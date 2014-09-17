@@ -17,8 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef KWIN_WAYLAND_CONNECTION_THREAD_H
-#define KWIN_WAYLAND_CONNECTION_THREAD_H
+#ifndef WAYLAND_CONNECTION_THREAD_H
+#define WAYLAND_CONNECTION_THREAD_H
 
 #include <QObject>
 #include <QDir>

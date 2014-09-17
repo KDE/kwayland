@@ -26,12 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 namespace KWin
 {
 namespace Wayland
 {
 
-class Surface : public QObject
+class KWAYLANDCLIENT_EXPORT Surface : public QObject
 {
     Q_OBJECT
 public:

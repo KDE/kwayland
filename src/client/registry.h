@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 struct _wl_fullscreen_shell;
 
 namespace KWin
@@ -32,7 +34,7 @@ namespace KWin
 namespace Wayland
 {
 
-class Registry : public QObject
+class KWAYLANDCLIENT_EXPORT Registry : public QObject
 {
     Q_OBJECT
 public:

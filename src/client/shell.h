@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 namespace KWin
 {
 namespace Wayland
@@ -33,7 +35,7 @@ class ShellSurface;
 class Output;
 class Surface;
 
-class Shell : public QObject
+class KWAYLANDCLIENT_EXPORT Shell : public QObject
 {
     Q_OBJECT
 public:
@@ -65,7 +67,7 @@ private:
     wl_shell *m_shell;
 };
 
-class ShellSurface : public QObject
+class KWAYLANDCLIENT_EXPORT ShellSurface : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)

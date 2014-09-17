@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QDir>
 
+#include <kwaylandclient_export.h>
+
 struct wl_display;
 class QFileSystemWatcher;
 class QSocketNotifier;
@@ -32,7 +34,7 @@ namespace KWin
 namespace Wayland
 {
 
-class ConnectionThread : public QObject
+class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject
 {
     Q_OBJECT
 public:

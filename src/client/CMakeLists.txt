@@ -43,6 +43,7 @@ set(CLIENT_LIB_SRCS
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 add_dependencies(KF5WaylandClient wayland-client-fullscreen-shell)
+generate_export_header(KF5WaylandClient BASE_NAME KWaylandClient)
 add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
 
 target_link_libraries(KF5WaylandClient

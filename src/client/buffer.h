@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 namespace KWin
 {
 namespace Wayland
@@ -31,7 +33,7 @@ namespace Wayland
 
 class ShmPool;
 
-class Buffer
+class KWAYLANDCLIENT_EXPORT Buffer
 {
 public:
     ~Buffer();

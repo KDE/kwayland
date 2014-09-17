@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-client-fullscreen-shell.h>
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 namespace KWin
 {
 namespace Wayland
@@ -33,7 +35,7 @@ namespace Wayland
 class Surface;
 class Output;
 
-class FullscreenShell : public QObject
+class KWAYLANDCLIENT_EXPORT FullscreenShell : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool capabilityArbitraryModes READ hasCapabilityArbitraryModes NOTIFY capabilityArbitraryModesChanged)

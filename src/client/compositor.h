@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
+#include <kwaylandclient_export.h>
+
 struct wl_compositor;
 
 namespace KWin
@@ -31,7 +33,7 @@ namespace Wayland
 
 class Surface;
 
-class Compositor : public QObject
+class KWAYLANDCLIENT_EXPORT Compositor : public QObject
 {
     Q_OBJECT
 public:

@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
+#include <kwaylandclient_export.h>
+
 class QImage;
 class QSize;
 class QTemporaryFile;
@@ -36,7 +38,7 @@ namespace Wayland
 {
 class Buffer;
 
-class ShmPool : public QObject
+class KWAYLANDCLIENT_EXPORT ShmPool : public QObject
 {
     Q_OBJECT
 public:

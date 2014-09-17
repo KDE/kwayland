@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <wayland-client-protocol.h>
 
+#include <kwaylandclient_export.h>
+
 namespace KWin
 {
 namespace Wayland
@@ -31,7 +33,7 @@ namespace Wayland
 class Keyboard;
 class Pointer;
 
-class Seat : public QObject
+class KWAYLANDCLIENT_EXPORT Seat : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool keyboard READ hasKeyboard NOTIFY hasKeyboardChanged)

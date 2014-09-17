@@ -46,7 +46,39 @@ add_dependencies(KF5WaylandClient wayland-client-fullscreen-shell)
 generate_export_header(KF5WaylandClient BASE_NAME KWaylandClient)
 add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
 
+target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client>")
+
 target_link_libraries(KF5WaylandClient
     PUBLIC Qt5::Gui
     PRIVATE Wayland::Client
+)
+
+if(IS_ABSOLUTE "${KF5_INCLUDE_INSTALL_DIR}")
+  target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}>" )
+else()
+  target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${KF5_INCLUDE_INSTALL_DIR}>" )
+endif()
+
+set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION_STRING}
+                                                 SOVERSION ${KWAYLAND_SOVERSION}
+                                                 EXPORT_NAME WaylandClient
+)
+
+install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS})
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/kwaylandclient_export.h
+  buffer.h
+  compositor.h
+  connection_thread.h
+  fullscreen_shell.h
+  keyboard.h
+  output.h
+  pointer.h
+  registry.h
+  seat.h
+  shell.h
+  shm_pool.h
+  surface.h
+  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )

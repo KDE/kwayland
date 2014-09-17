@@ -22,9 +22,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-client-protocol.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 Compositor::Compositor(QObject *parent)

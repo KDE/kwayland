@@ -25,9 +25,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwaylandclient_export.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class Surface;
@@ -79,8 +79,8 @@ Q_SIGNALS:
     void entered(quint32 serial, const QPointF &relativeToSurface);
     void left(quint32 serial);
     void motion(const QPointF &relativeToSurface, quint32 time);
-    void buttonStateChanged(quint32 serial, quint32 time, quint32 button, KWin::Wayland::Pointer::ButtonState state);
-    void axisChanged(quint32 time, KWin::Wayland::Pointer::Axis axis, qreal delta);
+    void buttonStateChanged(quint32 serial, quint32 time, quint32 button, KWayland::Client::Pointer::ButtonState state);
+    void axisChanged(quint32 time, KWayland::Client::Pointer::Axis axis, qreal delta);
 
 private:
     void enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface);
@@ -93,7 +93,7 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWin::Wayland::Pointer::ButtonState)
-Q_DECLARE_METATYPE(KWin::Wayland::Pointer::Axis)
+Q_DECLARE_METATYPE(KWayland::Client::Pointer::ButtonState)
+Q_DECLARE_METATYPE(KWayland::Client::Pointer::Axis)
 
 #endif

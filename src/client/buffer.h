@@ -26,9 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwaylandclient_export.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class ShmPool;

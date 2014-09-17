@@ -19,9 +19,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "keyboard.h"
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 const wl_keyboard_listener Keyboard::s_listener = {

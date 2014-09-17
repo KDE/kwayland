@@ -27,9 +27,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <sys/mman.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 ShmPool::ShmPool(QObject *parent)

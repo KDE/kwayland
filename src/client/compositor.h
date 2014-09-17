@@ -26,9 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 struct wl_compositor;
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class Surface;

@@ -29,9 +29,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 struct _wl_fullscreen_shell;
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class KWAYLANDCLIENT_EXPORT Registry : public QObject

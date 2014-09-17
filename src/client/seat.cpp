@@ -21,9 +21,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.h"
 #include "pointer.h"
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 const wl_seat_listener Seat::s_listener = {

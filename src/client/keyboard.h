@@ -25,9 +25,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwaylandclient_export.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class KWAYLANDCLIENT_EXPORT Keyboard : public QObject
@@ -63,7 +63,7 @@ public:
 
 Q_SIGNALS:
     void keymapChanged(int fd, quint32 size);
-    void keyChanged(quint32 key, KWin::Wayland::Keyboard::KeyState state, quint32 time);
+    void keyChanged(quint32 key, KWayland::Client::Keyboard::KeyState state, quint32 time);
     void modifiersChanged(quint32 depressed, quint32 latched, quint32 locked, quint32 group);
 
 private:
@@ -74,6 +74,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWin::Wayland::Keyboard::KeyState)
+Q_DECLARE_METATYPE(KWayland::Client::Keyboard::KeyState)
 
 #endif

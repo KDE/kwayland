@@ -25,10 +25,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-client-protocol.h>
 
-namespace KWin
+namespace KWayland
 {
 
-namespace Wayland
+namespace Client
 {
 
 ConnectionThread::ConnectionThread(QObject *parent)

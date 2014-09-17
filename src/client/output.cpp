@@ -21,10 +21,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QRect>
 
-namespace KWin
+namespace KWayland
 {
 
-namespace Wayland
+namespace Client
 {
 
 Output::Output(QObject *parent)

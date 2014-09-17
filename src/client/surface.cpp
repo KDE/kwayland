@@ -22,9 +22,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QRegion>
 #include <QVector>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 QList<Surface*> Surface::s_surfaces = QList<Surface*>();

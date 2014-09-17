@@ -29,9 +29,9 @@ struct wl_display;
 class QFileSystemWatcher;
 class QSocketNotifier;
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject

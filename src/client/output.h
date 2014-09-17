@@ -28,9 +28,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwaylandclient_export.h>
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 
 class KWAYLANDCLIENT_EXPORT Output : public QObject
@@ -181,7 +181,7 @@ Output::Transform Output::transform() const
 }
 }
 
-Q_DECLARE_METATYPE(KWin::Wayland::Output::SubPixel)
-Q_DECLARE_METATYPE(KWin::Wayland::Output::Transform)
+Q_DECLARE_METATYPE(KWayland::Client::Output::SubPixel)
+Q_DECLARE_METATYPE(KWayland::Client::Output::Transform)
 
 #endif

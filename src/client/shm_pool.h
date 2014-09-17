@@ -32,9 +32,9 @@ struct wl_shm;
 struct wl_buffer;
 struct wl_shm_pool;
 
-namespace KWin
+namespace KWayland
 {
-namespace Wayland
+namespace Client
 {
 class Buffer;
 

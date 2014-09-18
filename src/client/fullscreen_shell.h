@@ -22,10 +22,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-#include <wayland-client-fullscreen-shell.h>
-#include <wayland-client-protocol.h>
-
 #include <kwaylandclient_export.h>
+
+struct _wl_fullscreen_shell;
+struct wl_output;
+struct wl_surface;
 
 namespace KWayland
 {
@@ -44,33 +45,22 @@ public:
     explicit FullscreenShell(QObject *parent = nullptr);
     virtual ~FullscreenShell();
 
-    bool isValid() const {
-        return m_shell != nullptr;
-    }
+    bool isValid() const;
     void release();
     void destroy();
-    bool hasCapabilityArbitraryModes() const {
-        return m_capabilityArbitraryModes;
-    }
-    bool hasCapabilityCursorPlane() const {
-        return m_capabilityCursorPlane;
-    }
+    bool hasCapabilityArbitraryModes() const;
+    bool hasCapabilityCursorPlane() const;
     void setup(_wl_fullscreen_shell *shell);
     void present(wl_surface *surface, wl_output *output);
     void present(Surface *surface, Output *output);
-
-    static void capabilitiesAnnounce(void *data, struct _wl_fullscreen_shell *shell, uint32_t capability);
 
 Q_SIGNALS:
     void capabilityArbitraryModesChanged(bool);
     void capabilityCursorPlaneChanged(bool);
 
 private:
-    void handleCapabilities(uint32_t capability);
-    _wl_fullscreen_shell *m_shell;
-    bool m_capabilityArbitraryModes;
-    bool m_capabilityCursorPlane;
-    static _wl_fullscreen_shell_listener s_fullscreenShellListener;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

@@ -40,24 +40,19 @@ public:
     explicit Compositor(QObject *parent = nullptr);
     virtual ~Compositor();
 
-    bool isValid() const {
-        return m_compositor != nullptr;
-    }
+    bool isValid() const;
     void setup(wl_compositor *compositor);
     void release();
     void destroy();
 
     Surface *createSurface(QObject *parent = nullptr);
 
-    operator wl_compositor*() {
-        return m_compositor;
-    }
-    operator wl_compositor*() const {
-        return m_compositor;
-    }
+    operator wl_compositor*();
+    operator wl_compositor*() const;
 
 private:
-    wl_compositor *m_compositor;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

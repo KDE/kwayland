@@ -27,9 +27,17 @@ namespace KWayland
 namespace Client
 {
 
+class Compositor::Private
+{
+public:
+    Private() = default;
+
+    wl_compositor *compositor = nullptr;
+};
+
 Compositor::Compositor(QObject *parent)
     : QObject(parent)
-    , m_compositor(nullptr)
+    , d(new Private)
 {
 }
 
@@ -41,35 +49,49 @@ Compositor::~Compositor()
 void Compositor::setup(wl_compositor *compositor)
 {
     Q_ASSERT(compositor);
-    Q_ASSERT(!m_compositor);
-    m_compositor = compositor;
+    Q_ASSERT(!d->compositor);
+    d->compositor = compositor;
 }
 
 void Compositor::release()
 {
-    if (!m_compositor) {
+    if (!d->compositor) {
         return;
     }
-    wl_compositor_destroy(m_compositor);
-    m_compositor = nullptr;
+    wl_compositor_destroy(d->compositor);
+    d->compositor = nullptr;
 }
 
 void Compositor::destroy()
 {
-    if (!m_compositor) {
+    if (!d->compositor) {
         return;
     }
-    free(m_compositor);
-    m_compositor = nullptr;
+    free(d->compositor);
+    d->compositor = nullptr;
 }
 
 Surface *Compositor::createSurface(QObject *parent)
 {
     Q_ASSERT(isValid());
     Surface *s = new Surface(parent);
-    s->setup(wl_compositor_create_surface(m_compositor));
+    s->setup(wl_compositor_create_surface(d->compositor));
     return s;
 }
+
+Compositor::operator wl_compositor*() {
+    return d->compositor;
+}
+
+Compositor::operator wl_compositor*() const {
+    return d->compositor;
+}
+
+bool Compositor::isValid() const
+{
+    return d->compositor != nullptr;
+}
+
 
 }
 }

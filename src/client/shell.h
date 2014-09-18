@@ -42,9 +42,7 @@ public:
     explicit Shell(QObject *parent = nullptr);
     virtual ~Shell();
 
-    bool isValid() const {
-        return m_shell != nullptr;
-    }
+    bool isValid() const;
     void release();
     void destroy();
     void setup(wl_shell *shell);
@@ -52,19 +50,16 @@ public:
     ShellSurface *createSurface(wl_surface *surface, QObject *parent = nullptr);
     ShellSurface *createSurface(Surface *surface, QObject *parent = nullptr);
 
-    operator wl_shell*() {
-        return m_shell;
-    }
-    operator wl_shell*() const {
-        return m_shell;
-    }
+    operator wl_shell*();
+    operator wl_shell*() const;
 
 Q_SIGNALS:
     void interfaceAboutToBeReleased();
     void interfaceAboutToBeDestroyed();
 
 private:
-    wl_shell *m_shell;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 class KWAYLANDCLIENT_EXPORT ShellSurface : public QObject

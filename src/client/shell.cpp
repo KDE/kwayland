@@ -26,9 +26,15 @@ namespace KWayland
 namespace Client
 {
 
+class Shell::Private
+{
+public:
+    wl_shell *shell = nullptr;
+};
+
 Shell::Shell(QObject *parent)
     : QObject(parent)
-    , m_shell(nullptr)
+    , d(new Private)
 {
 }
 
@@ -39,29 +45,29 @@ Shell::~Shell()
 
 void Shell::destroy()
 {
-    if (!m_shell) {
+    if (!d->shell) {
         return;
     }
     emit interfaceAboutToBeDestroyed();
-    free(m_shell);
-    m_shell = nullptr;
+    free(d->shell);
+    d->shell = nullptr;
 }
 
 void Shell::release()
 {
-    if (!m_shell) {
+    if (!d->shell) {
         return;
     }
     emit interfaceAboutToBeReleased();
-    wl_shell_destroy(m_shell);
-    m_shell = nullptr;
+    wl_shell_destroy(d->shell);
+    d->shell = nullptr;
 }
 
 void Shell::setup(wl_shell *shell)
 {
-    Q_ASSERT(!m_shell);
+    Q_ASSERT(!d->shell);
     Q_ASSERT(shell);
-    m_shell = shell;
+    d->shell = shell;
 }
 
 ShellSurface *Shell::createSurface(wl_surface *surface, QObject *parent)
@@ -70,7 +76,7 @@ ShellSurface *Shell::createSurface(wl_surface *surface, QObject *parent)
     ShellSurface *s = new ShellSurface(parent);
     connect(this, &Shell::interfaceAboutToBeReleased, s, &ShellSurface::release);
     connect(this, &Shell::interfaceAboutToBeDestroyed, s, &ShellSurface::destroy);
-    s->setup(wl_shell_get_shell_surface(m_shell, surface));
+    s->setup(wl_shell_get_shell_surface(d->shell, surface));
     return s;
 }
 
@@ -78,6 +84,21 @@ ShellSurface *Shell::createSurface(Surface *surface, QObject *parent)
 {
     Q_ASSERT(surface);
     return createSurface(*surface, parent);
+}
+
+bool Shell::isValid() const
+{
+    return d->shell != nullptr;
+}
+
+Shell::operator wl_shell*()
+{
+    return d->shell;
+}
+
+Shell::operator wl_shell*() const
+{
+    return d->shell;
 }
 
 ShellSurface::ShellSurface(QObject *parent)

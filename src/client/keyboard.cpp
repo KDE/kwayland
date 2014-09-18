@@ -18,13 +18,47 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "keyboard.h"
+// wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
 
-const wl_keyboard_listener Keyboard::s_listener = {
+class Keyboard::Private
+{
+public:
+    Private(Keyboard *q);
+    void setup(wl_keyboard *k);
+
+    wl_keyboard *keyboard = nullptr;
+
+private:
+    static void keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
+    static void enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys);
+    static void leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface);
+    static void keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+    static void modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
+                                  uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+    Keyboard *q;
+    static const wl_keyboard_listener s_listener;
+};
+
+Keyboard::Private::Private(Keyboard *q)
+    : q(q)
+{
+}
+
+void Keyboard::Private::setup(wl_keyboard *k)
+{
+    Q_ASSERT(k);
+    Q_ASSERT(!keyboard);
+    keyboard = k;
+    wl_keyboard_add_listener(keyboard, &s_listener, this);
+}
+
+const wl_keyboard_listener Keyboard::Private::s_listener = {
     keymapCallback,
     enterCallback,
     leaveCallback,
@@ -34,7 +68,7 @@ const wl_keyboard_listener Keyboard::s_listener = {
 
 Keyboard::Keyboard(QObject *parent)
     : QObject(parent)
-    , m_keyboard(nullptr)
+    , d(new Private(this))
 {
 }
 
@@ -45,22 +79,19 @@ Keyboard::~Keyboard()
 
 void Keyboard::release()
 {
-    if (!m_keyboard) {
+    if (!d->keyboard) {
         return;
     }
-    wl_keyboard_destroy(m_keyboard);
-    m_keyboard = nullptr;
+    wl_keyboard_destroy(d->keyboard);
+    d->keyboard = nullptr;
 }
 
 void Keyboard::setup(wl_keyboard *keyboard)
 {
-    Q_ASSERT(keyboard);
-    Q_ASSERT(!m_keyboard);
-    m_keyboard = keyboard;
-    wl_keyboard_add_listener(m_keyboard, &Keyboard::s_listener, this);
+    d->setup(keyboard);
 }
 
-void Keyboard::enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
+void Keyboard::Private::enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
 {
     // ignore
     Q_UNUSED(data)
@@ -70,7 +101,7 @@ void Keyboard::enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial,
     Q_UNUSED(keys)
 }
 
-void Keyboard::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
+void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
 {
     // ignore
     Q_UNUSED(data)
@@ -79,11 +110,11 @@ void Keyboard::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial,
     Q_UNUSED(surface)
 }
 
-void Keyboard::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
     Q_UNUSED(serial)
-    Keyboard *k = reinterpret_cast<Keyboard*>(data);
-    Q_ASSERT(k->m_keyboard == keyboard);
+    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
     auto toState = [state] {
         if (state == WL_KEYBOARD_KEY_STATE_RELEASED) {
             return KeyState::Released;
@@ -91,26 +122,41 @@ void Keyboard::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, u
             return KeyState::Pressed;
         }
     };
-    emit k->keyChanged(key, toState(), time);
+    emit k->q->keyChanged(key, toState(), time);
 }
 
-void Keyboard::keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
+void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
 {
-    Keyboard *k = reinterpret_cast<Keyboard*>(data);
-    Q_ASSERT(k->m_keyboard == keyboard);
+    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
     if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
         return;
     }
-    emit k->keymapChanged(fd, size);
+    emit k->q->keymapChanged(fd, size);
 }
 
-void Keyboard::modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
+void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
                                  uint32_t modsLatched, uint32_t modsLocked, uint32_t group)
 {
     Q_UNUSED(serial)
-    Keyboard *k = reinterpret_cast<Keyboard*>(data);
-    Q_ASSERT(k->m_keyboard == keyboard);
-    emit k->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
+    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
+    emit k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
+}
+
+bool Keyboard::isValid() const
+{
+    return d->keyboard != nullptr;
+}
+
+Keyboard::operator wl_keyboard*()
+{
+    return d->keyboard;
+}
+
+Keyboard::operator wl_keyboard*() const
+{
+    return d->keyboard;
 }
 
 }

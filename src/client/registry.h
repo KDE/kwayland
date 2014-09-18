@@ -23,10 +23,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QObject>
 
-#include <wayland-client-protocol.h>
-
 #include <kwaylandclient_export.h>
 
+struct wl_compositor;
+struct wl_display;
+struct wl_output;
+struct wl_registry;
+struct wl_seat;
+struct wl_shell;
+struct wl_shm;
 struct _wl_fullscreen_shell;
 
 namespace KWayland
@@ -55,9 +60,7 @@ public:
     void create(wl_display *display);
     void setup();
 
-    bool isValid() const {
-        return m_registry != nullptr;
-    }
+    bool isValid() const;
     bool hasInterface(Interface interface) const;
 
     wl_compositor *bindCompositor(uint32_t name, uint32_t version) const;
@@ -67,18 +70,9 @@ public:
     wl_output *bindOutput(uint32_t name, uint32_t version) const;
     _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
 
-    operator wl_registry*() {
-        return m_registry;
-    }
-    operator wl_registry*() const {
-        return m_registry;
-    }
-    wl_registry *registry() {
-        return m_registry;
-    }
-
-    static void globalAnnounce(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version);
-    static void globalRemove(void *data, struct wl_registry *registry, uint32_t name);
+    operator wl_registry*();
+    operator wl_registry*() const;
+    wl_registry *registry();
 
 Q_SIGNALS:
     void compositorAnnounced(quint32 name, quint32 version);
@@ -95,18 +89,8 @@ Q_SIGNALS:
     void fullscreenShellRemoved(quint32 name);
 
 private:
-    static const struct wl_registry_listener s_registryListener;
-    void handleAnnounce(uint32_t name, const char *interface, uint32_t version);
-    void handleRemove(uint32_t name);
-    void *bind(Interface interface, uint32_t name, uint32_t version) const;
-
-    wl_registry *m_registry;
-    struct InterfaceData {
-        Interface interface;
-        uint32_t name;
-        uint32_t version;
-    };
-    QList<InterfaceData> m_interfaces;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

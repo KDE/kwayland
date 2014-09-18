@@ -18,18 +18,57 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "registry.h"
-#include <wayland-client-fullscreen-shell.h>
-
+// Qt
 #include <QDebug>
+// wayland
+#include <wayland-client-protocol.h>
+#include <wayland-client-fullscreen-shell.h>
 
 namespace KWayland
 {
 namespace Client
 {
 
+class Registry::Private
+{
+public:
+    Private(Registry *q);
+    void setup();
+    bool hasInterface(Interface interface) const;
+    template <typename T>
+    T *bind(Interface interface, uint32_t name, uint32_t version) const;
+
+    wl_registry *registry = nullptr;
+
+private:
+    void handleAnnounce(uint32_t name, const char *interface, uint32_t version);
+    void handleRemove(uint32_t name);
+    static void globalAnnounce(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version);
+    static void globalRemove(void *data, struct wl_registry *registry, uint32_t name);
+
+    Registry *q;
+    struct InterfaceData {
+        Interface interface;
+        uint32_t name;
+        uint32_t version;
+    };
+    QList<InterfaceData> m_interfaces;
+    static const struct wl_registry_listener s_registryListener;
+};
+
+Registry::Private::Private(Registry *q)
+    : q(q)
+{
+}
+
+void Registry::Private::setup()
+{
+    wl_registry_add_listener(registry, &s_registryListener, this);
+}
+
 Registry::Registry(QObject *parent)
     : QObject(parent)
-    , m_registry(nullptr)
+    , d(new Private(this))
 {
 }
 
@@ -40,17 +79,17 @@ Registry::~Registry()
 
 void Registry::release()
 {
-    if (m_registry) {
-        wl_registry_destroy(m_registry);
-        m_registry = nullptr;
+    if (d->registry) {
+        wl_registry_destroy(d->registry);
+        d->registry = nullptr;
     }
 }
 
 void Registry::destroy()
 {
-    if (m_registry) {
-        free(m_registry);
-        m_registry = nullptr;
+    if (d->registry) {
+        free(d->registry);
+        d->registry = nullptr;
     }
 }
 
@@ -58,31 +97,31 @@ void Registry::create(wl_display *display)
 {
     Q_ASSERT(display);
     Q_ASSERT(!isValid());
-    m_registry = wl_display_get_registry(display);
+    d->registry = wl_display_get_registry(display);
 }
 
 void Registry::setup()
 {
     Q_ASSERT(isValid());
-    wl_registry_add_listener(m_registry, &s_registryListener, this);
+    d->setup();
 }
 
-const struct wl_registry_listener Registry::s_registryListener = {
-    Registry::globalAnnounce,
-    Registry::globalRemove
+const struct wl_registry_listener Registry::Private::s_registryListener = {
+    globalAnnounce,
+    globalRemove
 };
 
-void Registry::globalAnnounce(void *data, wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
+void Registry::Private::globalAnnounce(void *data, wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
 {
-    Registry *r = reinterpret_cast<Registry*>(data);
-    Q_ASSERT(registry == r->m_registry);
+    auto r = reinterpret_cast<Registry::Private*>(data);
+    Q_ASSERT(registry == r->registry);
     r->handleAnnounce(name, interface, version);
 }
 
-void Registry::globalRemove(void *data, wl_registry *registry, uint32_t name)
+void Registry::Private::globalRemove(void *data, wl_registry *registry, uint32_t name)
 {
-    Registry *r = reinterpret_cast<Registry*>(data);
-    Q_ASSERT(registry == r->m_registry);
+    auto r = reinterpret_cast<Registry::Private*>(data);
+    Q_ASSERT(registry == r->registry);
     r->handleRemove(name);
 }
 
@@ -104,7 +143,7 @@ static Registry::Interface nameToInterface(const char *interface)
     return Registry::Interface::Unknown;
 }
 
-void Registry::handleAnnounce(uint32_t name, const char *interface, uint32_t version)
+void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uint32_t version)
 {
     Interface i = nameToInterface(interface);
     if (i == Interface::Unknown) {
@@ -115,22 +154,22 @@ void Registry::handleAnnounce(uint32_t name, const char *interface, uint32_t ver
     m_interfaces.append({i, name, version});
     switch (i) {
     case Interface::Compositor:
-        emit compositorAnnounced(name, version);
+        emit q->compositorAnnounced(name, version);
         break;
     case Interface::Shell:
-        emit shellAnnounced(name, version);
+        emit q->shellAnnounced(name, version);
         break;
     case Interface::Output:
-        emit outputAnnounced(name, version);
+        emit q->outputAnnounced(name, version);
         break;
     case Interface::Seat:
-        emit seatAnnounced(name, version);
+        emit q->seatAnnounced(name, version);
         break;
     case Interface::Shm:
-        emit shmAnnounced(name, version);
+        emit q->shmAnnounced(name, version);
         break;
     case Interface::FullscreenShell:
-        emit fullscreenShellAnnounced(name, version);
+        emit q->fullscreenShellAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -139,7 +178,7 @@ void Registry::handleAnnounce(uint32_t name, const char *interface, uint32_t ver
     }
 }
 
-void Registry::handleRemove(uint32_t name)
+void Registry::Private::handleRemove(uint32_t name)
 {
     auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
         [name](const InterfaceData &data) {
@@ -151,22 +190,22 @@ void Registry::handleRemove(uint32_t name)
         m_interfaces.erase(it);
         switch (data.interface) {
         case Interface::Compositor:
-            emit compositorRemoved(data.name);
+            emit q->compositorRemoved(data.name);
             break;
         case Interface::Output:
-            emit outputRemoved(data.name);
+            emit q->outputRemoved(data.name);
             break;
         case Interface::Seat:
-            emit seatRemoved(data.name);
+            emit q->seatRemoved(data.name);
             break;
         case Interface::Shell:
-            emit shellRemoved(data.name);
+            emit q->shellRemoved(data.name);
             break;
         case Interface::Shm:
-            emit shmRemoved(data.name);
+            emit q->shmRemoved(data.name);
             break;
         case Interface::FullscreenShell:
-            emit fullscreenShellRemoved(data.name);
+            emit q->fullscreenShellRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -176,7 +215,7 @@ void Registry::handleRemove(uint32_t name)
     }
 }
 
-bool Registry::hasInterface(Registry::Interface interface) const
+bool Registry::Private::hasInterface(Registry::Interface interface) const
 {
     auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
         [interface](const InterfaceData &data) {
@@ -186,34 +225,39 @@ bool Registry::hasInterface(Registry::Interface interface) const
     return it != m_interfaces.end();
 }
 
+bool Registry::hasInterface(Registry::Interface interface) const
+{
+    return d->hasInterface(interface);
+}
+
 wl_compositor *Registry::bindCompositor(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<wl_compositor*>(bind(Interface::Compositor, name, version));
+    return d->bind<wl_compositor>(Interface::Compositor, name, version);
 }
 
 wl_output *Registry::bindOutput(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<wl_output*>(bind(Interface::Output, name, version));
+    return d->bind<wl_output>(Interface::Output, name, version);
 }
 
 wl_seat *Registry::bindSeat(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<wl_seat*>(bind(Interface::Seat, name, version));
+    return d->bind<wl_seat>(Interface::Seat, name, version);
 }
 
 wl_shell *Registry::bindShell(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<wl_shell*>(bind(Interface::Shell, name, version));
+    return d->bind<wl_shell>(Interface::Shell, name, version);
 }
 
 wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<wl_shm*>(bind(Interface::Shm, name, version));
+    return d->bind<wl_shm>(Interface::Shm, name, version);
 }
 
 _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t version) const
 {
-    return reinterpret_cast<_wl_fullscreen_shell*>(bind(Interface::FullscreenShell, name, version));
+    return d->bind<_wl_fullscreen_shell>(Interface::FullscreenShell, name, version);
 }
 
 static const wl_interface *wlInterface(Registry::Interface interface)
@@ -237,7 +281,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
     }
 }
 
-void *Registry::bind(Registry::Interface interface, uint32_t name, uint32_t version) const
+template <typename T>
+T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_t version) const
 {
     auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(), [=](const InterfaceData &data) {
         return data.interface == interface && data.name == name && data.version >= version;
@@ -246,7 +291,27 @@ void *Registry::bind(Registry::Interface interface, uint32_t name, uint32_t vers
         qDebug() << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
         return nullptr;
     }
-    return wl_registry_bind(m_registry, name, wlInterface(interface), version);
+    return reinterpret_cast<T*>(wl_registry_bind(registry, name, wlInterface(interface), version));
+}
+
+bool Registry::isValid() const
+{
+    return d->registry != nullptr;
+}
+
+wl_registry *Registry::registry()
+{
+    return d->registry;
+}
+
+Registry::operator wl_registry*() const
+{
+    return d->registry;
+}
+
+Registry::operator wl_registry*()
+{
+    return d->registry;
 }
 
 }

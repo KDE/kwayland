@@ -26,7 +26,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class QImage;
 class QSize;
-class QTemporaryFile;
 
 struct wl_shm;
 struct wl_buffer;
@@ -57,35 +56,9 @@ public:
 Q_SIGNALS:
     void poolResized();
 private:
-    bool createPool();
-    bool resizePool(int32_t newSize);
-    wl_shm *m_shm;
-    wl_shm_pool *m_pool;
-    void *m_poolData;
-    int32_t m_size;
-    QScopedPointer<QTemporaryFile> m_tmpFile;
-    bool m_valid;
-    int m_offset;
-    QList<Buffer*> m_buffers;
+    class Private;
+    QScopedPointer<Private> d;
 };
-
-inline
-bool ShmPool::isValid() const
-{
-    return m_valid;
-}
-
-inline
-void* ShmPool::poolAddress() const
-{
-    return m_poolData;
-}
-
-inline
-wl_shm *ShmPool::shm()
-{
-    return m_shm;
-}
 
 }
 }

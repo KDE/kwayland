@@ -34,15 +34,34 @@ namespace KWayland
 namespace Client
 {
 
+class ShmPool::Private
+{
+public:
+    Private(ShmPool *q);
+    bool createPool();
+    bool resizePool(int32_t newSize);
+    wl_shm *shm = nullptr;
+    wl_shm_pool *pool = nullptr;
+    void *poolData = nullptr;
+    int32_t size = 1024;
+    QScopedPointer<QTemporaryFile> tmpFile;
+    bool valid = false;
+    int offset = 0;
+    QList<Buffer*> buffers;
+private:
+    ShmPool *q;
+};
+
+ShmPool::Private::Private(ShmPool *q)
+    : tmpFile(new QTemporaryFile())
+    , q(q)
+{
+}
+
+
 ShmPool::ShmPool(QObject *parent)
     : QObject(parent)
-    , m_shm(nullptr)
-    , m_pool(nullptr)
-    , m_poolData(nullptr)
-    , m_size(1024)
-    , m_tmpFile(new QTemporaryFile())
-    , m_valid(false)
-    , m_offset(0)
+    , d(new Private(this))
 {
 }
 
@@ -53,95 +72,95 @@ ShmPool::~ShmPool()
 
 void ShmPool::release()
 {
-    qDeleteAll(m_buffers);
-    m_buffers.clear();
-    if (m_poolData) {
-        munmap(m_poolData, m_size);
-        m_poolData = nullptr;
+    qDeleteAll(d->buffers);
+    d->buffers.clear();
+    if (d->poolData) {
+        munmap(d->poolData, d->size);
+        d->poolData = nullptr;
     }
-    if (m_pool) {
-        wl_shm_pool_destroy(m_pool);
-        m_pool = nullptr;
+    if (d->pool) {
+        wl_shm_pool_destroy(d->pool);
+        d->pool = nullptr;
     }
-    if (m_shm) {
-        wl_shm_destroy(m_shm);
-        m_shm = nullptr;
+    if (d->shm) {
+        wl_shm_destroy(d->shm);
+        d->shm = nullptr;
     }
-    m_tmpFile->close();
-    m_valid = false;
-    m_offset = 0;
+    d->tmpFile->close();
+    d->valid = false;
+    d->offset = 0;
 }
 
 void ShmPool::destroy()
 {
-    qDeleteAll(m_buffers);
-    m_buffers.clear();
-    if (m_poolData) {
-        munmap(m_poolData, m_size);
-        m_poolData = nullptr;
+    qDeleteAll(d->buffers);
+    d->buffers.clear();
+    if (d->poolData) {
+        munmap(d->poolData, d->size);
+        d->poolData = nullptr;
     }
-    if (m_pool) {
-        free(m_pool);
-        m_pool = nullptr;
+    if (d->pool) {
+        free(d->pool);
+        d->pool = nullptr;
     }
-    if (m_shm) {
-        free(m_shm);
-        m_shm = nullptr;
+    if (d->shm) {
+        free(d->shm);
+        d->shm = nullptr;
     }
-    m_tmpFile->close();
-    m_valid = false;
-    m_offset = 0;
+    d->tmpFile->close();
+    d->valid = false;
+    d->offset = 0;
 }
 
 void ShmPool::setup(wl_shm *shm)
 {
     Q_ASSERT(shm);
-    Q_ASSERT(!m_shm);
-    m_shm = shm;
-    m_valid = createPool();
+    Q_ASSERT(!d->shm);
+    d->shm = shm;
+    d->valid = d->createPool();
 }
 
-bool ShmPool::createPool()
+bool ShmPool::Private::createPool()
 {
-    if (!m_tmpFile->open()) {
+    if (!tmpFile->open()) {
         qDebug() << "Could not open temporary file for Shm pool";
         return false;
     }
-    if (ftruncate(m_tmpFile->handle(), m_size) < 0) {
+    if (ftruncate(tmpFile->handle(), size) < 0) {
         qDebug() << "Could not set size for Shm pool file";
         return false;
     }
-    m_poolData = mmap(NULL, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_tmpFile->handle(), 0);
-    m_pool = wl_shm_create_pool(m_shm, m_tmpFile->handle(), m_size);
+    poolData = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
+    pool = wl_shm_create_pool(shm, tmpFile->handle(), size);
 
-    if (!m_poolData || !m_pool) {
+    if (!poolData || !pool) {
         qDebug() << "Creating Shm pool failed";
         return false;
     }
     return true;
 }
 
-bool ShmPool::resizePool(int32_t newSize)
+bool ShmPool::Private::resizePool(int32_t newSize)
 {
-    if (ftruncate(m_tmpFile->handle(), newSize) < 0) {
+    if (ftruncate(tmpFile->handle(), newSize) < 0) {
         qDebug() << "Could not set new size for Shm pool file";
         return false;
     }
-    wl_shm_pool_resize(m_pool, newSize);
-    munmap(m_poolData, m_size);
-    m_poolData = mmap(NULL, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, m_tmpFile->handle(), 0);
-    m_size = newSize;
-    if (!m_poolData) {
+    wl_shm_pool_resize(pool, newSize);
+    munmap(poolData, size);
+    poolData = mmap(NULL, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
+    size = newSize;
+    if (!poolData) {
         qDebug() << "Resizing Shm pool failed";
         return false;
     }
-    emit poolResized();
+    emit q->poolResized();
     return true;
 }
 
 wl_buffer *ShmPool::createBuffer(const QImage& image)
 {
-    if (image.isNull() || !m_valid) {
+    if (image.isNull() || !d->valid) {
         return NULL;
     }
     Buffer *buffer = getBuffer(image.size(), image.bytesPerLine());
@@ -154,7 +173,7 @@ wl_buffer *ShmPool::createBuffer(const QImage& image)
 
 wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src)
 {
-    if (size.isNull() || !m_valid) {
+    if (size.isNull() || !d->valid) {
         return NULL;
     }
     Buffer *buffer = getBuffer(size, stride);
@@ -167,7 +186,7 @@ wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *
 
 Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride)
 {
-    Q_FOREACH (Buffer *buffer, m_buffers) {
+    Q_FOREACH (Buffer *buffer, d->buffers) {
         if (!buffer->isReleased() || buffer->isUsed()) {
             continue;
         }
@@ -178,21 +197,36 @@ Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride)
         return buffer;
     }
     const int32_t byteCount = size.height() * stride;
-    if (m_offset + byteCount > m_size) {
-        if (!resizePool(m_size + byteCount)) {
+    if (d->offset + byteCount > d->size) {
+        if (!d->resizePool(d->size + byteCount)) {
             return NULL;
         }
     }
     // we don't have a buffer which we could reuse - need to create a new one
-    wl_buffer *native = wl_shm_pool_create_buffer(m_pool, m_offset, size.width(), size.height(),
+    wl_buffer *native = wl_shm_pool_create_buffer(d->pool, d->offset, size.width(), size.height(),
                                                   stride, WL_SHM_FORMAT_ARGB8888);
     if (!native) {
         return NULL;
     }
-    Buffer *buffer = new Buffer(this, native, size, stride, m_offset);
-    m_offset += byteCount;
-    m_buffers.append(buffer);
+    Buffer *buffer = new Buffer(this, native, size, stride, d->offset);
+    d->offset += byteCount;
+    d->buffers.append(buffer);
     return buffer;
+}
+
+bool ShmPool::isValid() const
+{
+    return d->valid;
+}
+
+void* ShmPool::poolAddress() const
+{
+    return d->poolData;
+}
+
+wl_shm *ShmPool::shm()
+{
+    return d->shm;
 }
 
 }

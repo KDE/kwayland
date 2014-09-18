@@ -18,8 +18,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "output.h"
-
+// Qt
+#include <QPoint>
 #include <QRect>
+#include <QSize>
+// wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
@@ -27,43 +31,85 @@ namespace KWayland
 namespace Client
 {
 
+class Output::Private
+{
+public:
+    Private(Output *q);
+    void setup(wl_output *o);
+
+    wl_output *output = nullptr;
+    QSize physicalSize;
+    QPoint globalPosition;
+    QString manufacturer;
+    QString model;
+    QSize pixelSize;
+    int refreshRate = 0;
+    int scale = 1;
+    SubPixel subPixel = SubPixel::Unknown;
+    Transform transform = Transform::Normal;
+
+private:
+    static void geometryCallback(void *data, wl_output *output, int32_t x, int32_t y,
+                                 int32_t physicalWidth, int32_t physicalHeight, int32_t subPixel,
+                                 const char *make, const char *model, int32_t transform);
+    static void modeCallback(void *data, wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+    static void doneCallback(void *data, wl_output *output);
+    static void scaleCallback(void *data, wl_output *output, int32_t scale);
+    void setPhysicalSize(const QSize &size);
+    void setGlobalPosition(const QPoint &pos);
+    void setManufacturer(const QString &manufacturer);
+    void setModel(const QString &model);
+    void setPixelSize(const QSize &size);
+    void setRefreshRate(int refreshRate);
+    void setScale(int scale);
+    void setSubPixel(SubPixel subPixel);
+    void setTransform(Transform transform);
+
+    Output *q;
+    static struct wl_output_listener s_outputListener;
+};
+
+Output::Private::Private(Output *q)
+    : q(q)
+{
+}
+
+void Output::Private::setup(wl_output *o)
+{
+    Q_ASSERT(o);
+    Q_ASSERT(!output);
+    output = o;
+    wl_output_add_listener(output, &s_outputListener, this);
+}
+
 Output::Output(QObject *parent)
     : QObject(parent)
-    , m_output(nullptr)
-    , m_physicalSize()
-    , m_globalPosition()
-    , m_manufacturer()
-    , m_model()
-    , m_pixelSize()
-    , m_refreshRate(0)
-    , m_scale(1)
-    , m_subPixel(SubPixel::Unknown)
-    , m_transform(Transform::Normal)
+    , d(new Private(this))
 {
 }
 
 Output::~Output()
 {
-    if (m_output) {
-        wl_output_destroy(m_output);
+    if (d->output) {
+        wl_output_destroy(d->output);
     }
 }
 
-wl_output_listener Output::s_outputListener = {
-    Output::geometryCallback,
-    Output::modeCallback,
-    Output::doneCallback,
-    Output::scaleCallback
+wl_output_listener Output::Private::s_outputListener = {
+    geometryCallback,
+    modeCallback,
+    doneCallback,
+    scaleCallback
 };
 
-void Output::geometryCallback(void *data, wl_output *output,
+void Output::Private::geometryCallback(void *data, wl_output *output,
                               int32_t x, int32_t y,
                               int32_t physicalWidth, int32_t physicalHeight,
                               int32_t subPixel, const char *make, const char *model, int32_t transform)
 {
     Q_UNUSED(transform)
-    Output *o = reinterpret_cast<Output*>(data);
-    Q_ASSERT(o->output() == output);
+    auto o = reinterpret_cast<Output::Private*>(data);
+    Q_ASSERT(o->output == output);
     o->setGlobalPosition(QPoint(x, y));
     o->setManufacturer(make);
     o->setModel(model);
@@ -110,91 +156,151 @@ void Output::geometryCallback(void *data, wl_output *output,
     o->setTransform(toTransform());
 }
 
-void Output::modeCallback(void *data, wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+void Output::Private::modeCallback(void *data, wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
     if (!(flags & WL_OUTPUT_MODE_CURRENT)) {
         // ignore all non-current modes;
         return;
     }
-    Output *o = reinterpret_cast<Output*>(data);
-    Q_ASSERT(o->output() == output);
+    auto o = reinterpret_cast<Output::Private*>(data);
+    Q_ASSERT(o->output == output);
     o->setPixelSize(QSize(width, height));
     o->setRefreshRate(refresh);
 }
 
-void Output::scaleCallback(void *data, wl_output *output, int32_t scale)
+void Output::Private::scaleCallback(void *data, wl_output *output, int32_t scale)
 {
-    Output *o = reinterpret_cast<Output*>(data);
-    Q_ASSERT(o->output() == output);
+    auto o = reinterpret_cast<Output::Private*>(data);
+    Q_ASSERT(o->output == output);
     o->setScale(scale);
 }
 
-void Output::doneCallback(void *data, wl_output *output)
+void Output::Private::doneCallback(void *data, wl_output *output)
 {
-    Output *o = reinterpret_cast<Output*>(data);
-    Q_ASSERT(o->output() == output);
-    o->changed();
+    auto o = reinterpret_cast<Output::Private*>(data);
+    Q_ASSERT(o->output == output);
+    emit o->q->changed();
 }
 
 void Output::setup(wl_output *output)
 {
-    Q_ASSERT(output);
-    Q_ASSERT(!m_output);
-    m_output = output;
-    wl_output_add_listener(m_output, &s_outputListener, this);
+    d->setup(output);
 }
 
-void Output::setGlobalPosition(const QPoint &pos)
+void Output::Private::setGlobalPosition(const QPoint &pos)
 {
-    m_globalPosition = pos;
+    globalPosition = pos;
 }
 
-void Output::setManufacturer(const QString &manufacturer)
+void Output::Private::setManufacturer(const QString &m)
 {
-    m_manufacturer = manufacturer;
+    manufacturer = m;
 }
 
-void Output::setModel(const QString &model)
+void Output::Private::setModel(const QString &m)
 {
-    m_model = model;
+    model = m;
 }
 
-void Output::setPhysicalSize(const QSize &size)
+void Output::Private::setPhysicalSize(const QSize &size)
 {
-    m_physicalSize = size;
+    physicalSize = size;
 }
 
-void Output::setPixelSize(const QSize& size)
+void Output::Private::setPixelSize(const QSize& size)
 {
-    m_pixelSize = size;
+    pixelSize = size;
 }
 
-void Output::setRefreshRate(int refreshRate)
+void Output::Private::setRefreshRate(int r)
 {
-    m_refreshRate = refreshRate;
+    refreshRate = r;
 }
 
-void Output::setScale(int scale)
+void Output::Private::setScale(int s)
 {
-    m_scale = scale;
+    scale = s;
 }
 
 QRect Output::geometry() const
 {
-    if (!m_pixelSize.isValid()) {
+    if (!d->pixelSize.isValid()) {
         return QRect();
     }
-    return QRect(m_globalPosition, m_pixelSize);
+    return QRect(d->globalPosition, d->pixelSize);
 }
 
-void Output::setSubPixel(Output::SubPixel subPixel)
+void Output::Private::setSubPixel(Output::SubPixel s)
 {
-    m_subPixel = subPixel;
+    subPixel = s;
 }
 
-void Output::setTransform(Output::Transform transform)
+void Output::Private::setTransform(Output::Transform t)
 {
-    m_transform = transform;
+    transform = t;
+}
+
+QPoint Output::globalPosition() const
+{
+    return d->globalPosition;
+}
+
+QString Output::manufacturer() const
+{
+    return d->manufacturer;
+}
+
+QString Output::model() const
+{
+    return d->model;
+}
+
+wl_output *Output::output()
+{
+    return d->output;
+}
+
+QSize Output::physicalSize() const
+{
+    return d->physicalSize;
+}
+
+QSize Output::pixelSize() const
+{
+    return d->pixelSize;
+}
+
+int Output::refreshRate() const
+{
+    return d->refreshRate;
+}
+
+int Output::scale() const
+{
+    return d->scale;
+}
+
+bool Output::isValid() const
+{
+    return d->output != nullptr;
+}
+
+Output::SubPixel Output::subPixel() const
+{
+    return d->subPixel;
+}
+
+Output::Transform Output::transform() const
+{
+    return d->transform;
+}
+
+Output::operator wl_output*() {
+    return d->output;
+}
+
+Output::operator wl_output*() const {
+    return d->output;
 }
 
 }

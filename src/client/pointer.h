@@ -21,9 +21,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_POINTER_H
 
 #include <QObject>
-#include <wayland-client-protocol.h>
 
 #include <kwaylandclient_export.h>
+
+struct wl_pointer;
 
 namespace KWayland
 {
@@ -47,33 +48,15 @@ public:
     explicit Pointer(QObject *parent = nullptr);
     virtual ~Pointer();
 
-    bool isValid() const {
-        return m_pointer;
-    }
+    bool isValid() const;
     void setup(wl_pointer *pointer);
     void release();
 
-    Surface *enteredSurface() const {
-        return m_enteredSurface;
-    }
-    Surface *enteredSurface(){
-        return m_enteredSurface;
-    }
+    Surface *enteredSurface() const;
+    Surface *enteredSurface();
 
-    operator wl_pointer*() {
-        return m_pointer;
-    }
-    operator wl_pointer*() const {
-        return m_pointer;
-    }
-
-    static void enterCallback(void *data, wl_pointer *pointer, uint32_t serial, wl_surface *surface,
-                              wl_fixed_t sx, wl_fixed_t sy);
-    static void leaveCallback(void *data, wl_pointer *pointer, uint32_t serial, wl_surface *surface);
-    static void motionCallback(void *data, wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
-    static void buttonCallback(void *data, wl_pointer *pointer, uint32_t serial, uint32_t time,
-                               uint32_t button, uint32_t state);
-    static void axisCallback(void *data, wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
+    operator wl_pointer*();
+    operator wl_pointer*() const;
 
 Q_SIGNALS:
     void entered(quint32 serial, const QPointF &relativeToSurface);
@@ -83,11 +66,8 @@ Q_SIGNALS:
     void axisChanged(quint32 time, KWayland::Client::Pointer::Axis axis, qreal delta);
 
 private:
-    void enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface);
-    void leave(uint32_t serial);
-    wl_pointer *m_pointer;
-    Surface *m_enteredSurface;
-    static const wl_pointer_listener s_listener;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

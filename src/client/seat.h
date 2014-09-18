@@ -21,9 +21,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_SEAT_H
 
 #include <QObject>
-#include <wayland-client-protocol.h>
 
 #include <kwaylandclient_export.h>
+
+struct wl_seat;
+struct wl_touch;
 
 namespace KWayland
 {
@@ -44,38 +46,21 @@ public:
     explicit Seat(QObject *parent = nullptr);
     virtual ~Seat();
 
-    bool isValid() const {
-        return m_seat != nullptr;
-    }
+    bool isValid() const;
     void setup(wl_seat *seat);
     void release();
     void destroy();
 
-    bool hasKeyboard() const {
-        return m_capabilityKeyboard;
-    }
-    bool hasPointer() const {
-        return m_capabilityPointer;
-    }
-    bool hasTouch() const {
-        return m_capabilityTouch;
-    }
-    const QString &name() const {
-        return m_name;
-    }
-    operator wl_seat*() {
-        return m_seat;
-    }
-    operator wl_seat*() const {
-        return m_seat;
-    }
+    bool hasKeyboard() const;
+    bool hasPointer() const;
+    bool hasTouch() const;
+    QString name() const;
+    operator wl_seat*();
+    operator wl_seat*() const;
 
     Keyboard *createKeyboard(QObject *parent = nullptr);
     Pointer *createPointer(QObject *parent = nullptr);
     wl_touch *createTouch();
-
-    static void capabilitiesCallback(void *data, wl_seat *seat, uint32_t capabilities);
-    static void nameCallback(void *data, wl_seat *wl_seat, const char *name);
 
 Q_SIGNALS:
     void hasKeyboardChanged(bool);
@@ -84,19 +69,8 @@ Q_SIGNALS:
     void nameChanged(const QString &name);
 
 private:
-    void resetSeat();
-    void setHasKeyboard(bool has);
-    void setHasPointer(bool has);
-    void setHasTouch(bool has);
-    void capabilitiesChanged(uint32_t capabilities);
-    void setName(const QString &name);
-
-    wl_seat *m_seat;
-    bool m_capabilityKeyboard;
-    bool m_capabilityPointer;
-    bool m_capabilityTouch;
-    QString m_name;
-    static const wl_seat_listener s_listener;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

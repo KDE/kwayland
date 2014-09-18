@@ -20,23 +20,61 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "keyboard.h"
 #include "pointer.h"
+// Wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
 
-const wl_seat_listener Seat::s_listener = {
-    Seat::capabilitiesCallback,
-    Seat::nameCallback
+class Seat::Private
+{
+public:
+    Private(Seat *q);
+    void resetSeat();
+    void setup(wl_seat *seat);
+
+    wl_seat *seat = nullptr;
+    bool capabilityKeyboard = false;
+    bool capabilityPointer = false;
+    bool capabilityTouch = false;
+    QString name;
+
+private:
+    void setHasKeyboard(bool has);
+    void setHasPointer(bool has);
+    void setHasTouch(bool has);
+    void capabilitiesChanged(uint32_t capabilities);
+    void setName(const QString &name);
+    static void capabilitiesCallback(void *data, wl_seat *seat, uint32_t capabilities);
+    static void nameCallback(void *data, wl_seat *wl_seat, const char *name);
+
+    Seat *q;
+    static const wl_seat_listener s_listener;
+};
+
+Seat::Private::Private(Seat *q)
+    : q(q)
+{
+}
+
+void Seat::Private::setup(wl_seat *s)
+{
+    Q_ASSERT(s);
+    Q_ASSERT(!seat);
+    seat = s;
+    wl_seat_add_listener(seat, &s_listener, this);
+}
+
+const wl_seat_listener Seat::Private::s_listener = {
+    capabilitiesCallback,
+    nameCallback
 };
 
 Seat::Seat(QObject *parent)
     : QObject(parent)
-    , m_seat(nullptr)
-    , m_capabilityKeyboard(false)
-    , m_capabilityPointer(false)
-    , m_capabilityTouch(false)
+    , d(new Private(this))
 {
 }
 
@@ -47,25 +85,25 @@ Seat::~Seat()
 
 void Seat::release()
 {
-    if (!m_seat) {
+    if (!d->seat) {
         return;
     }
-    wl_seat_destroy(m_seat);
-    m_seat = nullptr;
-    resetSeat();
+    wl_seat_destroy(d->seat);
+    d->seat = nullptr;
+    d->resetSeat();
 }
 
 void Seat::destroy()
 {
-    if (!m_seat) {
+    if (!d->seat) {
         return;
     }
-    free(m_seat);
-    m_seat = nullptr;
-    resetSeat();
+    free(d->seat);
+    d->seat = nullptr;
+    d->resetSeat();
 }
 
-void Seat::resetSeat()
+void Seat::Private::resetSeat()
 {
     setHasKeyboard(false);
     setHasPointer(false);
@@ -73,56 +111,53 @@ void Seat::resetSeat()
     setName(QString());
 }
 
-void Seat::setHasKeyboard(bool has)
+void Seat::Private::setHasKeyboard(bool has)
 {
-    if (m_capabilityKeyboard == has) {
+    if (capabilityKeyboard == has) {
         return;
     }
-    m_capabilityKeyboard = has;
-    emit hasKeyboardChanged(m_capabilityKeyboard);
+    capabilityKeyboard = has;
+    emit q->hasKeyboardChanged(capabilityKeyboard);
 }
 
-void Seat::setHasPointer(bool has)
+void Seat::Private::setHasPointer(bool has)
 {
-    if (m_capabilityPointer == has) {
+    if (capabilityPointer == has) {
         return;
     }
-    m_capabilityPointer = has;
-    emit hasPointerChanged(m_capabilityPointer);
+    capabilityPointer = has;
+    emit q->hasPointerChanged(capabilityPointer);
 }
 
-void Seat::setHasTouch(bool has)
+void Seat::Private::setHasTouch(bool has)
 {
-    if (m_capabilityTouch == has) {
+    if (capabilityTouch == has) {
         return;
     }
-    m_capabilityTouch = has;
-    emit hasTouchChanged(m_capabilityTouch);
+    capabilityTouch = has;
+    emit q->hasTouchChanged(capabilityTouch);
 }
 
 void Seat::setup(wl_seat *seat)
 {
-    Q_ASSERT(seat);
-    Q_ASSERT(!m_seat);
-    m_seat = seat;
-    wl_seat_add_listener(m_seat, &Seat::s_listener, this);
+    d->setup(seat);
 }
 
-void Seat::capabilitiesCallback(void *data, wl_seat *seat, uint32_t capabilities)
+void Seat::Private::capabilitiesCallback(void *data, wl_seat *seat, uint32_t capabilities)
 {
-    Seat *s = reinterpret_cast<Seat*>(data);
-    Q_ASSERT(s->m_seat == seat);
+    auto s = reinterpret_cast<Seat::Private*>(data);
+    Q_ASSERT(s->seat == seat);
     s->capabilitiesChanged(capabilities);
 }
 
-void Seat::nameCallback(void *data, wl_seat *seat, const char *name)
+void Seat::Private::nameCallback(void *data, wl_seat *seat, const char *name)
 {
-    Seat *s = reinterpret_cast<Seat*>(data);
-    Q_ASSERT(s->m_seat == seat);
+    auto s = reinterpret_cast<Seat::Private*>(data);
+    Q_ASSERT(s->seat == seat);
     s->setName(QString::fromUtf8(name));
 }
 
-void Seat::capabilitiesChanged(uint32_t capabilities)
+void Seat::Private::capabilitiesChanged(uint32_t capabilities)
 {
     setHasKeyboard(capabilities & WL_SEAT_CAPABILITY_KEYBOARD);
     setHasPointer(capabilities & WL_SEAT_CAPABILITY_POINTER);
@@ -132,35 +167,70 @@ void Seat::capabilitiesChanged(uint32_t capabilities)
 Keyboard *Seat::createKeyboard(QObject *parent)
 {
     Q_ASSERT(isValid());
-    Q_ASSERT(m_capabilityKeyboard);
+    Q_ASSERT(d->capabilityKeyboard);
     Keyboard *k = new Keyboard(parent);
-    k->setup(wl_seat_get_keyboard(m_seat));
+    k->setup(wl_seat_get_keyboard(d->seat));
     return k;
 }
 
 Pointer *Seat::createPointer(QObject *parent)
 {
     Q_ASSERT(isValid());
-    Q_ASSERT(m_capabilityPointer);
+    Q_ASSERT(d->capabilityPointer);
     Pointer *p = new Pointer(parent);
-    p->setup(wl_seat_get_pointer(m_seat));
+    p->setup(wl_seat_get_pointer(d->seat));
     return p;
 }
 
 wl_touch *Seat::createTouch()
 {
     Q_ASSERT(isValid());
-    Q_ASSERT(m_capabilityTouch);
-    return wl_seat_get_touch(m_seat);
+    Q_ASSERT(d->capabilityTouch);
+    return wl_seat_get_touch(d->seat);
 }
 
-void Seat::setName(const QString &name)
+void Seat::Private::setName(const QString &n)
 {
-    if (m_name == name) {
+    if (name == n) {
         return;
     }
-    m_name = name;
-    emit nameChanged(m_name);
+    name = n;
+    emit q->nameChanged(name);
+}
+
+bool Seat::isValid() const
+{
+    return d->seat != nullptr;
+}
+
+bool Seat::hasKeyboard() const
+{
+    return d->capabilityKeyboard;
+}
+
+bool Seat::hasPointer() const
+{
+    return d->capabilityPointer;
+}
+
+bool Seat::hasTouch() const
+{
+    return d->capabilityTouch;
+}
+
+QString Seat::name() const
+{
+    return d->name;
+}
+
+Seat::operator wl_seat*()
+{
+    return d->seat;
+}
+
+Seat::operator wl_seat*() const
+{
+    return d->seat;
 }
 
 }

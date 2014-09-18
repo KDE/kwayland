@@ -21,48 +21,122 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shm_pool.h"
 // system
 #include <string.h>
+// wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
 
-const struct wl_buffer_listener Buffer::s_listener = {
-    Buffer::releasedCallback
+class Buffer::Private
+{
+public:
+    Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset);
+    ~Private();
+
+    ShmPool *shm;
+    wl_buffer *nativeBuffer;
+    bool released;
+    QSize size;
+    int32_t stride;
+    size_t offset;
+    bool used;
+private:
+    Buffer *q;
+    static const struct wl_buffer_listener s_listener;
+    static void releasedCallback(void *data, wl_buffer *wl_buffer);
 };
 
+const struct wl_buffer_listener Buffer::Private::s_listener = {
+    Buffer::Private::releasedCallback
+};
+
+Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset)
+    : shm(parent)
+    , nativeBuffer(nativeBuffer)
+    , released(false)
+    , size(size)
+    , stride(stride)
+    , offset(offset)
+    , used(false)
+    , q(q)
+{
+    wl_buffer_add_listener(nativeBuffer, &s_listener, this);
+}
+
+Buffer::Private::~Private()
+{
+    wl_buffer_destroy(nativeBuffer);
+}
+
+void Buffer::Private::releasedCallback(void *data, wl_buffer *buffer)
+{
+    auto b = reinterpret_cast<Buffer::Private*>(data);
+    Q_ASSERT(b->nativeBuffer == buffer);
+    b->q->setReleased(true);
+}
+
 Buffer::Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset)
-    : m_shm(parent)
-    , m_nativeBuffer(buffer)
-    , m_released(false)
-    , m_size(size)
-    , m_stride(stride)
-    , m_offset(offset)
-    , m_used(false)
+    : d(new Private(this, parent, buffer, size, stride, offset))
 {
-    wl_buffer_add_listener(m_nativeBuffer, &s_listener, this);
 }
 
-Buffer::~Buffer()
-{
-    wl_buffer_destroy(m_nativeBuffer);
-}
-
-void Buffer::releasedCallback(void *data, wl_buffer *buffer)
-{
-    Buffer *b = reinterpret_cast<Buffer*>(data);
-    Q_ASSERT(b->m_nativeBuffer == buffer);
-    b->setReleased(true);
-}
+Buffer::~Buffer() = default;
 
 void Buffer::copy(const void *src)
 {
-    memcpy(address(), src, m_size.height()*m_stride);
+    memcpy(address(), src, d->size.height()*d->stride);
 }
 
 uchar *Buffer::address()
 {
-    return reinterpret_cast<uchar*>(m_shm->poolAddress()) + m_offset;
+    return reinterpret_cast<uchar*>(d->shm->poolAddress()) + d->offset;
+}
+
+wl_buffer *Buffer::buffer() const
+{
+    return d->nativeBuffer;
+}
+
+Buffer::operator wl_buffer*()
+{
+    return d->nativeBuffer;
+}
+
+Buffer::operator wl_buffer*() const
+{
+    return d->nativeBuffer;
+}
+
+bool Buffer::isReleased() const
+{
+    return d->released;
+}
+
+void Buffer::setReleased(bool released)
+{
+    d->released = released;
+}
+
+QSize Buffer::size() const
+{
+    return d->size;
+}
+
+int32_t Buffer::stride() const
+{
+    return d->stride;
+}
+
+bool Buffer::isUsed() const
+{
+    return d->used;
+}
+
+void Buffer::setUsed(bool used)
+{
+    d->used = used;
 }
 
 }

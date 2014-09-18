@@ -21,13 +21,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_CONNECTION_THREAD_H
 
 #include <QObject>
-#include <QDir>
 
 #include <kwaylandclient_export.h>
 
 struct wl_display;
-class QFileSystemWatcher;
-class QSocketNotifier;
 
 namespace KWayland
 {
@@ -45,7 +42,7 @@ public:
     /**
      * @returns the name of the socket it connects to.
      **/
-    const QString &socketName() const;
+    QString socketName() const;
     /**
      * Sets the @p socketName to connect to.
      * Only applies if called before calling initConnection.
@@ -82,28 +79,9 @@ private Q_SLOTS:
     void doInitConnection();
 
 private:
-    void setupSocketNotifier();
-    void setupSocketFileWatcher();
-    wl_display *m_display;
-    QString m_socketName;
-    QDir m_runtimeDir;
-    QSocketNotifier *m_socketNotifier;
-    QFileSystemWatcher *m_socketWatcher;
-    bool m_serverDied;
+    class Private;
+    QScopedPointer<Private> d;
 };
-
-inline
-const QString &ConnectionThread::socketName() const
-{
-    return m_socketName;
-}
-
-inline
-wl_display *ConnectionThread::display()
-{
-    return m_display;
-}
-
 }
 }
 

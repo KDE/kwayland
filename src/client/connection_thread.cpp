@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection_thread.h"
 // Qt
 #include <QDebug>
+#include <QDir>
 #include <QFileSystemWatcher>
 #include <QSocketNotifier>
 // Wayland
@@ -31,27 +32,122 @@ namespace KWayland
 namespace Client
 {
 
-ConnectionThread::ConnectionThread(QObject *parent)
-    : QObject(parent)
-    , m_display(nullptr)
-    , m_socketName(QString::fromUtf8(qgetenv("WAYLAND_DISPLAY")))
-    , m_runtimeDir(QString::fromUtf8(qgetenv("XDG_RUNTIME_DIR")))
-    , m_socketNotifier(nullptr)
-    , m_socketWatcher(nullptr)
-    , m_serverDied(false)
+class ConnectionThread::Private
 {
-    if (m_socketName.isEmpty()) {
-        m_socketName = QStringLiteral("wayland-0");
+public:
+    Private(ConnectionThread *q);
+    ~Private();
+    void doInitConnection();
+    void setupSocketNotifier();
+    void setupSocketFileWatcher();
+
+    wl_display *display = nullptr;
+    QString socketName;
+    QDir runtimeDir;
+    QScopedPointer<QSocketNotifier> socketNotifier;
+    QScopedPointer<QFileSystemWatcher> socketWatcher;
+    bool serverDied = false;
+private:
+    ConnectionThread *q;
+};
+
+ConnectionThread::Private::Private(ConnectionThread *q)
+    : socketName(QString::fromUtf8(qgetenv("WAYLAND_DISPLAY")))
+    , runtimeDir(QString::fromUtf8(qgetenv("XDG_RUNTIME_DIR")))
+    , q(q)
+{
+    if (socketName.isEmpty()) {
+        socketName = QStringLiteral("wayland-0");
     }
 }
 
-ConnectionThread::~ConnectionThread()
+ConnectionThread::Private::~Private()
 {
-    if (m_display) {
-        wl_display_flush(m_display);
-        wl_display_disconnect(m_display);
+    if (display) {
+        wl_display_flush(display);
+        wl_display_disconnect(display);
     }
 }
+
+void ConnectionThread::Private::doInitConnection()
+{
+    display = wl_display_connect(socketName.toUtf8().constData());
+    if (!display) {
+        qWarning() << "Failed connecting to Wayland display";
+        emit q->failed();
+        return;
+    }
+    qDebug() << "Connected to Wayland server at:" << socketName;
+
+    // setup socket notifier
+    setupSocketNotifier();
+    setupSocketFileWatcher();
+    emit q->connected();
+}
+
+void ConnectionThread::Private::setupSocketNotifier()
+{
+    const int fd = wl_display_get_fd(display);
+    socketNotifier.reset(new QSocketNotifier(fd, QSocketNotifier::Read));
+    QObject::connect(socketNotifier.data(), &QSocketNotifier::activated, q,
+        [this]() {
+            if (!display) {
+                return;
+            }
+            wl_display_dispatch(display);
+            emit q->eventsRead();
+        }
+    );
+}
+
+void ConnectionThread::Private::setupSocketFileWatcher()
+{
+    if (!runtimeDir.exists()) {
+        return;
+    }
+    socketWatcher.reset(new QFileSystemWatcher);
+    socketWatcher->addPath(runtimeDir.absoluteFilePath(socketName));
+    QObject::connect(socketWatcher.data(), &QFileSystemWatcher::fileChanged, q,
+        [this] (const QString &file) {
+            if (QFile::exists(file) || serverDied) {
+                return;
+            }
+            qWarning() << "Connection to server went away";
+            serverDied = true;
+            if (display) {
+                free(display);
+                display = nullptr;
+            }
+            socketNotifier.reset();
+
+            // need a new filesystem watcher
+            socketWatcher.reset(new QFileSystemWatcher);
+            socketWatcher->addPath(runtimeDir.absolutePath());
+            QObject::connect(socketWatcher.data(), &QFileSystemWatcher::directoryChanged, q,
+                [this]() {
+                    if (!serverDied) {
+                        return;
+                    }
+                    if (runtimeDir.exists(socketName)) {
+                        qDebug() << "Socket reappeared";
+                        socketWatcher.reset();
+                        serverDied = false;
+                        q->initConnection();
+                    }
+                }
+            );
+            emit q->connectionDied();
+        }
+    );
+}
+
+ConnectionThread::ConnectionThread(QObject *parent)
+    : QObject(parent)
+    , d(new Private(this))
+{
+}
+
+ConnectionThread::~ConnectionThread() = default;
 
 void ConnectionThread::initConnection()
 {
@@ -60,86 +156,26 @@ void ConnectionThread::initConnection()
 
 void ConnectionThread::doInitConnection()
 {
-    m_display = wl_display_connect(m_socketName.toUtf8().constData());
-    if (!m_display) {
-        qWarning() << "Failed connecting to Wayland display";
-        emit failed();
-        return;
-    }
-    qDebug() << "Connected to Wayland server at:" << m_socketName;
-
-    // setup socket notifier
-    setupSocketNotifier();
-    setupSocketFileWatcher();
-    emit connected();
-}
-
-void ConnectionThread::setupSocketNotifier()
-{
-    const int fd = wl_display_get_fd(m_display);
-    m_socketNotifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
-    connect(m_socketNotifier, &QSocketNotifier::activated, this,
-        [this]() {
-            if (!m_display) {
-                return;
-            }
-            wl_display_dispatch(m_display);
-            emit eventsRead();
-        }
-    );
-}
-
-void ConnectionThread::setupSocketFileWatcher()
-{
-    if (!m_runtimeDir.exists()) {
-        return;
-    }
-    m_socketWatcher = new QFileSystemWatcher(this);
-    m_socketWatcher->addPath(m_runtimeDir.absoluteFilePath(m_socketName));
-    connect(m_socketWatcher, &QFileSystemWatcher::fileChanged, this,
-        [this] (const QString &file) {
-            if (QFile::exists(file) || m_serverDied) {
-                return;
-            }
-            qWarning() << "Connection to server went away";
-            m_serverDied = true;
-            if (m_display) {
-                free(m_display);
-                m_display = nullptr;
-            }
-            delete m_socketNotifier;
-            m_socketNotifier = nullptr;
-
-            // need a new filesystem watcher
-            delete m_socketWatcher;
-            m_socketWatcher = new QFileSystemWatcher(this);
-            m_socketWatcher->addPath(m_runtimeDir.absolutePath());
-            connect(m_socketWatcher, &QFileSystemWatcher::directoryChanged, this,
-                [this]() {
-                    if (!m_serverDied) {
-                        return;
-                    }
-                    if (m_runtimeDir.exists(m_socketName)) {
-                        qDebug() << "Socket reappeared";
-                        delete m_socketWatcher;
-                        m_socketWatcher = nullptr;
-                        m_serverDied = false;
-                        initConnection();
-                    }
-                }
-            );
-            emit connectionDied();
-        }
-    );
+    d->doInitConnection();
 }
 
 void ConnectionThread::setSocketName(const QString &socketName)
 {
-    if (m_display) {
+    if (d->display) {
         // already initialized
         return;
     }
-    m_socketName = socketName;
+    d->socketName = socketName;
+}
+
+wl_display *ConnectionThread::display()
+{
+    return d->display;
+}
+
+QString ConnectionThread::socketName() const
+{
+    return d->socketName;
 }
 
 }

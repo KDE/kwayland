@@ -21,80 +21,110 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QRegion>
 #include <QVector>
+// Wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
 
-QList<Surface*> Surface::s_surfaces = QList<Surface*>();
+class Surface::Private
+{
+public:
+    Private(Surface *q);
+    void setupFrameCallback();
+
+    wl_surface *surface = nullptr;
+    bool frameCallbackInstalled = false;
+    QSize size;
+
+    static QList<Surface*> s_surfaces;
+private:
+    void handleFrameCallback();
+    static void frameCallback(void *data, wl_callback *callback, uint32_t time);
+
+    Surface *q;
+    static const wl_callback_listener s_listener;
+};
+
+QList<Surface*> Surface::Private::s_surfaces = QList<Surface*>();
+
+Surface::Private::Private(Surface *q)
+    : q(q)
+{
+}
 
 Surface::Surface(QObject *parent)
     : QObject(parent)
-    , m_surface(nullptr)
-    , m_frameCallbackInstalled(false)
+    , d(new Private(this))
 {
-    s_surfaces << this;
+    Private::s_surfaces << this;
 }
 
 Surface::~Surface()
 {
-    s_surfaces.removeAll(this);
+    Private::s_surfaces.removeAll(this);
     release();
 }
 
 void Surface::release()
 {
-    if (!m_surface) {
+    if (!d->surface) {
         return;
     }
-    wl_surface_destroy(m_surface);
-    m_surface = nullptr;
+    wl_surface_destroy(d->surface);
+    d->surface = nullptr;
 }
 
 void Surface::destroy()
 {
-    if (!m_surface) {
+    if (!d->surface) {
         return;
     }
-    free(m_surface);
-    m_surface = nullptr;
+    free(d->surface);
+    d->surface = nullptr;
 }
 
 void Surface::setup(wl_surface *surface)
 {
     Q_ASSERT(surface);
-    Q_ASSERT(!m_surface);
-    m_surface = surface;
+    Q_ASSERT(!d->surface);
+    d->surface = surface;
 }
 
-void Surface::frameCallback(void *data, wl_callback *callback, uint32_t time)
+void Surface::Private::frameCallback(void *data, wl_callback *callback, uint32_t time)
 {
     Q_UNUSED(time)
-    Surface *s = reinterpret_cast<Surface*>(data);
+    auto s = reinterpret_cast<Surface::Private*>(data);
     if (callback) {
         wl_callback_destroy(callback);
     }
     s->handleFrameCallback();
 }
 
-void Surface::handleFrameCallback()
+void Surface::Private::handleFrameCallback()
 {
-    m_frameCallbackInstalled = false;
-    frameRendered();
+    frameCallbackInstalled = false;
+    emit q->frameRendered();
 }
 
-const struct wl_callback_listener Surface::s_listener = {
-        Surface::frameCallback
+const struct wl_callback_listener Surface::Private::s_listener = {
+        frameCallback
 };
+
+void Surface::Private::setupFrameCallback()
+{
+    Q_ASSERT(!frameCallbackInstalled);
+    wl_callback *callback = wl_surface_frame(surface);
+    wl_callback_add_listener(callback, &s_listener, this);
+    frameCallbackInstalled = true;
+}
 
 void Surface::setupFrameCallback()
 {
     Q_ASSERT(isValid());
-    Q_ASSERT(!m_frameCallbackInstalled);
-    wl_callback *callback = wl_surface_frame(m_surface);
-    wl_callback_add_listener(callback, &s_listener, this);
-    m_frameCallbackInstalled = true;
+    d->setupFrameCallback();
 }
 
 void Surface::commit(Surface::CommitFlag flag)
@@ -103,7 +133,7 @@ void Surface::commit(Surface::CommitFlag flag)
     if (flag == CommitFlag::FrameCallback) {
         setupFrameCallback();
     }
-    wl_surface_commit(m_surface);
+    wl_surface_commit(d->surface);
 }
 
 void Surface::damage(const QRegion &region)
@@ -116,32 +146,32 @@ void Surface::damage(const QRegion &region)
 void Surface::damage(const QRect &rect)
 {
     Q_ASSERT(isValid());
-    wl_surface_damage(m_surface, rect.x(), rect.y(), rect.width(), rect.height());
+    wl_surface_damage(d->surface, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 void Surface::attachBuffer(wl_buffer *buffer, const QPoint &offset)
 {
     Q_ASSERT(isValid());
-    wl_surface_attach(m_surface, buffer, offset.x(), offset.y());
+    wl_surface_attach(d->surface, buffer, offset.x(), offset.y());
 }
 
 void Surface::setSize(const QSize &size)
 {
-    if (m_size == size) {
+    if (d->size == size) {
         return;
     }
-    m_size = size;
-    emit sizeChanged(m_size);
+    d->size = size;
+    emit sizeChanged(d->size);
 }
 
 Surface *Surface::get(wl_surface *native)
 {
-    auto it = std::find_if(s_surfaces.constBegin(), s_surfaces.constEnd(),
+    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(),
         [native](Surface *s) {
-            return s->m_surface == native;
+            return s->d->surface == native;
         }
     );
-    if (it != s_surfaces.constEnd()) {
+    if (it != Private::s_surfaces.constEnd()) {
         return *(it);
     }
     return nullptr;
@@ -149,7 +179,27 @@ Surface *Surface::get(wl_surface *native)
 
 const QList< Surface* > &Surface::all()
 {
-    return s_surfaces;
+    return Private::s_surfaces;
+}
+
+bool Surface::isValid() const
+{
+    return d->surface != nullptr;
+}
+
+QSize Surface::size() const
+{
+    return d->size;
+}
+
+Surface::operator wl_surface*()
+{
+    return d->surface;
+}
+
+Surface::operator wl_surface*() const
+{
+    return d->surface;
 }
 
 }

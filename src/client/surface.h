@@ -24,9 +24,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPoint>
 #include <QSize>
 
-#include <wayland-client-protocol.h>
-
 #include <kwaylandclient_export.h>
+
+struct wl_buffer;
+struct wl_surface;
 
 namespace KWayland
 {
@@ -43,9 +44,7 @@ public:
     void setup(wl_surface *surface);
     void release();
     void destroy();
-    bool isValid() const {
-        return m_surface != nullptr;
-    }
+    bool isValid() const;
     void setupFrameCallback();
     enum class CommitFlag {
         None,
@@ -56,18 +55,10 @@ public:
     void damage(const QRegion &region);
     void attachBuffer(wl_buffer *buffer, const QPoint &offset = QPoint());
     void setSize(const QSize &size);
-    const QSize &size() const {
-        return m_size;
-    }
+    QSize size() const;
 
-    operator wl_surface*() {
-        return m_surface;
-    }
-    operator wl_surface*() const {
-        return m_surface;
-    }
-
-    static void frameCallback(void *data, wl_callback *callback, uint32_t time);
+    operator wl_surface*();
+    operator wl_surface*() const;
 
     static const QList<Surface*> &all();
     static Surface *get(wl_surface *native);
@@ -77,12 +68,8 @@ Q_SIGNALS:
     void sizeChanged(const QSize&);
 
 private:
-    void handleFrameCallback();
-    static const wl_callback_listener s_listener;
-    static QList<Surface*> s_surfaces;
-    wl_surface *m_surface;
-    bool m_frameCallbackInstalled;
-    QSize m_size;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

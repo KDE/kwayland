@@ -20,6 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell.h"
 #include "output.h"
 #include "surface.h"
+// Wayland
+#include <wayland-client-protocol.h>
 
 namespace KWayland
 {
@@ -101,10 +103,41 @@ Shell::operator wl_shell*() const
     return d->shell;
 }
 
+class ShellSurface::Private
+{
+public:
+    Private(ShellSurface *q);
+    void setup(wl_shell_surface *surface);
+
+    wl_shell_surface *surface = nullptr;
+    QSize size;
+
+private:
+    void ping(uint32_t serial);
+    static void pingCallback(void *data, struct wl_shell_surface *shellSurface, uint32_t serial);
+    static void configureCallback(void *data, struct wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height);
+    static void popupDoneCallback(void *data, struct wl_shell_surface *shellSurface);
+
+    ShellSurface *q;
+    static const struct wl_shell_surface_listener s_listener;
+};
+
+ShellSurface::Private::Private(ShellSurface *q)
+    : q(q)
+{
+}
+
+void ShellSurface::Private::setup(wl_shell_surface *s)
+{
+    Q_ASSERT(s);
+    Q_ASSERT(!surface);
+    surface = s;
+    wl_shell_surface_add_listener(surface, &s_listener, this);
+}
+
 ShellSurface::ShellSurface(QObject *parent)
     : QObject(parent)
-    , m_surface(nullptr)
-    , m_size()
+    , d(new Private(this))
 {
 }
 
@@ -118,8 +151,8 @@ void ShellSurface::release()
     if (!isValid()) {
         return;
     }
-    wl_shell_surface_destroy(m_surface);
-    m_surface = nullptr;
+    wl_shell_surface_destroy(d->surface);
+    d->surface = nullptr;
 }
 
 void ShellSurface::destroy()
@@ -127,32 +160,32 @@ void ShellSurface::destroy()
     if (!isValid()) {
         return;
     }
-    free(m_surface);
-    m_surface = nullptr;
+    free(d->surface);
+    d->surface = nullptr;
 }
 
-const struct wl_shell_surface_listener ShellSurface::s_listener = {
-    ShellSurface::pingCallback,
-    ShellSurface::configureCallback,
-    ShellSurface::popupDoneCallback
+const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {
+    pingCallback,
+    configureCallback,
+    popupDoneCallback
 };
 
-void ShellSurface::configureCallback(void *data, wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height)
+void ShellSurface::Private::configureCallback(void *data, wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height)
 {
     Q_UNUSED(edges)
-    ShellSurface *s = reinterpret_cast<ShellSurface*>(data);
-    Q_ASSERT(s->m_surface == shellSurface);
-    s->setSize(QSize(width, height));
+    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    Q_ASSERT(s->surface == shellSurface);
+    s->q->setSize(QSize(width, height));
 }
 
-void ShellSurface::pingCallback(void *data, wl_shell_surface *shellSurface, uint32_t serial)
+void ShellSurface::Private::pingCallback(void *data, wl_shell_surface *shellSurface, uint32_t serial)
 {
-    ShellSurface *s = reinterpret_cast<ShellSurface*>(data);
-    Q_ASSERT(s->m_surface == shellSurface);
+    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    Q_ASSERT(s->surface == shellSurface);
     s->ping(serial);
 }
 
-void ShellSurface::popupDoneCallback(void *data, wl_shell_surface *shellSurface)
+void ShellSurface::Private::popupDoneCallback(void *data, wl_shell_surface *shellSurface)
 {
     // not needed, we don't have popups
     Q_UNUSED(data)
@@ -161,31 +194,48 @@ void ShellSurface::popupDoneCallback(void *data, wl_shell_surface *shellSurface)
 
 void ShellSurface::setup(wl_shell_surface *surface)
 {
-    Q_ASSERT(surface);
-    Q_ASSERT(!m_surface);
-    m_surface = surface;
-    wl_shell_surface_add_listener(m_surface, &s_listener, this);
+    d->setup(surface);
 }
 
-void ShellSurface::ping(uint32_t serial)
+void ShellSurface::Private::ping(uint32_t serial)
 {
-    wl_shell_surface_pong(m_surface, serial);
-    emit pinged();
+    wl_shell_surface_pong(surface, serial);
+    emit q->pinged();
 }
 
 void ShellSurface::setSize(const QSize &size)
 {
-    if (m_size == size) {
+    if (d->size == size) {
         return;
     }
-    m_size = size;
+    d->size = size;
     emit sizeChanged(size);
 }
 
 void ShellSurface::setFullscreen(Output *output)
 {
     Q_ASSERT(isValid());
-    wl_shell_surface_set_fullscreen(m_surface, WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, output ? output->output() : nullptr);
+    wl_shell_surface_set_fullscreen(d->surface, WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, output ? output->output() : nullptr);
+}
+
+QSize ShellSurface::size() const
+{
+    return d->size;
+}
+
+bool ShellSurface::isValid() const
+{
+    return d->surface != nullptr;
+}
+
+ShellSurface::operator wl_shell_surface*()
+{
+    return d->surface;
+}
+
+ShellSurface::operator wl_shell_surface*() const
+{
+    return d->surface;
 }
 
 }

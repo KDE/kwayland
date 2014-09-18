@@ -23,9 +23,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QSize>
 
-#include <wayland-client-protocol.h>
-
 #include <kwaylandclient_export.h>
+
+struct wl_surface;
+struct wl_shell;
+struct wl_shell_surface;
 
 namespace KWayland
 {
@@ -73,36 +75,22 @@ public:
     void release();
     void destroy();
     void setup(wl_shell_surface *surface);
-    QSize size() const {
-        return m_size;
-    }
+    QSize size() const;
     void setSize(const QSize &size);
 
     void setFullscreen(Output *output = nullptr);
 
-    bool isValid() const {
-        return m_surface != nullptr;
-    }
-    operator wl_shell_surface*() {
-        return m_surface;
-    }
-    operator wl_shell_surface*() const {
-        return m_surface;
-    }
-
-    static void pingCallback(void *data, struct wl_shell_surface *shellSurface, uint32_t serial);
-    static void configureCallback(void *data, struct wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height);
-    static void popupDoneCallback(void *data, struct wl_shell_surface *shellSurface);
+    bool isValid() const;
+    operator wl_shell_surface*();
+    operator wl_shell_surface*() const;
 
 Q_SIGNALS:
     void pinged();
     void sizeChanged(const QSize &);
 
 private:
-    void ping(uint32_t serial);
-    wl_shell_surface *m_surface;
-    QSize m_size;
-    static const struct wl_shell_surface_listener s_listener;
+    class Private;
+    QScopedPointer<Private> d;
 };
 
 }

@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
+set(PROJECT_VERSION "5.0.95")
+set(PROJECT_VERSION_MAJOR 5)
 
 project(KWAYLAND)
 
@@ -15,7 +17,7 @@ include(CMakeFindFrameworks)
 
 include(ECMPoQmTools)
 
-set(KF5_VERSION "5.3.0") # handled by release scripts
+set(KF5_VERSION ${PROJECT_VERSION})
 
 ecm_setup_version(${KF5_VERSION} VARIABLE_PREFIX KWAYLAND
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h"

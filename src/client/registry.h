@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QObject>
 
-#include <kwaylandclient_export.h>
+#include <KWayland/Client/kwaylandclient_export.h>
 
 struct wl_compositor;
 struct wl_display;

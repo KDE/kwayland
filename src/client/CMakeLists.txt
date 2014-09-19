@@ -43,7 +43,12 @@ set(CLIENT_LIB_SRCS
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 add_dependencies(KF5WaylandClient wayland-client-fullscreen-shell)
-generate_export_header(KF5WaylandClient BASE_NAME KWaylandClient)
+generate_export_header(KF5WaylandClient
+    BASE_NAME
+        KWaylandClient
+    EXPORT_FILE_NAME
+        KWayland/Client/kwaylandclient_export.h
+)
 add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
 
 target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client>")
@@ -67,7 +72,7 @@ set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION_S
 install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/kwaylandclient_export.h
+  ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
   buffer.h
   compositor.h
   connection_thread.h

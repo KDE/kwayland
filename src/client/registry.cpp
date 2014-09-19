@@ -18,7 +18,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "registry.h"
+#include "compositor.h"
 #include "connection_thread.h"
+#include "fullscreen_shell.h"
+#include "output.h"
+#include "seat.h"
+#include "shell.h"
+#include "shm_pool.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -152,6 +158,7 @@ static Registry::Interface nameToInterface(const char *interface)
 void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uint32_t version)
 {
     Interface i = nameToInterface(interface);
+    emit q->interfaceAnnounced(QByteArray(interface), name, version);
     if (i == Interface::Unknown) {
         qDebug() << "Unknown interface announced: " << interface << "/" << name << "/" << version;
         return;
@@ -219,6 +226,7 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         }
     }
+    emit q->interfaceRemoved(name);
 }
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const
@@ -264,6 +272,48 @@ wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
 _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t version) const
 {
     return d->bind<_wl_fullscreen_shell>(Interface::FullscreenShell, name, version);
+}
+
+Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
+{
+    Compositor *c = new Compositor(parent);
+    c->setup(bindCompositor(name, version));
+    return c;
+}
+
+FullscreenShell *Registry::createFullscreenShell(quint32 name, quint32 version, QObject *parent)
+{
+    FullscreenShell *s = new FullscreenShell(parent);
+    s->setup(bindFullscreenShell(name, version));
+    return s;
+}
+
+Output *Registry::createOutput(quint32 name, quint32 version, QObject *parent)
+{
+    Output *o = new Output(parent);
+    o->setup(bindOutput(name, version));
+    return o;
+}
+
+Seat *Registry::createSeat(quint32 name, quint32 version, QObject *parent)
+{
+    Seat *s = new Seat(parent);
+    s->setup(bindSeat(name, version));
+    return s;
+}
+
+Shell *Registry::createShell(quint32 name, quint32 version, QObject *parent)
+{
+    Shell *s = new Shell(parent);
+    s->setup(bindShell(name, version));
+    return s;
+}
+
+ShmPool *Registry::createShmPool(quint32 name, quint32 version, QObject *parent)
+{
+    ShmPool *s = new ShmPool(parent);
+    s->setup(bindShm(name, version));
+    return s;
 }
 
 static const wl_interface *wlInterface(Registry::Interface interface)

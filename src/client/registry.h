@@ -39,7 +39,13 @@ namespace KWayland
 namespace Client
 {
 
+class Compositor;
 class ConnectionThread;
+class FullscreenShell;
+class Output;
+class Seat;
+class Shell;
+class ShmPool;
 
 class KWAYLANDCLIENT_EXPORT Registry : public QObject
 {
@@ -72,6 +78,13 @@ public:
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
     wl_output *bindOutput(uint32_t name, uint32_t version) const;
     _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
+
+    Compositor *createCompositor(quint32 name, quint32 version, QObject *parent = nullptr);
+    Shell *createShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    Seat *createSeat(quint32 name, quint32 version, QObject *parent = nullptr);
+    ShmPool *createShmPool(quint32 name, quint32 version, QObject *parent = nullptr);
+    Output *createOutput(quint32 name, quint32 version, QObject *parent = nullptr);
+    FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
 
     operator wl_registry*();
     operator wl_registry*() const;

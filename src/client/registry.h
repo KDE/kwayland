@@ -90,6 +90,8 @@ Q_SIGNALS:
     void shmRemoved(quint32 name);
     void outputRemoved(quint32 name);
     void fullscreenShellRemoved(quint32 name);
+    void interfaceAnnounced(QByteArray interface, quint32 name, quint32 version);
+    void interfaceRemoved(quint32 name);
 
 private:
     class Private;

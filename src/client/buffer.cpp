@@ -32,7 +32,7 @@ namespace Client
 class Buffer::Private
 {
 public:
-    Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset);
+    Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset, Format format);
     ~Private();
 
     ShmPool *shm;
@@ -42,6 +42,7 @@ public:
     int32_t stride;
     size_t offset;
     bool used;
+    Format format;
 private:
     Buffer *q;
     static const struct wl_buffer_listener s_listener;
@@ -52,7 +53,7 @@ const struct wl_buffer_listener Buffer::Private::s_listener = {
     Buffer::Private::releasedCallback
 };
 
-Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset)
+Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset, Format format)
     : shm(parent)
     , nativeBuffer(nativeBuffer)
     , released(false)
@@ -60,6 +61,7 @@ Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, co
     , stride(stride)
     , offset(offset)
     , used(false)
+    , format(format)
     , q(q)
 {
     wl_buffer_add_listener(nativeBuffer, &s_listener, this);
@@ -77,8 +79,8 @@ void Buffer::Private::releasedCallback(void *data, wl_buffer *buffer)
     b->q->setReleased(true);
 }
 
-Buffer::Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset)
-    : d(new Private(this, parent, buffer, size, stride, offset))
+Buffer::Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset, Format format)
+    : d(new Private(this, parent, buffer, size, stride, offset, format))
 {
 }
 
@@ -137,6 +139,11 @@ bool Buffer::isUsed() const
 void Buffer::setUsed(bool used)
 {
     d->used = used;
+}
+
+Buffer::Format Buffer::format() const
+{
+    return d->format;
 }
 
 }

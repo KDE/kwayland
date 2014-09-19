@@ -158,12 +158,26 @@ bool ShmPool::Private::resizePool(int32_t newSize)
     return true;
 }
 
+static Buffer::Format toBufferFormat(const QImage &image)
+{
+    switch (image.format()) {
+    case QImage::Format_ARGB32:
+    case QImage::Format_ARGB32_Premultiplied:
+        return Buffer::Format::ARGB32;
+    case QImage::Format_RGB32:
+        return Buffer::Format::RGB32;
+    default:
+        qWarning() << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
+        return Buffer::Format::ARGB32;
+    }
+};
+
 wl_buffer *ShmPool::createBuffer(const QImage& image)
 {
     if (image.isNull() || !d->valid) {
         return NULL;
     }
-    Buffer *buffer = getBuffer(image.size(), image.bytesPerLine());
+    Buffer *buffer = getBuffer(image.size(), image.bytesPerLine(), toBufferFormat(image));
     if (!buffer) {
         return NULL;
     }
@@ -171,12 +185,12 @@ wl_buffer *ShmPool::createBuffer(const QImage& image)
     return buffer->buffer();
 }
 
-wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src)
+wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
 {
     if (size.isNull() || !d->valid) {
         return NULL;
     }
-    Buffer *buffer = getBuffer(size, stride);
+    Buffer *buffer = getBuffer(size, stride, format);
     if (!buffer) {
         return NULL;
     }
@@ -184,7 +198,18 @@ wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *
     return buffer->buffer();
 }
 
-Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride)
+static wl_shm_format toWaylandFormat(Buffer::Format format)
+{
+    switch (format) {
+    case Buffer::Format::ARGB32:
+        return WL_SHM_FORMAT_ARGB8888;
+    case Buffer::Format::RGB32:
+        return WL_SHM_FORMAT_XRGB8888;
+    }
+    abort();
+}
+
+Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride, Buffer::Format format)
 {
     Q_FOREACH (Buffer *buffer, d->buffers) {
         if (!buffer->isReleased() || buffer->isUsed()) {
@@ -204,11 +229,11 @@ Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride)
     }
     // we don't have a buffer which we could reuse - need to create a new one
     wl_buffer *native = wl_shm_pool_create_buffer(d->pool, d->offset, size.width(), size.height(),
-                                                  stride, WL_SHM_FORMAT_ARGB8888);
+                                                  stride, toWaylandFormat(format));
     if (!native) {
         return NULL;
     }
-    Buffer *buffer = new Buffer(this, native, size, stride, d->offset);
+    Buffer *buffer = new Buffer(this, native, size, stride, d->offset, format);
     d->offset += byteCount;
     d->buffers.append(buffer);
     return buffer;

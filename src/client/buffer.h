@@ -37,6 +37,13 @@ class ShmPool;
 class KWAYLANDCLIENT_EXPORT Buffer
 {
 public:
+    /**
+     * All image formats supported by the implementation.
+     **/
+    enum class Format {
+        ARGB32, ///< 32-bit ARGB format, can be used for QImage::Format_ARGB32 and QImage::Format_ARGB32_Premultiplied
+        RGB32 ///< 32-bit RGB format, can be used for QImage::Format_RGB32
+    };
     ~Buffer();
     void copy(const void *src);
     void setReleased(bool released);
@@ -48,13 +55,17 @@ public:
     bool isReleased() const;
     bool isUsed() const;
     uchar *address();
+    /**
+     * @returns The image format used by this Buffer.
+     **/
+    Format format() const;
 
     operator wl_buffer*();
     operator wl_buffer*() const;
 
 private:
     friend class ShmPool;
-    explicit Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset);
+    explicit Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset, Format format);
     class Private;
     QScopedPointer<Private> d;
 };

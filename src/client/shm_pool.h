@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
+#include "buffer.h"
 #include <KWayland/Client/kwaylandclient_export.h>
 
 class QImage;
@@ -35,7 +36,6 @@ namespace KWayland
 {
 namespace Client
 {
-class Buffer;
 
 class KWAYLANDCLIENT_EXPORT ShmPool : public QObject
 {
@@ -49,9 +49,9 @@ public:
     void destroy();
 
     wl_buffer *createBuffer(const QImage &image);
-    wl_buffer *createBuffer(const QSize &size, int32_t stride, const void *src);
+    wl_buffer *createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format = Buffer::Format::ARGB32);
     void *poolAddress() const;
-    Buffer *getBuffer(const QSize &size, int32_t stride);
+    Buffer *getBuffer(const QSize &size, int32_t stride, Buffer::Format format = Buffer::Format::ARGB32);
     wl_shm *shm();
 Q_SIGNALS:
     void poolResized();

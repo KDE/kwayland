@@ -39,6 +39,8 @@ namespace KWayland
 namespace Client
 {
 
+class ConnectionThread;
+
 class KWAYLANDCLIENT_EXPORT Registry : public QObject
 {
     Q_OBJECT
@@ -58,6 +60,7 @@ public:
     void release();
     void destroy();
     void create(wl_display *display);
+    void create(ConnectionThread *connection);
     void setup();
 
     bool isValid() const;

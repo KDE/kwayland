@@ -19,6 +19,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "connection_thread.h"
 // Qt
+#include <QAbstractEventDispatcher>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFileSystemWatcher>
@@ -145,6 +147,13 @@ ConnectionThread::ConnectionThread(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
+    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, this,
+        [this] {
+            if (d->display) {
+                wl_display_flush(d->display);
+            }
+        },
+        Qt::DirectConnection);
 }
 
 ConnectionThread::~ConnectionThread() = default;

@@ -36,6 +36,12 @@ namespace KWayland
 namespace Client
 {
 
+static const quint32 s_compositorMaxVersion = 3;
+static const quint32 s_outputMaxVersion = 2;
+static const quint32 s_shmMaxVersion = 1;
+static const quint32 s_seatMaxVersion = 3;
+static const quint32 s_shellMaxVersion = 1;
+
 class Registry::Private
 {
 public:
@@ -246,27 +252,27 @@ bool Registry::hasInterface(Registry::Interface interface) const
 
 wl_compositor *Registry::bindCompositor(uint32_t name, uint32_t version) const
 {
-    return d->bind<wl_compositor>(Interface::Compositor, name, version);
+    return d->bind<wl_compositor>(Interface::Compositor, name, qMin(s_compositorMaxVersion, version));
 }
 
 wl_output *Registry::bindOutput(uint32_t name, uint32_t version) const
 {
-    return d->bind<wl_output>(Interface::Output, name, version);
+    return d->bind<wl_output>(Interface::Output, name, qMin(s_outputMaxVersion, version));
 }
 
 wl_seat *Registry::bindSeat(uint32_t name, uint32_t version) const
 {
-    return d->bind<wl_seat>(Interface::Seat, name, version);
+    return d->bind<wl_seat>(Interface::Seat, name, qMin(s_seatMaxVersion, version));
 }
 
 wl_shell *Registry::bindShell(uint32_t name, uint32_t version) const
 {
-    return d->bind<wl_shell>(Interface::Shell, name, version);
+    return d->bind<wl_shell>(Interface::Shell, name, qMin(s_shellMaxVersion, version));
 }
 
 wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
 {
-    return d->bind<wl_shm>(Interface::Shm, name, version);
+    return d->bind<wl_shm>(Interface::Shm, name, qMin(s_shmMaxVersion, version));
 }
 
 _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t version) const

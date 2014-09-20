@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "surface.h"
+#include "buffer.h"
 
 #include <QRegion>
 #include <QVector>
@@ -153,6 +154,11 @@ void Surface::attachBuffer(wl_buffer *buffer, const QPoint &offset)
 {
     Q_ASSERT(isValid());
     wl_surface_attach(d->surface, buffer, offset.x(), offset.y());
+}
+
+void Surface::attachBuffer(Buffer *buffer, const QPoint &offset)
+{
+    attachBuffer(buffer->buffer(), offset);
 }
 
 void Surface::setSize(const QSize &size)

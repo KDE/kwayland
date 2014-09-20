@@ -34,6 +34,8 @@ namespace KWayland
 namespace Client
 {
 
+class Buffer;
+
 class KWAYLANDCLIENT_EXPORT Surface : public QObject
 {
     Q_OBJECT
@@ -54,6 +56,7 @@ public:
     void damage(const QRect &rect);
     void damage(const QRegion &region);
     void attachBuffer(wl_buffer *buffer, const QPoint &offset = QPoint());
+    void attachBuffer(Buffer *buffer, const QPoint &offset = QPoint());
     void setSize(const QSize &size);
     QSize size() const;
 

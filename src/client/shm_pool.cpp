@@ -172,7 +172,7 @@ static Buffer::Format toBufferFormat(const QImage &image)
     }
 };
 
-wl_buffer *ShmPool::createBuffer(const QImage& image)
+Buffer *ShmPool::createBuffer(const QImage& image)
 {
     if (image.isNull() || !d->valid) {
         return NULL;
@@ -182,10 +182,10 @@ wl_buffer *ShmPool::createBuffer(const QImage& image)
         return NULL;
     }
     buffer->copy(image.bits());
-    return buffer->buffer();
+    return buffer;
 }
 
-wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
+Buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
 {
     if (size.isNull() || !d->valid) {
         return NULL;
@@ -195,7 +195,7 @@ wl_buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *
         return NULL;
     }
     buffer->copy(src);
-    return buffer->buffer();
+    return buffer;
 }
 
 static wl_shm_format toWaylandFormat(Buffer::Format format)

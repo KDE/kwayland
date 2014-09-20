@@ -29,8 +29,6 @@ class QImage;
 class QSize;
 
 struct wl_shm;
-struct wl_buffer;
-struct wl_shm_pool;
 
 namespace KWayland
 {
@@ -48,8 +46,8 @@ public:
     void release();
     void destroy();
 
-    wl_buffer *createBuffer(const QImage &image);
-    wl_buffer *createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format = Buffer::Format::ARGB32);
+    Buffer *createBuffer(const QImage &image);
+    Buffer *createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format = Buffer::Format::ARGB32);
     void *poolAddress() const;
     Buffer *getBuffer(const QSize &size, int32_t stride, Buffer::Format format = Buffer::Format::ARGB32);
     wl_shm *shm();

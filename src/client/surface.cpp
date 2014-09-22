@@ -161,6 +161,11 @@ void Surface::attachBuffer(Buffer *buffer, const QPoint &offset)
     attachBuffer(buffer->buffer(), offset);
 }
 
+void Surface::attachBuffer(Buffer::Ptr buffer, const QPoint &offset)
+{
+    attachBuffer(buffer.toStrongRef().data(), offset);
+}
+
 void Surface::setSize(const QSize &size)
 {
     if (d->size == size) {

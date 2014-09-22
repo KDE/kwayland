@@ -20,6 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WAYLAND_SURFACE_H
 #define WAYLAND_SURFACE_H
 
+#include "buffer.h"
+
 #include <QObject>
 #include <QPoint>
 #include <QSize>
@@ -33,8 +35,6 @@ namespace KWayland
 {
 namespace Client
 {
-
-class Buffer;
 
 class KWAYLANDCLIENT_EXPORT Surface : public QObject
 {
@@ -57,6 +57,7 @@ public:
     void damage(const QRegion &region);
     void attachBuffer(wl_buffer *buffer, const QPoint &offset = QPoint());
     void attachBuffer(Buffer *buffer, const QPoint &offset = QPoint());
+    void attachBuffer(Buffer::Ptr buffer, const QPoint &offset = QPoint());
     void setSize(const QSize &size);
     QSize size() const;
 

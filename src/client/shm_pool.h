@@ -46,10 +46,10 @@ public:
     void release();
     void destroy();
 
-    Buffer *createBuffer(const QImage &image);
-    Buffer *createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format = Buffer::Format::ARGB32);
+    Buffer::Ptr createBuffer(const QImage &image);
+    Buffer::Ptr createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format = Buffer::Format::ARGB32);
     void *poolAddress() const;
-    Buffer *getBuffer(const QSize &size, int32_t stride, Buffer::Format format = Buffer::Format::ARGB32);
+    Buffer::Ptr getBuffer(const QSize &size, int32_t stride, Buffer::Format format = Buffer::Format::ARGB32);
     wl_shm *shm();
 Q_SIGNALS:
     void poolResized();

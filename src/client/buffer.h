@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QSize>
 #include <QScopedPointer>
+#include <QWeakPointer>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -62,6 +63,8 @@ public:
 
     operator wl_buffer*();
     operator wl_buffer*() const;
+
+    typedef QWeakPointer<Buffer> Ptr;
 
 private:
     friend class ShmPool;

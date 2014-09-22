@@ -41,6 +41,7 @@ public:
     Private(ShmPool *q);
     bool createPool();
     bool resizePool(int32_t newSize);
+    QList<QSharedPointer<Buffer>>::iterator getBuffer(const QSize &size, int32_t stride, Buffer::Format format);
     wl_shm *shm = nullptr;
     wl_shm_pool *pool = nullptr;
     void *poolData = nullptr;
@@ -48,7 +49,7 @@ public:
     QScopedPointer<QTemporaryFile> tmpFile;
     bool valid = false;
     int offset = 0;
-    QList<Buffer*> buffers;
+    QList<QSharedPointer<Buffer>> buffers;
 private:
     ShmPool *q;
 };
@@ -73,7 +74,6 @@ ShmPool::~ShmPool()
 
 void ShmPool::release()
 {
-    qDeleteAll(d->buffers);
     d->buffers.clear();
     if (d->poolData) {
         munmap(d->poolData, d->size);
@@ -97,7 +97,6 @@ void ShmPool::destroy()
     for (auto b : d->buffers) {
         b->d->destroy();
     }
-    qDeleteAll(d->buffers);
     d->buffers.clear();
     if (d->poolData) {
         munmap(d->poolData, d->size);
@@ -176,30 +175,30 @@ static Buffer::Format toBufferFormat(const QImage &image)
     }
 };
 
-Buffer *ShmPool::createBuffer(const QImage& image)
+Buffer::Ptr ShmPool::createBuffer(const QImage& image)
 {
     if (image.isNull() || !d->valid) {
-        return NULL;
+        return QWeakPointer<Buffer>();
     }
-    Buffer *buffer = getBuffer(image.size(), image.bytesPerLine(), toBufferFormat(image));
-    if (!buffer) {
-        return NULL;
+    auto it = d->getBuffer(image.size(), image.bytesPerLine(), toBufferFormat(image));
+    if (it == d->buffers.end()) {
+        return QWeakPointer<Buffer>();
     }
-    buffer->copy(image.bits());
-    return buffer;
+    (*it)->copy(image.bits());
+    return QWeakPointer<Buffer>(*it);
 }
 
-Buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
+Buffer::Ptr ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
 {
     if (size.isEmpty() || !d->valid) {
-        return NULL;
+        return QWeakPointer<Buffer>();
     }
-    Buffer *buffer = getBuffer(size, stride, format);
-    if (!buffer) {
-        return NULL;
+    auto it = d->getBuffer(size, stride, format);
+    if (it == d->buffers.end()) {
+        return QWeakPointer<Buffer>();
     }
-    buffer->copy(src);
-    return buffer;
+    (*it)->copy(src);
+    return QWeakPointer<Buffer>(*it);
 }
 
 static wl_shm_format toWaylandFormat(Buffer::Format format)
@@ -213,34 +212,44 @@ static wl_shm_format toWaylandFormat(Buffer::Format format)
     abort();
 }
 
-Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride, Buffer::Format format)
+Buffer::Ptr ShmPool::getBuffer(const QSize &size, int32_t stride, Buffer::Format format)
 {
-    Q_FOREACH (Buffer *buffer, d->buffers) {
+    auto it = d->getBuffer(size, stride, format);
+    if (it == d->buffers.end()) {
+        return QWeakPointer<Buffer>();
+    }
+    return QWeakPointer<Buffer>(*it);
+}
+
+QList<QSharedPointer<Buffer>>::iterator ShmPool::Private::getBuffer(const QSize &s, int32_t stride, Buffer::Format format)
+{
+    for (auto it = buffers.begin(); it != buffers.end(); ++it) {
+        auto buffer = *it;
         if (!buffer->isReleased() || buffer->isUsed()) {
             continue;
         }
-        if (buffer->size() != size || buffer->stride() != stride || buffer->format() != format) {
+        if (buffer->size() != s || buffer->stride() != stride || buffer->format() != format) {
             continue;
         }
         buffer->setReleased(false);
-        return buffer;
+        return it;
     }
-    const int32_t byteCount = size.height() * stride;
-    if (d->offset + byteCount > d->size) {
-        if (!d->resizePool(d->size + byteCount)) {
-            return NULL;
+    const int32_t byteCount = s.height() * stride;
+    if (offset + byteCount > size) {
+        if (!resizePool(size + byteCount)) {
+            return buffers.end();
         }
     }
     // we don't have a buffer which we could reuse - need to create a new one
-    wl_buffer *native = wl_shm_pool_create_buffer(d->pool, d->offset, size.width(), size.height(),
+    wl_buffer *native = wl_shm_pool_create_buffer(pool, offset, s.width(), s.height(),
                                                   stride, toWaylandFormat(format));
     if (!native) {
-        return NULL;
+        return buffers.end();
     }
-    Buffer *buffer = new Buffer(this, native, size, stride, d->offset, format);
-    d->offset += byteCount;
-    d->buffers.append(buffer);
-    return buffer;
+    Buffer *buffer = new Buffer(q, native, s, stride, offset, format);
+    offset += byteCount;
+    auto it = buffers.insert(buffers.end(), QSharedPointer<Buffer>(buffer));
+    return it;
 }
 
 bool ShmPool::isValid() const

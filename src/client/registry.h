@@ -82,13 +82,13 @@ public:
      * object.
      **/
     enum class Interface {
+        Unknown,    ///< Refers to an Unknown interface
         Compositor, ///< Refers to the wl_compositor interface
         Shell,      ///< Refers to the wl_shell interface
         Seat,       ///< Refers to the wl_seat interface
         Shm,        ///< Refers to the wl_shm interface
         Output,     ///< Refers to the wl_output interface
-        FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
-        Unknown ///< Refers to an Unknown interface
+        FullscreenShell ///< Refers to the _wl_fullscreen_shell interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();

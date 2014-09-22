@@ -86,6 +86,15 @@ void Keyboard::release()
     d->keyboard = nullptr;
 }
 
+void Keyboard::destroy()
+{
+    if (!d->keyboard) {
+        return;
+    }
+    free(d->keyboard);
+    d->keyboard = nullptr;
+}
+
 void Keyboard::setup(wl_keyboard *keyboard)
 {
     d->setup(keyboard);

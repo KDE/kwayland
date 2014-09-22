@@ -93,6 +93,15 @@ void Pointer::release()
     d->pointer = nullptr;
 }
 
+void Pointer::destroy()
+{
+    if (!d->pointer) {
+        return;
+    }
+    free(d->pointer);
+    d->pointer = nullptr;
+}
+
 void Pointer::setup(wl_pointer *pointer)
 {
     d->setup(pointer);

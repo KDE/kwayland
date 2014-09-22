@@ -51,6 +51,7 @@ public:
     bool isValid() const;
     void setup(wl_pointer *pointer);
     void release();
+    void destroy();
 
     Surface *enteredSurface() const;
     Surface *enteredSurface();

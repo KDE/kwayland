@@ -88,6 +88,7 @@ void Seat::release()
     if (!d->seat) {
         return;
     }
+    emit interfaceAboutToBeReleased();
     wl_seat_destroy(d->seat);
     d->seat = nullptr;
     d->resetSeat();
@@ -98,6 +99,7 @@ void Seat::destroy()
     if (!d->seat) {
         return;
     }
+    emit interfaceAboutToBeDestroyed();
     free(d->seat);
     d->seat = nullptr;
     d->resetSeat();
@@ -169,6 +171,8 @@ Keyboard *Seat::createKeyboard(QObject *parent)
     Q_ASSERT(isValid());
     Q_ASSERT(d->capabilityKeyboard);
     Keyboard *k = new Keyboard(parent);
+    connect(this, &Seat::interfaceAboutToBeReleased, k, &Keyboard::release);
+    connect(this, &Seat::interfaceAboutToBeDestroyed, k, &Keyboard::destroy);
     k->setup(wl_seat_get_keyboard(d->seat));
     return k;
 }
@@ -178,6 +182,8 @@ Pointer *Seat::createPointer(QObject *parent)
     Q_ASSERT(isValid());
     Q_ASSERT(d->capabilityPointer);
     Pointer *p = new Pointer(parent);
+    connect(this, &Seat::interfaceAboutToBeReleased, p, &Pointer::release);
+    connect(this, &Seat::interfaceAboutToBeDestroyed, p, &Pointer::destroy);
     p->setup(wl_seat_get_pointer(d->seat));
     return p;
 }

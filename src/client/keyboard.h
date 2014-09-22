@@ -45,6 +45,7 @@ public:
     bool isValid() const;
     void setup(wl_keyboard *keyboard);
     void release();
+    void destroy();
 
     operator wl_keyboard*();
     operator wl_keyboard*() const;

@@ -70,6 +70,9 @@ Q_SIGNALS:
     void hasTouchChanged(bool);
     void nameChanged(const QString &name);
 
+    void interfaceAboutToBeReleased();
+    void interfaceAboutToBeDestroyed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

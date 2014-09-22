@@ -31,6 +31,54 @@ namespace KWayland
 namespace Client
 {
 
+/**
+ * @short Creates and manages the connection to a Wayland server.
+ *
+ * The purpose of this class is to create the connection to a Wayland server
+ * and to manage it. As the name suggests it's intended to move instances of
+ * this class into a dedicated thread. This also means that this class doesn't
+ * inherit QThread. In order to use it in a threaded way one needs to create a
+ * QThread and move the object there:
+ *
+ * @code
+ * ConnectionThread *connection = new ConnectionThread;
+ * QThread *thread = new QThread;
+ * connection->moveToThread(thread);
+ * thread->start();
+ * @endcode
+ *
+ * To finalize the initialization of the connection one needs to call @link ::initConnection.
+ * This starts an asynchronous connection initialization. In case the initialization
+ * succeeds the signal @link ::connected will be emitted, otherwise @link ::failed will
+ * be emitted:
+ *
+ * @code
+ * connect(connection, &ConnectionThread::connected, [connection] {
+ *     qDebug() << "Successfully connected to Wayland server at socket:" << connection->socketName();
+ * });
+ * connect(connection, &ConnectionThread::failed, [connection] {
+ *     qDebug() << "Failed to connect to Wayland server at socket:" << connection->socketName();
+ * });
+ * connection->initConnection();
+ * @endcode
+ *
+ * This class is also responsible for dispatching events. Whenever new data is available on
+ * the Wayland socket, it will be dispatched and the signal @link ::eventsRead is emitted.
+ * This allows further event queues in other threads to also dispatch their events.
+ *
+ * Furthermore this class flushes the Wayland connection whenever the QAbstractEventDispatcher
+ * is about to block.
+ *
+ * To disconnect the connection to the Wayland server one should delete the instance of this
+ * class and quit the dedicated thread:
+ *
+ * @code
+ * connection->deleteLater();
+ * thread->quit();
+ * thread->wait();
+ * @endcode
+ *
+ **/
 class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject
 {
     Q_OBJECT
@@ -38,6 +86,11 @@ public:
     explicit ConnectionThread(QObject *parent = nullptr);
     virtual ~ConnectionThread();
 
+    /**
+     * The display this ConnectionThread is connected to.
+     * As long as there is no connection this method returns @c null.
+     * @see initConnection
+     **/
     wl_display *display();
     /**
      * @returns the name of the socket it connects to.
@@ -52,6 +105,14 @@ public:
     void setSocketName(const QString &socketName);
 
 public Q_SLOTS:
+    /**
+     * Initializes the connection in an asynchronous way.
+     * In case the connection gets established the signal @link ::connected will be
+     * emitted, on failure the signal @link ::failed will be emitted.
+     *
+     * @see connected
+     * @see failed
+     **/
     void initConnection();
 
 Q_SIGNALS:
@@ -76,6 +137,9 @@ Q_SIGNALS:
     void connectionDied();
 
 private Q_SLOTS:
+    /**
+     * @internal
+     **/
     void doInitConnection();
 
 private:

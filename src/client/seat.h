@@ -60,7 +60,9 @@ public:
 
     Keyboard *createKeyboard(QObject *parent = nullptr);
     Pointer *createPointer(QObject *parent = nullptr);
+#if 0
     wl_touch *createTouch();
+#endif
 
 Q_SIGNALS:
     void hasKeyboardChanged(bool);

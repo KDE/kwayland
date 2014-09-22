@@ -182,12 +182,14 @@ Pointer *Seat::createPointer(QObject *parent)
     return p;
 }
 
+#if 0
 wl_touch *Seat::createTouch()
 {
     Q_ASSERT(isValid());
     Q_ASSERT(d->capabilityTouch);
     return wl_seat_get_touch(d->seat);
 }
+#endif
 
 void Seat::Private::setName(const QString &n)
 {

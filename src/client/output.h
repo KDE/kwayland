@@ -34,6 +34,35 @@ namespace KWayland
 namespace Client
 {
 
+/**
+ * @short Wrapper for the wl_output interface.
+ *
+ * This class provides a convenient wrapper for the wl_output interface.
+ * It's main purpose is to hold the information about one Output.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create an Output interface:
+ * @code
+ * Output *c = registry->createOutput(name, version);
+ * @endcode
+ *
+ * This creates the Output and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * Output *c = new Output;
+ * c->setup(registry->bindOutput(name, version));
+ * @endcode
+ *
+ * The Output can be used as a drop-in replacement for any wl_output
+ * pointer as it provides matching cast operators.
+ *
+ * Please note that all properties of Output are not valid until the
+ * changed signal has been emitted. The wayland server is pushing the
+ * information in an async way to the Output instance. By emitting changed
+ * the Output indicates that all relevant information is available.
+ *
+ * @see Registry
+ **/
 class KWAYLANDCLIENT_EXPORT Output : public QObject
 {
     Q_OBJECT
@@ -59,24 +88,76 @@ public:
     explicit Output(QObject *parent = nullptr);
     virtual ~Output();
 
+    /**
+     * Setup this Compositor to manage the @p output.
+     * When using Registry::createOutput there is no need to call this
+     * method.
+     **/
     void setup(wl_output *output);
 
+    /**
+     * @returns @c true if managing a wl_output.
+     **/
     bool isValid() const;
     operator wl_output*();
     operator wl_output*() const;
     wl_output *output();
+    /**
+     * Size in millimeters.
+     **/
     QSize physicalSize() const;
+    /**
+     * Position within the global compositor space.
+     **/
     QPoint globalPosition() const;
+    /**
+     * Textual description of the manufacturer.
+     **/
     QString manufacturer() const;
+    /**
+     * Textual description of the model.
+     **/
     QString model() const;
+    /**
+     * Size in the current mode.
+     **/
     QSize pixelSize() const;
+    /**
+     * The geometry of this Output in pixels.
+     * Convenient for QRect(globalPosition(), pixelSize()).
+     * @see globalPosition
+     * @see pixelSize
+     **/
     QRect geometry() const;
+    /**
+     * Refresh rate in mHz of the current mode.
+     **/
     int refreshRate() const;
+    /**
+     * Scaling factor of this output.
+     *
+     * A scale larger than 1 means that the compositor will automatically scale surface buffers
+     * by this amount when rendering. This is used for very high resolution displays where
+     * applications rendering at the native resolution would be too small to be legible.
+     **/
     int scale() const;
+    /**
+     * Subpixel orientation of this Output.
+     **/
     SubPixel subPixel() const;
+    /**
+     * Transform that maps framebuffer to Output.
+     *
+     * The purpose is mainly to allow clients render accordingly and tell the compositor,
+     * so that for fullscreen surfaces, the compositor will still be able to scan out
+     * directly from client surfaces.
+     **/
     Transform transform() const;
 
 Q_SIGNALS:
+    /**
+     * Emitted whenever at least one of the data changed.
+     **/
     void changed();
 
 private:

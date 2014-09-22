@@ -33,18 +33,82 @@ namespace Client
 
 class Surface;
 
+/**
+ * @short Wrapper for the wl_compositor interface.
+ *
+ * This class provides a convenient wrapper for the wl_compositor interface.
+ * It's main purpose is to create a Surface.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create the Compositor interface:
+ * @code
+ * Compositor *c = registry->createCompositor(name, version);
+ * @endcode
+ *
+ * This creates the Compositor and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * Compositor *c = new Compositor;
+ * c->setup(registry->bindCompositor(name, version));
+ * @endcode
+ *
+ * The Compositor can be used as a drop-in replacement for any wl_compositor
+ * pointer as it provides matching cast operators.
+ *
+ * @see Registry
+ **/
 class KWAYLANDCLIENT_EXPORT Compositor : public QObject
 {
     Q_OBJECT
 public:
+    /**
+     * Creates a new Compositor.
+     * Note: after constructing the Compositor it is not yet valid and one needs
+     * to call setup. In order to get a ready to use Compositor prefer using
+     * Registry::createCompositor.
+     **/
     explicit Compositor(QObject *parent = nullptr);
     virtual ~Compositor();
 
+    /**
+     * @returns @c true if managing a wl_compositor.
+     **/
     bool isValid() const;
+    /**
+     * Setup this Compositor to manage the @p compositor.
+     * When using Registry::createCompositor there is no need to call this
+     * method.
+     **/
     void setup(wl_compositor *compositor);
+    /**
+     * Releases the wl_compositor interface.
+     * After the interface has been released the Compositor instance is no
+     * longer valid and can be setup with another wl_compositor interface.
+     **/
     void release();
+    /**
+     * Destroys the data hold by this Compositor.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new wl_compositor interface
+     * once there is a new connection available.
+     *
+     * It is suggested to connect this method to ConnectionThread::connectionDied:
+     * @code
+     * connect(connection, &ConnectionThread::connectionDied, compositor, &Compositor::destroyed);
+     * @endcode
+     *
+     * @see release
+     **/
     void destroy();
 
+    /**
+     * Creates and setup a new Surface with @p parent.
+     * @param parent The parent to pass to the Surface.
+     * @returns The new created Surface
+     **/
     Surface *createSurface(QObject *parent = nullptr);
 
     operator wl_compositor*();

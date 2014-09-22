@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "buffer.h"
+#include "buffer_p.h"
 #include "shm_pool.h"
 // system
 #include <string.h>
@@ -28,26 +29,6 @@ namespace KWayland
 {
 namespace Client
 {
-
-class Buffer::Private
-{
-public:
-    Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset, Format format);
-    ~Private();
-
-    ShmPool *shm;
-    wl_buffer *nativeBuffer;
-    bool released;
-    QSize size;
-    int32_t stride;
-    size_t offset;
-    bool used;
-    Format format;
-private:
-    Buffer *q;
-    static const struct wl_buffer_listener s_listener;
-    static void releasedCallback(void *data, wl_buffer *wl_buffer);
-};
 
 const struct wl_buffer_listener Buffer::Private::s_listener = {
     Buffer::Private::releasedCallback
@@ -69,7 +50,17 @@ Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, co
 
 Buffer::Private::~Private()
 {
-    wl_buffer_destroy(nativeBuffer);
+    if (nativeBuffer) {
+        wl_buffer_destroy(nativeBuffer);
+    }
+}
+
+void Buffer::Private::destroy()
+{
+    if (nativeBuffer) {
+        free(nativeBuffer);
+        nativeBuffer = nullptr;
+    }
 }
 
 void Buffer::Private::releasedCallback(void *data, wl_buffer *buffer)

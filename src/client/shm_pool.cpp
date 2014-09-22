@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "shm_pool.h"
 #include "buffer.h"
+#include "buffer_p.h"
 // Qt
 #include <QDebug>
 #include <QImage>
@@ -93,6 +94,9 @@ void ShmPool::release()
 
 void ShmPool::destroy()
 {
+    for (auto b : d->buffers) {
+        b->d->destroy();
+    }
     qDeleteAll(d->buffers);
     d->buffers.clear();
     if (d->poolData) {
@@ -187,7 +191,7 @@ Buffer *ShmPool::createBuffer(const QImage& image)
 
 Buffer *ShmPool::createBuffer(const QSize &size, int32_t stride, const void *src, Buffer::Format format)
 {
-    if (size.isNull() || !d->valid) {
+    if (size.isEmpty() || !d->valid) {
         return NULL;
     }
     Buffer *buffer = getBuffer(size, stride, format);
@@ -215,7 +219,7 @@ Buffer *ShmPool::getBuffer(const QSize &size, int32_t stride, Buffer::Format for
         if (!buffer->isReleased() || buffer->isUsed()) {
             continue;
         }
-        if (buffer->size() != size || buffer->stride() != stride) {
+        if (buffer->size() != size || buffer->stride() != stride || buffer->format() != format) {
             continue;
         }
         buffer->setReleased(false);

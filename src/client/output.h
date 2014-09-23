@@ -21,13 +21,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_OUTPUT_H
 
 #include <QObject>
+#include <QPointer>
+#include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct wl_output;
 class QPoint;
 class QRect;
-class QSize;
 
 namespace KWayland
 {
@@ -84,6 +85,33 @@ public:
         Flipped90,
         Flipped180,
         Flipped270
+    };
+    struct Mode {
+        enum class Flag {
+            None = 0,
+            Current = 1 << 0,
+            Preferred = 1 << 1
+        };
+        Q_DECLARE_FLAGS(Flags, Flag)
+        /**
+         * The size of this Mode in pixel space.
+         **/
+        QSize size;
+        /**
+         * The refresh rate in mHz of this Mode.
+         **/
+        int refreshRate = 0;
+        /**
+         * The flags of this Mode, that is whether it's the
+         * Current and/or Preferred Mode of the Output.
+         **/
+        Flags flags = Flag::None;
+        /**
+         * The Output to which this Mode belongs.
+         **/
+        QPointer<Output> output;
+
+        bool operator==(const Mode &m) const;
     };
     explicit Output(QObject *parent = nullptr);
     virtual ~Output();
@@ -154,11 +182,30 @@ public:
      **/
     Transform transform() const;
 
+    /**
+     * @returns The Modes of this Output.
+     **/
+    QList<Mode> modes() const;
+
 Q_SIGNALS:
     /**
      * Emitted whenever at least one of the data changed.
      **/
     void changed();
+    /**
+     * Emitted whenever a new Mode is added.
+     * This normally only happens during the initial promoting of modes.
+     * Afterwards only modeChanged should be emitted.
+     * @param mode The newly added Mode.
+     * @see modeChanged
+     **/
+    void modeAdded(const KWayland::Client::Output::Mode &mode);
+    /**
+     * Emitted whenever a Mode changes.
+     * This normally means that the @c Mode::Flag::Current is added or removed.
+     * @param mode The changed Mode
+     **/
+    void modeChanged(const KWayland::Client::Output::Mode &mode);
 
 private:
     class Private;
@@ -170,5 +217,7 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Client::Output::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Client::Output::Transform)
+Q_DECLARE_METATYPE(KWayland::Client::Output::Mode)
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::Output::Mode::Flags)
 
 #endif

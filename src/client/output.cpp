@@ -31,6 +31,8 @@ namespace KWayland
 namespace Client
 {
 
+typedef QList<Output::Mode> Modes;
+
 class Output::Private
 {
 public:
@@ -42,11 +44,11 @@ public:
     QPoint globalPosition;
     QString manufacturer;
     QString model;
-    QSize pixelSize;
-    int refreshRate = 0;
     int scale = 1;
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
+    Modes modes;
+    Modes::iterator currentMode = modes.end();
 
 private:
     static void geometryCallback(void *data, wl_output *output, int32_t x, int32_t y,
@@ -59,11 +61,10 @@ private:
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
     void setModel(const QString &model);
-    void setPixelSize(const QSize &size);
-    void setRefreshRate(int refreshRate);
     void setScale(int scale);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
+    void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh);
 
     Output *q;
     static struct wl_output_listener s_outputListener;
@@ -80,6 +81,14 @@ void Output::Private::setup(wl_output *o)
     Q_ASSERT(!output);
     output = o;
     wl_output_add_listener(output, &s_outputListener, this);
+}
+
+bool Output::Mode::operator==(const Output::Mode &m) const
+{
+    return size == m.size
+           && refreshRate == m.refreshRate
+           && flags == m.flags
+           && output == m.output;
 }
 
 Output::Output(QObject *parent)
@@ -158,14 +167,47 @@ void Output::Private::geometryCallback(void *data, wl_output *output,
 
 void Output::Private::modeCallback(void *data, wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
-    if (!(flags & WL_OUTPUT_MODE_CURRENT)) {
-        // ignore all non-current modes;
-        return;
-    }
     auto o = reinterpret_cast<Output::Private*>(data);
     Q_ASSERT(o->output == output);
-    o->setPixelSize(QSize(width, height));
-    o->setRefreshRate(refresh);
+    o->addMode(flags, width, height, refresh);
+}
+
+void Output::Private::addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+{
+    Mode mode;
+    mode.output = QPointer<Output>(q);
+    mode.refreshRate = refresh;
+    mode.size = QSize(width, height);
+    if (flags & WL_OUTPUT_MODE_CURRENT) {
+        mode.flags |= Mode::Flag::Current;
+    }
+    if (flags & WL_OUTPUT_MODE_PREFERRED) {
+        mode.flags |= Mode::Flag::Preferred;
+    }
+    auto currentIt = modes.insert(modes.end(), mode);
+    bool existing = false;
+    if (flags & WL_OUTPUT_MODE_CURRENT) {
+        auto it = modes.begin();
+        while (it != currentIt) {
+            auto &m = (*it);
+            if (m.flags.testFlag(Mode::Flag::Current)) {
+                m.flags &= ~Mode::Flags(Mode::Flag::Current);
+                emit q->modeChanged(m);
+            }
+            if (m.refreshRate == mode.refreshRate && m.size == mode.size) {
+                it = modes.erase(it);
+                existing = true;
+            } else {
+                it++;
+            }
+        }
+        currentMode = currentIt;
+    }
+    if (existing) {
+        emit q->modeChanged(mode);
+    } else {
+        emit q->modeAdded(mode);
+    }
 }
 
 void Output::Private::scaleCallback(void *data, wl_output *output, int32_t scale)
@@ -207,16 +249,6 @@ void Output::Private::setPhysicalSize(const QSize &size)
     physicalSize = size;
 }
 
-void Output::Private::setPixelSize(const QSize& size)
-{
-    pixelSize = size;
-}
-
-void Output::Private::setRefreshRate(int r)
-{
-    refreshRate = r;
-}
-
 void Output::Private::setScale(int s)
 {
     scale = s;
@@ -224,10 +256,10 @@ void Output::Private::setScale(int s)
 
 QRect Output::geometry() const
 {
-    if (!d->pixelSize.isValid()) {
+    if (d->currentMode == d->modes.end()) {
         return QRect();
     }
-    return QRect(d->globalPosition, d->pixelSize);
+    return QRect(d->globalPosition, pixelSize());
 }
 
 void Output::Private::setSubPixel(Output::SubPixel s)
@@ -267,12 +299,18 @@ QSize Output::physicalSize() const
 
 QSize Output::pixelSize() const
 {
-    return d->pixelSize;
+    if (d->currentMode == d->modes.end()) {
+        return QSize();
+    }
+    return (*d->currentMode).size;
 }
 
 int Output::refreshRate() const
 {
-    return d->refreshRate;
+    if (d->currentMode == d->modes.end()) {
+        return 0;
+    }
+    return (*d->currentMode).refreshRate;
 }
 
 int Output::scale() const
@@ -293,6 +331,11 @@ Output::SubPixel Output::subPixel() const
 Output::Transform Output::transform() const
 {
     return d->transform;
+}
+
+QList< Output::Mode > Output::modes() const
+{
+    return d->modes;
 }
 
 Output::operator wl_output*() {

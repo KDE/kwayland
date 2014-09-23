@@ -32,6 +32,7 @@ namespace KWayland
 namespace Client
 {
 
+class EventQueue;
 class Keyboard;
 class Pointer;
 
@@ -125,6 +126,15 @@ public:
      * @see interfaceAboutToBeDestroyed
      **/
     void destroy();
+
+    /**
+     * Sets the @p queue to use for creating Keyboard, Pointer and Touch.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for creating Keyboard, Pointer and Touch.
+     **/
+    EventQueue *eventQueue();
 
     bool hasKeyboard() const;
     bool hasPointer() const;

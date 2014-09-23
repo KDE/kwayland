@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "shm_pool.h"
+#include "event_queue.h"
 #include "buffer.h"
 #include "buffer_p.h"
 // Qt
@@ -50,6 +51,7 @@ public:
     bool valid = false;
     int offset = 0;
     QList<QSharedPointer<Buffer>> buffers;
+    EventQueue *queue = nullptr;
 private:
     ShmPool *q;
 };
@@ -121,6 +123,16 @@ void ShmPool::setup(wl_shm *shm)
     Q_ASSERT(!d->shm);
     d->shm = shm;
     d->valid = d->createPool();
+}
+
+void ShmPool::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *ShmPool::eventQueue()
+{
+    return d->queue;
 }
 
 bool ShmPool::Private::createPool()
@@ -245,6 +257,9 @@ QList<QSharedPointer<Buffer>>::iterator ShmPool::Private::getBuffer(const QSize 
                                                   stride, toWaylandFormat(format));
     if (!native) {
         return buffers.end();
+    }
+    if (queue) {
+        queue->addProxy(native);
     }
     Buffer *buffer = new Buffer(q, native, s, stride, offset, format);
     offset += byteCount;

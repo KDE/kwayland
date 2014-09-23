@@ -33,6 +33,7 @@ namespace KWayland
 {
 namespace Client
 {
+class EventQueue;
 class ShellSurface;
 class Output;
 class Surface;
@@ -108,6 +109,15 @@ public:
      * method.
      **/
     void setup(wl_shell *shell);
+
+    /**
+     * Sets the @p queue to use for creating a Surface.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for creating a Surface.
+     **/
+    EventQueue *eventQueue();
 
     /**
      * Creates a ShellSurface for the given @p surface and sets it up.

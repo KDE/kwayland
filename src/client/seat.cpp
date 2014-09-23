@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "seat.h"
+#include "event_queue.h"
 #include "keyboard.h"
 #include "pointer.h"
 // Wayland
@@ -36,6 +37,7 @@ public:
     void setup(wl_seat *seat);
 
     wl_seat *seat = nullptr;
+    EventQueue *queue = nullptr;
     bool capabilityKeyboard = false;
     bool capabilityPointer = false;
     bool capabilityTouch = false;
@@ -103,6 +105,16 @@ void Seat::destroy()
     free(d->seat);
     d->seat = nullptr;
     d->resetSeat();
+}
+
+void Seat::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *Seat::eventQueue()
+{
+    return d->queue;
 }
 
 void Seat::Private::resetSeat()
@@ -173,7 +185,11 @@ Keyboard *Seat::createKeyboard(QObject *parent)
     Keyboard *k = new Keyboard(parent);
     connect(this, &Seat::interfaceAboutToBeReleased, k, &Keyboard::release);
     connect(this, &Seat::interfaceAboutToBeDestroyed, k, &Keyboard::destroy);
-    k->setup(wl_seat_get_keyboard(d->seat));
+    auto w = wl_seat_get_keyboard(d->seat);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    k->setup(w);
     return k;
 }
 
@@ -184,7 +200,11 @@ Pointer *Seat::createPointer(QObject *parent)
     Pointer *p = new Pointer(parent);
     connect(this, &Seat::interfaceAboutToBeReleased, p, &Pointer::release);
     connect(this, &Seat::interfaceAboutToBeDestroyed, p, &Pointer::destroy);
-    p->setup(wl_seat_get_pointer(d->seat));
+    auto w = wl_seat_get_pointer(d->seat);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    p->setup(w);
     return p;
 }
 

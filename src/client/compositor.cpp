@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "compositor.h"
+#include "event_queue.h"
 #include "surface.h"
 
 #include <wayland-client-protocol.h>
@@ -33,6 +34,7 @@ public:
     Private() = default;
 
     wl_compositor *compositor = nullptr;
+    EventQueue *queue = nullptr;
 };
 
 Compositor::Compositor(QObject *parent)
@@ -71,11 +73,25 @@ void Compositor::destroy()
     d->compositor = nullptr;
 }
 
+void Compositor::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *Compositor::eventQueue()
+{
+    return d->queue;
+}
+
 Surface *Compositor::createSurface(QObject *parent)
 {
     Q_ASSERT(isValid());
     Surface *s = new Surface(parent);
-    s->setup(wl_compositor_create_surface(d->compositor));
+    auto w = wl_compositor_create_surface(d->compositor);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    s->setup(w);
     return s;
 }
 

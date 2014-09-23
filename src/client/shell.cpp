@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "shell.h"
+#include "event_queue.h"
 #include "output.h"
 #include "surface.h"
 // Wayland
@@ -32,6 +33,7 @@ class Shell::Private
 {
 public:
     wl_shell *shell = nullptr;
+    EventQueue *queue = nullptr;
 };
 
 Shell::Shell(QObject *parent)
@@ -72,13 +74,27 @@ void Shell::setup(wl_shell *shell)
     d->shell = shell;
 }
 
+void Shell::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *Shell::eventQueue()
+{
+    return d->queue;
+}
+
 ShellSurface *Shell::createSurface(wl_surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
     ShellSurface *s = new ShellSurface(parent);
     connect(this, &Shell::interfaceAboutToBeReleased, s, &ShellSurface::release);
     connect(this, &Shell::interfaceAboutToBeDestroyed, s, &ShellSurface::destroy);
-    s->setup(wl_shell_get_shell_surface(d->shell, surface));
+    auto w = wl_shell_get_shell_surface(d->shell, surface);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    s->setup(w);
     return s;
 }
 

@@ -35,6 +35,8 @@ namespace KWayland
 namespace Client
 {
 
+class EventQueue;
+
 /**
  * @short Wrapper class for wl_shm interface.
  *
@@ -170,6 +172,15 @@ public:
      * @see release
      **/
     void destroy();
+
+    /**
+     * Sets the @p queue to use for creating a Buffer.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for creating a Buffer.
+     **/
+    EventQueue *eventQueue();
 
     /**
      * Provides a Buffer with:

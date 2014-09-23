@@ -31,6 +31,7 @@ namespace KWayland
 namespace Client
 {
 
+class EventQueue;
 class Surface;
 
 /**
@@ -103,6 +104,15 @@ public:
      * @see release
      **/
     void destroy();
+
+    /**
+     * Sets the @p queue to use for creating a Surface.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for creating a Surface.
+     **/
+    EventQueue *eventQueue();
 
     /**
      * Creates and setup a new Surface with @p parent.

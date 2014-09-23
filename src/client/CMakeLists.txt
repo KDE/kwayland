@@ -30,6 +30,7 @@ set(CLIENT_LIB_SRCS
     buffer.cpp
     compositor.cpp
     connection_thread.cpp
+    event_queue.cpp
     fullscreen_shell.cpp
     keyboard.cpp
     output.cpp
@@ -76,6 +77,7 @@ install(FILES
   buffer.h
   compositor.h
   connection_thread.h
+  event_queue.h
   fullscreen_shell.h
   keyboard.h
   output.h

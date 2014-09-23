@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "registry.h"
 #include "compositor.h"
 #include "connection_thread.h"
+#include "event_queue.h"
 #include "fullscreen_shell.h"
 #include "output.h"
 #include "seat.h"
@@ -52,6 +53,7 @@ public:
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
 
     wl_registry *registry = nullptr;
+    EventQueue *queue = nullptr;
 
 private:
     void handleAnnounce(uint32_t name, const char *interface, uint32_t version);
@@ -111,6 +113,9 @@ void Registry::create(wl_display *display)
     Q_ASSERT(display);
     Q_ASSERT(!isValid());
     d->registry = wl_display_get_registry(display);
+    if (d->queue) {
+        d->queue->addProxy(d->registry);
+    }
 }
 
 void Registry::create(ConnectionThread *connection)
@@ -122,6 +127,22 @@ void Registry::setup()
 {
     Q_ASSERT(isValid());
     d->setup();
+}
+
+void Registry::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+    if (!queue) {
+        return;
+    }
+    if (d->registry) {
+        d->queue->addProxy(d->registry);
+    }
+}
+
+EventQueue *Registry::eventQueue()
+{
+    return d->queue;
 }
 
 const struct wl_registry_listener Registry::Private::s_registryListener = {
@@ -283,6 +304,7 @@ _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t vers
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
 {
     Compositor *c = new Compositor(parent);
+    c->setEventQueue(d->queue);
     c->setup(bindCompositor(name, version));
     return c;
 }
@@ -304,6 +326,7 @@ Output *Registry::createOutput(quint32 name, quint32 version, QObject *parent)
 Seat *Registry::createSeat(quint32 name, quint32 version, QObject *parent)
 {
     Seat *s = new Seat(parent);
+    s->setEventQueue(d->queue);
     s->setup(bindSeat(name, version));
     return s;
 }
@@ -311,6 +334,7 @@ Seat *Registry::createSeat(quint32 name, quint32 version, QObject *parent)
 Shell *Registry::createShell(quint32 name, quint32 version, QObject *parent)
 {
     Shell *s = new Shell(parent);
+    s->setEventQueue(d->queue);
     s->setup(bindShell(name, version));
     return s;
 }
@@ -318,6 +342,7 @@ Shell *Registry::createShell(quint32 name, quint32 version, QObject *parent)
 ShmPool *Registry::createShmPool(quint32 name, quint32 version, QObject *parent)
 {
     ShmPool *s = new ShmPool(parent);
+    s->setEventQueue(d->queue);
     s->setup(bindShm(name, version));
     return s;
 }
@@ -353,7 +378,11 @@ T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_
         qDebug() << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
         return nullptr;
     }
-    return reinterpret_cast<T*>(wl_registry_bind(registry, name, wlInterface(interface), version));
+    auto t = reinterpret_cast<T*>(wl_registry_bind(registry, name, wlInterface(interface), version));
+    if (queue) {
+        queue->addProxy(t);
+    }
+    return t;
 }
 
 bool Registry::isValid() const

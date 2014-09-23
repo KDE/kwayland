@@ -41,6 +41,7 @@ namespace Client
 
 class Compositor;
 class ConnectionThread;
+class EventQueue;
 class FullscreenShell;
 class Output;
 class Seat;
@@ -131,6 +132,21 @@ public:
      * @see create
      **/
     void setup();
+
+    /**
+     * Sets the @p queue to use for this Registry.
+     *
+     * The EventQueue should be set before the Registry gets setup.
+     * The EventQueue gets automatically added to all interfaces created by
+     * this Registry. So that all objects are in teh same EventQueue.
+     *
+     * @param queue The event queue to use for this Registry.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The EventQueue used by this Registry
+     **/
+    EventQueue *eventQueue();
 
     /**
      * @returns @c true if managing a wl_registry.

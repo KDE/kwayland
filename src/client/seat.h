@@ -35,20 +35,95 @@ namespace Client
 class Keyboard;
 class Pointer;
 
+/**
+ * @short Wrapper for the wl_seat interface.
+ *
+ * This class provides a convenient wrapper for the wl_seat interface.
+ * It's main purpose is to provide the interfaces for Keyboard, Pointer and Touch.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create the Seat interface:
+ * @code
+ * Seat *s = registry->createSeat(name, version);
+ * @endcode
+ *
+ * This creates the Seat and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * Seat *s = new Seat;
+ * s->setup(registry->bindSeat(name, version));
+ * @endcode
+ *
+ * The Seat can be used as a drop-in replacement for any wl_seat
+ * pointer as it provides matching cast operators.
+ *
+ * @see Registry
+ * @see Keyboard
+ * @see Pointer
+ **/
 class KWAYLANDCLIENT_EXPORT Seat : public QObject
 {
     Q_OBJECT
+    /**
+     * The seat has pointer devices. Default value is @c false.
+     **/
     Q_PROPERTY(bool keyboard READ hasKeyboard NOTIFY hasKeyboardChanged)
+    /**
+     * The seat has pointer devices. Default value is @c false.
+     **/
     Q_PROPERTY(bool pointer READ hasPointer NOTIFY hasPointerChanged)
+    /**
+     * The seat has touch devices. Default value is @c false.
+     **/
     Q_PROPERTY(bool touch READ hasTouch NOTIFY hasTouchChanged)
+    /**
+     * In a multiseat configuration this can be used by the client to help identify
+     * which physical devices the seat represents.
+     * Based on the seat configuration used by the compositor.
+     **/
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 public:
     explicit Seat(QObject *parent = nullptr);
     virtual ~Seat();
 
+    /**
+     * @returns @c true if managing a wl_seat.
+     **/
     bool isValid() const;
+    /**
+     * Setup this Seat to manage the @p seat.
+     * When using Registry::createSeat there is no need to call this
+     * method.
+     **/
     void setup(wl_seat *seat);
+    /**
+     * Releases the wl_seat interface.
+     * After the interface has been released the Seat instance is no
+     * longer valid and can be setup with another wl_seat interface.
+     *
+     * Right before the interface is released the signal interfaceAboutToBeReleased is emitted.
+     * @see interfaceAboutToBeReleased
+     **/
     void release();
+    /**
+     * Destroys the data hold by this Seat.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new wl_shell interface
+     * once there is a new connection available.
+     *
+     * It is suggested to connect this method to ConnectionThread::connectionDied:
+     * @code
+     * connect(connection, &ConnectionThread::connectionDied, seat, &Seat::destroyed);
+     * @endcode
+     *
+     * Right before the data is destroyed the signal interfaceAboutToBeDestroyed is emitted.
+     *
+     * @see release
+     * @see interfaceAboutToBeDestroyed
+     **/
     void destroy();
 
     bool hasKeyboard() const;
@@ -58,7 +133,23 @@ public:
     operator wl_seat*();
     operator wl_seat*() const;
 
+    /**
+     * Creates a Keyboard.
+     *
+     * This method may only be called if the Seat has a keyboard.
+     *
+     * @param parent The parent to pass to the created Keyboard.
+     * @returns The created Keyboard.
+     **/
     Keyboard *createKeyboard(QObject *parent = nullptr);
+    /**
+     * Creates a Pointer.
+     *
+     * This method may only be called if the Seat has a pointer.
+     *
+     * @param parent The parent to pass to the created Pointer.
+     * @returns The created Pointer.
+     **/
     Pointer *createPointer(QObject *parent = nullptr);
 #if 0
     wl_touch *createTouch();
@@ -70,7 +161,13 @@ Q_SIGNALS:
     void hasTouchChanged(bool);
     void nameChanged(const QString &name);
 
+    /**
+     * This signal is emitted right before the interface is going to be released.
+     **/
     void interfaceAboutToBeReleased();
+    /**
+     * This signal is emitted right before the data is going to be destroyed.
+     **/
     void interfaceAboutToBeDestroyed();
 
 private:

@@ -36,24 +36,6 @@
       <arg name="surface" type="object" interface="wl_surface"/>
     </request>
 
-    <!-- Screen edge -->
-    <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->
-
-    <enum name="screen_edge">
-      <entry name="none" value="0"/>
-      <entry name="left" value="1"/>
-      <entry name="top" value="2"/>
-      <entry name="right" value="3"/>
-      <entry name="bottom" value="4"/>
-    </enum>
-
-    <request name="set_screen_edge">
-      <description summary="set screen edge activation">
-      </description>
-      <arg name="surface" type="object" interface="wl_surface"/>
-      <arg name="screen_edge" type="uint"/>
-    </request>
-
     <!-- Lock and unlock -->
 
     <!--
@@ -305,6 +287,23 @@
         Only one surface per output can have the lock role.
       </description>
       <arg name="role" type="uint"/>
+    </request>
+
+    <!-- Screen edge -->
+    <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->
+
+    <enum name="screen_edge">
+      <entry name="none" value="0"/>
+      <entry name="left" value="1"/>
+      <entry name="top" value="2"/>
+      <entry name="right" value="3"/>
+      <entry name="bottom" value="4"/>
+    </enum>
+
+    <request name="set_screen_edge">
+      <description summary="set screen edge activation">
+      </description>
+      <arg name="screen_edge" type="uint"/>
     </request>
   </interface>
 </protocol>

@@ -36,20 +36,6 @@
       <arg name="surface" type="object" interface="wl_surface"/>
     </request>
 
-    <!-- General purpose requests -->
-
-    <request name="set_global_position">
-      <description summary="change surface position">
-        Move the surface to new coordinates.
-
-        Coordinates are global, for example 50,50 for a 1920,0+1920x1080 output
-        is 1970,50 in global coordinates space.
-      </description>
-      <arg name="surface" type="object" interface="wl_surface"/>
-      <arg name="x" type="int" summary="x coordinate in output-relative coordinates"/>
-      <arg name="y" type="int" summary="y coordinate in output-relative coordinates"/>
-    </request>
-
     <!-- Screen edge -->
     <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->
 
@@ -242,14 +228,14 @@
       <description summary="change the shell surface position">
         Move the surface to new coordinates.
 
-        Coordinates are relative to the output, for example 50,50 for
-        a 1920,0+1920x1080 output is 1970,50 in global coordinates space.
+        Coordinates are global, for example 50,50 for a 1920,0+1920x1080 output
+        is 1970,50 in global coordinates space.
 
         Use org_kde_plasma_surface.set_output to assign an output
         to this surface.
       </description>
-      <arg name="x" type="int" summary="x coordinate in output-relative coordinates"/>
-      <arg name="y" type="int" summary="y coordinate in output-relative coordinates"/>
+      <arg name="x" type="int" summary="x coordinate in global space"/>
+      <arg name="y" type="int" summary="y coordinate in global space"/>
     </request>
 
     <!-- Role -->

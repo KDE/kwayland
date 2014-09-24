@@ -5,7 +5,7 @@ set(PROJECT_VERSION_MAJOR 5)
 project(KWAYLAND)
 
 # ECM setup
-find_package(ECM 1.2.0 REQUIRED NO_MODULE)
+find_package(ECM 1.4.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(FeatureSummary)
@@ -33,8 +33,7 @@ set_package_properties(Wayland PROPERTIES
                        TYPE REQUIRED
                       )
 
-find_program(WAYLAND_SCANNER_EXECUTABLE NAMES wayland-scanner)
-add_feature_info("wayland-scanner" WAYLAND_SCANNER_EXECUTABLE "Required for generating Wayland protocols")
+find_package(WaylandScanner)
 
 include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings)

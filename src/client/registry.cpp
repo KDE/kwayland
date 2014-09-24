@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 // wayland
 #include <wayland-client-protocol.h>
-#include <wayland-client-fullscreen-shell.h>
+#include <wayland-fullscreen-shell-client-protocol.h>
 
 namespace KWayland
 {

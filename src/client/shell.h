@@ -84,9 +84,9 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Shell.
+     * Destroys the data held by this Shell.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
+     * server goes away. Once the connection becomes invalid, it's not
      * possible to call release any more as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
      * that the instance can be deleted or setup to a new wl_shell interface
@@ -97,7 +97,7 @@ public:
      * connect(connection, &ConnectionThread::connectionDied, shell, &Shell::destroyed);
      * @endcode
      *
-     * Right before the data is destroyed the signal interfaceAboutToBeDestroyed is emitted.
+     * Right before the data is destroyed, the signal interfaceAboutToBeDestroyed is emitted.
      *
      * @see release
      * @see interfaceAboutToBeDestroyed
@@ -141,11 +141,11 @@ public:
 
 Q_SIGNALS:
     /**
-     * This signal is emitted right before the interface is going to be released.
+     * This signal is emitted right before the interface is released.
      **/
     void interfaceAboutToBeReleased();
     /**
-     * This signal is emitted right before the data is going to be destroyed.
+     * This signal is emitted right before the data is destroyed.
      **/
     void interfaceAboutToBeDestroyed();
 

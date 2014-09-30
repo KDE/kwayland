@@ -39,7 +39,7 @@ namespace Client
  * @short Wrapper for the wl_output interface.
  *
  * This class provides a convenient wrapper for the wl_output interface.
- * It's main purpose is to hold the information about one Output.
+ * Its main purpose is to hold the information about one Output.
  *
  * To use this class one needs to interact with the Registry. There are two
  * possible ways to create an Output interface:

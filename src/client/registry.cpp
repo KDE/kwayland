@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "shell.h"
 #include "shm_pool.h"
+#include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -52,7 +53,7 @@ public:
     template <typename T>
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
 
-    wl_registry *registry = nullptr;
+    WaylandPointer<wl_registry, wl_registry_destroy> registry;
     EventQueue *queue = nullptr;
 
 private:
@@ -94,25 +95,19 @@ Registry::~Registry()
 
 void Registry::release()
 {
-    if (d->registry) {
-        wl_registry_destroy(d->registry);
-        d->registry = nullptr;
-    }
+    d->registry.release();
 }
 
 void Registry::destroy()
 {
-    if (d->registry) {
-        free(d->registry);
-        d->registry = nullptr;
-    }
+    d->registry.destroy();
 }
 
 void Registry::create(wl_display *display)
 {
     Q_ASSERT(display);
     Q_ASSERT(!isValid());
-    d->registry = wl_display_get_registry(display);
+    d->registry.setup(wl_display_get_registry(display));
     if (d->queue) {
         d->queue->addProxy(d->registry);
     }
@@ -387,7 +382,7 @@ T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_
 
 bool Registry::isValid() const
 {
-    return d->registry != nullptr;
+    return d->registry.isValid();
 }
 
 wl_registry *Registry::registry()

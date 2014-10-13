@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "surface.h"
 #include "buffer.h"
+#include "wayland_pointer_p.h"
 
 #include <QRegion>
 #include <QVector>
@@ -36,7 +37,7 @@ public:
     Private(Surface *q);
     void setupFrameCallback();
 
-    wl_surface *surface = nullptr;
+    WaylandPointer<wl_surface, wl_surface_destroy> surface;
     bool frameCallbackInstalled = false;
     QSize size;
 
@@ -71,27 +72,19 @@ Surface::~Surface()
 
 void Surface::release()
 {
-    if (!d->surface) {
-        return;
-    }
-    wl_surface_destroy(d->surface);
-    d->surface = nullptr;
+    d->surface.release();
 }
 
 void Surface::destroy()
 {
-    if (!d->surface) {
-        return;
-    }
-    free(d->surface);
-    d->surface = nullptr;
+    d->surface.destroy();
 }
 
 void Surface::setup(wl_surface *surface)
 {
     Q_ASSERT(surface);
     Q_ASSERT(!d->surface);
-    d->surface = surface;
+    d->surface.setup(surface);
 }
 
 void Surface::Private::frameCallback(void *data, wl_callback *callback, uint32_t time)
@@ -195,7 +188,7 @@ const QList< Surface* > &Surface::all()
 
 bool Surface::isValid() const
 {
-    return d->surface != nullptr;
+    return d->surface.isValid();
 }
 
 QSize Surface::size() const

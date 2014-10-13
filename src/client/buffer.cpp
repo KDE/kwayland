@@ -50,17 +50,12 @@ Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, co
 
 Buffer::Private::~Private()
 {
-    if (nativeBuffer) {
-        wl_buffer_destroy(nativeBuffer);
-    }
+    nativeBuffer.release();
 }
 
 void Buffer::Private::destroy()
 {
-    if (nativeBuffer) {
-        free(nativeBuffer);
-        nativeBuffer = nullptr;
-    }
+    nativeBuffer.destroy();
 }
 
 void Buffer::Private::releasedCallback(void *data, wl_buffer *buffer)

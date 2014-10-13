@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "keyboard.h"
 #include "pointer.h"
+#include "wayland_pointer_p.h"
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -36,7 +37,7 @@ public:
     void resetSeat();
     void setup(wl_seat *seat);
 
-    wl_seat *seat = nullptr;
+    WaylandPointer<wl_seat, wl_seat_destroy> seat;
     EventQueue *queue = nullptr;
     bool capabilityKeyboard = false;
     bool capabilityPointer = false;
@@ -65,7 +66,7 @@ void Seat::Private::setup(wl_seat *s)
 {
     Q_ASSERT(s);
     Q_ASSERT(!seat);
-    seat = s;
+    seat.setup(s);
     wl_seat_add_listener(seat, &s_listener, this);
 }
 
@@ -91,8 +92,7 @@ void Seat::release()
         return;
     }
     emit interfaceAboutToBeReleased();
-    wl_seat_destroy(d->seat);
-    d->seat = nullptr;
+    d->seat.release();
     d->resetSeat();
 }
 
@@ -102,8 +102,7 @@ void Seat::destroy()
         return;
     }
     emit interfaceAboutToBeDestroyed();
-    free(d->seat);
-    d->seat = nullptr;
+    d->seat.destroy();
     d->resetSeat();
 }
 
@@ -228,7 +227,7 @@ void Seat::Private::setName(const QString &n)
 
 bool Seat::isValid() const
 {
-    return d->seat != nullptr;
+    return d->seat.isValid();
 }
 
 bool Seat::hasKeyboard() const

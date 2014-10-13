@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor.h"
 #include "event_queue.h"
 #include "surface.h"
+#include "wayland_pointer_p.h"
 
 #include <wayland-client-protocol.h>
 
@@ -33,7 +34,7 @@ class Compositor::Private
 public:
     Private() = default;
 
-    wl_compositor *compositor = nullptr;
+    WaylandPointer<wl_compositor, wl_compositor_destroy> compositor;
     EventQueue *queue = nullptr;
 };
 
@@ -52,25 +53,17 @@ void Compositor::setup(wl_compositor *compositor)
 {
     Q_ASSERT(compositor);
     Q_ASSERT(!d->compositor);
-    d->compositor = compositor;
+    d->compositor.setup(compositor);
 }
 
 void Compositor::release()
 {
-    if (!d->compositor) {
-        return;
-    }
-    wl_compositor_destroy(d->compositor);
-    d->compositor = nullptr;
+    d->compositor.release();
 }
 
 void Compositor::destroy()
 {
-    if (!d->compositor) {
-        return;
-    }
-    free(d->compositor);
-    d->compositor = nullptr;
+    d->compositor.destroy();
 }
 
 void Compositor::setEventQueue(EventQueue *queue)
@@ -105,7 +98,7 @@ Compositor::operator wl_compositor*() const {
 
 bool Compositor::isValid() const
 {
-    return d->compositor != nullptr;
+    return d->compositor.isValid();
 }
 
 

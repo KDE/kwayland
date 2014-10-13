@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fullscreen_shell.h"
 #include "surface.h"
 #include "output.h"
+#include "wayland_pointer_p.h"
 
 #include <QDebug>
 // wayland
@@ -37,7 +38,7 @@ public:
     Private(FullscreenShell *q);
     void setup(_wl_fullscreen_shell *shell);
 
-    _wl_fullscreen_shell *shell = nullptr;
+    WaylandPointer<_wl_fullscreen_shell, _wl_fullscreen_shell_release> shell;
     bool capabilityArbitraryModes = false;
     bool capabilityCursorPlane = false;
 
@@ -61,7 +62,7 @@ void FullscreenShell::Private::setup(_wl_fullscreen_shell *s)
 {
     Q_ASSERT(!shell);
     Q_ASSERT(s);
-    shell = s;
+    shell.setup(s);
     _wl_fullscreen_shell_add_listener(shell, &s_fullscreenShellListener, this);
 }
 
@@ -97,18 +98,12 @@ FullscreenShell::~FullscreenShell()
 
 void FullscreenShell::release()
 {
-    if (d->shell) {
-        _wl_fullscreen_shell_release(d->shell);
-        d->shell = nullptr;
-    }
+    d->shell.release();
 }
 
 void FullscreenShell::destroy()
 {
-    if (d->shell) {
-        free(d->shell);
-        d->shell = nullptr;
-    }
+    d->shell.destroy();
 }
 
 void FullscreenShell::setup(_wl_fullscreen_shell *shell)
@@ -131,7 +126,7 @@ void FullscreenShell::present(Surface *surface, Output *output)
 
 bool FullscreenShell::isValid() const
 {
-    return d->shell != nullptr;
+    return d->shell.isValid();
 }
 
 bool FullscreenShell::hasCapabilityArbitraryModes() const

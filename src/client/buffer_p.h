@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WAYLAND_BUFFER_P_H
 #define WAYLAND_BUFFER_P_H
 #include "buffer.h"
+#include "wayland_pointer_p.h"
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -36,7 +37,7 @@ public:
     void destroy();
 
     ShmPool *shm;
-    wl_buffer *nativeBuffer;
+    WaylandPointer<wl_buffer, wl_buffer_destroy> nativeBuffer;
     bool released;
     QSize size;
     int32_t stride;

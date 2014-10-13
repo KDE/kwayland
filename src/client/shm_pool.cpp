@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "buffer.h"
 #include "buffer_p.h"
+#include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>
 #include <QImage>
@@ -43,8 +44,8 @@ public:
     bool createPool();
     bool resizePool(int32_t newSize);
     QList<QSharedPointer<Buffer>>::iterator getBuffer(const QSize &size, int32_t stride, Buffer::Format format);
-    wl_shm *shm = nullptr;
-    wl_shm_pool *pool = nullptr;
+    WaylandPointer<wl_shm, wl_shm_destroy> shm;
+    WaylandPointer<wl_shm_pool, wl_shm_pool_destroy> pool;
     void *poolData = nullptr;
     int32_t size = 1024;
     QScopedPointer<QTemporaryFile> tmpFile;
@@ -81,14 +82,8 @@ void ShmPool::release()
         munmap(d->poolData, d->size);
         d->poolData = nullptr;
     }
-    if (d->pool) {
-        wl_shm_pool_destroy(d->pool);
-        d->pool = nullptr;
-    }
-    if (d->shm) {
-        wl_shm_destroy(d->shm);
-        d->shm = nullptr;
-    }
+    d->pool.release();
+    d->shm.release();
     d->tmpFile->close();
     d->valid = false;
     d->offset = 0;
@@ -104,14 +99,8 @@ void ShmPool::destroy()
         munmap(d->poolData, d->size);
         d->poolData = nullptr;
     }
-    if (d->pool) {
-        free(d->pool);
-        d->pool = nullptr;
-    }
-    if (d->shm) {
-        free(d->shm);
-        d->shm = nullptr;
-    }
+    d->pool.destroy();
+    d->shm.destroy();
     d->tmpFile->close();
     d->valid = false;
     d->offset = 0;
@@ -121,7 +110,7 @@ void ShmPool::setup(wl_shm *shm)
 {
     Q_ASSERT(shm);
     Q_ASSERT(!d->shm);
-    d->shm = shm;
+    d->shm.setup(shm);
     d->valid = d->createPool();
 }
 
@@ -146,7 +135,7 @@ bool ShmPool::Private::createPool()
         return false;
     }
     poolData = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
-    pool = wl_shm_create_pool(shm, tmpFile->handle(), size);
+    pool.setup(wl_shm_create_pool(shm, tmpFile->handle(), size));
 
     if (!poolData || !pool) {
         qDebug() << "Creating Shm pool failed";

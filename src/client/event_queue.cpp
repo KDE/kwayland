@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "event_queue.h"
 #include "connection_thread.h"
+#include "wayland_pointer_p.h"
 
 #include <wayland-client.h>
 
@@ -33,7 +34,7 @@ public:
     Private(EventQueue *q);
 
     wl_display *display = nullptr;
-    wl_event_queue *queue = nullptr;
+    WaylandPointer<wl_event_queue, wl_event_queue_destroy> queue;
 
 private:
     EventQueue *q;
@@ -57,27 +58,19 @@ EventQueue::~EventQueue()
 
 void EventQueue::release()
 {
-    if (!d->queue) {
-        return;
-    }
-    wl_event_queue_destroy(d->queue);
-    d->queue = nullptr;
+    d->queue.release();
     d->display = nullptr;
 }
 
 void EventQueue::destroy()
 {
-    if (!d->queue) {
-        return;
-    }
-    free(d->queue);
-    d->queue = nullptr;
+    d->queue.destroy();
     d->display = nullptr;
 }
 
 bool EventQueue::isValid()
 {
-    return d->queue != nullptr;
+    return d->queue.isValid();
 }
 
 void EventQueue::setup(wl_display *display)
@@ -86,7 +79,7 @@ void EventQueue::setup(wl_display *display)
     Q_ASSERT(!d->display);
     Q_ASSERT(!d->queue);
     d->display = display;
-    d->queue = wl_display_create_queue(display);
+    d->queue.setup(wl_display_create_queue(display));
 }
 
 void EventQueue::setup(ConnectionThread *connection)

@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "output.h"
+#include "wayland_pointer_p.h"
 // Qt
 #include <QPoint>
 #include <QRect>
@@ -39,7 +40,7 @@ public:
     Private(Output *q);
     void setup(wl_output *o);
 
-    wl_output *output = nullptr;
+    WaylandPointer<wl_output, wl_output_destroy> output;
     QSize physicalSize;
     QPoint globalPosition;
     QString manufacturer;
@@ -79,7 +80,7 @@ void Output::Private::setup(wl_output *o)
 {
     Q_ASSERT(o);
     Q_ASSERT(!output);
-    output = o;
+    output.setup(o);
     wl_output_add_listener(output, &s_outputListener, this);
 }
 
@@ -99,9 +100,7 @@ Output::Output(QObject *parent)
 
 Output::~Output()
 {
-    if (d->output) {
-        wl_output_destroy(d->output);
-    }
+    d->output.release();
 }
 
 wl_output_listener Output::Private::s_outputListener = {
@@ -320,7 +319,7 @@ int Output::scale() const
 
 bool Output::isValid() const
 {
-    return d->output != nullptr;
+    return d->output.isValid();
 }
 
 Output::SubPixel Output::subPixel() const

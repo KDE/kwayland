@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "pointer.h"
 #include "surface.h"
+#include "wayland_pointer_p.h"
 // Qt
 #include <QPointF>
 // wayland
@@ -35,7 +36,7 @@ public:
     Private(Pointer *q);
     void setup(wl_pointer *p);
 
-    wl_pointer *pointer = nullptr;
+    WaylandPointer<wl_pointer, wl_pointer_destroy> pointer;
     Surface *enteredSurface = nullptr;
 private:
     void enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface);
@@ -61,7 +62,7 @@ void Pointer::Private::setup(wl_pointer *p)
 {
     Q_ASSERT(p);
     Q_ASSERT(!pointer);
-    pointer = p;
+    pointer.setup(p);
     wl_pointer_add_listener(pointer, &s_listener, this);
 }
 
@@ -86,20 +87,12 @@ Pointer::~Pointer()
 
 void Pointer::release()
 {
-    if (!d->pointer) {
-        return;
-    }
-    wl_pointer_destroy(d->pointer);
-    d->pointer = nullptr;
+    d->pointer.release();
 }
 
 void Pointer::destroy()
 {
-    if (!d->pointer) {
-        return;
-    }
-    free(d->pointer);
-    d->pointer = nullptr;
+    d->pointer.destroy();
 }
 
 void Pointer::setup(wl_pointer *pointer)
@@ -182,7 +175,7 @@ Surface *Pointer::enteredSurface() const
 
 bool Pointer::isValid() const
 {
-    return d->pointer != nullptr;
+    return d->pointer.isValid();
 }
 
 Pointer::operator wl_pointer*() const

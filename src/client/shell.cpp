@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "output.h"
 #include "surface.h"
+#include "wayland_pointer_p.h"
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -32,7 +33,7 @@ namespace Client
 class Shell::Private
 {
 public:
-    wl_shell *shell = nullptr;
+    WaylandPointer<wl_shell, wl_shell_destroy> shell;
     EventQueue *queue = nullptr;
 };
 
@@ -53,8 +54,7 @@ void Shell::destroy()
         return;
     }
     emit interfaceAboutToBeDestroyed();
-    free(d->shell);
-    d->shell = nullptr;
+    d->shell.destroy();
 }
 
 void Shell::release()
@@ -63,15 +63,14 @@ void Shell::release()
         return;
     }
     emit interfaceAboutToBeReleased();
-    wl_shell_destroy(d->shell);
-    d->shell = nullptr;
+    d->shell.release();
 }
 
 void Shell::setup(wl_shell *shell)
 {
     Q_ASSERT(!d->shell);
     Q_ASSERT(shell);
-    d->shell = shell;
+    d->shell.setup(shell);
 }
 
 void Shell::setEventQueue(EventQueue *queue)
@@ -106,7 +105,7 @@ ShellSurface *Shell::createSurface(Surface *surface, QObject *parent)
 
 bool Shell::isValid() const
 {
-    return d->shell != nullptr;
+    return d->shell.isValid();
 }
 
 Shell::operator wl_shell*()
@@ -125,7 +124,7 @@ public:
     Private(ShellSurface *q);
     void setup(wl_shell_surface *surface);
 
-    wl_shell_surface *surface = nullptr;
+    WaylandPointer<wl_shell_surface, wl_shell_surface_destroy> surface;
     QSize size;
 
 private:
@@ -147,7 +146,7 @@ void ShellSurface::Private::setup(wl_shell_surface *s)
 {
     Q_ASSERT(s);
     Q_ASSERT(!surface);
-    surface = s;
+    surface.setup(s);
     wl_shell_surface_add_listener(surface, &s_listener, this);
 }
 
@@ -164,20 +163,12 @@ ShellSurface::~ShellSurface()
 
 void ShellSurface::release()
 {
-    if (!isValid()) {
-        return;
-    }
-    wl_shell_surface_destroy(d->surface);
-    d->surface = nullptr;
+    d->surface.release();
 }
 
 void ShellSurface::destroy()
 {
-    if (!isValid()) {
-        return;
-    }
-    free(d->surface);
-    d->surface = nullptr;
+    d->surface.destroy();
 }
 
 const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {
@@ -241,7 +232,7 @@ QSize ShellSurface::size() const
 
 bool ShellSurface::isValid() const
 {
-    return d->surface != nullptr;
+    return d->surface.isValid();
 }
 
 ShellSurface::operator wl_shell_surface*()

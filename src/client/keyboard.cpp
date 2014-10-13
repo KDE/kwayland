@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "keyboard.h"
+#include "wayland_pointer_p.h"
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -32,7 +33,7 @@ public:
     Private(Keyboard *q);
     void setup(wl_keyboard *k);
 
-    wl_keyboard *keyboard = nullptr;
+    WaylandPointer<wl_keyboard, wl_keyboard_destroy> keyboard;
 
 private:
     static void keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
@@ -54,7 +55,7 @@ void Keyboard::Private::setup(wl_keyboard *k)
 {
     Q_ASSERT(k);
     Q_ASSERT(!keyboard);
-    keyboard = k;
+    keyboard.setup(k);
     wl_keyboard_add_listener(keyboard, &s_listener, this);
 }
 
@@ -79,20 +80,12 @@ Keyboard::~Keyboard()
 
 void Keyboard::release()
 {
-    if (!d->keyboard) {
-        return;
-    }
-    wl_keyboard_destroy(d->keyboard);
-    d->keyboard = nullptr;
+    d->keyboard.release();
 }
 
 void Keyboard::destroy()
 {
-    if (!d->keyboard) {
-        return;
-    }
-    free(d->keyboard);
-    d->keyboard = nullptr;
+    d->keyboard.destroy();
 }
 
 void Keyboard::setup(wl_keyboard *keyboard)
@@ -155,7 +148,7 @@ void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uin
 
 bool Keyboard::isValid() const
 {
-    return d->keyboard != nullptr;
+    return d->keyboard.isValid();
 }
 
 Keyboard::operator wl_keyboard*()

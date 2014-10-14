@@ -396,6 +396,15 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void interfaceRemoved(quint32 name);
+    /**
+     * Emitted when the Wayland display is done flushing the initial interface
+     * callbacks, announcing wl_display properties. This can be used to compress
+     * events. Note that this signal is emitted only after announcing interfaces,
+     * such as outputs, but not after receiving callbacks of interface properties,
+     * such as the output's geometry, modes, etc..
+     * This signal is emitted from the wl_display_sync callback.
+     **/
+    void interfacesAnnounced();
 
 private:
     class Private;

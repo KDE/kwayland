@@ -54,13 +54,17 @@ public:
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
 
     WaylandPointer<wl_registry, wl_registry_destroy> registry;
+    static const struct wl_callback_listener s_callbackListener;
+    WaylandPointer<wl_callback, wl_callback_destroy> callback;
     EventQueue *queue = nullptr;
 
 private:
     void handleAnnounce(uint32_t name, const char *interface, uint32_t version);
     void handleRemove(uint32_t name);
+    void handleGlobalSync();
     static void globalAnnounce(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version);
     static void globalRemove(void *data, struct wl_registry *registry, uint32_t name);
+    static void globalSync(void *data, struct wl_callback *callback, uint32_t serial);
 
     Registry *q;
     struct InterfaceData {
@@ -80,6 +84,7 @@ Registry::Private::Private(Registry *q)
 void Registry::Private::setup()
 {
     wl_registry_add_listener(registry, &s_registryListener, this);
+    wl_callback_add_listener(callback, &s_callbackListener, this);
 }
 
 Registry::Registry(QObject *parent)
@@ -96,11 +101,13 @@ Registry::~Registry()
 void Registry::release()
 {
     d->registry.release();
+    d->callback.release();
 }
 
 void Registry::destroy()
 {
     d->registry.destroy();
+    d->callback.destroy();
 }
 
 void Registry::create(wl_display *display)
@@ -108,8 +115,10 @@ void Registry::create(wl_display *display)
     Q_ASSERT(display);
     Q_ASSERT(!isValid());
     d->registry.setup(wl_display_get_registry(display));
+    d->callback.setup(wl_display_sync(display));
     if (d->queue) {
         d->queue->addProxy(d->registry);
+        d->queue->addProxy(d->callback);
     }
 }
 
@@ -133,6 +142,9 @@ void Registry::setEventQueue(EventQueue *queue)
     if (d->registry) {
         d->queue->addProxy(d->registry);
     }
+    if (d->callback) {
+        d->queue->addProxy(d->callback);
+    }
 }
 
 EventQueue *Registry::eventQueue()
@@ -143,6 +155,10 @@ EventQueue *Registry::eventQueue()
 const struct wl_registry_listener Registry::Private::s_registryListener = {
     globalAnnounce,
     globalRemove
+};
+
+const struct wl_callback_listener Registry::Private::s_callbackListener = {
+   globalSync
 };
 
 void Registry::Private::globalAnnounce(void *data, wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
@@ -157,6 +173,20 @@ void Registry::Private::globalRemove(void *data, wl_registry *registry, uint32_t
     auto r = reinterpret_cast<Registry::Private*>(data);
     Q_ASSERT(registry == r->registry);
     r->handleRemove(name);
+}
+
+void Registry::Private::globalSync(void* data, wl_callback* callback, uint32_t serial)
+{
+    Q_UNUSED(serial)
+    auto r = reinterpret_cast<Registry::Private*>(data);
+    Q_ASSERT(r->callback == callback);
+    r->handleGlobalSync();
+    r->callback.destroy();
+}
+
+void Registry::Private::handleGlobalSync()
+{
+    emit q->interfacesAnnounced();
 }
 
 static Registry::Interface nameToInterface(const char *interface)

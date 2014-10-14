@@ -39,6 +39,8 @@ set(CLIENT_LIB_SRCS
     seat.cpp
     shell.cpp
     shm_pool.cpp
+    subcompositor.cpp
+    subsurface.cpp
     surface.cpp
 )
 
@@ -86,6 +88,8 @@ install(FILES
   seat.h
   shell.h
   shm_pool.h
+  subcompositor.h
+  subsurface.h
   surface.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )

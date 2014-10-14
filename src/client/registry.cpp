@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "shell.h"
 #include "shm_pool.h"
+#include "subcompositor.h"
 #include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>
@@ -43,6 +44,7 @@ static const quint32 s_outputMaxVersion = 2;
 static const quint32 s_shmMaxVersion = 1;
 static const quint32 s_seatMaxVersion = 3;
 static const quint32 s_shellMaxVersion = 1;
+static const quint32 s_subcompositorMaxVersion = 1;
 
 class Registry::Private
 {
@@ -203,6 +205,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::Output;
     } else if (strcmp(interface, "_wl_fullscreen_shell") == 0) {
         return Registry::Interface::FullscreenShell;
+    } else if (strcmp(interface, "wl_subcompositor") == 0) {
+        return Registry::Interface::SubCompositor;
     }
     return Registry::Interface::Unknown;
 }
@@ -235,6 +239,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::FullscreenShell:
         emit q->fullscreenShellAnnounced(name, version);
+        break;
+    case Interface::SubCompositor:
+        emit q->subCompositorAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -271,6 +278,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::FullscreenShell:
             emit q->fullscreenShellRemoved(data.name);
+            break;
+        case Interface::SubCompositor:
+            emit q->subCompositorRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -319,6 +329,11 @@ wl_shell *Registry::bindShell(uint32_t name, uint32_t version) const
 wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
 {
     return d->bind<wl_shm>(Interface::Shm, name, qMin(s_shmMaxVersion, version));
+}
+
+wl_subcompositor *Registry::bindSubCompositor(uint32_t name, uint32_t version) const
+{
+    return d->bind<wl_subcompositor>(Interface::SubCompositor, name, qMin(s_subcompositorMaxVersion, version));
 }
 
 _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t version) const
@@ -372,6 +387,14 @@ ShmPool *Registry::createShmPool(quint32 name, quint32 version, QObject *parent)
     return s;
 }
 
+SubCompositor *Registry::createSubCompositor(quint32 name, quint32 version, QObject *parent)
+{
+    auto s = new SubCompositor(parent);
+    s->setEventQueue(d->queue);
+    s->setup(bindSubCompositor(name, version));
+    return s;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -387,6 +410,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &wl_shm_interface;
     case Registry::Interface::FullscreenShell:
         return &_wl_fullscreen_shell_interface;
+    case Registry::Interface::SubCompositor:
+        return &wl_subcompositor_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

@@ -32,6 +32,7 @@ struct wl_registry;
 struct wl_seat;
 struct wl_shell;
 struct wl_shm;
+struct wl_subcompositor;
 struct _wl_fullscreen_shell;
 
 namespace KWayland
@@ -47,6 +48,7 @@ class Output;
 class Seat;
 class Shell;
 class ShmPool;
+class SubCompositor;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -89,7 +91,8 @@ public:
         Seat,       ///< Refers to the wl_seat interface
         Shm,        ///< Refers to the wl_shm interface
         Output,     ///< Refers to the wl_output interface
-        FullscreenShell ///< Refers to the _wl_fullscreen_shell interface
+        FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
+        SubCompositor ///< Refers to the wl_subcompositor interface;
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -194,6 +197,15 @@ public:
      **/
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
     /**
+     * Binds the wl_subcompositor with @p name and @p version.
+     * If the @p name does not exist or is not for the subcompositor interface,
+     * @c null will be returned.
+     *
+     * Prefer using createSubCompositor instead.
+     * @see createSubCompositor
+     **/
+    wl_subcompositor *bindSubCompositor(uint32_t name, uint32_t version) const;
+    /**
      * Binds the wl_output with @p name and @p version.
      * If the @p name does not exist or is not for the output interface,
      * @c null will be returned.
@@ -273,6 +285,21 @@ public:
      **/
     ShmPool *createShmPool(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
+     * Creates a SubCompositor and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the wl_subcompositor interface,
+     * the returned SubCompositor will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the wl_subcompositor interface to bind
+     * @param version The version or the wl_subcompositor interface to use
+     * @param parent The parent for SubCompositor
+     *
+     * @returns The created SubCompositor.
+     **/
+    SubCompositor *createSubCompositor(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
      * Creates an Output and sets it up to manage the interface identified by
      * @p name and @p version.
      *
@@ -333,6 +360,12 @@ Q_SIGNALS:
      **/
     void shmAnnounced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a wl_subcompositor interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     **/
+    void subCompositorAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a wl_output interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -364,6 +397,11 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void shmRemoved(quint32 name);
+    /**
+     * Emitted whenever a wl_subcompositor interface gets removed.
+     * @param name The name for the removed interface
+     **/
+    void subCompositorRemoved(quint32 name);
     /**
      * Emitted whenever a wl_output interface gets removed.
      * @param name The name for the removed interface

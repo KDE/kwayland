@@ -35,6 +35,7 @@ set(CLIENT_LIB_SRCS
     keyboard.cpp
     output.cpp
     pointer.cpp
+    region.cpp
     registry.cpp
     seat.cpp
     shell.cpp
@@ -84,6 +85,7 @@ install(FILES
   keyboard.h
   output.h
   pointer.h
+  region.h
   registry.h
   seat.h
   shell.h

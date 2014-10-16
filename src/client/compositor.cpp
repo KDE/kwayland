@@ -19,8 +19,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "compositor.h"
 #include "event_queue.h"
+#include "region.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
+// Qt
+#include <QRegion>
 
 #include <wayland-client-protocol.h>
 
@@ -88,6 +91,28 @@ Surface *Compositor::createSurface(QObject *parent)
     return s;
 }
 
+Region *Compositor::createRegion(QObject *parent)
+{
+    return createRegion(QRegion(), parent);
+}
+
+Region *Compositor::createRegion(const QRegion &region, QObject *parent)
+{
+    Q_ASSERT(isValid());
+    Region *r = new Region(region, parent);
+    auto w = wl_compositor_create_region(d->compositor);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    r->setup(w);
+    return r;
+}
+
+std::unique_ptr< Region > Compositor::createRegion(const QRegion &region)
+{
+    return std::unique_ptr<Region>(createRegion(region, nullptr));
+}
+
 Compositor::operator wl_compositor*() {
     return d->compositor;
 }
@@ -100,7 +125,6 @@ bool Compositor::isValid() const
 {
     return d->compositor.isValid();
 }
-
 
 }
 }

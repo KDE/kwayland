@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
+#include <memory>
+
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct wl_compositor;
@@ -32,6 +34,7 @@ namespace Client
 {
 
 class EventQueue;
+class Region;
 class Surface;
 
 /**
@@ -120,6 +123,40 @@ public:
      * @returns The new created Surface
      **/
     Surface *createSurface(QObject *parent = nullptr);
+
+    /**
+     * Creates and setup a new Region with @p parent.
+     * @param parent The parent to pass to the Region.
+     * @returns The new created Region
+     **/
+    Region *createRegion(QObject *parent = nullptr);
+    /**
+     * Creates and setup a new Region with @p parent.
+     *
+     * The @p region is directly added to the created Region.
+     * @param parent The parent to pass to the Region.
+     * @param region The region to install on the newly created Region
+     * @returns The new created Region
+     **/
+    Region *createRegion(const QRegion &region, QObject *parent);
+    /**
+     * Creates and setup a new Region with @p region installed.
+     *
+     * This overloaded convenience method is intended to be used in the
+     * case that the Region is only needed to setup e.g. input region on
+     * a Surface and is afterwards no longer needed. Setting the input
+     * region has copy semantics and the Region can be destroyed afterwards.
+     * This allows to simplify setting the input region to:
+     *
+     * @code
+     * Surface *s = compositor->createSurface();
+     * s->setInputRegion(compositor->createRegion(QRegion(0, 0, 10, 10)).get());
+     * @endcode
+     *
+     * @param region The region to install on the newly created Region
+     * @returns The new created Region
+     **/
+    std::unique_ptr<Region> createRegion(const QRegion &region);
 
     operator wl_compositor*();
     operator wl_compositor*() const;

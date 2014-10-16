@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "surface.h"
 #include "buffer.h"
+#include "region.h"
 #include "wayland_pointer_p.h"
 
 #include <QRegion>
@@ -157,6 +158,26 @@ void Surface::attachBuffer(Buffer *buffer, const QPoint &offset)
 void Surface::attachBuffer(Buffer::Ptr buffer, const QPoint &offset)
 {
     attachBuffer(buffer.toStrongRef().data(), offset);
+}
+
+void Surface::setInputRegion(const Region *region)
+{
+    Q_ASSERT(isValid());
+    if (region) {
+        wl_surface_set_input_region(d->surface, *region);
+    } else {
+        wl_surface_set_input_region(d->surface, nullptr);
+    }
+}
+
+void Surface::setOpaqueRegion(const Region *region)
+{
+    Q_ASSERT(isValid());
+    if (region) {
+        wl_surface_set_opaque_region(d->surface, *region);
+    } else {
+        wl_surface_set_opaque_region(d->surface, nullptr);
+    }
 }
 
 void Surface::setSize(const QSize &size)

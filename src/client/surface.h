@@ -36,6 +36,8 @@ namespace KWayland
 namespace Client
 {
 
+class Region;
+
 /**
  * @short Wrapper for the wl_surface interface.
  *
@@ -142,6 +144,36 @@ public:
      * Overloaded method for convenience.
      **/
     void attachBuffer(Buffer::Ptr buffer, const QPoint &offset = QPoint());
+    /**
+     * Sets the input region to @p region.
+     *
+     * This is a double buffered state and will be applied with the next Surface
+     * commit. Initially the Surface is set up to an infinite input region.
+     * By passing @c null as the input region, it gets reset to an infinite input
+     * region.
+     *
+     * Note: the Region is being copied and can be destroyed directly after passing
+     * to this method.
+     *
+     * @param region The new input region or an infinite region if @c null
+     * @see commit
+     **/
+    void setInputRegion(const Region *region = nullptr);
+    /**
+     * Sets the opaque region to @p region.
+     *
+     * This is a double buffered state and will be applied with the next Surface
+     * commit. Initially the Surface is set up to an empty opaque region.
+     * By passing @c null as the opaque region, it gets reset to an empty opaque
+     * region.
+     *
+     * Note: the Region is being copied and can be destroyed directly after passing
+     * to this method.
+     *
+     * @param region The new opaque region or an empty region if @c null
+     * @see commit
+     **/
+    void setOpaqueRegion(const Region *region = nullptr);
     void setSize(const QSize &size);
     QSize size() const;
 

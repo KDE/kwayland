@@ -31,6 +31,8 @@ set(CLIENT_LIB_SRCS
     compositor.cpp
     connection_thread.cpp
     event_queue.cpp
+    datadevicemanager.cpp
+    datasource.cpp
     fullscreen_shell.cpp
     keyboard.cpp
     output.cpp
@@ -81,6 +83,8 @@ install(FILES
   compositor.h
   connection_thread.h
   event_queue.h
+  datadevicemanager.h
+  datasource.h
   fullscreen_shell.h
   keyboard.h
   output.h

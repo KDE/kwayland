@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "registry.h"
 #include "compositor.h"
 #include "connection_thread.h"
+#include "datadevicemanager.h"
 #include "event_queue.h"
 #include "fullscreen_shell.h"
 #include "output.h"
@@ -40,6 +41,7 @@ namespace Client
 {
 
 static const quint32 s_compositorMaxVersion = 3;
+static const quint32 s_dataDeviceManagerMaxVersion = 1;
 static const quint32 s_outputMaxVersion = 2;
 static const quint32 s_shmMaxVersion = 1;
 static const quint32 s_seatMaxVersion = 3;
@@ -207,6 +209,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::FullscreenShell;
     } else if (strcmp(interface, "wl_subcompositor") == 0) {
         return Registry::Interface::SubCompositor;
+    } else if (strcmp(interface, "wl_data_device_manager") == 0) {
+        return Registry::Interface::DataDeviceManager;
     }
     return Registry::Interface::Unknown;
 }
@@ -242,6 +246,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::SubCompositor:
         emit q->subCompositorAnnounced(name, version);
+        break;
+    case Interface::DataDeviceManager:
+        emit q->dataDeviceManagerAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -281,6 +288,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::SubCompositor:
             emit q->subCompositorRemoved(data.name);
+            break;
+        case Interface::DataDeviceManager:
+            emit q->dataDeviceManagerRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -341,6 +351,11 @@ _wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t vers
     return d->bind<_wl_fullscreen_shell>(Interface::FullscreenShell, name, version);
 }
 
+wl_data_device_manager *Registry::bindDataDeviceManager(uint32_t name, uint32_t version) const
+{
+    return d->bind<wl_data_device_manager>(Interface::DataDeviceManager, name, qMin(s_dataDeviceManagerMaxVersion, version));
+}
+
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
 {
     Compositor *c = new Compositor(parent);
@@ -395,6 +410,14 @@ SubCompositor *Registry::createSubCompositor(quint32 name, quint32 version, QObj
     return s;
 }
 
+DataDeviceManager *Registry::createDataDeviceManager(quint32 name, quint32 version, QObject *parent)
+{
+    auto m = new DataDeviceManager(parent);
+    m->setEventQueue(d->queue);
+    m->setup(bindDataDeviceManager(name, version));
+    return m;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -412,6 +435,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &_wl_fullscreen_shell_interface;
     case Registry::Interface::SubCompositor:
         return &wl_subcompositor_interface;
+    case Registry::Interface::DataDeviceManager:
+        return &wl_data_device_manager_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

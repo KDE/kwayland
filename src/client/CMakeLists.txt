@@ -33,6 +33,7 @@ set(CLIENT_LIB_SRCS
     event_queue.cpp
     datadevice.cpp
     datadevicemanager.cpp
+    dataoffer.cpp
     datasource.cpp
     fullscreen_shell.cpp
     keyboard.cpp
@@ -86,6 +87,7 @@ install(FILES
   event_queue.h
   datadevice.h
   datadevicemanager.h
+  dataoffer.h
   datasource.h
   fullscreen_shell.h
   keyboard.h

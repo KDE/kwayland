@@ -17,94 +17,86 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef WAYLAND_DATADEVICE_H
-#define WAYLAND_DATADEVICE_H
-
-#include "dataoffer.h"
+#ifndef WAYLAND_DATAOFFER_H
+#define WAYLAND_DATAOFFER_H
 
 #include <QObject>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct wl_data_device;
+struct wl_data_offer;
+
+class QMimeType;
 
 namespace KWayland
 {
 namespace Client
 {
-class DataSource;
-class Surface;
+class DataDevice;
 
 /**
- * @short Wrapper for the wl_data_device interface.
+ * @short Wrapper for the wl_data_offer interface.
  *
- * This class is a convenient wrapper for the wl_data_device interface.
- * To create a DataDevice call DataDeviceManager::getDataDevice.
+ * This class is a convenient wrapper for the wl_data_offer interface.
+ * The DataOffer gets created by DataDevice.
  *
- * @see DataDeviceManager
+ * @see DataOfferManager
  **/
-class KWAYLANDCLIENT_EXPORT DataDevice : public QObject
+class KWAYLANDCLIENT_EXPORT DataOffer : public QObject
 {
     Q_OBJECT
 public:
-    explicit DataDevice(QObject *parent = nullptr);
-    virtual ~DataDevice();
+    virtual ~DataOffer();
 
     /**
-     * Setup this DataDevice to manage the @p dataDevice.
-     * When using DataDeviceManager::createDataDevice there is no need to call this
-     * method.
-     **/
-    void setup(wl_data_device *dataDevice);
-    /**
-     * Releases the wl_data_device interface.
-     * After the interface has been released the DataDevice instance is no
-     * longer valid and can be setup with another wl_data_device interface.
+     * Releases the wl_data_offer interface.
+     * After the interface has been released the DataOffer instance is no
+     * longer valid and can be setup with another wl_data_offer interface.
      **/
     void release();
     /**
-     * Destroys the data hold by this DataDevice.
+     * Destroys the data hold by this DataOffer.
      * This method is supposed to be used when the connection to the Wayland
      * server goes away. If the connection is not valid any more, it's not
      * possible to call release any more as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new wl_data_device interface
+     * that the instance can be deleted or setup to a new wl_data_offer interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, source, &DataDevice::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, source, &DataOffer::destroyed);
      * @endcode
      *
      * @see release
      **/
     void destroy();
     /**
-     * @returns @c true if managing a wl_data_device.
+     * @returns @c true if managing a wl_data_offer.
      **/
     bool isValid() const;
 
-    void startDrag(quint32 serial, DataSource *source, Surface *origin, Surface *icon = nullptr);
-    void startDragInternally(quint32 serial, Surface *origin, Surface *icon = nullptr);
+    QList<QMimeType> offeredMimeTypes() const;
 
-    void setSelection(quint32 serial, DataSource *source = nullptr);
-    void clearSelection(quint32 serial);
+    void receive(const QMimeType &mimeType, qint32 fd);
+    void receive(const QString &mimeType, qint32 fd);
 
-    DataOffer *offeredSelection() const;
-
-    operator wl_data_device*();
-    operator wl_data_device*() const;
+    operator wl_data_offer*();
+    operator wl_data_offer*() const;
 
 Q_SIGNALS:
-    void selectionOffered(KWayland::Client::DataOffer*);
-    void selectionCleared();
+    void mimeTypeOffered(const QString&);
 
 private:
+    friend class DataDevice;
+    explicit DataOffer(DataDevice *parent, wl_data_offer *dataOffer);
     class Private;
     QScopedPointer<Private> d;
 };
 
 }
 }
+
+Q_DECLARE_METATYPE(KWayland::Client::DataOffer*)
 
 #endif

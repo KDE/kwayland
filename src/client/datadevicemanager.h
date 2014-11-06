@@ -32,7 +32,9 @@ namespace Client
 {
 
 class EventQueue;
+class DataDevice;
 class DataSource;
+class Seat;
 
 /**
  * @short Wrapper for the wl_data_device_manager interface.
@@ -114,6 +116,8 @@ public:
     EventQueue *eventQueue();
 
     DataSource *createDataSource(QObject *parent = nullptr);
+
+    DataDevice *getDataDevice(Seat *seat, QObject *parent = nullptr);
 
     operator wl_data_device_manager*();
     operator wl_data_device_manager*() const;

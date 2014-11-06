@@ -18,8 +18,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "datadevicemanager.h"
+#include "datadevice.h"
 #include "datasource.h"
 #include "event_queue.h"
+#include "seat.h"
 #include "wayland_pointer_p.h"
 
 #include <wayland-client-protocol.h>
@@ -89,6 +91,19 @@ DataSource *DataDeviceManager::createDataSource(QObject *parent)
     }
     s->setup(w);
     return s;
+}
+
+DataDevice *DataDeviceManager::getDataDevice(Seat *seat, QObject *parent)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(seat);
+    DataDevice *device = new DataDevice(parent);
+    auto w = wl_data_device_manager_get_data_device(d->manager, *seat);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    device->setup(w);
+    return device;
 }
 
 DataDeviceManager::operator wl_data_device_manager*() const

@@ -44,6 +44,7 @@ public:
     void setupSocketFileWatcher();
 
     wl_display *display = nullptr;
+    int fd = -1;
     QString socketName;
     QDir runtimeDir;
     QScopedPointer<QSocketNotifier> socketNotifier;
@@ -73,13 +74,21 @@ ConnectionThread::Private::~Private()
 
 void ConnectionThread::Private::doInitConnection()
 {
-    display = wl_display_connect(socketName.toUtf8().constData());
+    if (fd != -1) {
+        display = wl_display_connect_to_fd(fd);
+    } else {
+        display = wl_display_connect(socketName.toUtf8().constData());
+    }
     if (!display) {
         qWarning() << "Failed connecting to Wayland display";
         emit q->failed();
         return;
     }
-    qDebug() << "Connected to Wayland server at:" << socketName;
+    if (fd != -1) {
+        qDebug() << "Connected to Wayland server over file descriptor:" << fd;
+    } else {
+        qDebug() << "Connected to Wayland server at:" << socketName;
+    }
 
     // setup socket notifier
     setupSocketNotifier();
@@ -104,7 +113,7 @@ void ConnectionThread::Private::setupSocketNotifier()
 
 void ConnectionThread::Private::setupSocketFileWatcher()
 {
-    if (!runtimeDir.exists()) {
+    if (!runtimeDir.exists() || fd != -1) {
         return;
     }
     socketWatcher.reset(new QFileSystemWatcher);
@@ -175,6 +184,15 @@ void ConnectionThread::setSocketName(const QString &socketName)
         return;
     }
     d->socketName = socketName;
+}
+
+void ConnectionThread::setSocketFd(int fd)
+{
+    if (d->display) {
+        // already initialized
+        return;
+    }
+    d->fd = fd;
 }
 
 wl_display *ConnectionThread::display()

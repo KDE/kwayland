@@ -101,8 +101,21 @@ public:
      * Only applies if called before calling initConnection.
      * The default socket name is derived from environment variable WAYLAND_DISPLAY
      * and if not set is hard coded to "wayland-0".
+     *
+     * The socket name will be ignored if a file descriptor has been set through @link{setSocketFd}.
+     *
+     * @see setSocketFd
      **/
     void setSocketName(const QString &socketName);
+    /**
+     * Sets the socket @p fd to connect to.
+     * Only applies if called before calling initConnection.
+     * If this method is invoked, the connection will be created on the file descriptor
+     * and not on the socket name passed through @link{setSocketName} or through the
+     * default environment variable WAYLAND_DISPLAY.
+     * @see setSocketName
+     **/
+    void setSocketFd(int fd);
 
 public Q_SLOTS:
     /**

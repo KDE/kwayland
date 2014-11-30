@@ -121,7 +121,7 @@ Q_SIGNALS:
      *
      * The leave notification is sent before the enter notification for the new focus.
      *
-     * @param serial The serial of this enter
+     * @param serial The serial of this leave event
      **/
     void left(quint32 serial);
     /**

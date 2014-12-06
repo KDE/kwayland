@@ -31,6 +31,8 @@ namespace KWayland
 namespace Client
 {
 
+class Surface;
+
 /**
  * @short Wrapper for the wl_keyboard interface.
  *
@@ -86,10 +88,33 @@ public:
      **/
     void destroy();
 
+    /**
+     * @returns The Surface the Keyboard is on, may be @c null.
+     **/
+    Surface *enteredSurface() const;
+    /**
+     * @overload
+     **/
+    Surface *enteredSurface();
+
     operator wl_keyboard*();
     operator wl_keyboard*() const;
 
 Q_SIGNALS:
+    /**
+     * Notification that this seat's Keyboard is focused on a certain surface.
+     *
+     * @param serial The serial for this enter
+     **/
+    void entered(quint32 serial);
+    /**
+     * Notification that this seat's Keyboard is no longer focused on a certain surface.
+     *
+     * The leave notification is sent before the enter notification for the new focus.
+     *
+     * @param serial The serial of this enter
+     **/
+    void left(quint32 serial);
     /**
      * This signal provides a file descriptor to the client which can
      * be memory-mapped to provide a keyboard mapping description.

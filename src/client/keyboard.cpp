@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "keyboard.h"
+#include "surface.h"
 #include "wayland_pointer_p.h"
 // wayland
 #include <wayland-client-protocol.h>
@@ -34,8 +35,10 @@ public:
     void setup(wl_keyboard *k);
 
     WaylandPointer<wl_keyboard, wl_keyboard_destroy> keyboard;
-
+    Surface *enteredSurface = nullptr;
 private:
+    void enter(uint32_t serial, wl_surface *surface, wl_array *keys);
+    void leave(uint32_t serial);
     static void keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
     static void enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys);
     static void leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface);
@@ -95,21 +98,30 @@ void Keyboard::setup(wl_keyboard *keyboard)
 
 void Keyboard::Private::enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
 {
-    // ignore
-    Q_UNUSED(data)
-    Q_UNUSED(keyboard)
-    Q_UNUSED(serial)
-    Q_UNUSED(surface)
+    auto k = reinterpret_cast<Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
+    k->enter(serial, surface, keys);
+}
+
+void Keyboard::Private::enter(uint32_t serial, wl_surface *surface, wl_array *keys)
+{
     Q_UNUSED(keys)
+    enteredSurface = Surface::get(surface);
+    emit q->entered(serial);
 }
 
 void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
 {
-    // ignore
-    Q_UNUSED(data)
-    Q_UNUSED(keyboard)
-    Q_UNUSED(serial)
-    Q_UNUSED(surface)
+    auto k = reinterpret_cast<Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
+    Q_ASSERT(*(k->enteredSurface) == surface);
+    k->leave(serial);
+}
+
+void Keyboard::Private::leave(uint32_t serial)
+{
+    enteredSurface = nullptr;
+    emit q->left(serial);
 }
 
 void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
@@ -144,6 +156,16 @@ void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uin
     auto k = reinterpret_cast<Keyboard::Private*>(data);
     Q_ASSERT(k->keyboard == keyboard);
     emit k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
+}
+
+Surface *Keyboard::enteredSurface()
+{
+    return d->enteredSurface;
+}
+
+Surface *Keyboard::enteredSurface() const
+{
+    return d->enteredSurface;
 }
 
 bool Keyboard::isValid() const

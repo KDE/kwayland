@@ -182,8 +182,9 @@ public:
 
     /**
      * All Surfaces which are currently created.
+     * TODO: KF6 return QList<Surface*> instead of const-ref
      **/
-    static const QList<Surface*> &all();
+    static const QList<Surface*> &all(); // krazy:exclude=constref
     /**
      * @returns The Surface referencing the @p native wl_surface or @c null if there is no such Surface.
      **/

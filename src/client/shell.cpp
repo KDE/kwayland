@@ -225,6 +225,12 @@ void ShellSurface::setFullscreen(Output *output)
     wl_shell_surface_set_fullscreen(d->surface, WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, output ? output->output() : nullptr);
 }
 
+void ShellSurface::setMaximized(Output *output)
+{
+    Q_ASSERT(isValid());
+    wl_shell_surface_set_maximized(d->surface, output ? output->output() : nullptr);
+}
+
 QSize ShellSurface::size() const
 {
     return d->size;

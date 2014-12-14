@@ -212,6 +212,7 @@ public:
      * Sets the ShellSurface fullscreen on @p output.
      **/
     void setFullscreen(Output *output = nullptr);
+    void setMaximized(Output *output = nullptr);
 
     bool isValid() const;
     operator wl_shell_surface*();

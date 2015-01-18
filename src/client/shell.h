@@ -213,6 +213,7 @@ public:
      **/
     void setFullscreen(Output *output = nullptr);
     void setMaximized(Output *output = nullptr);
+    void setToplevel();
 
     bool isValid() const;
     operator wl_shell_surface*();

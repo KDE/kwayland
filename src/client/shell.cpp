@@ -231,6 +231,12 @@ void ShellSurface::setMaximized(Output *output)
     wl_shell_surface_set_maximized(d->surface, output ? output->output() : nullptr);
 }
 
+void ShellSurface::setToplevel()
+{
+    Q_ASSERT(isValid());
+    wl_shell_surface_set_toplevel(d->surface);
+}
+
 QSize ShellSurface::size() const
 {
     return d->size;

@@ -131,6 +131,9 @@ bool ShmPool::Private::createPool()
         qCDebug(KWAYLAND_CLIENT) << "Could not open temporary file for Shm pool";
         return false;
     }
+    if (unlink(tmpFile->fileName().toUtf8().constData()) != 0) {
+        qCDebug(KWAYLAND_CLIENT) << "Unlinking temporary file for Shm pool from file system failed";
+    }
     if (ftruncate(tmpFile->handle(), size) < 0) {
         qCDebug(KWAYLAND_CLIENT) << "Could not set size for Shm pool file";
         return false;

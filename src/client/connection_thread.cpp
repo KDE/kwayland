@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "connection_thread.h"
+#include "logging_p.h"
 // Qt
 #include <QAbstractEventDispatcher>
 #include <QCoreApplication>
@@ -80,14 +81,14 @@ void ConnectionThread::Private::doInitConnection()
         display = wl_display_connect(socketName.toUtf8().constData());
     }
     if (!display) {
-        qWarning() << "Failed connecting to Wayland display";
+        qCWarning(KWAYLAND_CLIENT) << "Failed connecting to Wayland display";
         emit q->failed();
         return;
     }
     if (fd != -1) {
-        qDebug() << "Connected to Wayland server over file descriptor:" << fd;
+        qCDebug(KWAYLAND_CLIENT) << "Connected to Wayland server over file descriptor:" << fd;
     } else {
-        qDebug() << "Connected to Wayland server at:" << socketName;
+        qCDebug(KWAYLAND_CLIENT) << "Connected to Wayland server at:" << socketName;
     }
 
     // setup socket notifier
@@ -123,7 +124,7 @@ void ConnectionThread::Private::setupSocketFileWatcher()
             if (QFile::exists(file) || serverDied) {
                 return;
             }
-            qWarning() << "Connection to server went away";
+            qCWarning(KWAYLAND_CLIENT) << "Connection to server went away";
             serverDied = true;
             if (display) {
                 free(display);
@@ -140,7 +141,7 @@ void ConnectionThread::Private::setupSocketFileWatcher()
                         return;
                     }
                     if (runtimeDir.exists(socketName)) {
-                        qDebug() << "Socket reappeared";
+                        qCDebug(KWAYLAND_CLIENT) << "Socket reappeared";
                         socketWatcher.reset();
                         serverDied = false;
                         q->initConnection();

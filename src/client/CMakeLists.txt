@@ -13,6 +13,7 @@ set(CLIENT_LIB_SRCS
     datasource.cpp
     fullscreen_shell.cpp
     keyboard.cpp
+    logging.cpp
     output.cpp
     pointer.cpp
     region.cpp

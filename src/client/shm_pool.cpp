@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "buffer.h"
 #include "buffer_p.h"
+#include "logging_p.h"
 #include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>
@@ -127,18 +128,18 @@ EventQueue *ShmPool::eventQueue()
 bool ShmPool::Private::createPool()
 {
     if (!tmpFile->open()) {
-        qDebug() << "Could not open temporary file for Shm pool";
+        qCDebug(KWAYLAND_CLIENT) << "Could not open temporary file for Shm pool";
         return false;
     }
     if (ftruncate(tmpFile->handle(), size) < 0) {
-        qDebug() << "Could not set size for Shm pool file";
+        qCDebug(KWAYLAND_CLIENT) << "Could not set size for Shm pool file";
         return false;
     }
     poolData = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
     pool.setup(wl_shm_create_pool(shm, tmpFile->handle(), size));
 
     if (!poolData || !pool) {
-        qDebug() << "Creating Shm pool failed";
+        qCDebug(KWAYLAND_CLIENT) << "Creating Shm pool failed";
         return false;
     }
     return true;
@@ -147,7 +148,7 @@ bool ShmPool::Private::createPool()
 bool ShmPool::Private::resizePool(int32_t newSize)
 {
     if (ftruncate(tmpFile->handle(), newSize) < 0) {
-        qDebug() << "Could not set new size for Shm pool file";
+        qCDebug(KWAYLAND_CLIENT) << "Could not set new size for Shm pool file";
         return false;
     }
     wl_shm_pool_resize(pool, newSize);
@@ -155,7 +156,7 @@ bool ShmPool::Private::resizePool(int32_t newSize)
     poolData = mmap(NULL, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
     size = newSize;
     if (!poolData) {
-        qDebug() << "Resizing Shm pool failed";
+        qCDebug(KWAYLAND_CLIENT) << "Resizing Shm pool failed";
         return false;
     }
     emit q->poolResized();
@@ -171,7 +172,7 @@ static Buffer::Format toBufferFormat(const QImage &image)
     case QImage::Format_RGB32:
         return Buffer::Format::RGB32;
     default:
-        qWarning() << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
+        qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
         return Buffer::Format::ARGB32;
     }
 };

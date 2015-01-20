@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "datadevicemanager.h"
 #include "event_queue.h"
 #include "fullscreen_shell.h"
+#include "logging_p.h"
 #include "output.h"
 #include "seat.h"
 #include "shell.h"
@@ -220,10 +221,10 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
     Interface i = nameToInterface(interface);
     emit q->interfaceAnnounced(QByteArray(interface), name, version);
     if (i == Interface::Unknown) {
-        qDebug() << "Unknown interface announced: " << interface << "/" << name << "/" << version;
+        qCDebug(KWAYLAND_CLIENT) << "Unknown interface announced: " << interface << "/" << name << "/" << version;
         return;
     }
-    qDebug() << "Wayland Interface: " << interface << "/" << name << "/" << version;
+    qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
     m_interfaces.append({i, name, version});
     switch (i) {
     case Interface::Compositor:
@@ -450,7 +451,7 @@ T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_
         return data.interface == interface && data.name == name && data.version >= version;
     });
     if (it == m_interfaces.end()) {
-        qDebug() << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
+        qCDebug(KWAYLAND_CLIENT) << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
         return nullptr;
     }
     auto t = reinterpret_cast<T*>(wl_registry_bind(registry, name, wlInterface(interface), version));

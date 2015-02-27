@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_POINTER_H
 
 #include <QObject>
+#include <QPoint>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -91,6 +92,24 @@ public:
      * @see release
      **/
     void destroy();
+
+    /**
+     * Sets the cursor image for this Pointer.
+     *
+     * This has only an effect if a Surface of the same client is focused.
+     *
+     * @param surface The Surface pointing to the image data, if @c null the cursor will be hidden
+     * @param hotspot The hotspot of the cursor image
+     * @see hideCursor
+     * @since 5.3
+     **/
+    void setCursor(Surface *surface, const QPoint &hotspot = QPoint());
+    /**
+     * Hides the cursor. Same as calling setCursor with @c null for surface.
+     * @see setCursor
+     * @since 5.3
+     **/
+    void hideCursor();
 
     /**
      * @returns The Surface the Pointer is on, may be @c null.

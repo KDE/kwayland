@@ -38,6 +38,7 @@ public:
 
     WaylandPointer<wl_pointer, wl_pointer_destroy> pointer;
     Surface *enteredSurface = nullptr;
+    quint32 enteredSerial = 0;
 private:
     void enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface);
     void leave(uint32_t serial);
@@ -111,6 +112,7 @@ void Pointer::Private::enterCallback(void *data, wl_pointer *pointer, uint32_t s
 void Pointer::Private::enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface)
 {
     enteredSurface = Surface::get(surface);
+    enteredSerial = serial;
     emit q->entered(serial, relativeToSurface);
 }
 
@@ -161,6 +163,21 @@ void Pointer::Private::axisCallback(void *data, wl_pointer *pointer, uint32_t ti
         }
     };
     emit p->q->axisChanged(time, toAxis(), wl_fixed_to_double(value));
+}
+
+void Pointer::setCursor(Surface *surface, const QPoint &hotspot)
+{
+    Q_ASSERT(isValid());
+    wl_surface *s = nullptr;
+    if (surface) {
+        s = *surface;
+    }
+    wl_pointer_set_cursor(d->pointer, d->enteredSerial, s, hotspot.x(), hotspot.y());
+}
+
+void Pointer::hideCursor()
+{
+    setCursor(nullptr);
 }
 
 Surface *Pointer::enteredSurface()

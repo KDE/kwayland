@@ -35,6 +35,9 @@ set_package_properties(Wayland PROPERTIES
 
 find_package(WaylandScanner)
 
+find_package(EGL)
+set_package_properties(EGL PROPERTIES TYPE REQUIRED)
+
 include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings)
 include(KDECMakeSettings)

@@ -24,6 +24,7 @@ set(CLIENT_LIB_SRCS
     subcompositor.cpp
     subsurface.cpp
     surface.cpp
+    touch.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS

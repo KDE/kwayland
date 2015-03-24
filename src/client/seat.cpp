@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "keyboard.h"
 #include "pointer.h"
+#include "touch.h"
 #include "wayland_pointer_p.h"
 // Wayland
 #include <wayland-client-protocol.h>
@@ -207,14 +208,20 @@ Pointer *Seat::createPointer(QObject *parent)
     return p;
 }
 
-#if 0
-wl_touch *Seat::createTouch()
+Touch *Seat::createTouch(QObject *parent)
 {
     Q_ASSERT(isValid());
     Q_ASSERT(d->capabilityTouch);
-    return wl_seat_get_touch(d->seat);
+    Touch *t = new Touch(parent);
+    connect(this, &Seat::interfaceAboutToBeReleased, t, &Touch::release);
+    connect(this, &Seat::interfaceAboutToBeDestroyed, t, &Touch::destroy);
+    auto w = wl_seat_get_touch(d->seat);
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    t->setup(w);
+    return t;
 }
-#endif
 
 void Seat::Private::setName(const QString &n)
 {

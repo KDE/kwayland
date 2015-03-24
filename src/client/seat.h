@@ -35,6 +35,7 @@ namespace Client
 class EventQueue;
 class Keyboard;
 class Pointer;
+class Touch;
 
 /**
  * @short Wrapper for the wl_seat interface.
@@ -161,9 +162,15 @@ public:
      * @returns The created Pointer.
      **/
     Pointer *createPointer(QObject *parent = nullptr);
-#if 0
-    wl_touch *createTouch();
-#endif
+    /**
+     * Creates a Touch.
+     *
+     * This method may only be called if the Seat has touch support.
+     *
+     * @param parent The parent to pass to the created Touch.
+     * @returns The created Touch.
+     **/
+    Touch *createTouch(QObject *parent = nullptr);
 
 Q_SIGNALS:
     void hasKeyboardChanged(bool);

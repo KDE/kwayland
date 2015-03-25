@@ -83,5 +83,6 @@ install(FILES
   subcompositor.h
   subsurface.h
   surface.h
+  touch.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )

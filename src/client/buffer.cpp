@@ -132,5 +132,10 @@ Buffer::Format Buffer::format() const
     return d->format;
 }
 
+quint32 Buffer::getId(wl_buffer *b)
+{
+    return wl_proxy_get_id(reinterpret_cast<wl_proxy*>(b));
+}
+
 }
 }

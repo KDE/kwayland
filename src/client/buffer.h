@@ -109,6 +109,12 @@ public:
 
     typedef QWeakPointer<Buffer> Ptr;
 
+    /**
+     * Helper method to get the id for a provided native buffer.
+     * @since 5.3
+     **/
+    static quint32 getId(wl_buffer *b);
+
 private:
     friend class ShmPool;
     explicit Buffer(ShmPool *parent, wl_buffer *buffer, const QSize &size, int32_t stride, size_t offset, Format format);

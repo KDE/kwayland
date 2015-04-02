@@ -206,5 +206,13 @@ QString ConnectionThread::socketName() const
     return d->socketName;
 }
 
+void ConnectionThread::flush()
+{
+    if (!d->display) {
+        return;
+    }
+    wl_display_flush(d->display);
+}
+
 }
 }

@@ -117,6 +117,7 @@ public:
      **/
     void setSocketFd(int fd);
 
+
 public Q_SLOTS:
     /**
      * Initializes the connection in an asynchronous way.
@@ -127,6 +128,12 @@ public Q_SLOTS:
      * @see failed
      **/
     void initConnection();
+
+    /**
+     * Explicitly flush the Wayland display.
+     * @since 5.3
+     **/
+    void flush();
 
 Q_SIGNALS:
     /**

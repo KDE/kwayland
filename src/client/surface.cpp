@@ -22,8 +22,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "region.h"
 #include "wayland_pointer_p.h"
 
+#include <QGuiApplication>
 #include <QRegion>
 #include <QVector>
+#include <QWindow>
+#include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -41,6 +44,7 @@ public:
     WaylandPointer<wl_surface, wl_surface_destroy> surface;
     bool frameCallbackInstalled = false;
     QSize size;
+    bool foreign = false;
 
     static QList<Surface*> s_surfaces;
 private:
@@ -69,6 +73,27 @@ Surface::~Surface()
 {
     Private::s_surfaces.removeAll(this);
     release();
+}
+
+Surface *Surface::fromWindow(QWindow *window)
+{
+    if (!window) {
+        return nullptr;
+    }
+    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
+        return nullptr;
+    }
+    QPlatformNativeInterface *native = qApp->platformNativeInterface();
+    if (!native) {
+        return nullptr;
+    }
+    wl_surface *s = reinterpret_cast<wl_surface*>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
+    if (!s) {
+        return nullptr;
+    }
+    Surface *surface = new Surface(window);
+    surface->d->surface.setup(s, true);
+    return surface;
 }
 
 void Surface::release()

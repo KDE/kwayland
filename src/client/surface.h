@@ -31,6 +31,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 struct wl_buffer;
 struct wl_surface;
 
+class QWindow;
+
 namespace KWayland
 {
 namespace Client
@@ -57,6 +59,17 @@ class KWAYLANDCLIENT_EXPORT Surface : public QObject
 public:
     explicit Surface(QObject *parent = nullptr);
     virtual ~Surface();
+
+    /**
+     * Creates a Surface for the given @p window.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr as well as for not created QWindows.
+     *
+     * The returned Surface will be fully setup, but won't be released. It gets automatically
+     * destroyed together with the @p window.
+     * @since 5.4
+     **/
+    static Surface *fromWindow(QWindow *window);
 
     /**
      * Setup this Surface to manage the @p surface.

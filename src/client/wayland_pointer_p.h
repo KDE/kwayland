@@ -38,17 +38,20 @@ public:
         release();
     }
 
-    void setup(Pointer *pointer) {
+    void setup(Pointer *pointer, bool foreign = false) {
         Q_ASSERT(pointer);
         Q_ASSERT(!m_pointer);
         m_pointer = pointer;
+        m_foreign = foreign;
     }
 
     void release() {
         if (!m_pointer) {
             return;
         }
-        deleter(m_pointer);
+        if (!m_foreign) {
+            deleter(m_pointer);
+        }
         m_pointer = nullptr;
     }
 
@@ -56,7 +59,9 @@ public:
         if (!m_pointer) {
             return;
         }
-        free(m_pointer);
+        if (!m_foreign) {
+            free(m_pointer);
+        }
         m_pointer = nullptr;
     }
 
@@ -90,6 +95,7 @@ public:
 
 private:
     Pointer *m_pointer = nullptr;
+    bool m_foreign = false;
 };
 
 }

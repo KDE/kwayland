@@ -181,6 +181,12 @@ public:
     operator wl_surface*() const;
 
     /**
+     * @returns the id of the referenced wl_proxy.
+     * @since 5.4
+     **/
+    quint32 id() const;
+
+    /**
      * All Surfaces which are currently created.
      * TODO: KF6 return QList<Surface*> instead of const-ref
      **/

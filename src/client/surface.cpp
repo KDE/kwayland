@@ -227,5 +227,11 @@ Surface::operator wl_surface*() const
     return d->surface;
 }
 
+quint32 Surface::id() const
+{
+    wl_surface *s = *this;
+    return wl_proxy_get_id(reinterpret_cast<wl_proxy*>(s));
+}
+
 }
 }

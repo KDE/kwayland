@@ -87,6 +87,19 @@ public:
     virtual ~ConnectionThread();
 
     /**
+     * Creates a ConnectionThread for the used QGuiApplication.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr.
+     *
+     * The returned ConnectionThread will be fully setup, which means it manages a wl_display.
+     * There is no need to initConnection and the connected or failed signals won't be emitted.
+     * When the created ConnectionThread gets destroyed the managed wl_display won't be disconnected
+     * as that's managed by Qt.
+     * @since 5.4
+     **/
+    static ConnectionThread *fromApplication(QObject *parent = nullptr);
+
+    /**
      * The display this ConnectionThread is connected to.
      * As long as there is no connection this method returns @c null.
      * @see initConnection

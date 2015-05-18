@@ -21,11 +21,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "logging_p.h"
 // Qt
 #include <QAbstractEventDispatcher>
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFileSystemWatcher>
 #include <QSocketNotifier>
+#include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -51,6 +52,7 @@ public:
     QScopedPointer<QSocketNotifier> socketNotifier;
     QScopedPointer<QFileSystemWatcher> socketWatcher;
     bool serverDied = false;
+    bool foreign = false;
 private:
     ConnectionThread *q;
 };
@@ -67,7 +69,7 @@ ConnectionThread::Private::Private(ConnectionThread *q)
 
 ConnectionThread::Private::~Private()
 {
-    if (display) {
+    if (display && !foreign) {
         wl_display_flush(display);
         wl_display_disconnect(display);
     }
@@ -167,6 +169,25 @@ ConnectionThread::ConnectionThread(QObject *parent)
 }
 
 ConnectionThread::~ConnectionThread() = default;
+
+ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
+{
+    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
+        return nullptr;
+    }
+    QPlatformNativeInterface *native = qApp->platformNativeInterface();
+    if (!native) {
+        return nullptr;
+    }
+    wl_display *display = reinterpret_cast<wl_display*>(native->nativeResourceForIntegration(QByteArrayLiteral("wl_display")));
+    if (!display) {
+        return nullptr;
+    }
+    ConnectionThread *ct = new ConnectionThread(parent);
+    ct->d->foreign = true;
+    ct->d->display = display;
+    return ct;
+}
 
 void ConnectionThread::initConnection()
 {

@@ -91,6 +91,17 @@ add_test(kwayland-testShmPool testShmPool)
 ecm_mark_as_test(testShmPool)
 
 ########################################################
+# Test KWin
+########################################################
+set( test_wayland_kwin_SRCS
+        test_wayland_kwin.cpp
+    )
+add_executable(testWaylandKWin ${test_wayland_kwin_SRCS})
+target_link_libraries( testWaylandKWin Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(kwayland-testKWin testWaylandKWin)
+ecm_mark_as_test(testWaylandKWin)
+
+########################################################
 # Test Compositor
 ########################################################
 set( testCompositor_SRCS

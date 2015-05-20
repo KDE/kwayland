@@ -38,6 +38,7 @@ namespace Server
 
 class CompositorInterface;
 class DataDeviceManagerInterface;
+class KWinInterface;
 class OutputInterface;
 class SeatInterface;
 class ShellInterface;
@@ -114,6 +115,7 @@ public:
     SeatInterface *createSeat(QObject *parent = nullptr);
     SubCompositorInterface *createSubCompositor(QObject *parent = nullptr);
     DataDeviceManagerInterface *createDataDeviceManager(QObject *parent = nullptr);
+    KWinInterface *createKWin(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

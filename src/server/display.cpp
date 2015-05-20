@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
+#include "kwin_interface.h"
 #include "logging_p.h"
 #include "output_interface.h"
 #include "seat_interface.h"
@@ -200,6 +201,13 @@ ShellInterface *Display::createShell(QObject *parent)
     ShellInterface *shell = new ShellInterface(this, parent);
     connect(this, &Display::aboutToTerminate, shell, [this,shell] { delete shell; });
     return shell;
+}
+
+KWinInterface *Display::createKWin(QObject *parent)
+{
+    KWinInterface *kwin = new KWinInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
+    return kwin;
 }
 
 SeatInterface *Display::createSeat(QObject *parent)

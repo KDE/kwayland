@@ -1,3 +1,5 @@
+
+
 set(SERVER_LIB_SRCS
     buffer_interface.cpp
     clientconnection.cpp
@@ -19,6 +21,12 @@ set(SERVER_LIB_SRCS
     surface_interface.cpp
     subcompositor_interface.cpp
     touch_interface.cpp
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin.xml
+    BASENAME org_kde_kwin
+    #PREFIX org_kde_kwin_
 )
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})

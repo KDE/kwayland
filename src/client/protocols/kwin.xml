@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="org_kde_kwin">
+  <copyright><![CDATA[
+    Copyright 2015 Sebastian Kügler <sebas@kde.org>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ]]></copyright>
+
+  <interface name="org_kde_kwin_outputs" version="1">
+    <description summary="list outputs">
+
+    </description>
+
+    <request name="get_outputs">
+        <description summary="trigger listing outputs">
+        </description>
+    </request>
+
+    <event name="outputConnected">
+      <description summary="emitted when an output is connected">
+      </description>
+      <arg name="edid" type="string" summary="the outputs EDID string"/>
+      <arg name="name" type="string" summary="output's name"/>
+      <arg name="connector" type="string" summary="output's connector"/>
+  </event>
+
+    <event name="outputDisconnected">
+      <description summary="emitted when an output is disconnected">
+      </description>
+      <arg name="name" type="string" summary="output's name"/>
+      <arg name="connector" type="string" summary="output's connector"/>
+  </event>
+
+</interface>
+</protocol>

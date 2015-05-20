@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // WaylandServer
 #include "../../src/server/display.h"
 #include "../../src/server/clientconnection.h"
+#include "../../src/server/kwin_interface.h"
 #include "../../src/server/output_interface.h"
 // Wayland
 #include <wayland-server.h>
@@ -199,7 +200,7 @@ void TestWaylandServerDisplay::testKWin()
     auto display = new KWayland::Server::Display(this);
     display->setSocketName("kwayland-test-0");
     auto kwin = display->createKWin(this);
-    
+    kwin->getOutputs();
     display->start();
 
 }

@@ -35,6 +35,7 @@ struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
+struct org_kde_kwin;
 
 namespace KWayland
 {
@@ -46,6 +47,7 @@ class ConnectionThread;
 class DataDeviceManager;
 class EventQueue;
 class FullscreenShell;
+class KWin;
 class Output;
 class Seat;
 class Shell;
@@ -95,7 +97,8 @@ public:
         Output,     ///< Refers to the wl_output interface
         FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
-        DataDeviceManager ///< Refers to the wl_data_device_manager interface
+        DataDeviceManager, ///< Refers to the wl_data_device_manager interface
+        KWin ///< Refers to the wl_data_device_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -199,6 +202,15 @@ public:
      * @see createShmPool
      **/
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the wl_subcompositor with @p name and @p version.
+     * If the @p name does not exist or is not for the subcompositor interface,
+     * @c null will be returned.
+     *
+     * Prefer using createSubCompositor instead.
+     * @see createSubCompositor
+     **/
+    org_kde_kwin *bindKWin(uint32_t name, uint32_t version) const;
     /**
      * Binds the wl_subcompositor with @p name and @p version.
      * If the @p name does not exist or is not for the subcompositor interface,

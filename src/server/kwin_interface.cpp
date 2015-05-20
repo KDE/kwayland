@@ -89,7 +89,7 @@ void KWinInterface::Private::bind(wl_client *client, uint32_t version, uint32_t 
     r.version = version;
     resources << r;
 
-    org_kde_kwin_outputs_send_outputConnected(resource, "", "DiscoScreen", "HDMI1");
+    org_kde_kwin_send_outputConnected(resource, "", "DiscoScreen", "HDMI1");
 
     c->flush();
 }

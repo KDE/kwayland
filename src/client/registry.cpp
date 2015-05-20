@@ -35,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
+#include <wayland-org_kde_kwin-client-protocol.h>
 
 namespace KWayland
 {
@@ -340,6 +341,11 @@ wl_shell *Registry::bindShell(uint32_t name, uint32_t version) const
 wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
 {
     return d->bind<wl_shm>(Interface::Shm, name, qMin(s_shmMaxVersion, version));
+}
+
+org_kde_kwin *Registry::bindKWin(uint32_t name, uint32_t version) const
+{
+    return d->bind<org_kde_kwin>(Interface::KWin, name, qMin(s_shmMaxVersion, version));
 }
 
 wl_subcompositor *Registry::bindSubCompositor(uint32_t name, uint32_t version) const

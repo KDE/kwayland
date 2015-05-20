@@ -49,6 +49,7 @@ static const quint32 s_shmMaxVersion = 1;
 static const quint32 s_seatMaxVersion = 3;
 static const quint32 s_shellMaxVersion = 1;
 static const quint32 s_subcompositorMaxVersion = 1;
+static const quint32 s_kwinMaxVersion = 1;
 
 class Registry::Private
 {
@@ -199,6 +200,8 @@ static Registry::Interface nameToInterface(const char *interface)
 {
     if (strcmp(interface, "wl_compositor") == 0) {
         return Registry::Interface::Compositor;
+    } else if (strcmp(interface, "org_kde_kwin") == 0) {
+        return Registry::Interface::KWin;
     } else if (strcmp(interface, "wl_shell") == 0) {
         return Registry::Interface::Shell;
     } else if (strcmp(interface, "wl_seat") == 0) {

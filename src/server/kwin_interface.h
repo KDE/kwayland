@@ -44,7 +44,6 @@ class KWAYLANDSERVER_EXPORT KWinInterface : public Global
     Q_OBJECT
 
 public:
-    explicit KWinInterface(Display *display, QObject *parent = nullptr);
     virtual ~KWinInterface();
 
     void getOutputs();
@@ -53,6 +52,7 @@ Q_SIGNALS:
     void outputConnected();
 
 private:
+    explicit KWinInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

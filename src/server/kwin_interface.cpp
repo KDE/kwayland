@@ -23,6 +23,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 
 #include <wayland-server.h>
+#include "wayland-org_kde_kwin-server-protocol.h"
+
+#include <QDebug>
 
 namespace KWayland
 {
@@ -86,25 +89,8 @@ void KWinInterface::Private::bind(wl_client *client, uint32_t version, uint32_t 
     r.version = version;
     resources << r;
 
-//     sendGeometry(resource);
-//     sendScale(r);
+    org_kde_kwin_outputs_send_outputConnected(resource, "", "DiscoScreen", "HDMI1");
 
-//     auto currentModeIt = modes.constEnd();
-//     for (auto it = modes.constBegin(); it != modes.constEnd(); ++it) {
-//         const Mode &mode = *it;
-//         if (mode.flags.testFlag(ModeFlag::Current)) {
-//             // needs to be sent as last mode
-//             currentModeIt = it;
-//             continue;
-//         }
-// //         sendMode(resource, mode);
-//     }
-//
-//     if (currentModeIt != modes.constEnd()) {
-//         sendMode(resource, *currentModeIt);
-//     }
-
-//     sendDone(r);
     c->flush();
 }
 
@@ -115,6 +101,11 @@ void KWinInterface::Private::unbind(wl_resource *resource)
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
+}
+
+void KWinInterface::getOutputs()
+{
+    qDebug() << "GetOutputs!";
 }
 
 

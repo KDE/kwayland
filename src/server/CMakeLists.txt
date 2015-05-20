@@ -75,6 +75,7 @@ install(FILES
   display.h
   global.h
   keyboard_interface.h
+  kwin_interface.h
   output_interface.h
   pointer_interface.h
   region_interface.h

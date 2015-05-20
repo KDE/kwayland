@@ -41,6 +41,7 @@ private Q_SLOTS:
     void testAddRemoveOutput();
     void testClientConnection();
     void testConnectNoSocket();
+    void testKWin();
 };
 
 void TestWaylandServerDisplay::testSocketName()
@@ -192,6 +193,17 @@ void TestWaylandServerDisplay::testConnectNoSocket()
     close(sv[0]);
     close(sv[1]);
 }
+
+void TestWaylandServerDisplay::testKWin()
+{
+    auto display = new KWayland::Server::Display(this);
+    display->setSocketName("kwayland-test-0");
+    auto kwin = display->createKWin(this);
+    
+    display->start();
+
+}
+
 
 QTEST_GUILESS_MAIN(TestWaylandServerDisplay)
 #include "test_display.moc"

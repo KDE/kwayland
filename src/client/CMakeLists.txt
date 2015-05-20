@@ -35,6 +35,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME fullscreen-shell
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin.xml
+    BASENAME org_kde_kwin
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME

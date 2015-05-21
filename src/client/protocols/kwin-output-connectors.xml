@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol name="org_kde_kwin">
+<protocol name="org_kde_kwin_output_connectors">
   <copyright><![CDATA[
     Copyright 2015 Sebastian Kügler <sebas@kde.org>
 
@@ -17,30 +17,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_kwin" version="1">
-    <description summary="list outputs">
-
+  <interface name="org_kde_kwin_output_connectors" version="1">
+    <description summary="list connected, but disabled outputs">
+    This interface allows to enlist connected outputs that are not used by the
+    compositor. These outputs are currently disabled, so not rendered to.
     </description>
 
-    <request name="get_outputs">
-        <description summary="trigger listing outputs">
+    <request name="get_disabled_outputs">
+        <description summary="trigger listing disabled outputs">
         </description>
     </request>
 
-    <event name="outputConnected">
+    <event name="outputAppeared">
       <description summary="emitted when an output is connected">
+        The output is connected, but not used for rendering yet. This means that
+        this output has either just been plugged in, or disabled and excluded from
+        the registry object.
       </description>
       <arg name="edid" type="string" summary="the outputs EDID string"/>
       <arg name="name" type="string" summary="output's name"/>
       <arg name="connector" type="string" summary="output's connector"/>
-  </event>
+    </event>
 
-    <event name="outputDisconnected">
-      <description summary="emitted when an output is disconnected">
+    <event name="outputDisappeared">
+      <description summary="emitted when an output disappears from the list">
+        The output is disconnected, or has been enabled.
       </description>
       <arg name="name" type="string" summary="output's name"/>
       <arg name="connector" type="string" summary="output's connector"/>
-  </event>
+    </event>
+
+    <event name="sync">
+        <description summary="emitted when the listing initiated by get_disabled_outputs is done">
+            This event is fired once the listing of outputs triggered from
+            get_disabled_outputs.has emitted all outputAppeared events.
+        </description>
+    </event>
 
 </interface>
 </protocol>

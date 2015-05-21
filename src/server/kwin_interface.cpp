@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 
 #include <wayland-server.h>
-#include "wayland-org_kde_kwin-server-protocol.h"
+#include "wayland-org_kde_kwin_output_connectors-server-protocol.h"
 
 #include <QDebug>
 
@@ -89,7 +89,7 @@ void KWinInterface::Private::bind(wl_client *client, uint32_t version, uint32_t 
     r.version = version;
     resources << r;
 
-    org_kde_kwin_send_outputConnected(resource, "", "DiscoScreen", "HDMI1");
+    org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
 
     c->flush();
 }

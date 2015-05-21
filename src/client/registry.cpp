@@ -35,7 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
-#include <wayland-org_kde_kwin-client-protocol.h>
+#include <wayland-org_kde_kwin_output_connectors-client-protocol.h>
 
 namespace KWayland
 {

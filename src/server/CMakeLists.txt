@@ -25,8 +25,8 @@ set(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin.xml
-    BASENAME org_kde_kwin
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-output-connectors.xml
+    BASENAME org_kde_kwin_output_connectors
     #PREFIX org_kde_kwin_
 )
 

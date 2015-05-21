@@ -39,12 +39,12 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT KWinInterface : public Global
+class KWAYLANDSERVER_EXPORT KWinOutputConnectorsInterface : public Global
 {
     Q_OBJECT
 
 public:
-    virtual ~KWinInterface();
+    virtual ~KWinOutputConnectorsInterface();
 
     void getOutputs();
 
@@ -52,7 +52,7 @@ Q_SIGNALS:
     void outputConnected();
 
 private:
-    explicit KWinInterface(Display *display, QObject *parent = nullptr);
+    explicit KWinOutputConnectorsInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

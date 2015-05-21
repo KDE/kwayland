@@ -34,14 +34,14 @@ namespace Server
 
 static const quint32 s_version = 1;
 
-class KWinInterface::Private : public Global::Private
+class KWinOutputConnectorsInterface::Private : public Global::Private
 {
 public:
     struct ResourceData {
         wl_resource *resource;
         uint32_t version;
     };
-    Private(KWinInterface *q, Display *d);
+    Private(KWinOutputConnectorsInterface *q, Display *d);
 
     QString manufacturer = QStringLiteral("org.kde.kwin");
     QString model = QStringLiteral("none");
@@ -51,30 +51,30 @@ private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    KWinInterface *q;
+    KWinOutputConnectorsInterface *q;
 };
 
-KWinInterface::Private::Private(KWinInterface *q, Display *d)
+KWinOutputConnectorsInterface::Private::Private(KWinOutputConnectorsInterface *q, Display *d)
     : Global::Private(d, &wl_output_interface, s_version)
     , q(q)
 {
 }
 
-KWinInterface::KWinInterface(Display *display, QObject *parent)
+KWinOutputConnectorsInterface::KWinOutputConnectorsInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
 }
 
-KWinInterface::~KWinInterface() = default;
+KWinOutputConnectorsInterface::~KWinOutputConnectorsInterface() = default;
 
 
-KWinInterface::Private *KWinInterface::d_func() const
+KWinOutputConnectorsInterface::Private *KWinOutputConnectorsInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-void KWinInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&wl_output_interface, qMin(version, s_version), id);
@@ -94,16 +94,16 @@ void KWinInterface::Private::bind(wl_client *client, uint32_t version, uint32_t 
     c->flush();
 }
 
-void KWinInterface::Private::unbind(wl_resource *resource)
+void KWinOutputConnectorsInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<KWinInterface::Private*>(wl_resource_get_user_data(resource));
+    auto o = reinterpret_cast<KWinOutputConnectorsInterface::Private*>(wl_resource_get_user_data(resource));
     auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
 }
 
-void KWinInterface::getOutputs()
+void KWinOutputConnectorsInterface::getOutputs()
 {
     qDebug() << "GetOutputs!";
 }

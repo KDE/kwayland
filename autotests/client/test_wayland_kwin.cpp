@@ -1,5 +1,6 @@
 /********************************************************************
-Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2014 Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2015 Sebastian Kügler <sebas@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -67,7 +68,7 @@ void TestWaylandKWin::init()
     m_display->setSocketName(s_socketName);
     m_display->start();
     QVERIFY(m_display->isRunning());
-    m_display->createKWin(this);
+    m_display->createKWinOutputConnectors(this);
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
@@ -109,6 +110,7 @@ void TestWaylandKWin::cleanup()
 void TestWaylandKWin::testGetOutputs()
 {
      /*-*/
+     auto kwin = m_display->createKWinOutputConnectors();
 }
 
 

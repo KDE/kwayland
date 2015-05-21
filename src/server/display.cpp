@@ -203,9 +203,9 @@ ShellInterface *Display::createShell(QObject *parent)
     return shell;
 }
 
-KWinInterface *Display::createKWin(QObject *parent)
+KWinOutputConnectorsInterface *Display::createKWinOutputConnectors(QObject *parent)
 {
-    KWinInterface *kwin = new KWinInterface(this, parent);
+    KWinOutputConnectorsInterface *kwin = new KWinOutputConnectorsInterface(this, parent);
     connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
     return kwin;
 }

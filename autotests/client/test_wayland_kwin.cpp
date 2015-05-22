@@ -23,11 +23,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
+#include "../../src/client/kwin_output_connectors.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
+#include "../../src/server/shell_interface.h"
+#include "../../src/server/compositor_interface.h"
 #include "../../src/server/output_interface.h"
-//#include "../../src/server/kwin_interface.h"
+#include "../../src/server/kwin_output_connectors_interface.h"
+
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -44,7 +48,9 @@ private Q_SLOTS:
 
 private:
     KWayland::Server::Display *m_display;
-//     KWayland::Server::KWin *m_kwin;
+    KWayland::Server::KWinOutputConnectorsInterface *m_kwinInterface;
+    KWayland::Server::OutputInterface *m_serverOutput;
+    //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
     QThread *m_thread;
@@ -68,7 +74,22 @@ void TestWaylandKWin::init()
     m_display->setSocketName(s_socketName);
     m_display->start();
     QVERIFY(m_display->isRunning());
-    m_display->createKWinOutputConnectors(this);
+
+    auto shell = m_display->createShell(this);
+    shell->create();
+    auto comp = m_display->createCompositor(this);
+    comp->create();
+
+    m_serverOutput = m_display->createOutput(this);
+    m_serverOutput->addMode(QSize(800, 600), OutputInterface::ModeFlags(OutputInterface::ModeFlag::Preferred));
+    m_serverOutput->addMode(QSize(1024, 768));
+    m_serverOutput->addMode(QSize(1280, 1024), OutputInterface::ModeFlags(), 90000);
+    m_serverOutput->setCurrentMode(QSize(1024, 768));
+    m_serverOutput->create();
+
+    qDebug() << "creating m_kwinInterface";
+    m_kwinInterface = m_display->createKWinOutputConnectors(this);
+    m_kwinInterface->create();
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
@@ -110,7 +131,25 @@ void TestWaylandKWin::cleanup()
 void TestWaylandKWin::testGetOutputs()
 {
      /*-*/
-     auto kwin = m_display->createKWinOutputConnectors();
+     //auto kwin = m_display->createKWinOutputConnectors();
+     //kwin->getOutputs();
+
+     KWayland::Client::Registry registry;
+     //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+     //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
+     QSignalSpy announced(&registry, SIGNAL(kwinOutputConnectorsAnnounced(quint32,quint32)));
+     registry.create(m_connection->display());
+     QVERIFY(registry.isValid());
+     registry.setup();
+     wl_display_flush(m_connection->display());
+     QVERIFY(announced.wait(1000));
+
+
+     KWayland::Client::KWinOutputConnectors *kwin = registry.createKWinOutputConnectors(announced.first().first().value<quint32>(), 1, &registry);
+     QVERIFY(kwin->isValid());
+     
+     kwin->getDisabledOutputs();
+
 }
 
 

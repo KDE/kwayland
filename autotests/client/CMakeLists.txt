@@ -97,7 +97,7 @@ set( test_wayland_kwin_SRCS
         test_wayland_kwin.cpp
     )
 add_executable(testWaylandKWin ${test_wayland_kwin_SRCS})
-target_link_libraries( testWaylandKWin Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+target_link_libraries( testWaylandKWin Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client)
 add_test(kwayland-testKWin testWaylandKWin)
 ecm_mark_as_test(testWaylandKWin)
 

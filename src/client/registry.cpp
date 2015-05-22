@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "fullscreen_shell.h"
 #include "logging_p.h"
+#include "kwin_output_connectors.h"
 #include "output.h"
 #include "seat.h"
 #include "shell.h"
@@ -200,8 +201,8 @@ static Registry::Interface nameToInterface(const char *interface)
 {
     if (strcmp(interface, "wl_compositor") == 0) {
         return Registry::Interface::Compositor;
-    } else if (strcmp(interface, "org_kde_kwin") == 0) {
-        return Registry::Interface::KWin;
+    } else if (strcmp(interface, "org_kde_kwin_output_connectors") == 0) {
+        return Registry::Interface::KWinOutputConnectors;
     } else if (strcmp(interface, "wl_shell") == 0) {
         return Registry::Interface::Shell;
     } else if (strcmp(interface, "wl_seat") == 0) {
@@ -254,6 +255,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::DataDeviceManager:
         emit q->dataDeviceManagerAnnounced(name, version);
+        break;
+    case Interface::KWinOutputConnectors:
+        emit q->kwinOutputConnectorsAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -346,9 +350,9 @@ wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
     return d->bind<wl_shm>(Interface::Shm, name, qMin(s_shmMaxVersion, version));
 }
 
-org_kde_kwin *Registry::bindKWin(uint32_t name, uint32_t version) const
+org_kde_kwin_output_connectors *Registry::bindKWinOutputConnectors(uint32_t name, uint32_t version) const
 {
-    return d->bind<org_kde_kwin>(Interface::KWin, name, qMin(s_shmMaxVersion, version));
+    return d->bind<org_kde_kwin_output_connectors>(Interface::KWinOutputConnectors, name, qMin(s_shmMaxVersion, version));
 }
 
 wl_subcompositor *Registry::bindSubCompositor(uint32_t name, uint32_t version) const
@@ -428,6 +432,14 @@ DataDeviceManager *Registry::createDataDeviceManager(quint32 name, quint32 versi
     return m;
 }
 
+KWinOutputConnectors* Registry::createKWinOutputConnectors(quint32 name, quint32 version, QObject* parent)
+{
+    auto k = new KWinOutputConnectors(parent);
+    //k->setEventQueue(d->queue);
+    k->setup(bindKWinOutputConnectors(name, version));
+    return k;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -447,6 +459,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &wl_subcompositor_interface;
     case Registry::Interface::DataDeviceManager:
         return &wl_data_device_manager_interface;
+    case Registry::Interface::KWinOutputConnectors:
+        return &org_kde_kwin_output_connectors_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

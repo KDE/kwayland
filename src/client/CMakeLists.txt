@@ -16,6 +16,7 @@ set(CLIENT_LIB_SRCS
     datasource.cpp
     fullscreen_shell.cpp
     keyboard.cpp
+    kwin_output_connectors.cpp
     logging.cpp
     output.cpp
     pointer.cpp
@@ -39,6 +40,7 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-output-connectors.xml
     BASENAME org_kde_kwin_output_connectors
 )
+message("Client Sources: ${CLIENT_LIB_SRCS}")
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -81,6 +83,7 @@ install(FILES
   datasource.h
   fullscreen_shell.h
   keyboard.h
+  kwin_output_connectors.h
   output.h
   pointer.h
   region.h

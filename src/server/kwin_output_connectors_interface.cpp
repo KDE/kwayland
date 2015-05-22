@@ -65,7 +65,7 @@ KWinOutputConnectorsInterface::KWinOutputConnectorsInterface(Display *display, Q
 {
     Q_D();
     qDebug() << "New output interface";
-    wl_display_flush_clients(*(d->display));
+    //wl_display_flush_clients(*(d->display));
 }
 
 KWinOutputConnectorsInterface::~KWinOutputConnectorsInterface() = default;
@@ -93,6 +93,7 @@ void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t ve
     resources << r;
 
     org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
+    org_kde_kwin_output_connectors_send_outputAppeared(resource, "INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
     org_kde_kwin_output_connectors_send_sync(resource);
 
     c->flush();
@@ -107,9 +108,12 @@ void KWinOutputConnectorsInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void KWinOutputConnectorsInterface::getOutputs()
+void KWinOutputConnectorsInterface::getDisabledOutputs()
 {
-    qDebug() << "GetOutputs!";
+    Q_ASSERT(isValid());
+    qDebug() << "getDisabledOutputs!";
+//     org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
+//     org_kde_kwin_output_connectors_send_sync(resource);
 }
 
 

@@ -68,51 +68,6 @@ class KWAYLANDCLIENT_EXPORT KWinOutputConnectors : public QObject
 {
     Q_OBJECT
 public:
-    enum class SubPixel {
-        Unknown,
-        None,
-        HorizontalRGB,
-        HorizontalBGR,
-        VerticalRGB,
-        VerticalBGR
-    };
-    enum class Transform {
-        Normal,
-        Rotated90,
-        Rotated180,
-        Rotated270,
-        Flipped,
-        Flipped90,
-        Flipped180,
-        Flipped270
-    };
-    struct Mode {
-        enum class Flag {
-            None = 0,
-            Current = 1 << 0,
-            Preferred = 1 << 1
-        };
-        Q_DECLARE_FLAGS(Flags, Flag)
-        /**
-         * The size of this Mode in pixel space.
-         **/
-        QSize size;
-        /**
-         * The refresh rate in mHz of this Mode.
-         **/
-        int refreshRate = 0;
-        /**
-         * The flags of this Mode, that is whether it's the
-         * Current and/or Preferred Mode of the KWinOutputConnectors.
-         **/
-        Flags flags = Flag::None;
-        /**
-         * The KWinOutputConnectors to which this Mode belongs.
-         **/
-        QPointer<KWinOutputConnectors> output;
-
-        bool operator==(const Mode &m) const;
-    };
     explicit KWinOutputConnectors(QObject *parent = nullptr);
     virtual ~KWinOutputConnectors();
 
@@ -138,19 +93,7 @@ Q_SIGNALS:
      * Emitted whenever at least one of the data changed.
      **/
     void sync();
-    /**
-     * Emitted whenever a new Mode is added.
-     * This normally only happens during the initial promoting of modes.
-     * Afterwards only modeChanged should be emitted.
-     * @param mode The newly added Mode.
-     * @see modeChanged
-     **/
     void outputAppeared(const QString &name, const QString &connector);
-    /**
-     * Emitted whenever a Mode changes.
-     * This normally means that the @c Mode::Flag::Current is added or removed.
-     * @param mode The changed Mode
-     **/
     void outputDisppeared(const QString &name, const QString &connector);
 
 private:

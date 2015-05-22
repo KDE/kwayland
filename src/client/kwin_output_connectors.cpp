@@ -35,8 +35,6 @@ namespace KWayland
 namespace Client
 {
 
-typedef QList<KWinOutputConnectors::Mode> Modes;
-
 class KWinOutputConnectors::Private
 {
 public:
@@ -48,8 +46,6 @@ public:
     void getDisabledOutputs();
 
 private:
-
-
     static void outputAppearedCallback(void *data, org_kde_kwin_output_connectors *output,
                                        const char *edid,
                                        const char *name,
@@ -125,6 +121,7 @@ void KWinOutputConnectors::Private::getDisabledOutputs()
 {
     qDebug() << "client: get disabled outputs";
     org_kde_kwin_output_connectors_get_disabled_outputs(output);
+
 }
 
 org_kde_kwin_output_connectors *KWinOutputConnectors::output()

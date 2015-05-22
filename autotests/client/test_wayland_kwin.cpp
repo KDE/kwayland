@@ -90,6 +90,7 @@ void TestWaylandKWin::init()
     qDebug() << "creating m_kwinInterface";
     m_kwinInterface = m_display->createKWinOutputConnectors(this);
     m_kwinInterface->create();
+    QVERIFY(m_kwinInterface->isValid());
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
@@ -147,7 +148,7 @@ void TestWaylandKWin::testGetOutputs()
 
      KWayland::Client::KWinOutputConnectors *kwin = registry.createKWinOutputConnectors(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
-     
+
      kwin->getDisabledOutputs();
 
 }

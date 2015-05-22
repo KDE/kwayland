@@ -46,10 +46,12 @@ class KWAYLANDSERVER_EXPORT KWinOutputConnectorsInterface : public Global
 public:
     virtual ~KWinOutputConnectorsInterface();
 
-    void getOutputs();
+    void getDisabledOutputs();
 
 Q_SIGNALS:
-    void outputConnected();
+    void outputAppeared(const QString &edid, const QString &name, const QString &connector);
+    void outputDisappeared(const QString &name, const QString &connector);
+    void sync();
 
 private:
     explicit KWinOutputConnectorsInterface(Display *display, QObject *parent = nullptr);

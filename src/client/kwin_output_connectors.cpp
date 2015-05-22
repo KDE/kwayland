@@ -94,17 +94,21 @@ org_kde_kwin_output_connectors_listener KWinOutputConnectors::Private::s_outputL
 void KWinOutputConnectors::Private::outputAppearedCallback(void* data, org_kde_kwin_output_connectors* output, const char* edid, const char* name, const char* connector)
 {
     qDebug() << "outputAppearedCallback!" << name << connector;
+    auto o = reinterpret_cast<KWinOutputConnectors::Private*>(data);
+    Q_ASSERT(o->output == output);
+
+    emit o->q->outputAppeared(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 
 }
 
 void KWinOutputConnectors::Private::outputDisappearedCallback(void* data, org_kde_kwin_output_connectors* output, const char* name, const char* connector)
 {
-    qDebug() << "outputDisappearedCallback!" << name << connector;
+    qDebug() << "outputDisappearedCallback! FIXME" << name << connector;
 }
 
 void KWinOutputConnectors::Private::syncCallback(void* data, org_kde_kwin_output_connectors* output)
 {
-    qDebug() << "Sync!";
+    qDebug() << "Sync! FIXME";
 }
 
 void KWinOutputConnectors::setup(org_kde_kwin_output_connectors *output)
@@ -121,7 +125,6 @@ void KWinOutputConnectors::Private::getDisabledOutputs()
 {
     qDebug() << "client: get disabled outputs";
     org_kde_kwin_output_connectors_get_disabled_outputs(output);
-
 }
 
 org_kde_kwin_output_connectors *KWinOutputConnectors::output()

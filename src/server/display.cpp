@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
-#include "kwin_interface.h"
+#include "kwin_output_connectors_interface.h"
 #include "logging_p.h"
 #include "output_interface.h"
 #include "seat_interface.h"

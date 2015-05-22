@@ -11,7 +11,7 @@ set(SERVER_LIB_SRCS
     display.cpp
     global.cpp
     keyboard_interface.cpp
-    kwin_interface.cpp
+    kwin_output_connectors_interface.cpp
     logging.cpp
     output_interface.cpp
     pointer_interface.cpp
@@ -27,8 +27,9 @@ set(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-output-connectors.xml
     BASENAME org_kde_kwin_output_connectors
-    #PREFIX org_kde_kwin_
 )
+
+message("Server Sources: ${SERVER_LIB_SRCS}")
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
 generate_export_header(KF5WaylandServer
@@ -75,7 +76,7 @@ install(FILES
   display.h
   global.h
   keyboard_interface.h
-  kwin_interface.h
+  kwin_output_connectors_interface.h
   output_interface.h
   pointer_interface.h
   region_interface.h

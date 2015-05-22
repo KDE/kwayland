@@ -18,7 +18,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "kwin_interface.h"
+#include "kwin_output_connectors_interface.h"
 #include "global_p.h"
 #include "display.h"
 
@@ -55,7 +55,7 @@ private:
 };
 
 KWinOutputConnectorsInterface::Private::Private(KWinOutputConnectorsInterface *q, Display *d)
-    : Global::Private(d, &wl_output_interface, s_version)
+    : Global::Private(d, &org_kde_kwin_output_connectors_interface, s_version)
     , q(q)
 {
 }
@@ -64,6 +64,8 @@ KWinOutputConnectorsInterface::KWinOutputConnectorsInterface(Display *display, Q
     : Global(new Private(this, display), parent)
 {
     Q_D();
+    qDebug() << "New output interface";
+    wl_display_flush_clients(*(d->display));
 }
 
 KWinOutputConnectorsInterface::~KWinOutputConnectorsInterface() = default;
@@ -76,8 +78,9 @@ KWinOutputConnectorsInterface::Private *KWinOutputConnectorsInterface::d_func() 
 
 void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
+    qDebug() << "Bound!";
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&wl_output_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_output_connectors_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -90,6 +93,7 @@ void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t ve
     resources << r;
 
     org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
+    org_kde_kwin_output_connectors_send_sync(resource);
 
     c->flush();
 }

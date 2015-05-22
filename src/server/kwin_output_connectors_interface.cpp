@@ -65,7 +65,6 @@ KWinOutputConnectorsInterface::KWinOutputConnectorsInterface(Display *display, Q
 {
     Q_D();
     qDebug() << "New output interface";
-    //wl_display_flush_clients(*(d->display));
 }
 
 KWinOutputConnectorsInterface::~KWinOutputConnectorsInterface() = default;
@@ -97,6 +96,7 @@ void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t ve
     org_kde_kwin_output_connectors_send_sync(resource);
 
     c->flush();
+    qDebug() << "Flushed";
 }
 
 void KWinOutputConnectorsInterface::Private::unbind(wl_resource *resource)

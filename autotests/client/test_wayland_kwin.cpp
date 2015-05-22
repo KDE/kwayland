@@ -150,6 +150,10 @@ void TestWaylandKWin::testGetOutputs()
      QVERIFY(kwin->isValid());
 
      kwin->getDisabledOutputs();
+     //wl_display_flush(m_connection->display());
+     QSignalSpy syncSpy(kwin, SIGNAL(sync()));
+//      QVERIFY(syncSpy.wait(200));
+     syncSpy.wait(200);
 
 }
 

@@ -93,7 +93,7 @@ Q_SIGNALS:
      * Emitted whenever at least one of the data changed.
      **/
     void sync();
-    void outputAppeared(const QString &name, const QString &connector);
+    void outputAppeared(const QString &edid, const QString &name, const QString &connector);
     void outputDisppeared(const QString &name, const QString &connector);
 
 private:

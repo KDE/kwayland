@@ -80,6 +80,7 @@
 
     <!-- Desktop loading -->
 
+<!--
     <event name="loaded">
       <description summary="tell the shell to create and set its surfaces">
         Tell the shell we want it to create and set its surfaces such as
@@ -104,15 +105,18 @@
         See also the splash role in org_kde_plasma_surface.set_role.
       </description>
     </request>
+-->
 
     <!-- Other stuff -->
 
+<!--
     <request name="present">
       <description summary="present all surfaces specified">
         Tell the compositor to present all the specified surfaces.
       </description>
       <arg name="surfaces" type="array" allow-null="true" summary="list of surfaces to present"/>
     </request>
+-->
 
     <!-- Martin will discuss the whole security concept at XDC -->
     <!--
@@ -291,6 +295,7 @@
 
     <!-- Flags -->
 
+<!--
     <enum name="flag">
       <description summary="flags on the surface">
         Various flags that modify the behavior of the surface.
@@ -324,10 +329,12 @@
       </description>
       <arg name="flags" type="uint" summary="bitmask of flag values"/>
     </request>
+-->
 
     <!-- Screen edge -->
     <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->
 
+<!--
     <enum name="screen_edge">
       <entry name="none" value="0"/>
       <entry name="left" value="1"/>
@@ -341,5 +348,6 @@
       </description>
       <arg name="screen_edge" type="uint"/>
     </request>
+-->
   </interface>
 </protocol>

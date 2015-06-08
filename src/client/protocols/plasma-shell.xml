@@ -184,14 +184,16 @@
     <!-- Role -->
 
     <enum name="role">
-      <entry name="none" value="0"/>
+      <entry name="normal" value="0"/>
+      <entry name="desktop" value="1"/>
+      <entry name="panel" value="2"/>
+<!--
       <entry name="splash" value="1"/>
-      <entry name="desktop" value="2"/>
       <entry name="dashboard" value="3"/>
-      <entry name="panel" value="4"/>
       <entry name="overlay" value="5"/>
       <entry name="notification" value="6"/>
       <entry name="lock" value="7"/>
+-->
     </enum>
 
     <request name="set_role">

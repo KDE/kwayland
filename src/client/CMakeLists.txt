@@ -19,6 +19,7 @@ set(CLIENT_LIB_SRCS
     logging.cpp
     output.cpp
     pointer.cpp
+    plasmashell.cpp
     region.cpp
     registry.cpp
     seat.cpp
@@ -33,6 +34,11 @@ set(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fullscreen-shell.xml
     BASENAME fullscreen-shell
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
+    BASENAME plasma-shell
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -78,6 +84,7 @@ install(FILES
   keyboard.h
   output.h
   pointer.h
+  plasmashell.h
   region.h
   registry.h
   seat.h

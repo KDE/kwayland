@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fullscreen_shell.h"
 #include "logging_p.h"
 #include "output.h"
+#include "plasmashell.h"
 #include "seat.h"
 #include "shell.h"
 #include "shm_pool.h"
@@ -35,6 +36,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
+#include <wayland-plasma-shell-client-protocol.h>
 
 namespace KWayland
 {
@@ -48,6 +50,7 @@ static const quint32 s_shmMaxVersion = 1;
 static const quint32 s_seatMaxVersion = 3;
 static const quint32 s_shellMaxVersion = 1;
 static const quint32 s_subcompositorMaxVersion = 1;
+static const quint32 s_plasmaShellMaxVersion = 1;
 
 class Registry::Private
 {
@@ -212,6 +215,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::SubCompositor;
     } else if (strcmp(interface, "wl_data_device_manager") == 0) {
         return Registry::Interface::DataDeviceManager;
+    } else if (strcmp(interface, "org_kde_plasma_shell") == 0) {
+        return Registry::Interface::PlasmaShell;
     }
     return Registry::Interface::Unknown;
 }
@@ -250,6 +255,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::DataDeviceManager:
         emit q->dataDeviceManagerAnnounced(name, version);
+        break;
+    case Interface::PlasmaShell:
+        emit q->plasmaShellAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -292,6 +300,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::DataDeviceManager:
             emit q->dataDeviceManagerRemoved(data.name);
+            break;
+        case Interface::PlasmaShell:
+            emit q->plasmaShellRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -357,6 +368,11 @@ wl_data_device_manager *Registry::bindDataDeviceManager(uint32_t name, uint32_t 
     return d->bind<wl_data_device_manager>(Interface::DataDeviceManager, name, qMin(s_dataDeviceManagerMaxVersion, version));
 }
 
+org_kde_plasma_shell* Registry::bindPlasmaShell(uint32_t name, uint32_t version) const
+{
+    return d->bind<org_kde_plasma_shell>(Interface::PlasmaShell, name, qMin(s_plasmaShellMaxVersion, version));
+}
+
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
 {
     Compositor *c = new Compositor(parent);
@@ -419,6 +435,14 @@ DataDeviceManager *Registry::createDataDeviceManager(quint32 name, quint32 versi
     return m;
 }
 
+PlasmaShell *Registry::createPlasmaShell(quint32 name, quint32 version, QObject *parent)
+{
+    auto s = new PlasmaShell(parent);
+    s->setEventQueue(d->queue);
+    s->setup(bindPlasmaShell(name, version));
+    return s;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -438,6 +462,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &wl_subcompositor_interface;
     case Registry::Interface::DataDeviceManager:
         return &wl_data_device_manager_interface;
+    case Registry::Interface::PlasmaShell:
+        return &org_kde_plasma_shell_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

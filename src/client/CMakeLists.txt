@@ -20,6 +20,7 @@ set(CLIENT_LIB_SRCS
     output.cpp
     pointer.cpp
     plasmashell.cpp
+    plasmawindowmanagement.cpp
     region.cpp
     registry.cpp
     seat.cpp
@@ -39,6 +40,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
     BASENAME plasma-shell
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
+    BASENAME plasma-window-management
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -85,6 +90,7 @@ install(FILES
   output.h
   pointer.h
   plasmashell.h
+  plasmawindowmanagement.h
   region.h
   registry.h
   seat.h

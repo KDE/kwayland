@@ -36,6 +36,7 @@ struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
 struct org_kde_plasma_shell;
+struct org_kde_plasma_window_management;
 
 namespace KWayland
 {
@@ -49,6 +50,7 @@ class EventQueue;
 class FullscreenShell;
 class Output;
 class PlasmaShell;
+class PlasmaWindowManagement;
 class Seat;
 class Shell;
 class ShmPool;
@@ -98,7 +100,8 @@ public:
         FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
-        PlasmaShell ///< Refers to org_kde_plasma_shell interface
+        PlasmaShell, ///< Refers to org_kde_plasma_shell interface
+        PlasmaWindowManagement ///< Refers to org_kde_plasma_window_management interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -231,6 +234,7 @@ public:
     _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
     wl_data_device_manager *bindDataDeviceManager(uint32_t name, uint32_t version) const;
     org_kde_plasma_shell *bindPlasmaShell(uint32_t name, uint32_t version) const;
+    org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
 
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
@@ -338,7 +342,8 @@ public:
      **/
     FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
     DataDeviceManager *createDataDeviceManager(quint32 name, quint32 version, QObject *parent = nullptr);
-    PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);;
+    PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
 
     operator wl_registry*();
     operator wl_registry*() const;
@@ -389,6 +394,7 @@ Q_SIGNALS:
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
+    void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
@@ -426,6 +432,7 @@ Q_SIGNALS:
     void fullscreenShellRemoved(quint32 name);
     void dataDeviceManagerRemoved(quint32 name);
     void plasmaShellRemoved(quint32 name);
+    void plasmaWindowManagementRemoved(quint32 name);
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

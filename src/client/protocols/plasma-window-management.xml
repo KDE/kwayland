@@ -27,6 +27,7 @@
       Only one client can bind this interface at a time.
     </description>
 
+    <!--
     <enum name="state">
       <entry name="inactive" value="0x0"/>
       <entry name="active" value="0x1"/>
@@ -38,6 +39,7 @@
       <entry name="shaded" value="0x7"/>
       <entry name="on_all_desktops" value="0x8"/>
     </enum>
+    -->
 
     <enum name="show_desktop">
         <entry name="disabled" value="0"/>
@@ -61,6 +63,7 @@
       <arg name="state" type="uint" summary="new state"/>
     </event>
 
+    <!--
     <event name="window_created">
       <description summary="notify the client that a window was mapped">
         This event will be sent immediately after a window is mapped.
@@ -75,8 +78,10 @@
       <arg name="title" type="string" summary="window title"/>
       <arg name="app_id" type="string" summary="application identifier"/>
     </event>
+    -->
   </interface>
 
+  <!--
   <interface name="org_kde_plasma_window" version="1">
     <description summary="interface to control application windows">
       Manages and control an application window.
@@ -158,4 +163,5 @@
       </description>
     </event>
   </interface>
+  -->
 </protocol>

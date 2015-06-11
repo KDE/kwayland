@@ -39,18 +39,27 @@
       <entry name="on_all_desktops" value="0x8"/>
     </enum>
 
+    <enum name="show_desktop">
+        <entry name="disabled" value="0"/>
+        <entry name="enabled" value="1"/>
+    </enum>
+
     <request name="show_desktop">
-      <description summary="reveal the desktop">
-        Tell the compositor to reveal the desktop.
+      <description summary="show/hide the desktop">
+        Tell the compositor to show/hide the desktop.
       </description>
+      <arg name="state" type="uint" summary="requested state"/>
     </request>
 
-    <request name="hide_desktop">
-      <description summary="hide desktop">
-        Tell the compositor to restore windows exactly as it was
-        before calling org_kde_plasma_window_management.show_desktop.
-      </description>
-    </request>
+    <event name="show_desktop_changed">
+        <description summary="notify the client when the show desktop mode is entered/left">
+            This event will be sent whenever the show desktop mode changes. E.g. when it is entered
+            or left.
+
+            On binding the interface the current state is sent.
+        </description>
+      <arg name="state" type="uint" summary="new state"/>
+    </event>
 
     <event name="window_created">
       <description summary="notify the client that a window was mapped">

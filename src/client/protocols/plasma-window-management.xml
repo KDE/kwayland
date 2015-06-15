@@ -63,7 +63,6 @@
       <arg name="state" type="uint" summary="new state"/>
     </event>
 
-    <!--
     <event name="window_created">
       <description summary="notify the client that a window was mapped">
         This event will be sent immediately after a window is mapped.
@@ -74,14 +73,9 @@
         They are used in a bitfield.
       </description>
       <arg name="id" type="new_id" interface="org_kde_plasma_window"/>
-      <arg name="flags" type="uint" summary="bitfield of state flags"/>
-      <arg name="title" type="string" summary="window title"/>
-      <arg name="app_id" type="string" summary="application identifier"/>
     </event>
-    -->
   </interface>
 
-  <!--
   <interface name="org_kde_plasma_window" version="1">
     <description summary="interface to control application windows">
       Manages and control an application window.
@@ -89,6 +83,7 @@
       Only one client can bind this interface at a time.
     </description>
 
+  <!--
     <request name="set_state">
       <description summary="set window state">
         Set window state.
@@ -122,6 +117,7 @@
       </description>
     </request>
 
+  -->
     <event name="title_changed">
       <description summary="window title has been changed">
         This event will be sent as soon as the window title is changed.
@@ -137,6 +133,7 @@
       <arg name="app_id" type="string"/>
     </event>
 
+    <!--
     <event name="state_changed">
       <description summary="window state has been changed">
         This event will be sent as soon as the window state changes.
@@ -145,6 +142,7 @@
       </description>
       <arg name="flags" type="uint" summary="bitfield of state flags"/>
     </event>
+    -->
 
     <event name="virtual_desktop_changed">
       <description summary="window was moved to another workspace">
@@ -163,5 +161,4 @@
       </description>
     </event>
   </interface>
-  -->
 </protocol>

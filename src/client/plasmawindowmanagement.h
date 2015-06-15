@@ -26,12 +26,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct org_kde_plasma_window_management;
+struct org_kde_plasma_window;
 
 namespace KWayland
 {
 namespace Client
 {
 class EventQueue;
+class PlasmaWindow;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
@@ -122,6 +124,8 @@ public:
     void showDesktop();
     void hideDesktop();
 
+    QList<PlasmaWindow*> windows() const;
+
 Q_SIGNALS:
     /**
      * This signal is emitted right before the interface is released.
@@ -133,12 +137,78 @@ Q_SIGNALS:
     void interfaceAboutToBeDestroyed();
     void showingDesktopChanged(bool);
 
+    void windowCreated(KWayland::Client::PlasmaWindow *window);
+
 private:
+    class Private;
+    QScopedPointer<Private> d;
+};
+
+/**
+ * @short Wrapper for the org_kde_plasma_window interface.
+ *
+ * This class is a convenient wrapper for the org_kde_plasma_window interface.
+ * The PlasmaWindow gets created by PlasmaWindowManagement.
+ *
+ * @see PlasmaWindowManager
+ **/
+class KWAYLANDCLIENT_EXPORT PlasmaWindow : public QObject
+{
+    Q_OBJECT
+public:
+    virtual ~PlasmaWindow();
+
+    /**
+     * Releases the org_kde_plasma_window interface.
+     * After the interface has been released the PlasmaWindow instance is no
+     * longer valid and can be setup with another org_kde_plasma_window interface.
+     **/
+    void release();
+    /**
+     * Destroys the data hold by this PlasmaWindow.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new org_kde_plasma_window interface
+     * once there is a new connection available.
+     *
+     * It is suggested to connect this method to ConnectionThread::connectionDied:
+     * @code
+     * connect(connection, &ConnectionThread::connectionDied, source, &PlasmaWindow::destroyed);
+     * @endcode
+     *
+     * @see release
+     **/
+    void destroy();
+    /**
+     * @returns @c true if managing a org_kde_plasma_window.
+     **/
+    bool isValid() const;
+
+    operator org_kde_plasma_window*();
+    operator org_kde_plasma_window*() const;
+
+    QString title() const;
+    QString appId() const;
+    quint32 virtualDesktop() const;
+
+Q_SIGNALS:
+    void titleChanged();
+    void appIdChanged();
+    void virtualDesktopChanged();
+    void unmapped();
+
+private:
+    friend class PlasmaWindowManagement;
+    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer);
     class Private;
     QScopedPointer<Private> d;
 };
 
 }
 }
+
+Q_DECLARE_METATYPE(KWayland::Client::PlasmaWindow*)
 
 #endif

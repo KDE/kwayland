@@ -75,6 +75,18 @@ public:
     virtual ~Compositor();
 
     /**
+     * Creates a Compositor for the used QGuiApplication.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr.
+     *
+     * The returned Compositor will be fully setup, which means it manages a wl_compositor.
+     * When the created Compositor gets destroyed the managed wl_compositor won't be disconnected
+     * as that's managed by Qt.
+     * @since 5.4
+     **/
+    static Compositor *fromApplication(QObject *parent = nullptr);
+
+    /**
      * @returns @c true if managing a wl_compositor.
      **/
     bool isValid() const;

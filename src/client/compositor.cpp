@@ -23,7 +23,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "surface.h"
 #include "wayland_pointer_p.h"
 // Qt
+#include <QGuiApplication>
 #include <QRegion>
+#include <qpa/qplatformnativeinterface.h>
 
 #include <wayland-client-protocol.h>
 
@@ -50,6 +52,24 @@ Compositor::Compositor(QObject *parent)
 Compositor::~Compositor()
 {
     release();
+}
+
+Compositor *Compositor::fromApplication(QObject *parent)
+{
+    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
+        return nullptr;
+    }
+    QPlatformNativeInterface *native = qApp->platformNativeInterface();
+    if (!native) {
+        return nullptr;
+    }
+    wl_compositor *compositor = reinterpret_cast<wl_compositor*>(native->nativeResourceForIntegration(QByteArrayLiteral("compositor")));
+    if (!compositor) {
+        return nullptr;
+    }
+    Compositor *c = new Compositor(parent);
+    c->d->compositor.setup(compositor, true);
+    return c;
 }
 
 void Compositor::setup(wl_compositor *compositor)

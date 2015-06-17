@@ -269,8 +269,10 @@ void PlasmaWindow::Private::virtualDesktopChangedCallback(void *data, org_kde_pl
 
 void PlasmaWindow::Private::unmappedCallback(void *data, org_kde_plasma_window *window)
 {
+    auto p = cast(data);
     Q_UNUSED(window);
-    emit cast(data)->q->unmapped();
+    emit p->q->unmapped();
+    p->q->deleteLater();
 }
 
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, PlasmaWindow *q)

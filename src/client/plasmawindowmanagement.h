@@ -192,11 +192,35 @@ public:
     QString title() const;
     QString appId() const;
     quint32 virtualDesktop() const;
+    bool isActive() const;
+    bool isFullscreen() const;
+    bool isKeepAbove() const;
+    bool isKeepBelow() const;
+    bool isMinimized() const;
+    bool isMaximized() const;
+    bool isOnAllDesktops() const;
+    bool isDemandingAttention() const;
+    bool isCloseable() const;
+    bool isMaximizeable() const;
+    bool isMinimizeable() const;
+    bool isFullscreenable() const;
 
 Q_SIGNALS:
     void titleChanged();
     void appIdChanged();
     void virtualDesktopChanged();
+    void activeChanged();
+    void fullscreenChanged();
+    void keepAboveChanged();
+    void keepBelowChanged();
+    void minimizedChanged();
+    void maximizedChanged();
+    void onAllDesktopsChanged();
+    void demandsAttentionChanged();
+    void closeableChanged();
+    void minimizeableChanged();
+    void maximizeableChanged();
+    void fullscreenableChanged();
     void unmapped();
 
 private:

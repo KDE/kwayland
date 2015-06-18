@@ -27,19 +27,20 @@
       Only one client can bind this interface at a time.
     </description>
 
-    <!--
     <enum name="state">
-      <entry name="inactive" value="0x0"/>
-      <entry name="active" value="0x1"/>
-      <entry name="minimized" value="0x2"/>
-      <entry name="maximized" value="0x3"/>
-      <entry name="fullscreen" value="0x4"/>
-      <entry name="keep_above" value="0x5"/>
-      <entry name="keep_below" value="0x6"/>
-      <entry name="shaded" value="0x7"/>
-      <entry name="on_all_desktops" value="0x8"/>
+      <entry name="active" value="1 &lt;&lt; 0"/>
+      <entry name="minimized" value="1 &lt;&lt; 1"/>
+      <entry name="maximized" value="1 &lt;&lt; 2"/>
+      <entry name="fullscreen" value="1 &lt;&lt; 3"/>
+      <entry name="keep_above" value="1 &lt;&lt; 4"/>
+      <entry name="keep_below" value="1 &lt;&lt; 5"/>
+      <entry name="on_all_desktops" value="1 &lt;&lt; 6"/>
+      <entry name="demands_attention" value="1 &lt;&lt; 7"/>
+      <entry name="closeable" value="1 &lt;&lt; 8"/>
+      <entry name="minimizable" value="1 &lt;&lt; 9"/>
+      <entry name="maximizable" value="1 &lt;&lt; 10"/>
+      <entry name="fullscreenable" value="1 &lt;&lt; 11"/>
     </enum>
-    -->
 
     <enum name="show_desktop">
         <entry name="disabled" value="0"/>
@@ -133,7 +134,6 @@
       <arg name="app_id" type="string"/>
     </event>
 
-    <!--
     <event name="state_changed">
       <description summary="window state has been changed">
         This event will be sent as soon as the window state changes.
@@ -142,7 +142,6 @@
       </description>
       <arg name="flags" type="uint" summary="bitfield of state flags"/>
     </event>
-    -->
 
     <event name="virtual_desktop_changed">
       <description summary="window was moved to another workspace">

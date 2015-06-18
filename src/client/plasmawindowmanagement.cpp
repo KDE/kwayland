@@ -209,12 +209,37 @@ public:
     QString title;
     QString appId;
     quint32 desktop = 0;
+    bool active = false;
+    bool minimized = false;
+    bool maximized = false;
+    bool fullscreen = false;
+    bool keepAbove = false;
+    bool keepBelow = false;
+    bool onAllDesktops = false;
+    bool demandsAttention = false;
+    bool closeable = false;
+    bool minimizeable = false;
+    bool maximizeable = false;
+    bool fullscreenable = false;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
+    static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
     static void unmappedCallback(void *data, org_kde_plasma_window *window);
+    void setActive(bool set);
+    void setMinimized(bool set);
+    void setMaximized(bool set);
+    void setFullscreen(bool set);
+    void setKeepAbove(bool set);
+    void setKeepBelow(bool set);
+    void setOnAllDesktops(bool set);
+    void setDemandsAttention(bool set);
+    void setCloseable(bool set);
+    void setMinimizeable(bool set);
+    void setMaximizeable(bool set);
+    void setFullscreenable(bool set);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -228,6 +253,7 @@ private:
 org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     titleChangedCallback,
     appIdChangedCallback,
+    stateChangedCallback,
     virtualDesktopChangedCallback,
     unmappedCallback
 };
@@ -273,6 +299,132 @@ void PlasmaWindow::Private::unmappedCallback(void *data, org_kde_plasma_window *
     Q_UNUSED(window);
     emit p->q->unmapped();
     p->q->deleteLater();
+}
+
+void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+    p->setActive(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
+    p->setMinimized(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
+    p->setMaximized(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED);
+    p->setFullscreen(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN);
+    p->setKeepAbove(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+    p->setKeepBelow(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW);
+    p->setOnAllDesktops(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS);
+    p->setDemandsAttention(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION);
+    p->setCloseable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_CLOSEABLE);
+    p->setFullscreenable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE);
+    p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
+    p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
+}
+
+void PlasmaWindow::Private::setActive(bool set)
+{
+    if (active == set) {
+        return;
+    }
+    active = set;
+    emit q->activeChanged();
+}
+
+void PlasmaWindow::Private::setFullscreen(bool set)
+{
+    if (fullscreen == set) {
+        return;
+    }
+    fullscreen = set;
+    emit q->fullscreenChanged();
+}
+
+void PlasmaWindow::Private::setKeepAbove(bool set)
+{
+    if (keepAbove == set) {
+        return;
+    }
+    keepAbove = set;
+    emit q->keepAboveChanged();
+}
+
+void PlasmaWindow::Private::setKeepBelow(bool set)
+{
+    if (keepBelow == set) {
+        return;
+    }
+    keepBelow = set;
+    emit q->keepBelowChanged();
+}
+
+void PlasmaWindow::Private::setMaximized(bool set)
+{
+    if (maximized == set) {
+        return;
+    }
+    maximized = set;
+    emit q->maximizedChanged();
+}
+
+void PlasmaWindow::Private::setMinimized(bool set)
+{
+    if (minimized == set) {
+        return;
+    }
+    minimized = set;
+    emit q->minimizedChanged();
+}
+
+void PlasmaWindow::Private::setOnAllDesktops(bool set)
+{
+    if (onAllDesktops == set) {
+        return;
+    }
+    onAllDesktops = set;
+    emit q->onAllDesktopsChanged();
+}
+
+void PlasmaWindow::Private::setDemandsAttention(bool set)
+{
+    if (demandsAttention == set) {
+        return;
+    }
+    demandsAttention = set;
+    emit q->demandsAttentionChanged();
+}
+
+void PlasmaWindow::Private::setCloseable(bool set)
+{
+    if (closeable == set) {
+        return;
+    }
+    closeable = set;
+    emit q->closeableChanged();
+}
+
+void PlasmaWindow::Private::setFullscreenable(bool set)
+{
+    if (fullscreenable == set) {
+        return;
+    }
+    fullscreenable = set;
+    emit q->fullscreenableChanged();
+}
+
+void PlasmaWindow::Private::setMaximizeable(bool set)
+{
+    if (maximizeable == set) {
+        return;
+    }
+    maximizeable = set;
+    emit q->maximizeableChanged();
+}
+
+void PlasmaWindow::Private::setMinimizeable(bool set)
+{
+    if (minimizeable == set) {
+        return;
+    }
+    minimizeable = set;
+    emit q->minimizeableChanged();
 }
 
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, PlasmaWindow *q)
@@ -331,6 +483,66 @@ QString PlasmaWindow::title() const
 quint32 PlasmaWindow::virtualDesktop() const
 {
     return d->desktop;
+}
+
+bool PlasmaWindow::isActive() const
+{
+    return d->active;
+}
+
+bool PlasmaWindow::isFullscreen() const
+{
+    return d->fullscreen;
+}
+
+bool PlasmaWindow::isKeepAbove() const
+{
+    return d->keepAbove;
+}
+
+bool PlasmaWindow::isKeepBelow() const
+{
+    return d->keepBelow;
+}
+
+bool PlasmaWindow::isMaximized() const
+{
+    return d->maximized;
+}
+
+bool PlasmaWindow::isMinimized() const
+{
+    return d->minimized;
+}
+
+bool PlasmaWindow::isOnAllDesktops() const
+{
+    return d->onAllDesktops;
+}
+
+bool PlasmaWindow::isDemandingAttention() const
+{
+    return d->demandsAttention;
+}
+
+bool PlasmaWindow::isCloseable() const
+{
+    return d->closeable;
+}
+
+bool PlasmaWindow::isFullscreenable() const
+{
+    return d->fullscreenable;
+}
+
+bool PlasmaWindow::isMaximizeable() const
+{
+    return d->maximizeable;
+}
+
+bool PlasmaWindow::isMinimizeable() const
+{
+    return d->minimizeable;
 }
 
 }

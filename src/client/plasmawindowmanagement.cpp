@@ -567,5 +567,10 @@ bool PlasmaWindow::isMinimizeable() const
     return d->minimizeable;
 }
 
+void PlasmaWindow::requestClose()
+{
+    org_kde_plasma_window_close(d->window);
+}
+
 }
 }

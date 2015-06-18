@@ -207,6 +207,8 @@ public:
     bool isMinimizeable() const;
     bool isFullscreenable() const;
 
+    void requestClose();
+
 Q_SIGNALS:
     void titleChanged();
     void appIdChanged();

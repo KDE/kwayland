@@ -111,6 +111,7 @@
         Tell the compositor to highlight this window.
       </description>
     </request>
+  -->
 
     <request name="close">
       <description summary="close window">
@@ -118,7 +119,6 @@
       </description>
     </request>
 
-  -->
     <event name="title_changed">
       <description summary="window title has been changed">
         This event will be sent as soon as the window title is changed.

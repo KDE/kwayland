@@ -125,6 +125,7 @@ public:
     void hideDesktop();
 
     QList<PlasmaWindow*> windows() const;
+    PlasmaWindow *activeWindow() const;
 
 Q_SIGNALS:
     /**
@@ -138,6 +139,7 @@ Q_SIGNALS:
     void showingDesktopChanged(bool);
 
     void windowCreated(KWayland::Client::PlasmaWindow *window);
+    void activeWindowChanged();
 
 private:
     class Private;

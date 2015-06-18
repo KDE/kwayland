@@ -38,6 +38,7 @@ public:
     EventQueue *queue = nullptr;
     bool showingDesktop = false;
     QList<PlasmaWindow*> windows;
+    PlasmaWindow *activeWindow = nullptr;
 
     void setup(org_kde_plasma_window_management *wm);
 
@@ -112,6 +113,22 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id)
     QObject::connect(window, &QObject::destroyed, q,
         [this, window] {
             windows.removeAll(window);
+        }
+    );
+    QObject::connect(window, &PlasmaWindow::activeChanged, q,
+        [this, window] {
+            if (window->isActive()) {
+                if (activeWindow == window) {
+                    return;
+                }
+                activeWindow = window;
+                emit q->activeWindowChanged();
+            } else {
+                if (activeWindow == window) {
+                    activeWindow = nullptr;
+                    emit q->activeWindowChanged();
+                }
+            }
         }
     );
     emit q->windowCreated(window);
@@ -199,6 +216,11 @@ bool PlasmaWindowManagement::isShowingDesktop() const
 QList< PlasmaWindow* > PlasmaWindowManagement::windows() const
 {
     return d->windows;
+}
+
+PlasmaWindow *PlasmaWindowManagement::activeWindow() const
+{
+    return d->activeWindow;
 }
 
 class PlasmaWindow::Private

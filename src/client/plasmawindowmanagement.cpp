@@ -572,5 +572,10 @@ void PlasmaWindow::requestClose()
     org_kde_plasma_window_close(d->window);
 }
 
+void PlasmaWindow::requestVirtualDesktop(quint32 desktop)
+{
+    org_kde_plasma_window_set_virtual_desktop(d->window, desktop);
+}
+
 }
 }

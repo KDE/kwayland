@@ -84,15 +84,16 @@
       Only one client can bind this interface at a time.
     </description>
 
-  <!--
     <request name="set_state">
       <description summary="set window state">
         Set window state.
 
         Values for state argument are described by org_kde_plasma_window_management.state
-        and can be used together in a bitfield.
+        and can be used together in a bitfield. The flags bitfield describes which flags are
+        supposed to be set, the state bitfield the value for the set flags
       </description>
-      <arg name="flags" type="uint" summary="bitfield of state flags"/>
+      <arg name="flags" type="uint" summary="bitfield of set state flags"/>
+      <arg name="state" type="uint" summary="bitfield of state flags"/>
     </request>
 
     <request name="set_virtual_desktop">
@@ -106,6 +107,7 @@
       <arg name="number" type="uint" summary="zero based virtual desktop number"/>
     </request>
 
+  <!--
     <request name="highlight">
       <description summary="highlight the window">
         Tell the compositor to highlight this window.

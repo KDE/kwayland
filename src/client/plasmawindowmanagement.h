@@ -208,6 +208,7 @@ public:
     bool isFullscreenable() const;
 
     void requestClose();
+    void requestVirtualDesktop(quint32 desktop);
 
 Q_SIGNALS:
     void titleChanged();

@@ -213,6 +213,14 @@ public:
     void setRole(Role role);
     void setPosition(const QPoint &point);
 
+    enum class PanelBehavior {
+        AlwaysVisible,
+        AutoHide,
+        WindowsCanCover,
+        WindowsGoBelow
+    };
+    void setPanelBehavior(PanelBehavior behavior);
+
 private:
     class Private;
     QScopedPointer<Private> d;

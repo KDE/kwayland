@@ -297,41 +297,33 @@
 
     <!-- Flags -->
 
-<!--
-    <enum name="flag">
-      <description summary="flags on the surface">
-        Various flags that modify the behavior of the surface.
-        Flags may depend on the surface role.
-
-        Ranges are:
-
-        0x0000 - 0x007F: panel visibility
+    <enum name="panel_behavior">
+      <description summary="Behavior for panel surface">
       </description>
-      <entry name="panel_always_visible" value="1" summary="normal panel visibility">
+      <entry name="always_visible" value="1" summary="normal panel visibility">
         The panel is on top of other surfaces, windows cannot cover (full screen
         windows excluded).
       </entry>
-      <entry name="panel_auto_hide" value="2" summary="hide automatically">
+      <entry name="auto_hide" value="2" summary="hide automatically">
         The panel is hidden automatically and restored when the mouse is over.
       </entry>
-      <entry name="panel_windows_can_cover" value="3" summary="windows can cover">
+      <entry name="windows_can_cover" value="3" summary="windows can cover">
         Windows can cover the panel.
       </entry>
-      <entry name="panel_windows_go_below" value="4" summary="windows go below">
+      <entry name="windows_go_below" value="4" summary="windows go below">
         Maximized windows take the whole screen space but the panel is above
         the windows.
       </entry>
     </enum>
 
-    <request name="set_flags">
-      <description summary="set or unset flags specific to the role">
+    <request name="set_panel_behavior">
+      <description summary="set or unset the panel ">
         Set flags bitmask as described by the flag enum.
         Pass 0 to unset any flag, the surface will adjust its behavior to
         the default.
       </description>
-      <arg name="flags" type="uint" summary="bitmask of flag values"/>
+      <arg name="flag" type="uint" summary="panel_behavior enum value"/>
     </request>
--->
 
     <!-- Screen edge -->
     <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->

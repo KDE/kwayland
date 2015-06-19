@@ -211,5 +211,29 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
     org_kde_plasma_surface_set_role(d->surface, wlRole);
 }
 
+void PlasmaShellSurface::setPanelBehavior(PlasmaShellSurface::PanelBehavior behavior)
+{
+    Q_ASSERT(isValid());
+    uint32_t wlRole = ORG_KDE_PLASMA_SURFACE_PANEL_BEHAVIOR_ALWAYS_VISIBLE;
+    switch (behavior) {
+    case PanelBehavior::AlwaysVisible:
+        wlRole = ORG_KDE_PLASMA_SURFACE_PANEL_BEHAVIOR_ALWAYS_VISIBLE;
+        break;
+    case PanelBehavior::AutoHide:
+        wlRole = ORG_KDE_PLASMA_SURFACE_PANEL_BEHAVIOR_AUTO_HIDE;
+        break;
+    case PanelBehavior::WindowsCanCover:
+        wlRole = ORG_KDE_PLASMA_SURFACE_PANEL_BEHAVIOR_WINDOWS_CAN_COVER;
+        break;
+    case PanelBehavior::WindowsGoBelow:
+        wlRole = ORG_KDE_PLASMA_SURFACE_PANEL_BEHAVIOR_WINDOWS_GO_BELOW;
+        break;
+    default:
+        Q_UNREACHABLE();
+        break;
+    }
+    org_kde_plasma_surface_set_panel_behavior(d->surface, wlRole);
+}
+
 }
 }

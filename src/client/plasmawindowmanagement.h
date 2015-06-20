@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_PLASMAWINDOWMANAGEMENT_H
 
 #include <QObject>
+#include <QIcon>
 #include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
@@ -206,6 +207,7 @@ public:
     bool isMaximizeable() const;
     bool isMinimizeable() const;
     bool isFullscreenable() const;
+    QIcon icon() const;
 
     void requestClose();
     void requestVirtualDesktop(quint32 desktop);
@@ -226,6 +228,7 @@ Q_SIGNALS:
     void minimizeableChanged();
     void maximizeableChanged();
     void fullscreenableChanged();
+    void iconChanged();
     void unmapped();
 
 private:

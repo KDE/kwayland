@@ -243,12 +243,14 @@ public:
     bool minimizeable = false;
     bool maximizeable = false;
     bool fullscreenable = false;
+    QIcon icon;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
     static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
+    static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
     static void unmappedCallback(void *data, org_kde_plasma_window *window);
     void setActive(bool set);
     void setMinimized(bool set);
@@ -277,6 +279,7 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     appIdChangedCallback,
     stateChangedCallback,
     virtualDesktopChangedCallback,
+    themedIconNameChangedCallback,
     unmappedCallback
 };
 
@@ -339,6 +342,15 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setFullscreenable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE);
     p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
+}
+
+void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+    QIcon icon = QIcon::fromTheme(QString::fromUtf8(name));
+    p->icon = icon;
+    emit p->q->iconChanged();
 }
 
 void PlasmaWindow::Private::setActive(bool set)
@@ -565,6 +577,11 @@ bool PlasmaWindow::isMaximizeable() const
 bool PlasmaWindow::isMinimizeable() const
 {
     return d->minimizeable;
+}
+
+QIcon PlasmaWindow::icon() const
+{
+    return d->icon;
 }
 
 void PlasmaWindow::requestClose()

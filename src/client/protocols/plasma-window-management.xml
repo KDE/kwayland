@@ -155,6 +155,13 @@
       <arg name="number" type="int" summary="zero based virtual desktop number"/>
     </event>
 
+    <event name="themed_icon_name_changed">
+        <description summary="window's icon name changed">
+            This event will be sent whenever the themed icon name changes. May be null.
+        </description>
+        <arg name="name" type="string" summary="the new themed icon name"/>
+    </event>
+
     <event name="unmapped">
       <description summary="window's surface was unmapped">
         This event will be sent immediately after the window is closed

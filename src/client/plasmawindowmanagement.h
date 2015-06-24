@@ -209,6 +209,7 @@ public:
     bool isFullscreenable() const;
     QIcon icon() const;
 
+    void requestActivate();
     void requestClose();
     void requestVirtualDesktop(quint32 desktop);
 

@@ -584,6 +584,13 @@ QIcon PlasmaWindow::icon() const
     return d->icon;
 }
 
+void PlasmaWindow::requestActivate()
+{
+    org_kde_plasma_window_set_state(d->window,
+        ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE,
+        ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
+}
+
 void PlasmaWindow::requestClose()
 {
     org_kde_plasma_window_close(d->window);

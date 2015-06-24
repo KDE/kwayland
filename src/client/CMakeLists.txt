@@ -21,6 +21,7 @@ set(CLIENT_LIB_SRCS
     pointer.cpp
     plasmashell.cpp
     plasmawindowmanagement.cpp
+    plasmawindowmodel.cpp
     region.cpp
     registry.cpp
     seat.cpp
@@ -91,6 +92,7 @@ install(FILES
   pointer.h
   plasmashell.h
   plasmawindowmanagement.h
+  plasmawindowmodel.h
   region.h
   registry.h
   seat.h

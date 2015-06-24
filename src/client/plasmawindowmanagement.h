@@ -35,6 +35,7 @@ namespace Client
 {
 class EventQueue;
 class PlasmaWindow;
+class PlasmaWindowModel;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
@@ -127,6 +128,7 @@ public:
 
     QList<PlasmaWindow*> windows() const;
     PlasmaWindow *activeWindow() const;
+    PlasmaWindowModel *createWindowModel();
 
 Q_SIGNALS:
     /**

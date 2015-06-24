@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "plasmawindowmanagement.h"
+#include "plasmawindowmodel.h"
 #include "event_queue.h"
 #include "output.h"
 #include "surface.h"
@@ -222,6 +223,12 @@ PlasmaWindow *PlasmaWindowManagement::activeWindow() const
 {
     return d->activeWindow;
 }
+
+PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
+{
+    return new PlasmaWindowModel(this);
+}
+
 
 class PlasmaWindow::Private
 {

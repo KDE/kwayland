@@ -26,6 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-plasma-window-management-client-protocol.h>
 
+#include <QTimer>
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Client
@@ -101,7 +104,16 @@ void PlasmaWindowManagement::Private::windowCreatedCallback(void *data, org_kde_
 {
     auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
     Q_ASSERT(wm->wm == org_kde_plasma_window_management);
-    wm->windowCreated(id);
+    QTimer *timer = new QTimer();
+    timer->setSingleShot(true);
+    timer->setInterval(0);
+    QObject::connect(timer, &QTimer::timeout, wm->q,
+        [timer, wm, id] {
+            wm->windowCreated(id);
+            timer->deleteLater();
+        }, Qt::QueuedConnection
+    );
+    timer->start();
 }
 
 void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id)

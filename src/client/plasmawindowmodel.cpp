@@ -204,7 +204,7 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
     } else if (role == IsMaximized) {
         return window->isMaximized();
     } else if (role == IsMinimizable) {
-        return window->IsMinimizable();
+        return window->isMinimizeable();
     } else if (role == IsMinimized) {
         return window->isMinimized();
     } else if (role == IsKeepAbove) {

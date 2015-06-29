@@ -54,6 +54,11 @@
       <arg name="state" type="uint" summary="requested state"/>
     </request>
 
+    <request name="get_window">
+        <arg name="id" type="new_id" interface="org_kde_plasma_window"/>
+        <arg name="internal_window_id" type="uint" summary="The internal window id of the window to create"/>
+    </request>
+
     <event name="show_desktop_changed">
         <description summary="notify the client when the show desktop mode is entered/left">
             This event will be sent whenever the show desktop mode changes. E.g. when it is entered
@@ -64,16 +69,11 @@
       <arg name="state" type="uint" summary="new state"/>
     </event>
 
-    <event name="window_created">
+    <event name="window">
       <description summary="notify the client that a window was mapped">
         This event will be sent immediately after a window is mapped.
-        A new org_kde_plasma_window object is created and it will be used to manage
-        this window.
-
-        Values for state argument are described by org_kde_plasma_window_management.state.
-        They are used in a bitfield.
       </description>
-      <arg name="id" type="new_id" interface="org_kde_plasma_window"/>
+      <arg name="id" type="uint" summary="internal window Id"/>
     </event>
   </interface>
 

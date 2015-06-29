@@ -27,7 +27,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-plasma-window-management-client-protocol.h>
 
 #include <QTimer>
-#include <QDebug>
 
 namespace KWayland
 {
@@ -48,7 +47,7 @@ public:
 
 private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
-    static void windowCreatedCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, org_kde_plasma_window *id);
+    static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id);
 
@@ -63,7 +62,7 @@ PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
 
 org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_listener = {
     showDesktopCallback,
-    windowCreatedCallback
+    windowCallback
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -100,16 +99,16 @@ void PlasmaWindowManagement::Private::setShowDesktop(bool set)
     emit q->showingDesktopChanged(showingDesktop);
 }
 
-void PlasmaWindowManagement::Private::windowCreatedCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, org_kde_plasma_window *id)
+void PlasmaWindowManagement::Private::windowCallback(void *data, org_kde_plasma_window_management *interface, uint32_t id)
 {
     auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
-    Q_ASSERT(wm->wm == org_kde_plasma_window_management);
+    Q_ASSERT(wm->wm == interface);
     QTimer *timer = new QTimer();
     timer->setSingleShot(true);
     timer->setInterval(0);
     QObject::connect(timer, &QTimer::timeout, wm->q,
         [timer, wm, id] {
-            wm->windowCreated(id);
+            wm->windowCreated(org_kde_plasma_window_management_get_window(wm->wm, id));
             timer->deleteLater();
         }, Qt::QueuedConnection
     );

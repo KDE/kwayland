@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="fake_input">
+  <copyright><![CDATA[
+    Copyright (C) 2015 Martin Gräßlin
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ]]></copyright>
+  <interface  name="org_kde_kwin_fake_input" version="1">
+      <description summary="Fake input manager">
+        This interface allows other processes to provide fake input events.
+        Purpose is on the one hand side to provide testing facilities like XTest on X11.
+        But also to support use case like kdeconnect's mouse pad interface.
+
+        A compositor should not trust the input received from this interface.
+        Clients should not expect that the compositor honors the requests from this
+        interface.
+      </description>
+      <request name="authenticate">
+          <description summary="Information why the client wants to use the interface">
+              A client should use this request to tell the compositor why it wants to
+              use this interface. The compositor might use the information to decide
+              whether it wants to grant the request. The data might also be passed to
+              the user to decide whether the application should get granted access to
+              this very privileged interface.
+          </description>
+          <arg name="application" type="string" description="user visible name of the application"/>
+          <arg name="reason" type="string" description="reason why the application wants to use this interface"/>
+      </request>
+      <request name="pointer_motion">
+          <arg name="delta_x" type="fixed"/>
+          <arg name="delta_y" type="fixed"/>
+      </request>
+      <request name="button">
+        <arg name="button" type="uint"/>
+        <arg name="state" type="uint"/>
+      </request>
+      <request name="axis">
+        <arg name="axis" type="uint"/>
+        <arg name="value" type="fixed"/>
+      </request>
+  </interface>
+</protocol>

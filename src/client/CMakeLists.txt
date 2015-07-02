@@ -14,6 +14,7 @@ set(CLIENT_LIB_SRCS
     datadevicemanager.cpp
     dataoffer.cpp
     datasource.cpp
+    fakeinput.cpp
     fullscreen_shell.cpp
     idle.cpp
     keyboard.cpp
@@ -51,6 +52,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/idle.xml
     BASENAME idle
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fake-input.xml
+    BASENAME fake-input
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -92,6 +98,7 @@ install(FILES
   datadevicemanager.h
   dataoffer.h
   datasource.h
+  fakeinput.h
   fullscreen_shell.h
   idle.h
   keyboard.h

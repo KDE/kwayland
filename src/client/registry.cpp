@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "datadevicemanager.h"
 #include "event_queue.h"
 #include "fullscreen_shell.h"
+#include "idle.h"
 #include "logging_p.h"
 #include "output.h"
 #include "plasmashell.h"
@@ -39,6 +40,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
+#include <wayland-idle-client-protocol.h>
 
 namespace KWayland
 {
@@ -54,6 +56,7 @@ static const quint32 s_shellMaxVersion = 1;
 static const quint32 s_subcompositorMaxVersion = 1;
 static const quint32 s_plasmaShellMaxVersion = 1;
 static const quint32 s_plasmaWindowManagementMaxVersion = 1;
+static const quint32 s_idleMaxVersion = 1;
 
 class Registry::Private
 {
@@ -222,6 +225,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::PlasmaShell;
     } else if (strcmp(interface, "org_kde_plasma_window_management") == 0) {
         return Registry::Interface::PlasmaWindowManagement;
+    } else if (strcmp(interface, "org_kde_kwin_idle") == 0) {
+        return Registry::Interface::Idle;
     }
     return Registry::Interface::Unknown;
 }
@@ -266,6 +271,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::PlasmaWindowManagement:
         emit q->plasmaWindowManagementAnnounced(name, version);
+        break;
+    case Interface::Idle:
+        emit q->idleAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -314,6 +322,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::PlasmaWindowManagement:
             emit q->plasmaWindowManagementRemoved(data.name);
+            break;
+        case Interface::Idle:
+            emit q->idleRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -387,6 +398,11 @@ org_kde_plasma_shell* Registry::bindPlasmaShell(uint32_t name, uint32_t version)
 org_kde_plasma_window_management *Registry::bindPlasmaWindowManagement(uint32_t name, uint32_t version) const
 {
     return d->bind<org_kde_plasma_window_management>(Interface::PlasmaWindowManagement, name, qMin(s_plasmaWindowManagementMaxVersion, version));
+}
+
+org_kde_kwin_idle *Registry::bindIdle(uint32_t name, uint32_t version) const
+{
+    return d->bind<org_kde_kwin_idle>(Interface::Idle, name, qMin(s_idleMaxVersion, version));
 }
 
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
@@ -467,6 +483,14 @@ PlasmaWindowManagement *Registry::createPlasmaWindowManagement(quint32 name, qui
     return wm;
 }
 
+Idle *Registry::createIdle(quint32 name, quint32 version, QObject *parent)
+{
+    auto idle = new Idle(parent);
+    idle->setEventQueue(d->queue);
+    idle->setup(bindIdle(name, version));
+    return idle;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -490,6 +514,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &org_kde_plasma_shell_interface;
     case Registry::Interface::PlasmaWindowManagement:
         return &org_kde_plasma_window_management_interface;
+    case Registry::Interface::Idle:
+        return &org_kde_kwin_idle_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

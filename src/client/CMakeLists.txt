@@ -15,6 +15,7 @@ set(CLIENT_LIB_SRCS
     dataoffer.cpp
     datasource.cpp
     fullscreen_shell.cpp
+    idle.cpp
     keyboard.cpp
     logging.cpp
     output.cpp
@@ -45,6 +46,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
     BASENAME plasma-window-management
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/idle.xml
+    BASENAME idle
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -87,6 +93,7 @@ install(FILES
   dataoffer.h
   datasource.h
   fullscreen_shell.h
+  idle.h
   keyboard.h
   output.h
   pointer.h

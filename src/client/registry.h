@@ -35,6 +35,7 @@ struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
+struct org_kde_kwin_idle;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 
@@ -48,6 +49,7 @@ class ConnectionThread;
 class DataDeviceManager;
 class EventQueue;
 class FullscreenShell;
+class Idle;
 class Output;
 class PlasmaShell;
 class PlasmaWindowManagement;
@@ -101,7 +103,8 @@ public:
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
-        PlasmaWindowManagement ///< Refers to org_kde_plasma_window_management interface
+        PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
+        Idle ///< Refers to org_kde_kwin_idle_interface interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -235,6 +238,7 @@ public:
     wl_data_device_manager *bindDataDeviceManager(uint32_t name, uint32_t version) const;
     org_kde_plasma_shell *bindPlasmaShell(uint32_t name, uint32_t version) const;
     org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
+    org_kde_kwin_idle *bindIdle(uint32_t name, uint32_t version) const;
 
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
@@ -344,6 +348,7 @@ public:
     DataDeviceManager *createDataDeviceManager(quint32 name, quint32 version, QObject *parent = nullptr);
     PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);;
     PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
+    Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
 
     operator wl_registry*();
     operator wl_registry*() const;
@@ -395,6 +400,7 @@ Q_SIGNALS:
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
+    void idleAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
@@ -433,6 +439,7 @@ Q_SIGNALS:
     void dataDeviceManagerRemoved(quint32 name);
     void plasmaShellRemoved(quint32 name);
     void plasmaWindowManagementRemoved(quint32 name);
+    void idleRemoved(quint32 name);
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

@@ -49,7 +49,7 @@ private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
     static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
     void setShowDesktop(bool set);
-    void windowCreated(org_kde_plasma_window *id);
+    void windowCreated(org_kde_plasma_window *id, quint32 internalId);
 
     static struct org_kde_plasma_window_management_listener s_listener;
     PlasmaWindowManagement *q;
@@ -108,19 +108,19 @@ void PlasmaWindowManagement::Private::windowCallback(void *data, org_kde_plasma_
     timer->setInterval(0);
     QObject::connect(timer, &QTimer::timeout, wm->q,
         [timer, wm, id] {
-            wm->windowCreated(org_kde_plasma_window_management_get_window(wm->wm, id));
+            wm->windowCreated(org_kde_plasma_window_management_get_window(wm->wm, id), id);
             timer->deleteLater();
         }, Qt::QueuedConnection
     );
     timer->start();
 }
 
-void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id)
+void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, quint32 internalId)
 {
     if (queue) {
         queue->addProxy(id);
     }
-    PlasmaWindow *window = new PlasmaWindow(q, id);
+    PlasmaWindow *window = new PlasmaWindow(q, id, internalId);
     windows << window;
     QObject::connect(window, &QObject::destroyed, q,
         [this, window] {
@@ -244,8 +244,9 @@ PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
 class PlasmaWindow::Private
 {
 public:
-    Private(org_kde_plasma_window *window, PlasmaWindow *q);
+    Private(org_kde_plasma_window *window, quint32 internalId, PlasmaWindow *q);
     WaylandPointer<org_kde_plasma_window, org_kde_plasma_window_destroy> window;
+    quint32 internalId;
     QString title;
     QString appId;
     quint32 desktop = 0;
@@ -479,16 +480,17 @@ void PlasmaWindow::Private::setMinimizeable(bool set)
     emit q->minimizeableChanged();
 }
 
-PlasmaWindow::Private::Private(org_kde_plasma_window *w, PlasmaWindow *q)
-    : q(q)
+PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
+    : internalId(internalId)
+    , q(q)
 {
     window.setup(w);
     org_kde_plasma_window_add_listener(w, &s_listener, this);
 }
 
-PlasmaWindow::PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *window)
+PlasmaWindow::PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *window, quint32 internalId)
     : QObject(parent)
-    , d(new Private(window, this))
+    , d(new Private(window, internalId, this))
 {
 }
 
@@ -617,6 +619,11 @@ void PlasmaWindow::requestClose()
 void PlasmaWindow::requestVirtualDesktop(quint32 desktop)
 {
     org_kde_plasma_window_set_virtual_desktop(d->window, desktop);
+}
+
+quint32 PlasmaWindow::internalId() const
+{
+    return d->internalId;
 }
 
 }

@@ -215,6 +215,13 @@ public:
     void requestClose();
     void requestVirtualDesktop(quint32 desktop);
 
+    /**
+     * An internal window identifier.
+     * This is not a global window identifier.
+     * This identifier does not correspond to QWindow::winId in any way.
+     **/
+    quint32 internalId() const;
+
 Q_SIGNALS:
     void titleChanged();
     void appIdChanged();
@@ -236,7 +243,7 @@ Q_SIGNALS:
 
 private:
     friend class PlasmaWindowManagement;
-    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer);
+    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);
     class Private;
     QScopedPointer<Private> d;
 };

@@ -130,6 +130,13 @@ public:
      **/
     void setSocketFd(int fd);
 
+    /**
+     * Trigger a blocking roundtrip to the Wayland server. Ensures that all events are processed
+     * before returning to the event loop.
+     *
+     * @since 5.4
+     **/
+    void roundtrip();
 
 public Q_SLOTS:
     /**

@@ -27,6 +27,7 @@ set(CLIENT_LIB_SRCS
     region.cpp
     registry.cpp
     seat.cpp
+    shadow.cpp
     shell.cpp
     shm_pool.cpp
     subcompositor.cpp
@@ -57,6 +58,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fake-input.xml
     BASENAME fake-input
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
+    BASENAME shadow
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -110,6 +116,7 @@ install(FILES
   region.h
   registry.h
   seat.h
+  shadow.h
   shell.h
   shm_pool.h
   subcompositor.h

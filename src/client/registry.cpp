@@ -30,6 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "plasmashell.h"
 #include "plasmawindowmanagement.h"
 #include "seat.h"
+#include "shadow.h"
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
@@ -43,6 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
+#include <wayland-shadow-client-protocol.h>
 
 namespace KWayland
 {
@@ -60,6 +62,7 @@ static const quint32 s_plasmaShellMaxVersion = 1;
 static const quint32 s_plasmaWindowManagementMaxVersion = 1;
 static const quint32 s_idleMaxVersion = 1;
 static const quint32 s_fakeInputMaxVersion = 1;
+static const quint32 s_shadowMaxVersion = 1;
 
 class Registry::Private
 {
@@ -232,6 +235,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::Idle;
     } else if (strcmp(interface, "org_kde_kwin_fake_input") == 0) {
         return Registry::Interface::FakeInput;
+    } else if (strcmp(interface, "org_kde_kwin_shadow_manager") == 0) {
+        return Registry::Interface::Shadow;
     }
     return Registry::Interface::Unknown;
 }
@@ -282,6 +287,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::FakeInput:
         emit q->fakeInputAnnounced(name, version);
+        break;
+    case Interface::Shadow:
+        emit q->shadowAnnounced(name, version);
         break;
     case Interface::Unknown:
     default:
@@ -336,6 +344,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::FakeInput:
             emit q->fakeInputRemoved(data.name);
+            break;
+        case Interface::Shadow:
+            emit q->shadowRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -419,6 +430,11 @@ org_kde_kwin_idle *Registry::bindIdle(uint32_t name, uint32_t version) const
 org_kde_kwin_fake_input *Registry::bindFakeInput(uint32_t name, uint32_t version) const
 {
     return d->bind<org_kde_kwin_fake_input>(Interface::FakeInput, name, qMin(s_fakeInputMaxVersion, version));
+}
+
+org_kde_kwin_shadow_manager *Registry::bindShadowManager(uint32_t name, uint32_t version) const
+{
+    return d->bind<org_kde_kwin_shadow_manager>(Interface::Shadow, name, qMin(s_shadowMaxVersion, version));
 }
 
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
@@ -515,6 +531,14 @@ FakeInput *Registry::createFakeInput(quint32 name, quint32 version, QObject *par
     return input;
 }
 
+ShadowManager *Registry::createShadowManager(quint32 name, quint32 version, QObject *parent)
+{
+    auto manager = new ShadowManager(parent);
+    manager->setEventQueue(d->queue);
+    manager->setup(bindShadowManager(name, version));
+    return manager;
+}
+
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     switch (interface) {
@@ -542,6 +566,8 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return &org_kde_kwin_idle_interface;
     case Registry::Interface::FakeInput:
         return &org_kde_kwin_fake_input_interface;
+    case Registry::Interface::Shadow:
+        return &org_kde_kwin_shadow_manager_interface;
     case Registry::Interface::Unknown:
     default:
         return nullptr;

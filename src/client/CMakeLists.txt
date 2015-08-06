@@ -21,6 +21,7 @@ set(CLIENT_LIB_SRCS
     logging.cpp
     output.cpp
     pointer.cpp
+    plasmaeffects.cpp
     plasmashell.cpp
     plasmawindowmanagement.cpp
     plasmawindowmodel.cpp
@@ -63,6 +64,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
     BASENAME shadow
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-effects.xml
+    BASENAME plasma-effects
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -110,6 +116,7 @@ install(FILES
   keyboard.h
   output.h
   pointer.h
+  plasmaeffects.h
   plasmashell.h
   plasmawindowmanagement.h
   plasmawindowmodel.h

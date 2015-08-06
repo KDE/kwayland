@@ -43,12 +43,22 @@ namespace Client
 class EventQueue;
 class Surface;
 class Region;
+class Output;
 
 class KWAYLANDCLIENT_EXPORT PlasmaEffects : public QObject
 {
     Q_OBJECT
 
 public:
+    enum Location {
+        None = 0,
+        Left = 1,
+        Top = 2,
+        Right = 3,
+        Bottom = 4
+    };
+    Q_ENUMS(Location)
+
     explicit PlasmaEffects(QObject *parent = nullptr);
     virtual ~PlasmaEffects();
 
@@ -94,6 +104,22 @@ public:
      * @returns The event queue to use for creating a PlasmaEffects.
      **/
     EventQueue *eventQueue();
+
+    /**
+     * Ask the compositor to move the surface from a location to another
+     * with a slide animation.
+     *
+     * The from argument provides a clue about where the slide animation
+     * begins, destination coordinates are specified with x and y.
+     *
+     * @param output on what screen to apply this effect //FIXME: needed?
+     * @param surface The surface to apply the effect to
+     * @param from The location from which the slide effect will start,
+     *             this suggests the direction of the slide animation as well
+     * @param x Final destination position of the window //FIXME: we aren't actually animating the window position?
+     * @param x Final destination position of the window //FIXME: we aren't actually animating the window position?
+     */
+    void slide(Output *output, Surface *surface, Location from, int x, int y);
 
     /**
      * This request sets the region of the surface that will allow to see

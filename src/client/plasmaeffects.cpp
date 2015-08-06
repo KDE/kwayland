@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "surface.h"
 #include "region.h"
+#include "output.h"
 #include "wayland_pointer_p.h"
 
 #include <QMarginsF>
@@ -85,6 +86,14 @@ void PlasmaEffects::setEventQueue(EventQueue *queue)
 EventQueue *PlasmaEffects::eventQueue()
 {
     return d->queue;
+}
+
+void PlasmaEffects::slide(Output *output, Surface *surface, Location from, int x, int y)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(surface);
+
+    org_kde_plasma_effects_slide(d->effects, *output, *surface, (org_kde_plasma_effects_location)from, x, y);
 }
 
 void PlasmaEffects::setBlurBehindRegion(Surface *surface, const Region *region)

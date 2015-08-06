@@ -21,19 +21,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KWAYLAND_PLASMAEFFECTS_H
 #define KWAYLAND_PLASMAEFFECTS_H
 
-#include "buffer.h"
-
 #include <QObject>
-#include <QPoint>
-#include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct wl_buffer;
 struct org_kde_plasma_effects;
 
-class QMarginsF;
-class QWindow;
 
 namespace KWayland
 {

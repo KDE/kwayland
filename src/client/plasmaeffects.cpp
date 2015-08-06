@@ -26,8 +26,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "output.h"
 #include "wayland_pointer_p.h"
 
-#include <QMarginsF>
-
 #include <wayland-plasma-effects-client-protocol.h>
 
 namespace KWayland
@@ -105,6 +103,18 @@ void PlasmaEffects::setBlurBehindRegion(Surface *surface, const Region *region)
         org_kde_plasma_effects_set_blur_behind_region(d->effects, *surface, *region);
     } else {
         org_kde_plasma_effects_set_blur_behind_region(d->effects, *surface, nullptr);
+    }
+}
+
+void PlasmaEffects::setContrastRegion(Surface *surface, const Region *region, int contrast, int intensity, int saturation)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(surface);
+
+    if (region) {
+        org_kde_plasma_effects_set_contrast_region(d->effects, *surface, *region, contrast, intensity, saturation);
+    } else {
+        org_kde_plasma_effects_set_contrast_region(d->effects, *surface, nullptr, contrast, intensity, saturation);
     }
 }
 

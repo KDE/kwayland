@@ -124,6 +124,31 @@ public:
      */
     void setBlurBehindRegion(Surface *surface, const Region *region = nullptr);
 
+    /**
+     *  This request sets the region of the surface with a different
+     *  contrast.
+     *
+     *  Pass a null region to disable this effect.
+     *
+     *  When a null region is passed the contrast, intensity and saturation
+     *  arguments are not taken into account.
+     *
+     *  The contrast, intensity and saturation parameters are in
+     *  the 0-255 range.
+     *
+     * @param surface The surface we want apply the contrast effect to
+     * @param region The region of the surface we want apply the contrast effect to
+     * @param contrast 0-255 value for the contrast of the background
+     *                 of the surface
+     * @param intensity 0-255 value for the intensity of the background of
+     *                  the surface: 0-127 will result in a darker color,
+     *                  128-255 will result in a lighter color
+     * @param saturation 0-255 value for the saturation: 0 will convert to
+     *                   black and white and 255 will increase the vibrance
+     *                   of the colors a lot
+     */
+    void setContrastRegion(Surface *surface, const Region *region, int contrast, int intensity, int saturation);
+
     operator org_kde_plasma_effects*();
     operator org_kde_plasma_effects*() const;
 

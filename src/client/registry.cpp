@@ -32,6 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "shadow.h"
 #include "shell.h"
+#include "plasmaeffects.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
 #include "wayland_pointer_p.h"
@@ -63,6 +64,7 @@ static const quint32 s_plasmaWindowManagementMaxVersion = 1;
 static const quint32 s_idleMaxVersion = 1;
 static const quint32 s_fakeInputMaxVersion = 1;
 static const quint32 s_shadowMaxVersion = 1;
+static const quint32 s_plasmaEffectsMaxVersion = 1;
 
 class Registry::Private
 {
@@ -291,6 +293,8 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
     case Interface::Shadow:
         emit q->shadowAnnounced(name, version);
         break;
+    case Interface::PlasmaEffects:
+        emit q->plasmaEffectsAnnounced(name, version);
     case Interface::Unknown:
     default:
         // nothing
@@ -347,6 +351,9 @@ void Registry::Private::handleRemove(uint32_t name)
             break;
         case Interface::Shadow:
             emit q->shadowRemoved(data.name);
+            break;
+        case Interface::PlasmaEffects:
+            emit q->plasmaEffectsRemoved(data.name);
             break;
         case Interface::Unknown:
         default:
@@ -435,6 +442,11 @@ org_kde_kwin_fake_input *Registry::bindFakeInput(uint32_t name, uint32_t version
 org_kde_kwin_shadow_manager *Registry::bindShadowManager(uint32_t name, uint32_t version) const
 {
     return d->bind<org_kde_kwin_shadow_manager>(Interface::Shadow, name, qMin(s_shadowMaxVersion, version));
+}
+
+org_kde_plasma_effects *Registry::bindPlasmaEffects(uint32_t name, uint32_t version) const
+{
+    return d->bind<org_kde_plasma_effects>(Interface::PlasmaEffects, name, qMin(s_plasmaEffectsMaxVersion, version));
 }
 
 Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
@@ -537,6 +549,14 @@ ShadowManager *Registry::createShadowManager(quint32 name, quint32 version, QObj
     manager->setEventQueue(d->queue);
     manager->setup(bindShadowManager(name, version));
     return manager;
+}
+
+PlasmaEffects *Registry::createPlasmaEffects(quint32 name, quint32 version, QObject *parent)
+{
+    auto effects = new PlasmaEffects(parent);
+    effects->setEventQueue(d->queue);
+    effects->setup(bindPlasmaEffects(name, version));
+    return effects;
 }
 
 static const wl_interface *wlInterface(Registry::Interface interface)

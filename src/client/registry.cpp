@@ -239,6 +239,8 @@ static Registry::Interface nameToInterface(const char *interface)
         return Registry::Interface::FakeInput;
     } else if (strcmp(interface, "org_kde_kwin_shadow_manager") == 0) {
         return Registry::Interface::Shadow;
+    } else if (strcmp(interface, "org_kde_plasma_effects") == 0) {
+        return Registry::Interface::PlasmaEffects;
     }
     return Registry::Interface::Unknown;
 }
@@ -295,6 +297,7 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         break;
     case Interface::PlasmaEffects:
         emit q->plasmaEffectsAnnounced(name, version);
+        break;
     case Interface::Unknown:
     default:
         // nothing

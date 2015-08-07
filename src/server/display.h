@@ -48,6 +48,7 @@ class SeatInterface;
 class ShadowManagerInterface;
 class ShellInterface;
 class SubCompositorInterface;
+class PlasmaEffectsInterface;
 
 class KWAYLANDSERVER_EXPORT Display : public QObject
 {
@@ -126,6 +127,7 @@ public:
     IdleInterface *createIdle(QObject *parent = nullptr);
     FakeInputInterface *createFakeInput(QObject *parent = nullptr);
     ShadowManagerInterface *createShadowManager(QObject *parent = nullptr);
+    PlasmaEffectsInterface *createPlasmaEffects(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

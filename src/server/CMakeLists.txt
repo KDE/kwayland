@@ -25,6 +25,7 @@ set(SERVER_LIB_SRCS
     surface_interface.cpp
     subcompositor_interface.cpp
     touch_interface.cpp
+    plasmaeffects_interface.cpp
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -55,6 +56,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
     BASENAME shadow
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-effects.xml
+    BASENAME plasma-effects
 )
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
@@ -117,6 +123,7 @@ install(FILES
   subcompositor_interface.h
   surface_interface.h
   touch_interface.h
+  plasmaeffects_interface.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Server COMPONENT Devel
 )
 

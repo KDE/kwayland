@@ -1,0 +1,134 @@
+/********************************************************************
+Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) version 3, or any
+later version accepted by the membership of KDE e.V. (or its
+successor approved by the membership of KDE e.V.), which shall
+act as a proxy defined in Section 6 of version 3 of the license.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*********************************************************************/
+#include "plasmaeffects_interface.h"
+#include "compositor_interface.h"
+#include "global_p.h"
+#include "display.h"
+
+#include <QDebug>
+
+// Wayland
+#include <wayland-server.h>
+#include <wayland-plasma-effects-server-protocol.h>
+
+namespace KWayland
+{
+namespace Server
+{
+
+static const quint32 s_version = 1;
+
+class PlasmaEffectsInterface::Private : public Global::Private
+{
+public:
+    Private(PlasmaEffectsInterface *q, Display *d);
+
+private:
+    void bind(wl_client *client, uint32_t version, uint32_t id) override;
+    static void getIdleTimeoutCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat, uint32_t timeout);
+
+    static void unbind(wl_resource *resource);
+
+    static void slideCallback(wl_client *client, wl_resource *r,
+                                wl_resource *output,
+                                wl_resource *surface,
+                                uint32_t from,
+                                int32_t x,
+                                int32_t y);
+
+    static void setBlurBehindRegionCallback(wl_client *client, wl_resource *r, wl_resource *surface, wl_resource *region);
+
+    static void setContrastRegionCallback(wl_client *client, wl_resource *r, wl_resource *surface, wl_resource *region,
+                                uint32_t contrast,
+                                uint32_t intensity,
+                                uint32_t saturation);
+
+    PlasmaEffectsInterface *q;
+    static const struct org_kde_plasma_effects_interface s_interface;
+};
+
+const struct org_kde_plasma_effects_interface PlasmaEffectsInterface::Private::s_interface = {
+    slideCallback,
+    setBlurBehindRegionCallback,
+    setContrastRegionCallback
+};
+
+PlasmaEffectsInterface::Private::Private(PlasmaEffectsInterface *q, Display *d)
+    : Global::Private(d, &org_kde_plasma_effects_interface, s_version)
+    , q(q)
+{
+}
+
+void PlasmaEffectsInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+{
+    auto c = display->getConnection(client);
+    wl_resource *shell = c->createResource(&org_kde_plasma_effects_interface, qMin(version, s_version), id);
+    if (!shell) {
+        wl_client_post_no_memory(client);
+        return;
+    }
+    wl_resource_set_implementation(shell, &s_interface, this, nullptr);
+}
+
+void PlasmaEffectsInterface::Private::unbind(wl_resource *resource)
+{
+    Q_UNUSED(resource)
+}
+
+void PlasmaEffectsInterface::Private::setBlurBehindRegionCallback(wl_client *client, wl_resource *r, wl_resource *surface, wl_resource *region)
+{
+    Q_UNUSED(client)
+    //cast<Private>(r)->add(QRect(x, y, width, height));
+    qWarning()<<"PlasmaEffectsInterface: setBlurBehindRegion called, region:"<<region;
+}
+
+void PlasmaEffectsInterface::Private::slideCallback(wl_client *client, wl_resource *r, wl_resource *output,
+                                wl_resource *surface,
+                                uint32_t from,
+                                int32_t x,
+                                int32_t y)
+{
+    Q_UNUSED(client)
+    qWarning()<< "Slide callback";
+}
+
+void PlasmaEffectsInterface::Private::setContrastRegionCallback(wl_client *client, wl_resource *r, wl_resource *surface, wl_resource *region,
+                                uint32_t contrast,
+                                uint32_t intensity,
+                                uint32_t saturation)
+{
+    qWarning()<< "Contrast region callback";
+}
+
+PlasmaEffectsInterface::PlasmaEffectsInterface(Display *display, QObject *parent)
+    : Global(new Private(this, display), parent)
+{
+}
+
+PlasmaEffectsInterface::~PlasmaEffectsInterface() = default;
+
+
+PlasmaEffectsInterface::Private *PlasmaEffectsInterface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
+
+}
+}

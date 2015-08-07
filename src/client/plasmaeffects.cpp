@@ -26,6 +26,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "output.h"
 #include "wayland_pointer_p.h"
 
+#include <QDebug>
+
 #include <wayland-plasma-effects-client-protocol.h>
 
 namespace KWayland

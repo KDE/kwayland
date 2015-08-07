@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shadow_interface.h"
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
+#include "plasmaeffects_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -267,6 +268,13 @@ FakeInputInterface *Display::createFakeInput(QObject *parent)
 ShadowManagerInterface *Display::createShadowManager(QObject *parent)
 {
     auto s = new ShadowManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
+    return s;
+}
+
+PlasmaEffectsInterface *Display::createPlasmaEffects(QObject *parent)
+{
+    auto s = new PlasmaEffectsInterface(this, parent);
     connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
     return s;
 }

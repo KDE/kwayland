@@ -114,9 +114,10 @@ PointerInterface::~PointerInterface() = default;
 void PointerInterface::setFocusedSurface(SurfaceInterface *surface, quint32 serial)
 {
     Q_D();
-    Q_ASSERT(d->resource);
     if (d->focusedSurface) {
-        wl_pointer_send_leave(d->resource, serial, d->focusedSurface->resource());
+        if (d->resource && d->focusedSurface->resource()) {
+            wl_pointer_send_leave(d->resource, serial, d->focusedSurface->resource());
+        }
         disconnect(d->destroyConnection);
     }
     if (!surface) {

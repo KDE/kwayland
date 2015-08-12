@@ -32,3 +32,12 @@ endif()
 
 add_executable(touchClientTest touchclienttest.cpp)
 target_link_libraries(touchClientTest KF5::WaylandClient)
+
+
+add_executable(panelTest paneltest.cpp)
+target_link_libraries(panelTest KF5::WaylandClient)
+ecm_mark_as_test(panelTest)
+
+add_executable(qtwayland-integration-test qtwaylandintegrationtest.cpp)
+target_link_libraries(qtwayland-integration-test Qt5::Core Qt5::Gui KF5::WaylandClient)
+ecm_mark_as_test(qtwayland-integration-test)

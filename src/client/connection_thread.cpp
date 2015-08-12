@@ -235,5 +235,13 @@ void ConnectionThread::flush()
     wl_display_flush(d->display);
 }
 
+void ConnectionThread::roundtrip()
+{
+    if (!d->display) {
+        return;
+    }
+    wl_display_roundtrip(d->display);
+}
+
 }
 }

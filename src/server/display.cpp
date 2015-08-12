@@ -21,9 +21,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
 #include "kwin_output_connectors_interface.h"
+#include "idle_interface.h"
+#include "fakeinput_interface.h"
 #include "logging_p.h"
 #include "output_interface.h"
+#include "plasmashell_interface.h"
+#include "plasmawindowmanagement_interface.h"
+#include "qtsurfaceextension_interface.h"
 #include "seat_interface.h"
+#include "shadow_interface.h"
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
 
@@ -229,6 +235,48 @@ DataDeviceManagerInterface *Display::createDataDeviceManager(QObject *parent)
     auto m = new DataDeviceManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, m, [this,m] { delete m; });
     return m;
+}
+
+PlasmaShellInterface *Display::createPlasmaShell(QObject* parent)
+{
+    auto s = new PlasmaShellInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
+    return s;
+}
+
+PlasmaWindowManagementInterface *Display::createPlasmaWindowManagement(QObject *parent)
+{
+    auto wm = new PlasmaWindowManagementInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, wm, [this, wm] { delete wm; });
+    return wm;
+}
+
+QtSurfaceExtensionInterface *Display::createQtSurfaceExtension(QObject *parent)
+{
+    auto s = new QtSurfaceExtensionInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
+    return s;
+}
+
+IdleInterface *Display::createIdle(QObject *parent)
+{
+    auto i = new IdleInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, i, [this, i] { delete i; });
+    return i;
+}
+
+FakeInputInterface *Display::createFakeInput(QObject *parent)
+{
+    auto i = new FakeInputInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, i, [this, i] { delete i; });
+    return i;
+}
+
+ShadowManagerInterface *Display::createShadowManager(QObject *parent)
+{
+    auto s = new ShadowManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
+    return s;
 }
 
 void Display::createShm()

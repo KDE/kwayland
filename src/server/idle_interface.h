@@ -17,5 +17,47 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "logging_p.h"
-Q_LOGGING_CATEGORY(KWAYLAND_CLIENT, "kwayland-client", QtCriticalMsg);
+#ifndef KWAYLAND_SERVER_IDLE_INTERFACE_H
+#define KWAYLAND_SERVER_IDLE_INTERFACE_H
+
+#include <KWayland/Server/kwaylandserver_export.h>
+#include "global.h"
+#include "resource.h"
+
+namespace KWayland
+{
+namespace Server
+{
+
+class Display;
+class SeatInterface;
+
+class KWAYLANDSERVER_EXPORT IdleInterface : public Global
+{
+    Q_OBJECT
+public:
+    virtual ~IdleInterface();
+
+private:
+    explicit IdleInterface(Display *display, QObject *parent = nullptr);
+    friend class Display;
+    class Private;
+};
+
+class KWAYLANDSERVER_EXPORT IdleTimeoutInterface : public Resource
+{
+    Q_OBJECT
+public:
+    virtual ~IdleTimeoutInterface();
+
+private:
+    explicit IdleTimeoutInterface(SeatInterface *seat, IdleInterface *parent, wl_resource *parentResource);
+    friend class IdleInterface;
+    class Private;
+    Private *d_func() const;
+};
+
+}
+}
+
+#endif

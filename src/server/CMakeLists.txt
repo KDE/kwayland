@@ -10,14 +10,20 @@ set(SERVER_LIB_SRCS
     datasource_interface.cpp
     display.cpp
     global.cpp
+    idle_interface.cpp
+    fakeinput_interface.cpp
     keyboard_interface.cpp
     kwin_output_connectors_interface.cpp
     logging.cpp
     output_interface.cpp
     pointer_interface.cpp
+    plasmashell_interface.cpp
+    plasmawindowmanagement_interface.cpp
+    qtsurfaceextension_interface.cpp
     region_interface.cpp
     resource.cpp
     seat_interface.cpp
+    shadow_interface.cpp
     shell_interface.cpp
     surface_interface.cpp
     subcompositor_interface.cpp
@@ -29,7 +35,35 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     BASENAME org_kde_kwin_output_connectors
 )
 
-message("Server Sources: ${SERVER_LIB_SRCS}")
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
+    BASENAME plasma-shell
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
+    BASENAME plasma-window-management
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/surface-extension.xml
+    BASENAME qt-surface-extension
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/idle.xml
+    BASENAME idle
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fake-input.xml
+    BASENAME fake-input
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
+    BASENAME shadow
+)
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
 generate_export_header(KF5WaylandServer
@@ -74,17 +108,28 @@ install(FILES
   dataoffer_interface.h
   datasource_interface.h
   display.h
+  fakeinput_interface.h
   global.h
+  idle_interface.h
   keyboard_interface.h
   kwin_output_connectors_interface.h
   output_interface.h
   pointer_interface.h
+  plasmashell_interface.h
+  plasmawindowmanagement_interface.h
+  qtsurfaceextension_interface.h
   region_interface.h
   resource.h
   seat_interface.h
+  shadow_interface.h
   shell_interface.h
   subcompositor_interface.h
   surface_interface.h
   touch_interface.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Server COMPONENT Devel
 )
+
+include(ECMGeneratePriFile)
+ecm_generate_pri_file(BASE_NAME KWaylandServer LIB_NAME KF5WaylandServer DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5})
+install(FILES ${PRI_FILENAME}
+        DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

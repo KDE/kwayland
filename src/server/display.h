@@ -39,8 +39,14 @@ namespace Server
 class CompositorInterface;
 class DataDeviceManagerInterface;
 class KWinOutputConnectorsInterface;
+class IdleInterface;
+class FakeInputInterface;
 class OutputInterface;
+class PlasmaShellInterface;
+class PlasmaWindowManagementInterface;
+class QtSurfaceExtensionInterface;
 class SeatInterface;
+class ShadowManagerInterface;
 class ShellInterface;
 class SubCompositorInterface;
 
@@ -116,6 +122,12 @@ public:
     SubCompositorInterface *createSubCompositor(QObject *parent = nullptr);
     DataDeviceManagerInterface *createDataDeviceManager(QObject *parent = nullptr);
     KWinOutputConnectorsInterface *createKWinOutputConnectors(QObject *parent = nullptr);
+    PlasmaShellInterface *createPlasmaShell(QObject *parent = nullptr);
+    PlasmaWindowManagementInterface *createPlasmaWindowManagement(QObject *parent = nullptr);
+    QtSurfaceExtensionInterface *createQtSurfaceExtension(QObject *parent = nullptr);
+    IdleInterface *createIdle(QObject *parent = nullptr);
+    FakeInputInterface *createFakeInput(QObject *parent = nullptr);
+    ShadowManagerInterface *createShadowManager(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

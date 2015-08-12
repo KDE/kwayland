@@ -124,6 +124,12 @@ bool SurfaceInterface::Private::lowerChild(QPointer<SubSurfaceInterface> subsurf
     return true;
 }
 
+void SurfaceInterface::Private::setShadow(const QPointer<ShadowInterface> &shadow)
+{
+    pending.shadow = shadow;
+    pending.shadowIsSet = true;
+}
+
 const struct wl_surface_interface SurfaceInterface::Private::s_interface = {
     destroyCallback,
     attachCallback,
@@ -174,14 +180,12 @@ void SurfaceInterface::Private::destroy()
 void SurfaceInterface::Private::commit()
 {
     Q_Q(SurfaceInterface);
-    for (wl_resource *c : current.callbacks) {
-        wl_resource_destroy(c);
-    }
     const bool bufferChanged = pending.bufferIsSet;
     const bool opaqueRegionChanged = pending.opaqueIsSet;
     const bool inputRegionChanged = pending.inputIsSet;
     const bool scaleFactorChanged = current.scale != pending.scale;
     const bool transformFactorChanged = current.transform != pending.transform;
+    const bool shadowChanged = pending.shadowIsSet;
     bool sizeChanged = false;
     auto buffer = current.buffer;
     if (bufferChanged) {
@@ -199,9 +203,17 @@ void SurfaceInterface::Private::commit()
         }
         buffer = pending.buffer;
     }
+    auto shadow = current.shadow;
+    if (shadowChanged) {
+        shadow = pending.shadow;
+    }
+    QList<wl_resource*> callbacks = current.callbacks;
+    callbacks.append(pending.callbacks);
     // copy values
     current = pending;
     current.buffer = buffer;
+    current.callbacks = callbacks;
+    current.shadow = shadow;
     pending = State{};
     pending.children = current.children;
     pending.input = current.input;
@@ -228,6 +240,10 @@ void SurfaceInterface::Private::commit()
     }
     if (bufferChanged) {
         if (!current.damage.isEmpty()) {
+            const QRegion windowRegion = QRegion(0, 0, q->size().width(), q->size().height());
+            if (!windowRegion.isEmpty()) {
+                current.damage = windowRegion.intersected(current.damage);
+            }
             emit q->damaged(current.damage);
         } else if (!current.buffer) {
             emit q->unmapped();
@@ -235,6 +251,9 @@ void SurfaceInterface::Private::commit()
     }
     if (sizeChanged) {
         emit q->sizeChanged();
+    }
+    if (shadowChanged) {
+        emit q->shadowChanged();
     }
 }
 
@@ -244,7 +263,6 @@ void SurfaceInterface::Private::damage(const QRect &rect)
         // TODO: should we send an error?
         return;
     }
-    // TODO: documentation says we need to remove the parts outside of the surface
     pending.damage = pending.damage.united(rect);
 }
 
@@ -454,6 +472,12 @@ QSize SurfaceInterface::size() const
         return d->current.buffer->size();
     }
     return QSize();
+}
+
+QPointer< ShadowInterface > SurfaceInterface::shadow() const
+{
+    Q_D();
+    return d->current.shadow;
 }
 
 SurfaceInterface::Private *SurfaceInterface::d_func() const

@@ -14,15 +14,21 @@ set(CLIENT_LIB_SRCS
     datadevicemanager.cpp
     dataoffer.cpp
     datasource.cpp
+    fakeinput.cpp
     fullscreen_shell.cpp
+    idle.cpp
     keyboard.cpp
     kwin_output_connectors.cpp
     logging.cpp
     output.cpp
     pointer.cpp
+    plasmashell.cpp
+    plasmawindowmanagement.cpp
+    plasmawindowmodel.cpp
     region.cpp
     registry.cpp
     seat.cpp
+    shadow.cpp
     shell.cpp
     shm_pool.cpp
     subcompositor.cpp
@@ -40,7 +46,29 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-output-connectors.xml
     BASENAME org_kde_kwin_output_connectors
 )
-message("Client Sources: ${CLIENT_LIB_SRCS}")
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
+    BASENAME plasma-shell
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
+    BASENAME plasma-window-management
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/idle.xml
+    BASENAME idle
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fake-input.xml
+    BASENAME fake-input
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
+    BASENAME shadow
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -81,14 +109,20 @@ install(FILES
   datadevicemanager.h
   dataoffer.h
   datasource.h
+  fakeinput.h
   fullscreen_shell.h
+  idle.h
   keyboard.h
   kwin_output_connectors.h
   output.h
   pointer.h
+  plasmashell.h
+  plasmawindowmanagement.h
+  plasmawindowmodel.h
   region.h
   registry.h
   seat.h
+  shadow.h
   shell.h
   shm_pool.h
   subcompositor.h
@@ -97,3 +131,8 @@ install(FILES
   touch.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )
+
+include(ECMGeneratePriFile)
+ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF5WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5})
+install(FILES ${PRI_FILENAME}
+        DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

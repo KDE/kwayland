@@ -1,5 +1,5 @@
 /********************************************************************
-Copyright 2015  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,5 +17,47 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "logging_p.h"
-Q_LOGGING_CATEGORY(KWAYLAND_CLIENT, "kwayland-client", QtCriticalMsg);
+#ifndef WAYLANDCLIENTTEST_H
+#define WAYLANDCLIENTTEST_H
+
+#include <QObject>
+#include <QSize>
+
+namespace KWayland
+{
+namespace Client
+{
+class Compositor;
+class ConnectionThread;
+class Registry;
+class ShellSurface;
+class ShmPool;
+class Surface;
+}
+}
+
+class QTimer;
+
+class WaylandClientTest : public QObject
+{
+    Q_OBJECT
+public:
+    explicit WaylandClientTest(QObject *parent = nullptr);
+    virtual ~WaylandClientTest();
+
+private:
+    void init();
+    void render(const QSize &size);
+    void render();
+    void setupRegistry(KWayland::Client::Registry *registry);
+    void toggleTimer();
+    KWayland::Client::ConnectionThread *m_connectionThreadObject;
+    KWayland::Client::Compositor *m_compositor;
+    KWayland::Client::Surface *m_surface;
+    KWayland::Client::ShmPool *m_shm;
+    KWayland::Client::ShellSurface *m_shellSurface;
+    QSize m_currentSize;
+    QTimer *m_timer;
+};
+
+#endif

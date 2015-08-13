@@ -177,7 +177,7 @@ void Surface::attachBuffer(wl_buffer *buffer, const QPoint &offset)
 
 void Surface::attachBuffer(Buffer *buffer, const QPoint &offset)
 {
-    attachBuffer(buffer->buffer(), offset);
+    attachBuffer(buffer ? buffer->buffer() : nullptr, offset);
 }
 
 void Surface::attachBuffer(Buffer::Ptr buffer, const QPoint &offset)

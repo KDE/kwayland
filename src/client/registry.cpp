@@ -70,6 +70,8 @@ public:
     Private(Registry *q);
     void setup();
     bool hasInterface(Interface interface) const;
+    AnnouncedInterface interface(Interface interface) const;
+    QVector<AnnouncedInterface> interfaces(Interface interface) const;
     template <typename T>
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
 
@@ -367,9 +369,40 @@ bool Registry::Private::hasInterface(Registry::Interface interface) const
     return it != m_interfaces.end();
 }
 
+QVector<Registry::AnnouncedInterface> Registry::Private::interfaces(Interface interface) const
+{
+    QVector<Registry::AnnouncedInterface> retVal;
+    for (auto it = m_interfaces.constBegin(); it != m_interfaces.constEnd(); ++it) {
+        const auto &data = *it;
+        if (data.interface == interface) {
+            retVal << AnnouncedInterface{data.name, data.version};
+        }
+    }
+    return retVal;
+}
+
+Registry::AnnouncedInterface Registry::Private::interface(Interface interface) const
+{
+    const auto all = interfaces(interface);
+    if (!all.isEmpty()) {
+        return all.last();
+    }
+    return AnnouncedInterface{0, 0};
+}
+
 bool Registry::hasInterface(Registry::Interface interface) const
 {
     return d->hasInterface(interface);
+}
+
+QVector<Registry::AnnouncedInterface> Registry::interfaces(Interface interface) const
+{
+    return d->interfaces(interface);
+}
+
+Registry::AnnouncedInterface Registry::interface(Interface interface) const
+{
+    return d->interface(interface);
 }
 
 wl_compositor *Registry::bindCompositor(uint32_t name, uint32_t version) const

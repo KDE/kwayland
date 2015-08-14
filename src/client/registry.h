@@ -179,6 +179,47 @@ public:
     bool hasInterface(Interface interface) const;
 
     /**
+     * Representation of one announced interface.
+     **/
+    struct AnnouncedInterface {
+        /**
+         * The name of the announced interface.
+         **/
+        quint32 name;
+        /**
+         * The maximum supported version of the announced interface.
+         **/
+        quint32 version;
+    };
+    /**
+     * Provides name and version for the @p interface.
+     *
+     * The first value of the returned pair is the "name", the second value is the "version".
+     * If the @p interface has not been announced, both values are set to 0.
+     * If there @p interface has been announced multiple times, the last announced is returned.
+     * In case one is interested in all announced interfaces, one should prefer @link{interfaces(Interface)}.
+     *
+     * The returned information can be passed into the bind or create methods.
+     *
+     * @param interface The well-known interface for which the name and version should be retrieved
+     * @returns name and version of the given interface
+     * @since 5.5
+     **/
+    AnnouncedInterface interface(Interface interface) const;
+    /**
+     * Provides all pairs of name and version for the well-known @p interface.
+     *
+     * If the @p interface has not been announced, an empty vector is returned.
+     *
+     * The returned information can be passed into the bind or create methods.
+     *
+     * @param interface The well-known interface for which the name and version should be retrieved
+     * @returns All pairs of name and version of the given interface
+     * @since 5.5
+     **/
+    QVector<AnnouncedInterface> interfaces(Interface interface) const;
+
+    /**
      * Binds the wl_compositor with @p name and @p version.
      * If the @p name does not exist or is not for the compositor interface,
      * @c null will be returned.

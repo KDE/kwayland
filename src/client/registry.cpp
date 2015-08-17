@@ -282,7 +282,7 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         emit q->dataDeviceManagerAnnounced(name, version);
         break;
     case Interface::KWinScreenManagement:
-        emit q->kwinOutputConnectorsAnnounced(name, version);
+        emit q->kwinScreenManagementAnnounced(name, version);
     case Interface::PlasmaShell:
         emit q->plasmaShellAnnounced(name, version);
         break;

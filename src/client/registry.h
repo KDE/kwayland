@@ -430,7 +430,7 @@ Q_SIGNALS:
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
-    void kwinOutputConnectorsAnnounced(quint32 name, quint32 version);
+    void kwinScreenManagementAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     void idleAnnounced(quint32 name, quint32 version);

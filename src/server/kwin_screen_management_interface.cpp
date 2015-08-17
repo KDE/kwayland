@@ -43,8 +43,6 @@ public:
     };
     Private(KWinScreenManagementInterface *q, Display *d);
 
-    QString manufacturer = QStringLiteral("org.kde.kwin");
-    QString model = QStringLiteral("none");
     QList<ResourceData> resources;
 
 private:

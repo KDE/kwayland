@@ -149,9 +149,11 @@ void TestWaylandKWin::testGetOutputs()
      KWayland::Client::KWinScreenManagement *kwin = registry.createKWinScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
 
-     //wl_display_flush(m_connection->display());
+     QSignalSpy oSpy(kwin, SIGNAL(outputAppeared(const QString&, const QString&, const QString&)));
      QSignalSpy doneSpy(kwin, SIGNAL(done()));
+
      QVERIFY(doneSpy.wait(200));
+     QVERIFY(oSpy.count() == 2);
 
 }
 

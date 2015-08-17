@@ -47,7 +47,7 @@
       <arg name="connector" type="string" summary="output's connector"/>
     </event>
 
-    <event name="sync">
+    <event name="done">
         <description summary="emitted when the listing initiated by get_disabled_outputs is done">
             This event is fired once the listing of outputs triggered from
             get_disabled_outputs.has emitted all outputAppeared events.

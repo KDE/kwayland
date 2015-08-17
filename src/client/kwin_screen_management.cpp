@@ -55,7 +55,7 @@ private:
                                           const char *name,
                                           const char *connector);
 
-    static void syncCallback(void *data, org_kde_kwin_screen_management *output);
+    static void doneCallback(void *data, org_kde_kwin_screen_management *output);
 
     KWinScreenManagement *q;
     static struct org_kde_kwin_screen_management_listener s_outputListener;
@@ -88,7 +88,7 @@ KWinScreenManagement::~KWinScreenManagement()
 org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {
     outputAppearedCallback,
     outputDisappearedCallback,
-    syncCallback
+    doneCallback
 };
 
 void KWinScreenManagement::Private::outputAppearedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
@@ -106,9 +106,9 @@ void KWinScreenManagement::Private::outputDisappearedCallback(void* data, org_kd
     qDebug() << "outputDisappearedCallback! FIXME" << name << connector;
 }
 
-void KWinScreenManagement::Private::syncCallback(void* data, org_kde_kwin_screen_management* output)
+void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {
-    qDebug() << "Sync! FIXME";
+    qDebug() << "done()! FIXME";
 }
 
 void KWinScreenManagement::setup(org_kde_kwin_screen_management *output)

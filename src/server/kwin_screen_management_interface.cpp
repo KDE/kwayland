@@ -93,7 +93,7 @@ void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t ve
 
     org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
     org_kde_kwin_screen_management_send_outputAppeared(resource, "INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-    org_kde_kwin_screen_management_send_sync(resource);
+    org_kde_kwin_screen_management_send_done(resource);
 
     c->flush();
     qDebug() << "Flushed";
@@ -113,7 +113,7 @@ void KWinScreenManagementInterface::getDisabledOutputs()
     Q_ASSERT(isValid());
     qDebug() << "getDisabledOutputs!";
 //     org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
-//     org_kde_kwin_screen_management_send_sync(resource);
+//     org_kde_kwin_screen_management_send_done(resource);
 }
 
 

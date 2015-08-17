@@ -51,7 +51,7 @@ public:
 Q_SIGNALS:
     void outputAppeared(const QString &edid, const QString &name, const QString &connector);
     void outputDisappeared(const QString &name, const QString &connector);
-    void sync();
+    void done();
 
 private:
     explicit KWinScreenManagementInterface(Display *display, QObject *parent = nullptr);

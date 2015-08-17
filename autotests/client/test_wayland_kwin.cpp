@@ -149,11 +149,9 @@ void TestWaylandKWin::testGetOutputs()
      KWayland::Client::KWinScreenManagement *kwin = registry.createKWinScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
 
-     kwin->getDisabledOutputs();
      //wl_display_flush(m_connection->display());
-     QSignalSpy syncSpy(kwin, SIGNAL(sync()));
-//      QVERIFY(syncSpy.wait(200));
-     syncSpy.wait(200);
+     QSignalSpy doneSpy(kwin, SIGNAL(done()));
+     QVERIFY(doneSpy.wait(200));
 
 }
 

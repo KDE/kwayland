@@ -86,8 +86,6 @@ public:
     operator org_kde_kwin_screen_management*() const;
     org_kde_kwin_screen_management *output();
 
-    void getDisabledOutputs();
-
 Q_SIGNALS:
     /**
      * Emitted whenever at least one of the data changed.

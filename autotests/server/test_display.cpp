@@ -203,7 +203,6 @@ void TestWaylandServerDisplay::testKWin()
     auto kwin = display->createKWinScreenManagement(this);
     kwin->create();
     QVERIFY(kwin->isValid());
-    kwin->getDisabledOutputs();
 }
 
 

@@ -108,14 +108,6 @@ void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void KWinScreenManagementInterface::getDisabledOutputs()
-{
-    Q_ASSERT(isValid());
-    qDebug() << "getDisabledOutputs!";
-//     org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
-//     org_kde_kwin_screen_management_send_done(resource);
-}
-
 
 }
 }

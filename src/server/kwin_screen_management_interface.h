@@ -46,8 +46,6 @@ class KWAYLANDSERVER_EXPORT KWinScreenManagementInterface : public Global
 public:
     virtual ~KWinScreenManagementInterface();
 
-    void getDisabledOutputs();
-
 Q_SIGNALS:
     void outputAppeared(const QString &edid, const QString &name, const QString &connector);
     void outputDisappeared(const QString &name, const QString &connector);

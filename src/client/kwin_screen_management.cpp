@@ -43,8 +43,6 @@ public:
 
     WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> output;
 
-    void getDisabledOutputs();
-
 private:
     static void outputAppearedCallback(void *data, org_kde_kwin_screen_management *output,
                                        const char *edid,
@@ -108,23 +106,14 @@ void KWinScreenManagement::Private::outputDisappearedCallback(void* data, org_kd
 
 void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {
-    qDebug() << "done()! FIXME";
+    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
+    Q_ASSERT(o->output == output);
+    emit o->q->done();
 }
 
 void KWinScreenManagement::setup(org_kde_kwin_screen_management *output)
 {
     d->setup(output);
-}
-
-void KWinScreenManagement::getDisabledOutputs()
-{
-    return d->getDisabledOutputs();
-}
-
-void KWinScreenManagement::Private::getDisabledOutputs()
-{
-    qDebug() << "client: get disabled outputs";
-    org_kde_kwin_screen_management_get_disabled_outputs(output);
 }
 
 org_kde_kwin_screen_management *KWinScreenManagement::output()

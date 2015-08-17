@@ -23,11 +23,6 @@
     compositor. These outputs are currently disabled, so not rendered to.
     </description>
 
-    <request name="get_disabled_outputs">
-        <description summary="trigger listing disabled outputs">
-        </description>
-    </request>
-
     <event name="outputAppeared">
       <description summary="emitted when an output is connected">
         The output is connected, but not used for rendering yet. This means that

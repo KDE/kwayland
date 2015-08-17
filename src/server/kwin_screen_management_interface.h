@@ -39,12 +39,12 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT KWinOutputConnectorsInterface : public Global
+class KWAYLANDSERVER_EXPORT KWinScreenManagementInterface : public Global
 {
     Q_OBJECT
 
 public:
-    virtual ~KWinOutputConnectorsInterface();
+    virtual ~KWinScreenManagementInterface();
 
     void getDisabledOutputs();
 
@@ -54,7 +54,7 @@ Q_SIGNALS:
     void sync();
 
 private:
-    explicit KWinOutputConnectorsInterface(Display *display, QObject *parent = nullptr);
+    explicit KWinScreenManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

@@ -35,7 +35,7 @@ struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
-struct org_kde_kwin_output_connectors;
+struct org_kde_kwin_screen_management;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
 struct org_kde_kwin_shadow_manager;
@@ -53,7 +53,7 @@ class DataDeviceManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
-class KWinOutputConnectors;
+class KWinScreenManagement;
 class Idle;
 class Output;
 class PlasmaShell;
@@ -108,7 +108,7 @@ public:
         FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
-        KWinOutputConnectors, ///< Refers to the wl_data_device_manager interface
+        KWinScreenManagement, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
@@ -220,7 +220,7 @@ public:
     /**
      * FIXME: docs.
      **/
-    org_kde_kwin_output_connectors *bindKWinOutputConnectors(uint32_t name, uint32_t version) const;
+    org_kde_kwin_screen_management *bindKWinScreenManagement(uint32_t name, uint32_t version) const;
     /**
      * Binds the wl_subcompositor with @p name and @p version.
      * If the @p name does not exist or is not for the subcompositor interface,
@@ -346,20 +346,20 @@ public:
      **/
     Output *createOutput(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
-     * Creates an KWinOutputConnectors and sets it up to manage the interface identified
+     * Creates an KWinScreenManagement and sets it up to manage the interface identified
      * by @p name and @p version.
      *
      * Note: in case @p name is invalid or isn't for the wl_output interface,
      * the returned KWinConnectors will not be valid. Therefore it's recommended to call
      * isValid on the created instance.
      *
-     * @param name The name of the org_kde_kwin_output_connectors interface to bind
-     * @param version The version or the org_kde_kwin_output_connectors interface to use
-     * @param parent The parent for KWinOutputConnectors
+     * @param name The name of the org_kde_kwin_screen_management interface to bind
+     * @param version The version or the org_kde_kwin_screen_management interface to use
+     * @param parent The parent for KWinScreenManagement
      *
-     * @returns The created KWinOutputConnectors.
+     * @returns The created KWinScreenManagement.
      **/
-    KWinOutputConnectors *createKWinOutputConnectors(quint32 name, quint32 version, QObject *parent = nullptr);
+    KWinScreenManagement *createKWinScreenManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a FullscreenShell and sets it up to manage the interface identified by
      * @p name and @p version.

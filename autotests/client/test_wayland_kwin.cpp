@@ -23,14 +23,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/kwin_output_connectors.h"
+#include "../../src/client/kwin_screen_management.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/output_interface.h"
-#include "../../src/server/kwin_output_connectors_interface.h"
+#include "../../src/server/kwin_screen_management_interface.h"
 
 // Wayland
 #include <wayland-client-protocol.h>
@@ -48,7 +48,7 @@ private Q_SLOTS:
 
 private:
     KWayland::Server::Display *m_display;
-    KWayland::Server::KWinOutputConnectorsInterface *m_kwinInterface;
+    KWayland::Server::KWinScreenManagementInterface *m_kwinInterface;
     KWayland::Server::OutputInterface *m_serverOutput;
     //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
@@ -88,7 +88,7 @@ void TestWaylandKWin::init()
     m_serverOutput->create();
 
     qDebug() << "creating m_kwinInterface";
-    m_kwinInterface = m_display->createKWinOutputConnectors(this);
+    m_kwinInterface = m_display->createKWinScreenManagement(this);
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 
@@ -132,7 +132,7 @@ void TestWaylandKWin::cleanup()
 void TestWaylandKWin::testGetOutputs()
 {
      /*-*/
-     //auto kwin = m_display->createKWinOutputConnectors();
+     //auto kwin = m_display->createKWinScreenManagement();
      //kwin->getOutputs();
 
      KWayland::Client::Registry registry;
@@ -146,7 +146,7 @@ void TestWaylandKWin::testGetOutputs()
      QVERIFY(announced.wait(1000));
 
 
-     KWayland::Client::KWinOutputConnectors *kwin = registry.createKWinOutputConnectors(announced.first().first().value<quint32>(), 1, &registry);
+     KWayland::Client::KWinScreenManagement *kwin = registry.createKWinScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
 
      kwin->getDisabledOutputs();

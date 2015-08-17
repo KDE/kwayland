@@ -13,7 +13,7 @@ set(SERVER_LIB_SRCS
     idle_interface.cpp
     fakeinput_interface.cpp
     keyboard_interface.cpp
-    kwin_output_connectors_interface.cpp
+    kwin_screen_management_interface.cpp
     logging.cpp
     output_interface.cpp
     pointer_interface.cpp
@@ -31,8 +31,8 @@ set(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-output-connectors.xml
-    BASENAME org_kde_kwin_output_connectors
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-screen-management.xml
+    BASENAME org_kde_kwin_screen_management
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -112,7 +112,7 @@ install(FILES
   global.h
   idle_interface.h
   keyboard_interface.h
-  kwin_output_connectors_interface.h
+  kwin_screen_management_interface.h
   output_interface.h
   pointer_interface.h
   plasmashell_interface.h

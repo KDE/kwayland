@@ -18,12 +18,12 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "kwin_output_connectors_interface.h"
+#include "kwin_screen_management_interface.h"
 #include "global_p.h"
 #include "display.h"
 
 #include <wayland-server.h>
-#include "wayland-org_kde_kwin_output_connectors-server-protocol.h"
+#include "wayland-org_kde_kwin_screen_management-server-protocol.h"
 
 #include <QDebug>
 
@@ -34,14 +34,14 @@ namespace Server
 
 static const quint32 s_version = 1;
 
-class KWinOutputConnectorsInterface::Private : public Global::Private
+class KWinScreenManagementInterface::Private : public Global::Private
 {
 public:
     struct ResourceData {
         wl_resource *resource;
         uint32_t version;
     };
-    Private(KWinOutputConnectorsInterface *q, Display *d);
+    Private(KWinScreenManagementInterface *q, Display *d);
 
     QString manufacturer = QStringLiteral("org.kde.kwin");
     QString model = QStringLiteral("none");
@@ -51,35 +51,35 @@ private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    KWinOutputConnectorsInterface *q;
+    KWinScreenManagementInterface *q;
 };
 
-KWinOutputConnectorsInterface::Private::Private(KWinOutputConnectorsInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_output_connectors_interface, s_version)
+KWinScreenManagementInterface::Private::Private(KWinScreenManagementInterface *q, Display *d)
+    : Global::Private(d, &org_kde_kwin_screen_management_interface, s_version)
     , q(q)
 {
 }
 
-KWinOutputConnectorsInterface::KWinOutputConnectorsInterface(Display *display, QObject *parent)
+KWinScreenManagementInterface::KWinScreenManagementInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
     qDebug() << "New output interface";
 }
 
-KWinOutputConnectorsInterface::~KWinOutputConnectorsInterface() = default;
+KWinScreenManagementInterface::~KWinScreenManagementInterface() = default;
 
 
-KWinOutputConnectorsInterface::Private *KWinOutputConnectorsInterface::d_func() const
+KWinScreenManagementInterface::Private *KWinScreenManagementInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     qDebug() << "Bound!";
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kde_kwin_output_connectors_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_screen_management_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -91,29 +91,29 @@ void KWinOutputConnectorsInterface::Private::bind(wl_client *client, uint32_t ve
     r.version = version;
     resources << r;
 
-    org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
-    org_kde_kwin_output_connectors_send_outputAppeared(resource, "INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-    org_kde_kwin_output_connectors_send_sync(resource);
+    org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
+    org_kde_kwin_screen_management_send_outputAppeared(resource, "INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    org_kde_kwin_screen_management_send_sync(resource);
 
     c->flush();
     qDebug() << "Flushed";
 }
 
-void KWinOutputConnectorsInterface::Private::unbind(wl_resource *resource)
+void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<KWinOutputConnectorsInterface::Private*>(wl_resource_get_user_data(resource));
+    auto o = reinterpret_cast<KWinScreenManagementInterface::Private*>(wl_resource_get_user_data(resource));
     auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
 }
 
-void KWinOutputConnectorsInterface::getDisabledOutputs()
+void KWinScreenManagementInterface::getDisabledOutputs()
 {
     Q_ASSERT(isValid());
     qDebug() << "getDisabledOutputs!";
-//     org_kde_kwin_output_connectors_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
-//     org_kde_kwin_output_connectors_send_sync(resource);
+//     org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
+//     org_kde_kwin_screen_management_send_sync(resource);
 }
 
 

@@ -17,7 +17,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "kwin_output_connectors.h"
+#include "kwin_screen_management.h"
 #include "wayland_pointer_p.h"
 // Qt
 #include <QPoint>
@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSize>
 // wayland
 #include <wayland-client-protocol.h>
-#include "wayland-org_kde_kwin_output_connectors-client-protocol.h"
+#include "wayland-org_kde_kwin_screen_management-client-protocol.h"
 
 #include <QDebug>
 
@@ -35,113 +35,113 @@ namespace KWayland
 namespace Client
 {
 
-class KWinOutputConnectors::Private
+class KWinScreenManagement::Private
 {
 public:
-    Private(KWinOutputConnectors *q);
-    void setup(org_kde_kwin_output_connectors *o);
+    Private(KWinScreenManagement *q);
+    void setup(org_kde_kwin_screen_management *o);
 
-    WaylandPointer<org_kde_kwin_output_connectors, org_kde_kwin_output_connectors_destroy> output;
+    WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> output;
 
     void getDisabledOutputs();
 
 private:
-    static void outputAppearedCallback(void *data, org_kde_kwin_output_connectors *output,
+    static void outputAppearedCallback(void *data, org_kde_kwin_screen_management *output,
                                        const char *edid,
                                        const char *name,
                                        const char *connector);
 
-    static void outputDisappearedCallback(void *data, org_kde_kwin_output_connectors *output,
+    static void outputDisappearedCallback(void *data, org_kde_kwin_screen_management *output,
                                           const char *name,
                                           const char *connector);
 
-    static void syncCallback(void *data, org_kde_kwin_output_connectors *output);
+    static void syncCallback(void *data, org_kde_kwin_screen_management *output);
 
-    KWinOutputConnectors *q;
-    static struct org_kde_kwin_output_connectors_listener s_outputListener;
+    KWinScreenManagement *q;
+    static struct org_kde_kwin_screen_management_listener s_outputListener;
 };
 
-KWinOutputConnectors::Private::Private(KWinOutputConnectors *q)
+KWinScreenManagement::Private::Private(KWinScreenManagement *q)
     : q(q)
 {
 }
 
-void KWinOutputConnectors::Private::setup(org_kde_kwin_output_connectors *o)
+void KWinScreenManagement::Private::setup(org_kde_kwin_screen_management *o)
 {
     Q_ASSERT(o);
     Q_ASSERT(!output);
     output.setup(o);
-    org_kde_kwin_output_connectors_add_listener(output, &s_outputListener, this);
+    org_kde_kwin_screen_management_add_listener(output, &s_outputListener, this);
 }
 
-KWinOutputConnectors::KWinOutputConnectors(QObject *parent)
+KWinScreenManagement::KWinScreenManagement(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
 }
 
-KWinOutputConnectors::~KWinOutputConnectors()
+KWinScreenManagement::~KWinScreenManagement()
 {
     d->output.release();
 }
 
-org_kde_kwin_output_connectors_listener KWinOutputConnectors::Private::s_outputListener = {
+org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {
     outputAppearedCallback,
     outputDisappearedCallback,
     syncCallback
 };
 
-void KWinOutputConnectors::Private::outputAppearedCallback(void* data, org_kde_kwin_output_connectors* output, const char* edid, const char* name, const char* connector)
+void KWinScreenManagement::Private::outputAppearedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
 {
     qDebug() << "outputAppearedCallback!" << name << connector;
-    auto o = reinterpret_cast<KWinOutputConnectors::Private*>(data);
+    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
     Q_ASSERT(o->output == output);
 
     emit o->q->outputAppeared(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 
 }
 
-void KWinOutputConnectors::Private::outputDisappearedCallback(void* data, org_kde_kwin_output_connectors* output, const char* name, const char* connector)
+void KWinScreenManagement::Private::outputDisappearedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
 {
     qDebug() << "outputDisappearedCallback! FIXME" << name << connector;
 }
 
-void KWinOutputConnectors::Private::syncCallback(void* data, org_kde_kwin_output_connectors* output)
+void KWinScreenManagement::Private::syncCallback(void* data, org_kde_kwin_screen_management* output)
 {
     qDebug() << "Sync! FIXME";
 }
 
-void KWinOutputConnectors::setup(org_kde_kwin_output_connectors *output)
+void KWinScreenManagement::setup(org_kde_kwin_screen_management *output)
 {
     d->setup(output);
 }
 
-void KWinOutputConnectors::getDisabledOutputs()
+void KWinScreenManagement::getDisabledOutputs()
 {
     return d->getDisabledOutputs();
 }
 
-void KWinOutputConnectors::Private::getDisabledOutputs()
+void KWinScreenManagement::Private::getDisabledOutputs()
 {
     qDebug() << "client: get disabled outputs";
-    org_kde_kwin_output_connectors_get_disabled_outputs(output);
+    org_kde_kwin_screen_management_get_disabled_outputs(output);
 }
 
-org_kde_kwin_output_connectors *KWinOutputConnectors::output()
+org_kde_kwin_screen_management *KWinScreenManagement::output()
 {
     return d->output;
 }
 
-bool KWinOutputConnectors::isValid() const
+bool KWinScreenManagement::isValid() const
 {
     return d->output.isValid();
 }
 
-KWinOutputConnectors::operator org_kde_kwin_output_connectors*() {
+KWinScreenManagement::operator org_kde_kwin_screen_management*() {
     return d->output;
 }
 
-KWinOutputConnectors::operator org_kde_kwin_output_connectors*() const {
+KWinScreenManagement::operator org_kde_kwin_screen_management*() const {
     return d->output;
 }
 

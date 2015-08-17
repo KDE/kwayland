@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct org_kde_kwin_output_connectors;
+struct org_kde_kwin_screen_management;
 class QPoint;
 class QRect;
 
@@ -36,55 +36,55 @@ namespace Client
 {
 
 /**
- * @short Wrapper for the org_kde_kwin_output_connectors interface.
+ * @short Wrapper for the org_kde_kwin_screen_management interface.
  *
- * This class provides a convenient wrapper for the org_kde_kwin_output_connectors interface.
- * Its main purpose is to hold the information about one KWinOutputConnectors.
+ * This class provides a convenient wrapper for the org_kde_kwin_screen_management interface.
+ * Its main purpose is to hold the information about one KWinScreenManagement.
  *
  * To use this class one needs to interact with the Registry. There are two
- * possible ways to create an KWinOutputConnectors interface:
+ * possible ways to create an KWinScreenManagement interface:
  * @code
- * KWinOutputConnectors *c = registry->createKWinOutputConnectors(name, version);
+ * KWinScreenManagement *c = registry->createKWinScreenManagement(name, version);
  * @endcode
  *
- * This creates the KWinOutputConnectors and sets it up directly. As an alternative this
+ * This creates the KWinScreenManagement and sets it up directly. As an alternative this
  * can also be done in a more low level way:
  * @code
- * KWinOutputConnectors *c = new KWinOutputConnectors;
- * c->setup(registry->bindKWinOutputConnectors(name, version));
+ * KWinScreenManagement *c = new KWinScreenManagement;
+ * c->setup(registry->bindKWinScreenManagement(name, version));
  * @endcode
  *
- * The KWinOutputConnectors can be used as a drop-in replacement for any org_kde_kwin_output_connectors
+ * The KWinScreenManagement can be used as a drop-in replacement for any org_kde_kwin_screen_management
  * pointer as it provides matching cast operators.
  *
- * Please note that all properties of KWinOutputConnectors are not valid until the
+ * Please note that all properties of KWinScreenManagement are not valid until the
  * changed signal has been emitted. The wayland server is pushing the
- * information in an async way to the KWinOutputConnectors instance. By emitting changed
- * the KWinOutputConnectors indicates that all relevant information is available.
+ * information in an async way to the KWinScreenManagement instance. By emitting changed
+ * the KWinScreenManagement indicates that all relevant information is available.
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT KWinOutputConnectors : public QObject
+class KWAYLANDCLIENT_EXPORT KWinScreenManagement : public QObject
 {
     Q_OBJECT
 public:
-    explicit KWinOutputConnectors(QObject *parent = nullptr);
-    virtual ~KWinOutputConnectors();
+    explicit KWinScreenManagement(QObject *parent = nullptr);
+    virtual ~KWinScreenManagement();
 
     /**
      * Setup this Compositor to manage the @p output.
-     * When using Registry::createKWinOutputConnectors there is no need to call this
+     * When using Registry::createKWinScreenManagement there is no need to call this
      * method.
      **/
-    void setup(org_kde_kwin_output_connectors *output);
+    void setup(org_kde_kwin_screen_management *output);
 
     /**
-     * @returns @c true if managing a org_kde_kwin_output_connectors.
+     * @returns @c true if managing a org_kde_kwin_screen_management.
      **/
     bool isValid() const;
-    operator org_kde_kwin_output_connectors*();
-    operator org_kde_kwin_output_connectors*() const;
-    org_kde_kwin_output_connectors *output();
+    operator org_kde_kwin_screen_management*();
+    operator org_kde_kwin_screen_management*() const;
+    org_kde_kwin_screen_management *output();
 
     void getDisabledOutputs();
 

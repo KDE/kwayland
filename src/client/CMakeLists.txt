@@ -14,6 +14,7 @@ set(CLIENT_LIB_SRCS
     datadevicemanager.cpp
     dataoffer.cpp
     datasource.cpp
+    disabledoutput.cpp
     fakeinput.cpp
     fullscreen_shell.cpp
     idle.cpp
@@ -109,6 +110,7 @@ install(FILES
   datadevicemanager.h
   dataoffer.h
   datasource.h
+  disabledoutput.h
   fakeinput.h
   fullscreen_shell.h
   idle.h

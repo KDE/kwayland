@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2013  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2015  Sebastian Kügler <sebas@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -42,6 +43,8 @@ public:
     void setup(org_kde_kwin_screen_management *o);
 
     WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> output;
+
+    QList<DisabledOutput*> disabledOutputs;
 
 private:
     static void disabledOutputAddedCallback(void *data, org_kde_kwin_screen_management *output,
@@ -95,6 +98,13 @@ void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
     Q_ASSERT(o->output == output);
 
+    DisabledOutput *op = new DisabledOutput(o->q);
+    op->setEdid(edid);
+    op->setName(name);
+    op->setConnector(connector);
+
+    o->disabledOutputs << op;
+
     emit o->q->disabledOutputAdded(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 
 }
@@ -104,6 +114,16 @@ void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, or
     qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
     Q_ASSERT(o->output == output);
+
+    DisabledOutput *op = new DisabledOutput(o->q);
+    op->setName(name);
+    op->setConnector(connector);
+
+    auto it = std::find_if(o->disabledOutputs.begin(), o->disabledOutputs.end(),
+                           [op](const DisabledOutput *r) {
+                               return (r->name() == op->name() && r->connector() == op->connector());
+                        });
+    o->disabledOutputs.erase(it);
 
     emit o->q->disabledOutputRemoved(QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 }
@@ -137,6 +157,12 @@ KWinScreenManagement::operator org_kde_kwin_screen_management*() {
 KWinScreenManagement::operator org_kde_kwin_screen_management*() const {
     return d->output;
 }
+
+QList< DisabledOutput* > KWinScreenManagement::disabledOutputs() const
+{
+    return d->disabledOutputs;
+}
+
 
 }
 }

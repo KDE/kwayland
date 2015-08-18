@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2013  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2015  Sebastian Kügler <sebas@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,12 +18,14 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef WAYLAND_KWIN_OUTPUT_CONNECTORS_H
-#define WAYLAND_KWIN_OUTPUT_CONNECTORS_H
+#ifndef WAYLAND_KWIN_SCREEN_MANAGEMENT_H
+#define WAYLAND_KWIN_SCREEN_MANAGEMENT_H
 
 #include <QObject>
 #include <QPointer>
 #include <QSize>
+
+#include "disabledoutput.h"
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -85,6 +88,8 @@ public:
     operator org_kde_kwin_screen_management*();
     operator org_kde_kwin_screen_management*() const;
     org_kde_kwin_screen_management *output();
+
+    QList<DisabledOutput*> disabledOutputs() const;
 
 Q_SIGNALS:
     /**

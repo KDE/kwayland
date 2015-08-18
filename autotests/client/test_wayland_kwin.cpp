@@ -163,6 +163,8 @@ void TestWaylandKWin::testGetOutputs()
      QVERIFY(rSpy.wait(1000));
      QCOMPARE(rSpy.count(), 1);
      //m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+     QCOMPARE(kwin->disabledOutputs().count(), 1);
+
 
 
 }

@@ -138,19 +138,23 @@ void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const
 void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
     Q_D();
-    qDebug() << "removeDisabledOutput" << name << connector;
-    foreach (auto op, d->disabledOutputs) {
-        if (op.name == name && op.connector == connector) {
-            //d->disabledOutputs.removeAll(op); // FIXME: iterator
+    qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
+
+    QList<DisabledOutput>::iterator i;
+    for (i = d->disabledOutputs.begin(); i != d->disabledOutputs.end(); ++i) {
+        if ((*i).name == name) {
+            qDebug() << "Kill me" << name;
             for (auto r : d->resources) {
                 wl_resource *resource = r.resource;
                 org_kde_kwin_screen_management_send_disabledOutputRemoved(resource,
-                                                                      qPrintable(name),
-                                                                      qPrintable(connector));
+                                                                          qPrintable((*i).name),
+                                                                          qPrintable((*i).connector));
             }
+            d->disabledOutputs.erase(i);
         }
-
+        i++;
     }
+    qDebug() << "d->DisabledOutputs is now " << d->disabledOutputs.count();
 }
 
 
@@ -163,7 +167,6 @@ void KWinScreenManagementInterface::done()
         org_kde_kwin_screen_management_send_done(resource);
     }
 }
-
 
 
 }

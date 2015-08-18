@@ -53,8 +53,8 @@ public:
     virtual ~KWinScreenManagementInterface();
 
 public Q_SLOTS:
-    void outputAppeared(const QString &edid, const QString &name, const QString &connector);
-    void outputDisappeared(const QString &name, const QString &connector);
+    void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
+    void removeDisabledOutput(const QString &name, const QString &connector);
 
 private Q_SLOTS:
     void done();

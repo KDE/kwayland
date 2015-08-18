@@ -92,7 +92,7 @@ void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t ve
     resources << r;
 
     foreach (auto op, disabledOutputs) {
-        org_kde_kwin_screen_management_send_outputAppeared(resource,
+        org_kde_kwin_screen_management_send_disabledOutputAdded(resource,
                                                            qPrintable(op.edid),
                                                            qPrintable(op.name),
                                                            qPrintable(op.connector));
@@ -113,7 +113,7 @@ void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void KWinScreenManagementInterface::outputAppeared(const QString& edid, const QString& name, const QString& connector)
+void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const QString& name, const QString& connector)
 {
     qDebug() << "New Output! :: " << edid << name << connector;
 
@@ -125,7 +125,7 @@ void KWinScreenManagementInterface::outputAppeared(const QString& edid, const QS
 
     for (auto r : d_func()->resources) {
         wl_resource *resource = r.resource;
-        org_kde_kwin_screen_management_send_outputAppeared(resource,
+        org_kde_kwin_screen_management_send_disabledOutputAdded(resource,
                                                            qPrintable(op.edid),
                                                            qPrintable(op.name),
                                                            qPrintable(op.connector));
@@ -133,14 +133,14 @@ void KWinScreenManagementInterface::outputAppeared(const QString& edid, const QS
 
 }
 
-void KWinScreenManagementInterface::outputDisappeared(const QString& name, const QString& connector)
+void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
     foreach (auto op, d_func()->disabledOutputs) {
         if (op.name == name && op.connector == connector) {
             //d_func()->disabledOutputs.removeAll(op); // FIXME: iterator
             for (auto r : d_func()->resources) {
                 wl_resource *resource = r.resource;
-                org_kde_kwin_screen_management_send_outputDisappeared(resource,
+                org_kde_kwin_screen_management_send_disabledOutputRemoved(resource,
                                                                       qPrintable(name),
                                                                       qPrintable(connector));
             }

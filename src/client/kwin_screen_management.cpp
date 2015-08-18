@@ -44,12 +44,12 @@ public:
     WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> output;
 
 private:
-    static void outputAppearedCallback(void *data, org_kde_kwin_screen_management *output,
+    static void disabledOutputAddedCallback(void *data, org_kde_kwin_screen_management *output,
                                        const char *edid,
                                        const char *name,
                                        const char *connector);
 
-    static void outputDisappearedCallback(void *data, org_kde_kwin_screen_management *output,
+    static void disabledOutputRemovedCallback(void *data, org_kde_kwin_screen_management *output,
                                           const char *name,
                                           const char *connector);
 
@@ -84,24 +84,24 @@ KWinScreenManagement::~KWinScreenManagement()
 }
 
 org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {
-    outputAppearedCallback,
-    outputDisappearedCallback,
+    disabledOutputAddedCallback,
+    disabledOutputRemovedCallback,
     doneCallback
 };
 
-void KWinScreenManagement::Private::outputAppearedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
+void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
 {
-    qDebug() << "outputAppearedCallback!" << name << connector;
+    qDebug() << "disabledOutputAddedCallback!" << name << connector;
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
     Q_ASSERT(o->output == output);
 
-    emit o->q->outputAppeared(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
+    emit o->q->disabledOutputAdded(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 
 }
 
-void KWinScreenManagement::Private::outputDisappearedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
+void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
 {
-    qDebug() << "outputDisappearedCallback! FIXME" << name << connector;
+    qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
 }
 
 void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)

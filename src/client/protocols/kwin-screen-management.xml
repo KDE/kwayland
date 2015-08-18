@@ -23,8 +23,8 @@
     compositor. These outputs are currently disabled, so not rendered to.
     </description>
 
-    <event name="outputAppeared">
-      <description summary="emitted when an output is connected">
+    <event name="disabledOutputAdded">
+      <description summary="emitted when anutp output is connected">
         The output is connected, but not used for rendering yet. This means that
         this output has either just been plugged in, or disabled and excluded from
         the registry object.
@@ -34,7 +34,7 @@
       <arg name="connector" type="string" summary="output's connector"/>
     </event>
 
-    <event name="outputDisappeared">
+    <event name="disabledOutputRemoved">
       <description summary="emitted when an output disappears from the list">
         The output is disconnected, or has been enabled.
       </description>
@@ -45,7 +45,7 @@
     <event name="done">
         <description summary="emitted when the listing initiated by get_disabled_outputs is done">
             This event is fired once the listing of outputs triggered from
-            get_disabled_outputs.has emitted all outputAppeared events.
+            get_disabled_outputs.has emitted all disabledOutputAdded events.
         </description>
     </event>
 

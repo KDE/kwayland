@@ -92,8 +92,8 @@ void TestWaylandKWin::init()
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 
-    m_kwinInterface->outputAppeared("", "DiscoScreen", "HDMI1");
-    m_kwinInterface->outputAppeared("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
+    m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
@@ -152,7 +152,7 @@ void TestWaylandKWin::testGetOutputs()
      KWayland::Client::KWinScreenManagement *kwin = registry.createKWinScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
 
-     QSignalSpy oSpy(kwin, SIGNAL(outputAppeared(const QString&, const QString&, const QString&)));
+     QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
      QSignalSpy doneSpy(kwin, SIGNAL(done()));
 
      QVERIFY(doneSpy.wait(200));

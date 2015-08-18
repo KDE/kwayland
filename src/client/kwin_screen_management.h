@@ -91,8 +91,8 @@ Q_SIGNALS:
      * Emitted whenever at least one of the data changed.
      **/
     void done();
-    void outputAppeared(const QString &edid, const QString &name, const QString &connector);
-    void outputDisppeared(const QString &name, const QString &connector);
+    void disabledOutputAdded(const QString &edid, const QString &name, const QString &connector);
+    void disabledOutputRemoved(const QString &name, const QString &connector);
 
 private:
     class Private;

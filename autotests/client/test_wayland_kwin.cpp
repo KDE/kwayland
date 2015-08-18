@@ -92,6 +92,10 @@ void TestWaylandKWin::init()
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 
+    m_kwinInterface->outputAppeared("", "DiscoScreen", "HDMI1");
+    m_kwinInterface->outputAppeared("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    m_kwinInterface->done();
+
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
     QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
@@ -153,7 +157,7 @@ void TestWaylandKWin::testGetOutputs()
      QSignalSpy doneSpy(kwin, SIGNAL(done()));
 
      QVERIFY(doneSpy.wait(200));
-     QVERIFY(oSpy.count() == 2);
+     QCOMPARE(oSpy.count(), 2);
 
 }
 

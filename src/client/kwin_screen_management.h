@@ -79,7 +79,7 @@ public:
      * When using Registry::createKWinScreenManagement there is no need to call this
      * method.
      **/
-    void setup(org_kde_kwin_screen_management *output);
+    void setup(org_kde_kwin_screen_management *screen_management);
 
     /**
      * @returns @c true if managing a org_kde_kwin_screen_management.
@@ -87,7 +87,7 @@ public:
     bool isValid() const;
     operator org_kde_kwin_screen_management*();
     operator org_kde_kwin_screen_management*() const;
-    org_kde_kwin_screen_management *output();
+    org_kde_kwin_screen_management *screen_management();
 
     QList<DisabledOutput*> disabledOutputs() const;
 

@@ -42,7 +42,7 @@ public:
     Private(KWinScreenManagement *q);
     void setup(org_kde_kwin_screen_management *o);
 
-    WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> output;
+    WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> screen_management;
 
     QList<DisabledOutput*> disabledOutputs;
 
@@ -70,9 +70,9 @@ KWinScreenManagement::Private::Private(KWinScreenManagement *q)
 void KWinScreenManagement::Private::setup(org_kde_kwin_screen_management *o)
 {
     Q_ASSERT(o);
-    Q_ASSERT(!output);
-    output.setup(o);
-    org_kde_kwin_screen_management_add_listener(output, &s_outputListener, this);
+    Q_ASSERT(!screen_management);
+    screen_management.setup(o);
+    org_kde_kwin_screen_management_add_listener(screen_management, &s_outputListener, this);
 }
 
 KWinScreenManagement::KWinScreenManagement(QObject *parent)
@@ -83,7 +83,8 @@ KWinScreenManagement::KWinScreenManagement(QObject *parent)
 
 KWinScreenManagement::~KWinScreenManagement()
 {
-    d->output.release();
+    d->screen_management.release();
+    qDeleteAll(d->disabledOutputs);
 }
 
 org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {
@@ -96,7 +97,7 @@ void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_
 {
     qDebug() << "disabledOutputAddedCallback!" << name << connector;
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
-    Q_ASSERT(o->output == output);
+    Q_ASSERT(o->screen_management == output);
 
     DisabledOutput *op = new DisabledOutput(o->q);
     op->setEdid(edid);
@@ -113,9 +114,9 @@ void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, or
 {
     qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
-    Q_ASSERT(o->output == output);
+    Q_ASSERT(o->screen_management == output);
 
-    DisabledOutput *op = new DisabledOutput(o->q);
+    DisabledOutput *op = new DisabledOutput();
     op->setName(name);
     op->setConnector(connector);
 
@@ -131,7 +132,7 @@ void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, or
 void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {
     auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
-    Q_ASSERT(o->output == output);
+    Q_ASSERT(o->screen_management == output);
     emit o->q->done();
 }
 
@@ -140,22 +141,22 @@ void KWinScreenManagement::setup(org_kde_kwin_screen_management *output)
     d->setup(output);
 }
 
-org_kde_kwin_screen_management *KWinScreenManagement::output()
+org_kde_kwin_screen_management *KWinScreenManagement::screen_management()
 {
-    return d->output;
+    return d->screen_management;
 }
 
 bool KWinScreenManagement::isValid() const
 {
-    return d->output.isValid();
+    return d->screen_management.isValid();
 }
 
 KWinScreenManagement::operator org_kde_kwin_screen_management*() {
-    return d->output;
+    return d->screen_management;
 }
 
 KWinScreenManagement::operator org_kde_kwin_screen_management*() const {
-    return d->output;
+    return d->screen_management;
 }
 
 QList< DisabledOutput* > KWinScreenManagement::disabledOutputs() const

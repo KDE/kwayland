@@ -55,6 +55,8 @@ public:
 public Q_SLOTS:
     void outputAppeared(const QString &edid, const QString &name, const QString &connector);
     void outputDisappeared(const QString &name, const QString &connector);
+
+private Q_SLOTS:
     void done();
 
 private:

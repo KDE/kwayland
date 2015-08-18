@@ -94,7 +94,6 @@ void TestWaylandKWin::init()
 
     m_kwinInterface->outputAppeared("", "DiscoScreen", "HDMI1");
     m_kwinInterface->outputAppeared("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-    m_kwinInterface->done();
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;

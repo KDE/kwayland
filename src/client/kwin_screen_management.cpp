@@ -102,6 +102,10 @@ void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_
 void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
 {
     qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
+    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
+    Q_ASSERT(o->output == output);
+
+    emit o->q->disabledOutputRemoved(QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 }
 
 void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)

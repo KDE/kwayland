@@ -153,10 +153,17 @@ void TestWaylandKWin::testGetOutputs()
      QVERIFY(kwin->isValid());
 
      QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
+     QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const QString&, const QString&)));
      QSignalSpy doneSpy(kwin, SIGNAL(done()));
 
      QVERIFY(doneSpy.wait(200));
      QCOMPARE(oSpy.count(), 2);
+
+     m_kwinInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
+     QVERIFY(rSpy.wait(1000));
+     QCOMPARE(rSpy.count(), 1);
+     //m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+
 
 }
 

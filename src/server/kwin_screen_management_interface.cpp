@@ -115,15 +115,17 @@ void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
 
 void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const QString& name, const QString& connector)
 {
+    Q_D();
+
     qDebug() << "New Output! :: " << edid << name << connector;
 
     DisabledOutput op;
     op.edid = edid;
     op.name = name;
     op.connector = connector;
-    d_func()->disabledOutputs << op;
+    d->disabledOutputs << op;
 
-    for (auto r : d_func()->resources) {
+    for (auto r : d->resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_disabledOutputAdded(resource,
                                                            qPrintable(op.edid),
@@ -135,10 +137,12 @@ void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const
 
 void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
-    foreach (auto op, d_func()->disabledOutputs) {
+    Q_D();
+    qDebug() << "removeDisabledOutput" << name << connector;
+    foreach (auto op, d->disabledOutputs) {
         if (op.name == name && op.connector == connector) {
-            //d_func()->disabledOutputs.removeAll(op); // FIXME: iterator
-            for (auto r : d_func()->resources) {
+            //d->disabledOutputs.removeAll(op); // FIXME: iterator
+            for (auto r : d->resources) {
                 wl_resource *resource = r.resource;
                 org_kde_kwin_screen_management_send_disabledOutputRemoved(resource,
                                                                       qPrintable(name),
@@ -152,7 +156,9 @@ void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, co
 
 void KWinScreenManagementInterface::done()
 {
-    for (auto r : d_func()->resources) {
+    Q_D();
+
+    for (auto r : d->resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_done(resource);
     }

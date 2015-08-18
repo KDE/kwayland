@@ -44,6 +44,7 @@ public:
     Private(KWinScreenManagementInterface *q, Display *d);
 
     QList<ResourceData> resources;
+    QList<DisabledOutput> disabledOutputs;
 
 private:
     static void unbind(wl_resource *resource);
@@ -56,6 +57,7 @@ KWinScreenManagementInterface::Private::Private(KWinScreenManagementInterface *q
     : Global::Private(d, &org_kde_kwin_screen_management_interface, s_version)
     , q(q)
 {
+
 }
 
 KWinScreenManagementInterface::KWinScreenManagementInterface(Display *display, QObject *parent)
@@ -89,9 +91,14 @@ void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t ve
     r.version = version;
     resources << r;
 
-    org_kde_kwin_screen_management_send_outputAppeared(resource, "", "DiscoScreen", "HDMI1");
-    org_kde_kwin_screen_management_send_outputAppeared(resource, "INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-    org_kde_kwin_screen_management_send_done(resource);
+    foreach (auto op, disabledOutputs) {
+        org_kde_kwin_screen_management_send_outputAppeared(resource,
+                                                           qPrintable(op.edid),
+                                                           qPrintable(op.name),
+                                                           qPrintable(op.connector));
+    }
+
+    q->done();
 
     c->flush();
     qDebug() << "Flushed";
@@ -105,6 +112,52 @@ void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
         o->resources.erase(it);
     }
 }
+
+void KWinScreenManagementInterface::outputAppeared(const QString& edid, const QString& name, const QString& connector)
+{
+    qDebug() << "New Output! :: " << edid << name << connector;
+
+    DisabledOutput op;
+    op.edid = edid;
+    op.name = name;
+    op.connector = connector;
+    d_func()->disabledOutputs << op;
+
+    for (auto r : d_func()->resources) {
+        wl_resource *resource = r.resource;
+        org_kde_kwin_screen_management_send_outputAppeared(resource,
+                                                           qPrintable(op.edid),
+                                                           qPrintable(op.name),
+                                                           qPrintable(op.connector));
+    }
+
+}
+
+void KWinScreenManagementInterface::outputDisappeared(const QString& name, const QString& connector)
+{
+    foreach (auto op, d_func()->disabledOutputs) {
+        if (op.name == name && op.connector == connector) {
+            //d_func()->disabledOutputs.removeAll(op); // FIXME: iterator
+            for (auto r : d_func()->resources) {
+                wl_resource *resource = r.resource;
+                org_kde_kwin_screen_management_send_outputDisappeared(resource,
+                                                                      qPrintable(name),
+                                                                      qPrintable(connector));
+            }
+        }
+
+    }
+}
+
+
+void KWinScreenManagementInterface::done()
+{
+    for (auto r : d_func()->resources) {
+        wl_resource *resource = r.resource;
+        org_kde_kwin_screen_management_send_done(resource);
+    }
+}
+
 
 
 }

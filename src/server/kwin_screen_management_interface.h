@@ -43,10 +43,16 @@ class KWAYLANDSERVER_EXPORT KWinScreenManagementInterface : public Global
 {
     Q_OBJECT
 
+    struct DisabledOutput {
+        QString edid;
+        QString name;
+        QString connector;
+    };
+
 public:
     virtual ~KWinScreenManagementInterface();
 
-Q_SIGNALS:
+public Q_SLOTS:
     void outputAppeared(const QString &edid, const QString &name, const QString &connector);
     void outputDisappeared(const QString &name, const QString &connector);
     void done();

@@ -46,6 +46,19 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 
+/*****
+ * How to add another interface:
+ * * define a new enum value in Registry::Interface
+ * * define the bind<InterfaceName> method
+ * * define the create<InterfaceName> method
+ * * define the <interfaceName>Announced signal
+ * * define the <interfaceName>Removed signal
+ * * add a block to s_interfaces
+ * * add the BIND macro for the new bind<InterfaceName>
+ * * add the CREATE macro for the new create<InterfaceName>
+ * * extend registry unit test to verify that it works
+ ****/
+
 namespace KWayland
 {
 namespace Client

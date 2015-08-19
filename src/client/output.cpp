@@ -41,6 +41,7 @@ public:
     void setup(wl_output *o);
 
     WaylandPointer<wl_output, wl_output_destroy> output;
+    EventQueue *queue = nullptr;
     QSize physicalSize;
     QPoint globalPosition;
     QString manufacturer;
@@ -226,6 +227,16 @@ void Output::Private::doneCallback(void *data, wl_output *output)
 void Output::setup(wl_output *output)
 {
     d->setup(output);
+}
+
+EventQueue *Output::eventQueue() const
+{
+    return d->queue;
+}
+
+void Output::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
 }
 
 void Output::Private::setGlobalPosition(const QPoint &pos)

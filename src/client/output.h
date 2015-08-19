@@ -35,6 +35,8 @@ namespace KWayland
 namespace Client
 {
 
+class EventQueue;
+
 /**
  * @short Wrapper for the wl_output interface.
  *
@@ -186,6 +188,15 @@ public:
      * @returns The Modes of this Output.
      **/
     QList<Mode> modes() const;
+
+    /**
+     * Sets the @p queue to use for bound proxies.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for bound proxies.
+     **/
+    EventQueue *eventQueue() const;
 
 Q_SIGNALS:
     /**

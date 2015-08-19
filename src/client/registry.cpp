@@ -489,6 +489,7 @@ FullscreenShell *Registry::createFullscreenShell(quint32 name, quint32 version, 
 Output *Registry::createOutput(quint32 name, quint32 version, QObject *parent)
 {
     Output *o = new Output(parent);
+    o->setEventQueue(d->queue);
     o->setup(bindOutput(name, version));
     return o;
 }

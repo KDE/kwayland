@@ -33,6 +33,7 @@ namespace KWayland
 namespace Client
 {
 
+class EventQueue;
 class Surface;
 class Output;
 
@@ -53,6 +54,15 @@ public:
     void setup(_wl_fullscreen_shell *shell);
     void present(wl_surface *surface, wl_output *output);
     void present(Surface *surface, Output *output);
+
+    /**
+     * Sets the @p queue to use for bound proxies.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for bound proxies.
+     **/
+    EventQueue *eventQueue() const;
 
 Q_SIGNALS:
     void capabilityArbitraryModesChanged(bool);

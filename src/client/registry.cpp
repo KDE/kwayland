@@ -481,6 +481,7 @@ Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *p
 FullscreenShell *Registry::createFullscreenShell(quint32 name, quint32 version, QObject *parent)
 {
     FullscreenShell *s = new FullscreenShell(parent);
+    s->setEventQueue(d->queue);
     s->setup(bindFullscreenShell(name, version));
     return s;
 }

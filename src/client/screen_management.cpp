@@ -18,7 +18,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "kwin_screen_management.h"
+#include "screen_management.h"
 #include "wayland_pointer_p.h"
 #include "event_queue.h"
 // Qt
@@ -37,10 +37,10 @@ namespace KWayland
 namespace Client
 {
 
-class KWinScreenManagement::Private
+class ScreenManagement::Private
 {
 public:
-    Private(KWinScreenManagement *q);
+    Private(ScreenManagement *q);
     void setup(org_kde_kwin_screen_management *o);
     EventQueue *queue = nullptr;
 
@@ -60,16 +60,16 @@ private:
 
     static void doneCallback(void *data, org_kde_kwin_screen_management *output);
 
-    KWinScreenManagement *q;
+    ScreenManagement *q;
     static struct org_kde_kwin_screen_management_listener s_outputListener;
 };
 
-KWinScreenManagement::Private::Private(KWinScreenManagement *q)
+ScreenManagement::Private::Private(ScreenManagement *q)
     : q(q)
 {
 }
 
-void KWinScreenManagement::Private::setup(org_kde_kwin_screen_management *o)
+void ScreenManagement::Private::setup(org_kde_kwin_screen_management *o)
 {
     Q_ASSERT(o);
     Q_ASSERT(!screen_management);
@@ -77,38 +77,38 @@ void KWinScreenManagement::Private::setup(org_kde_kwin_screen_management *o)
     org_kde_kwin_screen_management_add_listener(screen_management, &s_outputListener, this);
 }
 
-KWinScreenManagement::KWinScreenManagement(QObject *parent)
+ScreenManagement::ScreenManagement(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
 }
 
-KWinScreenManagement::~KWinScreenManagement()
+ScreenManagement::~ScreenManagement()
 {
     d->screen_management.release();
     qDeleteAll(d->disabledOutputs);
 }
 
-void KWinScreenManagement::setEventQueue(EventQueue *queue)
+void ScreenManagement::setEventQueue(EventQueue *queue)
 {
     d->queue = queue;
 }
 
-EventQueue *KWinScreenManagement::eventQueue()
+EventQueue *ScreenManagement::eventQueue()
 {
     return d->queue;
 }
 
-org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {
+org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListener = {
     disabledOutputAddedCallback,
     disabledOutputRemovedCallback,
     doneCallback
 };
 
-void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
+void ScreenManagement::Private::disabledOutputAddedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
 {
     qDebug() << "disabledOutputAddedCallback!" << name << connector;
-    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
+    auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
 
     DisabledOutput *op = new DisabledOutput(o->q);
@@ -122,10 +122,10 @@ void KWinScreenManagement::Private::disabledOutputAddedCallback(void* data, org_
 
 }
 
-void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
+void ScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
 {
     qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
-    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
+    auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
 
     DisabledOutput *op = new DisabledOutput();
@@ -141,37 +141,37 @@ void KWinScreenManagement::Private::disabledOutputRemovedCallback(void* data, or
     emit o->q->disabledOutputRemoved(QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
 }
 
-void KWinScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
+void ScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {
-    auto o = reinterpret_cast<KWinScreenManagement::Private*>(data);
+    auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
     emit o->q->done();
 }
 
-void KWinScreenManagement::setup(org_kde_kwin_screen_management *output)
+void ScreenManagement::setup(org_kde_kwin_screen_management *output)
 {
     d->setup(output);
 }
 
-org_kde_kwin_screen_management *KWinScreenManagement::screen_management()
+org_kde_kwin_screen_management *ScreenManagement::screen_management()
 {
     return d->screen_management;
 }
 
-bool KWinScreenManagement::isValid() const
+bool ScreenManagement::isValid() const
 {
     return d->screen_management.isValid();
 }
 
-KWinScreenManagement::operator org_kde_kwin_screen_management*() {
+ScreenManagement::operator org_kde_kwin_screen_management*() {
     return d->screen_management;
 }
 
-KWinScreenManagement::operator org_kde_kwin_screen_management*() const {
+ScreenManagement::operator org_kde_kwin_screen_management*() const {
     return d->screen_management;
 }
 
-QList< DisabledOutput* > KWinScreenManagement::disabledOutputs() const
+QList< DisabledOutput* > ScreenManagement::disabledOutputs() const
 {
     return d->disabledOutputs;
 }

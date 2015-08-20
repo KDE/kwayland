@@ -68,12 +68,12 @@ class EventQueue;
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT KWinScreenManagement : public QObject
+class KWAYLANDCLIENT_EXPORT ScreenManagement : public QObject
 {
     Q_OBJECT
 public:
-    explicit KWinScreenManagement(QObject *parent = nullptr);
-    virtual ~KWinScreenManagement();
+    explicit ScreenManagement(QObject *parent = nullptr);
+    virtual ~ScreenManagement();
 
     /**
      * Setup this Compositor to manage the @p output.

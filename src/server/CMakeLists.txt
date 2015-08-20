@@ -13,7 +13,7 @@ set(SERVER_LIB_SRCS
     idle_interface.cpp
     fakeinput_interface.cpp
     keyboard_interface.cpp
-    kwin_screen_management_interface.cpp
+    screen_management_interface.cpp
     logging.cpp
     output_interface.cpp
     pointer_interface.cpp
@@ -31,7 +31,7 @@ set(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-screen-management.xml
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/screen-management.xml
     BASENAME org_kde_kwin_screen_management
 )
 
@@ -112,7 +112,7 @@ install(FILES
   global.h
   idle_interface.h
   keyboard_interface.h
-  kwin_screen_management_interface.h
+  screen_management_interface.h
   output_interface.h
   pointer_interface.h
   plasmashell_interface.h

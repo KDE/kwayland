@@ -23,14 +23,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/kwin_screen_management.h"
+#include "../../src/client/screen_management.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/output_interface.h"
-#include "../../src/server/kwin_screen_management_interface.h"
+#include "../../src/server/screen_management_interface.h"
 
 // Wayland
 #include <wayland-client-protocol.h>
@@ -141,7 +141,7 @@ void TestWaylandKWin::testGetOutputs()
      KWayland::Client::Registry registry;
      //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
      //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
-     QSignalSpy announced(&registry, SIGNAL(kWinScreenManagementAnnounced(quint32,quint32)));
+     QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
      registry.create(m_connection->display());
      QVERIFY(registry.isValid());
      registry.setup();
@@ -149,7 +149,7 @@ void TestWaylandKWin::testGetOutputs()
      QVERIFY(announced.wait(1000));
 
 
-     KWayland::Client::KWinScreenManagement *kwin = registry.createKWinScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
+     KWayland::Client::ScreenManagement *kwin = registry.createScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
      QVERIFY(kwin->isValid());
 
      QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));

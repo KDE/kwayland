@@ -19,7 +19,7 @@ set(CLIENT_LIB_SRCS
     fullscreen_shell.cpp
     idle.cpp
     keyboard.cpp
-    kwin_screen_management.cpp
+    screen_management.cpp
     logging.cpp
     output.cpp
     pointer.cpp
@@ -44,7 +44,7 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/kwin-screen-management.xml
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/screen-management.xml
     BASENAME org_kde_kwin_screen_management
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -115,7 +115,7 @@ install(FILES
   fullscreen_shell.h
   idle.h
   keyboard.h
-  kwin_screen_management.h
+  screen_management.h
   output.h
   pointer.h
   plasmashell.h

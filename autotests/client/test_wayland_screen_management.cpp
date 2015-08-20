@@ -35,11 +35,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-client-protocol.h>
 
-class TestWaylandKWin : public QObject
+class TestWaylandScreenManagement : public QObject
 {
     Q_OBJECT
 public:
-    explicit TestWaylandKWin(QObject *parent = nullptr);
+    explicit TestWaylandScreenManagement(QObject *parent = nullptr);
 private Q_SLOTS:
     void init();
     void cleanup();
@@ -58,7 +58,7 @@ private:
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-output-0");
 
-TestWaylandKWin::TestWaylandKWin(QObject *parent)
+TestWaylandScreenManagement::TestWaylandScreenManagement(QObject *parent)
     : QObject(parent)
     , m_display(nullptr)
     , m_connection(nullptr)
@@ -66,7 +66,7 @@ TestWaylandKWin::TestWaylandKWin(QObject *parent)
 {
 }
 
-void TestWaylandKWin::init()
+void TestWaylandScreenManagement::init()
 {
     using namespace KWayland::Server;
     delete m_display;
@@ -113,7 +113,7 @@ void TestWaylandKWin::init()
     QVERIFY(m_queue->isValid());
 }
 
-void TestWaylandKWin::cleanup()
+void TestWaylandScreenManagement::cleanup()
 {
     if (m_queue) {
         delete m_queue;
@@ -132,7 +132,7 @@ void TestWaylandKWin::cleanup()
     m_display = nullptr;
 }
 
-void TestWaylandKWin::testGetOutputs()
+void TestWaylandScreenManagement::testGetOutputs()
 {
      /*-*/
      //auto kwin = m_display->createKWinScreenManagement();
@@ -171,5 +171,5 @@ void TestWaylandKWin::testGetOutputs()
 
 
 
-QTEST_GUILESS_MAIN(TestWaylandKWin)
-#include "test_wayland_kwin.moc"
+QTEST_GUILESS_MAIN(TestWaylandScreenManagement)
+#include "test_wayland_screen_management.moc"

@@ -93,10 +93,10 @@ ecm_mark_as_test(testShmPool)
 ########################################################
 # Test KWin
 ########################################################
-set( test_wayland_kwin_SRCS
-        test_wayland_kwin.cpp
+set( test_wayland_screen_management_SRCS
+        test_wayland_screen_management.cpp
     )
-add_executable(testWaylandKWin ${test_wayland_kwin_SRCS})
+add_executable(testWaylandKWin ${test_wayland_screen_management_SRCS})
 target_link_libraries( testWaylandKWin Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client)
 add_test(kwayland-testKWin testWaylandKWin)
 ecm_mark_as_test(testWaylandKWin)

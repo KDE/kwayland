@@ -44,8 +44,9 @@
 
     <event name="done">
         <description summary="emitted when the listing initiated by get_disabled_outputs is done">
-            This event is fired once the listing of outputs triggered from
-            get_disabled_outputs.has emitted all disabledOutputAdded events.
+            This event is fired once the listing of outputs triggered after binding
+            the protocol is done, i.e. after all disabled outputs have been announced.
+            In case there are no disabled outputs, this event is fired anyway.
         </description>
     </event>
 

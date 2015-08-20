@@ -39,6 +39,7 @@ public:
     void setup(_wl_fullscreen_shell *shell);
 
     WaylandPointer<_wl_fullscreen_shell, _wl_fullscreen_shell_release> shell;
+    EventQueue *queue = nullptr;
     bool capabilityArbitraryModes = false;
     bool capabilityCursorPlane = false;
 
@@ -109,6 +110,16 @@ void FullscreenShell::destroy()
 void FullscreenShell::setup(_wl_fullscreen_shell *shell)
 {
     d->setup(shell);
+}
+
+EventQueue *FullscreenShell::eventQueue() const
+{
+    return d->queue;
+}
+
+void FullscreenShell::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
 }
 
 void FullscreenShell::present(wl_surface *surface, wl_output *output)

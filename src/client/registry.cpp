@@ -48,24 +48,132 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 
+/*****
+ * How to add another interface:
+ * * define a new enum value in Registry::Interface
+ * * define the bind<InterfaceName> method
+ * * define the create<InterfaceName> method
+ * * define the <interfaceName>Announced signal
+ * * define the <interfaceName>Removed signal
+ * * add a block to s_interfaces
+ * * add the BIND macro for the new bind<InterfaceName>
+ * * add the CREATE macro for the new create<InterfaceName>
+ * * extend registry unit test to verify that it works
+ ****/
+
 namespace KWayland
 {
 namespace Client
 {
+struct SuppertedInterfaceData {
+    quint32 maxVersion;
+    QByteArray name;
+    const wl_interface *interface;
+    void (Registry::*announcedSignal)(quint32, quint32);
+    void (Registry::*removedSignal)(quint32);
+};
+static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
+    {Registry::Interface::Compositor, {
+        3,
+        QByteArrayLiteral("wl_compositor"),
+        &wl_compositor_interface,
+        &Registry::compositorAnnounced,
+        &Registry::compositorRemoved
+    }},
+    {Registry::Interface::DataDeviceManager, {
+        1,
+        QByteArrayLiteral("wl_data_device_manager"),
+        &wl_data_device_manager_interface,
+        &Registry::dataDeviceManagerAnnounced,
+        &Registry::dataDeviceManagerRemoved
+    }},
+    {Registry::Interface::Output, {
+        2,
+        QByteArrayLiteral("wl_output"),
+        &wl_output_interface,
+        &Registry::outputAnnounced,
+        &Registry::outputRemoved
+    }},
+    {Registry::Interface::Shm, {
+        1,
+        QByteArrayLiteral("wl_shm"),
+        &wl_shm_interface,
+        &Registry::shmAnnounced,
+        &Registry::shmRemoved
+    }},
+    {Registry::Interface::Seat, {
+        3,
+        QByteArrayLiteral("wl_seat"),
+        &wl_seat_interface,
+        &Registry::seatAnnounced,
+        &Registry::seatRemoved
+    }},
+    {Registry::Interface::Shell, {
+        1,
+        QByteArrayLiteral("wl_shell"),
+        &wl_shell_interface,
+        &Registry::shellAnnounced,
+        &Registry::shellRemoved
+    }},
+    {Registry::Interface::SubCompositor, {
+        1,
+        QByteArrayLiteral("wl_subcompositor"),
+        &wl_subcompositor_interface,
+        &Registry::subCompositorAnnounced,
+        &Registry::subCompositorRemoved
+    }},
+    {Registry::Interface::PlasmaShell, {
+        1,
+        QByteArrayLiteral("org_kde_plasma_shell"),
+        &org_kde_plasma_shell_interface,
+        &Registry::plasmaShellAnnounced,
+        &Registry::plasmaShellRemoved
+    }},
+    {Registry::Interface::PlasmaWindowManagement, {
+        1,
+        QByteArrayLiteral("org_kde_plasma_window_management"),
+        &org_kde_plasma_window_management_interface,
+        &Registry::plasmaWindowManagementAnnounced,
+        &Registry::plasmaWindowManagementRemoved
+    }},
+    {Registry::Interface::Idle, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_idle"),
+        &org_kde_kwin_idle_interface,
+        &Registry::idleAnnounced,
+        &Registry::idleRemoved
+    }},
+    {Registry::Interface::FakeInput, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_fake_input"),
+        &org_kde_kwin_fake_input_interface,
+        &Registry::fakeInputAnnounced,
+        &Registry::fakeInputRemoved
+    }},
+    {Registry::Interface::Shadow, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_shadow_manager"),
+        &org_kde_kwin_shadow_manager_interface,
+        &Registry::shadowAnnounced,
+        &Registry::shadowRemoved
+    }},
+    {Registry::Interface::FullscreenShell, {
+        1,
+        QByteArrayLiteral("_wl_fullscreen_shell"),
+        &_wl_fullscreen_shell_interface,
+        &Registry::fullscreenShellAnnounced,
+        &Registry::fullscreenShellRemoved
+    }}
+};
 
-static const quint32 s_compositorMaxVersion = 3;
-static const quint32 s_dataDeviceManagerMaxVersion = 1;
-static const quint32 s_outputMaxVersion = 2;
-static const quint32 s_shmMaxVersion = 1;
-static const quint32 s_seatMaxVersion = 3;
-static const quint32 s_shellMaxVersion = 1;
-static const quint32 s_subcompositorMaxVersion = 1;
-static const quint32 s_kwinMaxVersion = 1;
-static const quint32 s_plasmaShellMaxVersion = 1;
-static const quint32 s_plasmaWindowManagementMaxVersion = 1;
-static const quint32 s_idleMaxVersion = 1;
-static const quint32 s_fakeInputMaxVersion = 1;
-static const quint32 s_shadowMaxVersion = 1;
+static quint32 maxVersion(const Registry::Interface &interface)
+{
+    auto it = s_interfaces.find(interface);
+    if (it != s_interfaces.end()) {
+        return it.value().maxVersion;
+    }
+    return 0;
+}
 
 class Registry::Private
 {
@@ -73,8 +181,12 @@ public:
     Private(Registry *q);
     void setup();
     bool hasInterface(Interface interface) const;
+    AnnouncedInterface interface(Interface interface) const;
+    QVector<AnnouncedInterface> interfaces(Interface interface) const;
     template <typename T>
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
+    template <class T, typename WL>
+    T *create(quint32 name, quint32 version, QObject *parent, WL *(Registry::*bindMethod)(uint32_t, uint32_t) const);
 
     WaylandPointer<wl_registry, wl_registry_destroy> registry;
     static const struct wl_callback_listener s_callbackListener;
@@ -214,34 +326,10 @@ void Registry::Private::handleGlobalSync()
 
 static Registry::Interface nameToInterface(const char *interface)
 {
-    if (strcmp(interface, "wl_compositor") == 0) {
-        return Registry::Interface::Compositor;
-    } else if (strcmp(interface, "org_kde_kwin_screen_management") == 0) {
-        return Registry::Interface::KWinScreenManagement;
-    } else if (strcmp(interface, "wl_shell") == 0) {
-        return Registry::Interface::Shell;
-    } else if (strcmp(interface, "wl_seat") == 0) {
-        return Registry::Interface::Seat;
-    } else if (strcmp(interface, "wl_shm") == 0) {
-        return Registry::Interface::Shm;
-    } else if (strcmp(interface, "wl_output") == 0) {
-        return Registry::Interface::Output;
-    } else if (strcmp(interface, "_wl_fullscreen_shell") == 0) {
-        return Registry::Interface::FullscreenShell;
-    } else if (strcmp(interface, "wl_subcompositor") == 0) {
-        return Registry::Interface::SubCompositor;
-    } else if (strcmp(interface, "wl_data_device_manager") == 0) {
-        return Registry::Interface::DataDeviceManager;
-    } else if (strcmp(interface, "org_kde_plasma_shell") == 0) {
-        return Registry::Interface::PlasmaShell;
-    } else if (strcmp(interface, "org_kde_plasma_window_management") == 0) {
-        return Registry::Interface::PlasmaWindowManagement;
-    } else if (strcmp(interface, "org_kde_kwin_idle") == 0) {
-        return Registry::Interface::Idle;
-    } else if (strcmp(interface, "org_kde_kwin_fake_input") == 0) {
-        return Registry::Interface::FakeInput;
-    } else if (strcmp(interface, "org_kde_kwin_shadow_manager") == 0) {
-        return Registry::Interface::Shadow;
+    for (auto it = s_interfaces.begin(); it != s_interfaces.end(); ++it) {
+        if (qstrcmp(interface, it.value().name) == 0) {
+            return it.key();
+        }
     }
     return Registry::Interface::Unknown;
 }
@@ -256,52 +344,9 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
     }
     qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
     m_interfaces.append({i, name, version});
-    switch (i) {
-    case Interface::Compositor:
-        emit q->compositorAnnounced(name, version);
-        break;
-    case Interface::Shell:
-        emit q->shellAnnounced(name, version);
-        break;
-    case Interface::Output:
-        emit q->outputAnnounced(name, version);
-        break;
-    case Interface::Seat:
-        emit q->seatAnnounced(name, version);
-        break;
-    case Interface::Shm:
-        emit q->shmAnnounced(name, version);
-        break;
-    case Interface::FullscreenShell:
-        emit q->fullscreenShellAnnounced(name, version);
-        break;
-    case Interface::SubCompositor:
-        emit q->subCompositorAnnounced(name, version);
-        break;
-    case Interface::DataDeviceManager:
-        emit q->dataDeviceManagerAnnounced(name, version);
-        break;
-    case Interface::KWinScreenManagement:
-        emit q->kwinScreenManagementAnnounced(name, version);
-    case Interface::PlasmaShell:
-        emit q->plasmaShellAnnounced(name, version);
-        break;
-    case Interface::PlasmaWindowManagement:
-        emit q->plasmaWindowManagementAnnounced(name, version);
-        break;
-    case Interface::Idle:
-        emit q->idleAnnounced(name, version);
-        break;
-    case Interface::FakeInput:
-        emit q->fakeInputAnnounced(name, version);
-        break;
-    case Interface::Shadow:
-        emit q->shadowAnnounced(name, version);
-        break;
-    case Interface::Unknown:
-    default:
-        // nothing
-        break;
+    auto it = s_interfaces.constFind(i);
+    if (it != s_interfaces.end()) {
+        emit (q->*it.value().announcedSignal)(name, version);
     }
 }
 
@@ -315,50 +360,9 @@ void Registry::Private::handleRemove(uint32_t name)
     if (it != m_interfaces.end()) {
         InterfaceData data = *(it);
         m_interfaces.erase(it);
-        switch (data.interface) {
-        case Interface::Compositor:
-            emit q->compositorRemoved(data.name);
-            break;
-        case Interface::Output:
-            emit q->outputRemoved(data.name);
-            break;
-        case Interface::Seat:
-            emit q->seatRemoved(data.name);
-            break;
-        case Interface::Shell:
-            emit q->shellRemoved(data.name);
-            break;
-        case Interface::Shm:
-            emit q->shmRemoved(data.name);
-            break;
-        case Interface::FullscreenShell:
-            emit q->fullscreenShellRemoved(data.name);
-            break;
-        case Interface::SubCompositor:
-            emit q->subCompositorRemoved(data.name);
-            break;
-        case Interface::DataDeviceManager:
-            emit q->dataDeviceManagerRemoved(data.name);
-            break;
-        case Interface::PlasmaShell:
-            emit q->plasmaShellRemoved(data.name);
-            break;
-        case Interface::PlasmaWindowManagement:
-            emit q->plasmaWindowManagementRemoved(data.name);
-            break;
-        case Interface::Idle:
-            emit q->idleRemoved(data.name);
-            break;
-        case Interface::FakeInput:
-            emit q->fakeInputRemoved(data.name);
-            break;
-        case Interface::Shadow:
-            emit q->shadowRemoved(data.name);
-            break;
-        case Interface::Unknown:
-        default:
-            // nothing
-            break;
+        auto sit = s_interfaces.find(data.interface);
+        if (sit != s_interfaces.end()) {
+            emit (q->*sit.value().removedSignal)(data.name);
         }
     }
     emit q->interfaceRemoved(name);
@@ -374,226 +378,108 @@ bool Registry::Private::hasInterface(Registry::Interface interface) const
     return it != m_interfaces.end();
 }
 
+QVector<Registry::AnnouncedInterface> Registry::Private::interfaces(Interface interface) const
+{
+    QVector<Registry::AnnouncedInterface> retVal;
+    for (auto it = m_interfaces.constBegin(); it != m_interfaces.constEnd(); ++it) {
+        const auto &data = *it;
+        if (data.interface == interface) {
+            retVal << AnnouncedInterface{data.name, data.version};
+        }
+    }
+    return retVal;
+}
+
+Registry::AnnouncedInterface Registry::Private::interface(Interface interface) const
+{
+    const auto all = interfaces(interface);
+    if (!all.isEmpty()) {
+        return all.last();
+    }
+    return AnnouncedInterface{0, 0};
+}
+
 bool Registry::hasInterface(Registry::Interface interface) const
 {
     return d->hasInterface(interface);
 }
 
-wl_compositor *Registry::bindCompositor(uint32_t name, uint32_t version) const
+QVector<Registry::AnnouncedInterface> Registry::interfaces(Interface interface) const
 {
-    return d->bind<wl_compositor>(Interface::Compositor, name, qMin(s_compositorMaxVersion, version));
+    return d->interfaces(interface);
 }
 
-wl_output *Registry::bindOutput(uint32_t name, uint32_t version) const
+Registry::AnnouncedInterface Registry::interface(Interface interface) const
 {
-    return d->bind<wl_output>(Interface::Output, name, qMin(s_outputMaxVersion, version));
+    return d->interface(interface);
 }
 
-wl_seat *Registry::bindSeat(uint32_t name, uint32_t version) const
-{
-    return d->bind<wl_seat>(Interface::Seat, name, qMin(s_seatMaxVersion, version));
+#define BIND2(__NAME__, __INAME__, __WL__) \
+__WL__ *Registry::bind##__NAME__(uint32_t name, uint32_t version) const \
+{ \
+    return d->bind<__WL__>(Interface::__INAME__, name, qMin(maxVersion(Interface::__INAME__), version)); \
 }
 
-wl_shell *Registry::bindShell(uint32_t name, uint32_t version) const
+#define BIND(__NAME__, __WL__) BIND2(__NAME__, __NAME__, __WL__)
+
+BIND(Compositor, wl_compositor)
+BIND(Output, wl_output)
+BIND(Seat, wl_seat)
+BIND(Shell, wl_shell)
+BIND(Shm, wl_shm)
+BIND(SubCompositor, wl_subcompositor)
+BIND(FullscreenShell, _wl_fullscreen_shell)
+BIND(DataDeviceManager, wl_data_device_manager)
+BIND(PlasmaShell, org_kde_plasma_shell)
+BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
+BIND(Idle, org_kde_kwin_idle)
+BIND(FakeInput, org_kde_kwin_fake_input)
+BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
+
+#undef BIND
+#undef BIND2
+
+template <class T, typename WL>
+T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL *(Registry::*bindMethod)(uint32_t, uint32_t) const)
 {
-    return d->bind<wl_shell>(Interface::Shell, name, qMin(s_shellMaxVersion, version));
+    T *t = new T(parent);
+    t->setEventQueue(queue);
+    t->setup((q->*bindMethod)(name, version));
+    return t;
 }
 
-wl_shm *Registry::bindShm(uint32_t name, uint32_t version) const
-{
-    return d->bind<wl_shm>(Interface::Shm, name, qMin(s_shmMaxVersion, version));
+#define CREATE2(__NAME__, __BINDNAME__) \
+__NAME__ *Registry::create##__NAME__(quint32 name, quint32 version, QObject *parent) \
+{ \
+    return d->create<__NAME__>(name, version, parent, &Registry::bind##__BINDNAME__); \
 }
 
-org_kde_kwin_screen_management *Registry::bindKWinScreenManagement(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_kwin_screen_management>(Interface::KWinScreenManagement, name, qMin(s_shmMaxVersion, version));
-}
+#define CREATE(__NAME__) CREATE2(__NAME__, __NAME__)
 
-wl_subcompositor *Registry::bindSubCompositor(uint32_t name, uint32_t version) const
-{
-    return d->bind<wl_subcompositor>(Interface::SubCompositor, name, qMin(s_subcompositorMaxVersion, version));
-}
+CREATE(Compositor)
+CREATE(Seat)
+CREATE(Shell)
+CREATE(SubCompositor)
+CREATE(FullscreenShell)
+CREATE(Output)
+CREATE(DataDeviceManager)
+CREATE(PlasmaShell)
+CREATE(PlasmaWindowManagement)
+CREATE(Idle)
+CREATE(FakeInput)
+CREATE(ShadowManager)
+CREATE2(ShmPool, Shm)
 
-_wl_fullscreen_shell *Registry::bindFullscreenShell(uint32_t name, uint32_t version) const
-{
-    return d->bind<_wl_fullscreen_shell>(Interface::FullscreenShell, name, version);
-}
-
-wl_data_device_manager *Registry::bindDataDeviceManager(uint32_t name, uint32_t version) const
-{
-    return d->bind<wl_data_device_manager>(Interface::DataDeviceManager, name, qMin(s_dataDeviceManagerMaxVersion, version));
-}
-
-org_kde_plasma_shell* Registry::bindPlasmaShell(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_plasma_shell>(Interface::PlasmaShell, name, qMin(s_plasmaShellMaxVersion, version));
-}
-
-org_kde_plasma_window_management *Registry::bindPlasmaWindowManagement(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_plasma_window_management>(Interface::PlasmaWindowManagement, name, qMin(s_plasmaWindowManagementMaxVersion, version));
-}
-
-org_kde_kwin_idle *Registry::bindIdle(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_kwin_idle>(Interface::Idle, name, qMin(s_idleMaxVersion, version));
-}
-
-org_kde_kwin_fake_input *Registry::bindFakeInput(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_kwin_fake_input>(Interface::FakeInput, name, qMin(s_fakeInputMaxVersion, version));
-}
-
-org_kde_kwin_shadow_manager *Registry::bindShadowManager(uint32_t name, uint32_t version) const
-{
-    return d->bind<org_kde_kwin_shadow_manager>(Interface::Shadow, name, qMin(s_shadowMaxVersion, version));
-}
-
-Compositor *Registry::createCompositor(quint32 name, quint32 version, QObject *parent)
-{
-    Compositor *c = new Compositor(parent);
-    c->setEventQueue(d->queue);
-    c->setup(bindCompositor(name, version));
-    return c;
-}
-
-FullscreenShell *Registry::createFullscreenShell(quint32 name, quint32 version, QObject *parent)
-{
-    FullscreenShell *s = new FullscreenShell(parent);
-    s->setup(bindFullscreenShell(name, version));
-    return s;
-}
-
-Output *Registry::createOutput(quint32 name, quint32 version, QObject *parent)
-{
-    Output *o = new Output(parent);
-    o->setup(bindOutput(name, version));
-    return o;
-}
-
-Seat *Registry::createSeat(quint32 name, quint32 version, QObject *parent)
-{
-    Seat *s = new Seat(parent);
-    s->setEventQueue(d->queue);
-    s->setup(bindSeat(name, version));
-    return s;
-}
-
-Shell *Registry::createShell(quint32 name, quint32 version, QObject *parent)
-{
-    Shell *s = new Shell(parent);
-    s->setEventQueue(d->queue);
-    s->setup(bindShell(name, version));
-    return s;
-}
-
-ShmPool *Registry::createShmPool(quint32 name, quint32 version, QObject *parent)
-{
-    ShmPool *s = new ShmPool(parent);
-    s->setEventQueue(d->queue);
-    s->setup(bindShm(name, version));
-    return s;
-}
-
-SubCompositor *Registry::createSubCompositor(quint32 name, quint32 version, QObject *parent)
-{
-    auto s = new SubCompositor(parent);
-    s->setEventQueue(d->queue);
-    s->setup(bindSubCompositor(name, version));
-    return s;
-}
-
-DataDeviceManager *Registry::createDataDeviceManager(quint32 name, quint32 version, QObject *parent)
-{
-    auto m = new DataDeviceManager(parent);
-    m->setEventQueue(d->queue);
-    m->setup(bindDataDeviceManager(name, version));
-    return m;
-}
-
-KWinScreenManagement* Registry::createKWinScreenManagement(quint32 name, quint32 version, QObject* parent)
-{
-    auto k = new KWinScreenManagement(parent);
-    //k->setEventQueue(d->queue);
-    k->setup(bindKWinScreenManagement(name, version));
-    return k;
-}
-
-PlasmaShell *Registry::createPlasmaShell(quint32 name, quint32 version, QObject *parent)
-{
-    auto s = new PlasmaShell(parent);
-    s->setEventQueue(d->queue);
-    s->setup(bindPlasmaShell(name, version));
-    return s;
-}
-
-PlasmaWindowManagement *Registry::createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent)
-{
-    auto wm = new PlasmaWindowManagement(parent);
-    wm->setEventQueue(d->queue);
-    wm->setup(bindPlasmaWindowManagement(name, version));
-    return wm;
-}
-
-Idle *Registry::createIdle(quint32 name, quint32 version, QObject *parent)
-{
-    auto idle = new Idle(parent);
-    idle->setEventQueue(d->queue);
-    idle->setup(bindIdle(name, version));
-    return idle;
-}
-
-FakeInput *Registry::createFakeInput(quint32 name, quint32 version, QObject *parent)
-{
-    auto input = new FakeInput(parent);
-    input->setEventQueue(d->queue);
-    input->setup(bindFakeInput(name, version));
-    return input;
-}
-
-ShadowManager *Registry::createShadowManager(quint32 name, quint32 version, QObject *parent)
-{
-    auto manager = new ShadowManager(parent);
-    manager->setEventQueue(d->queue);
-    manager->setup(bindShadowManager(name, version));
-    return manager;
-}
+#undef CREATE
+#undef CREATE2
 
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
-    switch (interface) {
-    case Registry::Interface::Compositor:
-        return &wl_compositor_interface;
-    case Registry::Interface::Output:
-        return &wl_output_interface;
-    case Registry::Interface::Seat:
-        return &wl_seat_interface;
-    case Registry::Interface::Shell:
-        return &wl_shell_interface;
-    case Registry::Interface::Shm:
-        return &wl_shm_interface;
-    case Registry::Interface::FullscreenShell:
-        return &_wl_fullscreen_shell_interface;
-    case Registry::Interface::SubCompositor:
-        return &wl_subcompositor_interface;
-    case Registry::Interface::DataDeviceManager:
-        return &wl_data_device_manager_interface;
-    case Registry::Interface::KWinScreenManagement:
-        return &org_kde_kwin_screen_management_interface;
-    case Registry::Interface::PlasmaShell:
-        return &org_kde_plasma_shell_interface;
-    case Registry::Interface::PlasmaWindowManagement:
-        return &org_kde_plasma_window_management_interface;
-    case Registry::Interface::Idle:
-        return &org_kde_kwin_idle_interface;
-    case Registry::Interface::FakeInput:
-        return &org_kde_kwin_fake_input_interface;
-    case Registry::Interface::Shadow:
-        return &org_kde_kwin_shadow_manager_interface;
-    case Registry::Interface::Unknown:
-    default:
-        return nullptr;
+    auto it = s_interfaces.find(interface);
+    if (it != s_interfaces.end()) {
+        return it.value().interface;
     }
+    return nullptr;
 }
 
 template <typename T>

@@ -34,14 +34,14 @@ namespace Server
 
 static const quint32 s_version = 1;
 
-class KWinScreenManagementInterface::Private : public Global::Private
+class ScreenManagementInterface::Private : public Global::Private
 {
 public:
     struct ResourceData {
         wl_resource *resource;
         uint32_t version;
     };
-    Private(KWinScreenManagementInterface *q, Display *d);
+    Private(ScreenManagementInterface *q, Display *d);
 
     QList<ResourceData> resources;
     QList<DisabledOutput> disabledOutputs;
@@ -50,32 +50,32 @@ private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    KWinScreenManagementInterface *q;
+    ScreenManagementInterface *q;
 };
 
-KWinScreenManagementInterface::Private::Private(KWinScreenManagementInterface *q, Display *d)
+ScreenManagementInterface::Private::Private(ScreenManagementInterface *q, Display *d)
     : Global::Private(d, &org_kde_kwin_screen_management_interface, s_version)
     , q(q)
 {
 
 }
 
-KWinScreenManagementInterface::KWinScreenManagementInterface(Display *display, QObject *parent)
+ScreenManagementInterface::ScreenManagementInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
     qDebug() << "New output interface";
 }
 
-KWinScreenManagementInterface::~KWinScreenManagementInterface() = default;
+ScreenManagementInterface::~ScreenManagementInterface() = default;
 
 
-KWinScreenManagementInterface::Private *KWinScreenManagementInterface::d_func() const
+ScreenManagementInterface::Private *ScreenManagementInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     qDebug() << "Bound!";
     auto c = display->getConnection(client);
@@ -104,16 +104,16 @@ void KWinScreenManagementInterface::Private::bind(wl_client *client, uint32_t ve
     qDebug() << "Flushed";
 }
 
-void KWinScreenManagementInterface::Private::unbind(wl_resource *resource)
+void ScreenManagementInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<KWinScreenManagementInterface::Private*>(wl_resource_get_user_data(resource));
+    auto o = reinterpret_cast<ScreenManagementInterface::Private*>(wl_resource_get_user_data(resource));
     auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
 }
 
-void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const QString& name, const QString& connector)
+void ScreenManagementInterface::addDisabledOutput(const QString& edid, const QString& name, const QString& connector)
 {
     Q_D();
 
@@ -135,7 +135,7 @@ void KWinScreenManagementInterface::addDisabledOutput(const QString& edid, const
 
 }
 
-void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
+void ScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
     Q_D();
     qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
@@ -158,7 +158,7 @@ void KWinScreenManagementInterface::removeDisabledOutput(const QString& name, co
 }
 
 
-void KWinScreenManagementInterface::done()
+void ScreenManagementInterface::done()
 {
     Q_D();
 

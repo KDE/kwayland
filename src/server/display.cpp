@@ -209,9 +209,9 @@ ShellInterface *Display::createShell(QObject *parent)
     return shell;
 }
 
-KWinScreenManagementInterface *Display::createKWinScreenManagement(QObject *parent)
+ScreenManagementInterface *Display::createScreenManagement(QObject *parent)
 {
-    KWinScreenManagementInterface *kwin = new KWinScreenManagementInterface(this, parent);
+    ScreenManagementInterface *kwin = new ScreenManagementInterface(this, parent);
     connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
     return kwin;
 }

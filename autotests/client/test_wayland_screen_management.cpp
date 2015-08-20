@@ -48,7 +48,7 @@ private Q_SLOTS:
 
 private:
     KWayland::Server::Display *m_display;
-    KWayland::Server::KWinScreenManagementInterface *m_kwinInterface;
+    KWayland::Server::ScreenManagementInterface *m_kwinInterface;
     KWayland::Server::OutputInterface *m_serverOutput;
     //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
@@ -88,7 +88,7 @@ void TestWaylandScreenManagement::init()
     m_serverOutput->create();
 
     qDebug() << "creating m_kwinInterface";
-    m_kwinInterface = m_display->createKWinScreenManagement(this);
+    m_kwinInterface = m_display->createScreenManagement(this);
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 

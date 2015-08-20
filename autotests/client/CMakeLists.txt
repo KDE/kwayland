@@ -96,10 +96,10 @@ ecm_mark_as_test(testShmPool)
 set( test_wayland_screen_management_SRCS
         test_wayland_screen_management.cpp
     )
-add_executable(testWaylandKWin ${test_wayland_screen_management_SRCS})
-target_link_libraries( testWaylandKWin Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client)
-add_test(kwayland-testKWin testWaylandKWin)
-ecm_mark_as_test(testWaylandKWin)
+add_executable(testWaylandScreenManagement ${test_wayland_screen_management_SRCS})
+target_link_libraries( testWaylandScreenManagement Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client)
+add_test(kwayland-testKWin testWaylandScreenManagement)
+ecm_mark_as_test(testWaylandScreenManagement)
 
 ########################################################
 # Test Compositor

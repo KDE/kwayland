@@ -39,7 +39,7 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT KWinScreenManagementInterface : public Global
+class KWAYLANDSERVER_EXPORT ScreenManagementInterface : public Global
 {
     Q_OBJECT
 
@@ -50,7 +50,7 @@ class KWAYLANDSERVER_EXPORT KWinScreenManagementInterface : public Global
     };
 
 public:
-    virtual ~KWinScreenManagementInterface();
+    virtual ~ScreenManagementInterface();
 
 public Q_SLOTS:
     void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
@@ -60,7 +60,7 @@ private Q_SLOTS:
     void done();
 
 private:
-    explicit KWinScreenManagementInterface(Display *display, QObject *parent = nullptr);
+    explicit ScreenManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

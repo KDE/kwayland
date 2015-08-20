@@ -55,6 +55,7 @@ private Q_SLOTS:
     void testRemoval();
     void testDestroy();
     void testAnnounceMultiple();
+    void testBindScreenManagement();
 
 private:
     KWayland::Server::Display *m_display;
@@ -64,6 +65,7 @@ private:
     KWayland::Server::ShellInterface *m_shell;
     KWayland::Server::SubCompositorInterface *m_subcompositor;
     KWayland::Server::DataDeviceManagerInterface *m_dataDeviceManager;
+    KWayland::Server::ScreenManagementInterface *m_screenManagement;
 };
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-registry-0");
@@ -77,7 +79,8 @@ TestWaylandRegistry::TestWaylandRegistry(QObject *parent)
     , m_shell(nullptr)
     , m_subcompositor(nullptr)
     , m_dataDeviceManager(nullptr)
-{
+    , m_screenManagement(nullptr)
+    {
 }
 
 void TestWaylandRegistry::init()
@@ -98,6 +101,7 @@ void TestWaylandRegistry::init()
     m_subcompositor->create();
     m_dataDeviceManager = m_display->createDataDeviceManager();
     m_dataDeviceManager->create();
+    //m_screenManagement = m_display->create
 }
 
 void TestWaylandRegistry::cleanup()
@@ -188,6 +192,11 @@ void TestWaylandRegistry::testBindSeat()
 void TestWaylandRegistry::testBindShm()
 {
     TEST_BIND(KWayland::Client::Registry::Interface::Shm, SIGNAL(shmAnnounced(quint32,quint32)), bindShm, wl_shm_destroy)
+}
+
+void TestWaylandRegistry::testBindScreenManagement()
+{
+    //TEST_BIND(KWayland::Client::Registry::Interface::ScreenManagement, SIGNAL(screenManagementAnnounced(quint32,quint32)), bindScreenManagement, org_kde_kwin_screen_management_destroy)
 }
 
 void TestWaylandRegistry::testBindSubCompositor()

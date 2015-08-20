@@ -120,6 +120,17 @@ public:
     operator org_kde_kwin_idle*();
     operator org_kde_kwin_idle*() const;
 
+Q_SIGNALS:
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createIdle
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

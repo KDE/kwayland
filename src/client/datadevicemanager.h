@@ -122,6 +122,17 @@ public:
     operator wl_data_device_manager*();
     operator wl_data_device_manager*() const;
 
+Q_SIGNALS:
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createDataDeviceManager
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

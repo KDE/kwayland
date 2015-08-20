@@ -149,6 +149,16 @@ Q_SIGNALS:
      **/
     void interfaceAboutToBeDestroyed();
 
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createShell
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

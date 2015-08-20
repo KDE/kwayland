@@ -443,6 +443,13 @@ T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL 
     T *t = new T(parent);
     t->setEventQueue(queue);
     t->setup((q->*bindMethod)(name, version));
+    QObject::connect(q, &Registry::interfaceRemoved, t,
+        [t, name] (quint32 removed) {
+            if (name == removed) {
+                emit t->removed();
+            }
+        }
+    );
     return t;
 }
 

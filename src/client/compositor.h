@@ -173,6 +173,17 @@ public:
     operator wl_compositor*();
     operator wl_compositor*() const;
 
+Q_SIGNALS:
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createCompositor
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

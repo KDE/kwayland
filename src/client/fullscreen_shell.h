@@ -68,6 +68,16 @@ Q_SIGNALS:
     void capabilityArbitraryModesChanged(bool);
     void capabilityCursorPlaneChanged(bool);
 
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createFullscreenShell
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

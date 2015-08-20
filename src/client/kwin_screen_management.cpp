@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "kwin_screen_management.h"
 #include "wayland_pointer_p.h"
+#include "event_queue.h"
 // Qt
 #include <QPoint>
 #include <QRect>
@@ -41,6 +42,7 @@ class KWinScreenManagement::Private
 public:
     Private(KWinScreenManagement *q);
     void setup(org_kde_kwin_screen_management *o);
+    EventQueue *queue = nullptr;
 
     WaylandPointer<org_kde_kwin_screen_management, org_kde_kwin_screen_management_destroy> screen_management;
 
@@ -85,6 +87,16 @@ KWinScreenManagement::~KWinScreenManagement()
 {
     d->screen_management.release();
     qDeleteAll(d->disabledOutputs);
+}
+
+void KWinScreenManagement::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *KWinScreenManagement::eventQueue()
+{
+    return d->queue;
 }
 
 org_kde_kwin_screen_management_listener KWinScreenManagement::Private::s_outputListener = {

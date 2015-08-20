@@ -141,7 +141,7 @@ void TestWaylandKWin::testGetOutputs()
      KWayland::Client::Registry registry;
      //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
      //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
-     QSignalSpy announced(&registry, SIGNAL(kwinScreenManagementAnnounced(quint32,quint32)));
+     QSignalSpy announced(&registry, SIGNAL(kWinScreenManagementAnnounced(quint32,quint32)));
      registry.create(m_connection->display());
      QVERIFY(registry.isValid());
      registry.setup();

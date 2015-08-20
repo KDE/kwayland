@@ -37,6 +37,7 @@ namespace KWayland
 {
 namespace Client
 {
+class EventQueue;
 
 /**
  * @short Wrapper for the org_kde_kwin_screen_management interface.
@@ -80,6 +81,16 @@ public:
      * method.
      **/
     void setup(org_kde_kwin_screen_management *screen_management);
+
+    /**
+     * Sets the @p queue to use for creating a Surface.
+     **/
+    void setEventQueue(EventQueue *queue);
+
+    /**
+     * @returns The event queue to use for creating a Surface.
+     **/
+    EventQueue *eventQueue();
 
     /**
      * @returns @c true if managing a org_kde_kwin_screen_management.

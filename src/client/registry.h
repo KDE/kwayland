@@ -108,11 +108,11 @@ public:
         FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
-        KWinScreenManagement, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
+        KWinScreenManagement, ///< Refers to the wl_data_device_manager interface
         Shadow /// Refers to org_kde_kwin_shadow_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
@@ -471,7 +471,7 @@ Q_SIGNALS:
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
-    void kwinScreenManagementAnnounced(quint32 name, quint32 version);
+    void kWinScreenManagementAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     void idleAnnounced(quint32 name, quint32 version);
@@ -513,7 +513,7 @@ Q_SIGNALS:
      **/
     void fullscreenShellRemoved(quint32 name);
     void dataDeviceManagerRemoved(quint32 name);
-    void kwinOutputConnectorsRemoved(quint32 name, quint32 version);
+    void kWinScreenManagementRemoved(quint32 name);
     void plasmaShellRemoved(quint32 name);
     void plasmaWindowManagementRemoved(quint32 name);
     void idleRemoved(quint32 name);

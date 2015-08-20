@@ -150,6 +150,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::fakeInputAnnounced,
         &Registry::fakeInputRemoved
     }},
+    {Registry::Interface::KWinScreenManagement, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_screen_management"),
+        &org_kde_kwin_screen_management_interface,
+        &Registry::kWinScreenManagementAnnounced,
+        &Registry::kWinScreenManagementRemoved
+    }},
     {Registry::Interface::Shadow, {
         1,
         QByteArrayLiteral("org_kde_kwin_shadow_manager"),
@@ -165,7 +172,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::fullscreenShellRemoved
     }}
 };
-
+/*
+{KWinScreenManagement,
+    {1, KWayland::Client::<lambda()>(),
+        (& org_kde_kwin_screen_management_interface),
+        &KWayland::Client::Registry::kWinScreenManagementAnnounced,
+        &KWayland::Client::Registry::kWinScreenManagementRemoved}},
+*/
 static quint32 maxVersion(const Registry::Interface &interface)
 {
     auto it = s_interfaces.find(interface);
@@ -434,6 +447,7 @@ BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(FakeInput, org_kde_kwin_fake_input)
+BIND(KWinScreenManagement, org_kde_kwin_screen_management)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 
 #undef BIND
@@ -467,6 +481,7 @@ CREATE(PlasmaShell)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
 CREATE(FakeInput)
+CREATE(KWinScreenManagement)
 CREATE(ShadowManager)
 CREATE2(ShmPool, Shm)
 

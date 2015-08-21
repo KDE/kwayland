@@ -121,7 +121,7 @@ void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterfac
 
     d->disabledOutputs << output;
 
-    for (auto r : d->resources) {
+    foreach (auto r, d->resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_disabled_output_added(resource,
                                                        qPrintable(output.edid),
@@ -140,7 +140,7 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
     for (i = d->disabledOutputs.begin(); i != d->disabledOutputs.end(); ++i) {
         if ((*i).name == name) {
             qDebug() << "Kill me" << name;
-            for (auto r : d->resources) {
+            foreach (auto r, d->resources) {
                 wl_resource *resource = r.resource;
                 org_kde_kwin_screen_management_send_disabled_output_removed(resource,
                                                                           qPrintable((*i).name),
@@ -156,7 +156,7 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
 
 void ScreenManagementInterface::Private::sendDone()
 {
-    for (auto r : resources) {
+    foreach (auto r, resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_done(resource);
     }

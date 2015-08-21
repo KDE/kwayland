@@ -91,10 +91,10 @@ void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t versio
     resources << r;
 
     foreach (auto op, disabledOutputs) {
-        org_kde_kwin_screen_management_send_disabledOutputAdded(resource,
-                                                           qPrintable(op.edid),
-                                                           qPrintable(op.name),
-                                                           qPrintable(op.connector));
+        org_kde_kwin_screen_management_send_disabled_output_added(resource,
+                                                       qPrintable(op.edid),
+                                                       qPrintable(op.name),
+                                                       qPrintable(op.connector));
     }
 
     q->done();
@@ -126,10 +126,10 @@ void ScreenManagementInterface::addDisabledOutput(const QString& edid, const QSt
 
     for (auto r : d->resources) {
         wl_resource *resource = r.resource;
-        org_kde_kwin_screen_management_send_disabledOutputAdded(resource,
-                                                           qPrintable(op.edid),
-                                                           qPrintable(op.name),
-                                                           qPrintable(op.connector));
+        org_kde_kwin_screen_management_send_disabled_output_added(resource,
+                                                       qPrintable(op.edid),
+                                                       qPrintable(op.name),
+                                                       qPrintable(op.connector));
     }
 
 }
@@ -145,7 +145,7 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
             qDebug() << "Kill me" << name;
             for (auto r : d->resources) {
                 wl_resource *resource = r.resource;
-                org_kde_kwin_screen_management_send_disabledOutputRemoved(resource,
+                org_kde_kwin_screen_management_send_disabled_output_removed(resource,
                                                                           qPrintable((*i).name),
                                                                           qPrintable((*i).connector));
             }

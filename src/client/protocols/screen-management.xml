@@ -23,7 +23,7 @@
     compositor. These outputs are currently disabled, so not rendered to.
     </description>
 
-    <event name="disabledOutputAdded">
+    <event name="disabled_output_added">
       <description summary="emitted when anutp output is connected">
         The output is connected, but not used for rendering yet. This means that
         this output has either just been plugged in, or disabled and excluded from
@@ -34,7 +34,7 @@
       <arg name="connector" type="string" summary="output's connector"/>
     </event>
 
-    <event name="disabledOutputRemoved">
+    <event name="disabled_output_removed">
       <description summary="emitted when an output disappears from the list">
         The output is disconnected, or has been enabled.
       </description>

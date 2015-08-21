@@ -65,8 +65,8 @@ private:
 };
 
 ScreenManagement::Private::Private(ScreenManagement *q)
-    : q(q)
-    , screen_management(nullptr)
+    : screen_management(nullptr)
+    , q(q)
 {
 }
 

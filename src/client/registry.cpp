@@ -47,6 +47,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-idle-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
+#include <wayland-org_kde_kwin_screen_management-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -172,13 +173,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::fullscreenShellRemoved
     }}
 };
-/*
-{ScreenManagement,
-    {1, KWayland::Client::<lambda()>(),
-        (& org_kde_kwin_screen_management_interface),
-        &KWayland::Client::Registry::kWinScreenManagementAnnounced,
-        &KWayland::Client::Registry::kWinScreenManagementRemoved}},
-*/
+
 static quint32 maxVersion(const Registry::Interface &interface)
 {
     auto it = s_interfaces.find(interface);
@@ -365,6 +360,7 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
 
 void Registry::Private::handleRemove(uint32_t name)
 {
+    qDebug() << "interface remove: " << name;
     auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
         [name](const InterfaceData &data) {
             return data.name == name;
@@ -378,6 +374,7 @@ void Registry::Private::handleRemove(uint32_t name)
             emit (q->*sit.value().removedSignal)(data.name);
         }
     }
+    qDebug() << "emit removed" << name;
     emit q->interfaceRemoved(name);
 }
 

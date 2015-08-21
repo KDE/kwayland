@@ -66,6 +66,7 @@ private:
 
 ScreenManagement::Private::Private(ScreenManagement *q)
     : q(q)
+    , screen_management(nullptr)
 {
 }
 
@@ -85,8 +86,28 @@ ScreenManagement::ScreenManagement(QObject *parent)
 
 ScreenManagement::~ScreenManagement()
 {
-    d->screen_management.release();
+    release();
     qDeleteAll(d->disabledOutputs);
+}
+
+void ScreenManagement::destroy()
+{
+    qDebug() << "SM destroy" << d->screen_management.isValid();
+    if (!d->screen_management) {
+        return;
+    }
+    emit interfaceAboutToBeDestroyed();
+    d->screen_management.destroy();
+}
+
+void ScreenManagement::release()
+{
+    qDebug() << "SM release";
+    if (!d->screen_management) {
+        return;
+    }
+    emit interfaceAboutToBeReleased();
+    d->screen_management.release();
 }
 
 void ScreenManagement::setEventQueue(EventQueue *queue)

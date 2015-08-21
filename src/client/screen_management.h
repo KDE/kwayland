@@ -82,6 +82,9 @@ public:
      **/
     void setup(org_kde_kwin_screen_management *screen_management);
 
+    void release();
+    void destroy();
+
     /**
      * Sets the @p queue to use for creating a Surface.
      **/
@@ -109,6 +112,15 @@ Q_SIGNALS:
     void done();
     void disabledOutputAdded(const QString &edid, const QString &name, const QString &connector);
     void disabledOutputRemoved(const QString &name, const QString &connector);
+
+    /**
+     * This signal is emitted right before the interface is released.
+     **/
+    void interfaceAboutToBeReleased();
+    /**
+     * This signal is emitted right before the data is destroyed.
+     **/
+    void interfaceAboutToBeDestroyed();
 
 private:
     class Private;

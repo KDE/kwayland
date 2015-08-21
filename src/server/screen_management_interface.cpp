@@ -64,7 +64,6 @@ ScreenManagementInterface::ScreenManagementInterface(Display *display, QObject *
     : Global(new Private(this, display), parent)
 {
     Q_D();
-    qDebug() << "New output interface";
 }
 
 ScreenManagementInterface::~ScreenManagementInterface() = default;

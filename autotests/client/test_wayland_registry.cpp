@@ -30,6 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../src/server/seat_interface.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/subcompositor_interface.h"
+#include "../../src/server/screen_management_interface.h"
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -80,7 +81,7 @@ TestWaylandRegistry::TestWaylandRegistry(QObject *parent)
     , m_subcompositor(nullptr)
     , m_dataDeviceManager(nullptr)
     , m_screenManagement(nullptr)
-    {
+{
 }
 
 void TestWaylandRegistry::init()
@@ -101,7 +102,9 @@ void TestWaylandRegistry::init()
     m_subcompositor->create();
     m_dataDeviceManager = m_display->createDataDeviceManager();
     m_dataDeviceManager->create();
-    //m_screenManagement = m_display->create
+    m_screenManagement = m_display->createScreenManagement();
+    m_screenManagement->create();
+    QVERIFY(m_screenManagement->isValid());
 }
 
 void TestWaylandRegistry::cleanup()
@@ -237,6 +240,8 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(seatAnnouncedSpy.isValid());
     QSignalSpy subCompositorAnnouncedSpy(&registry, SIGNAL(subCompositorAnnounced(quint32,quint32)));
     QVERIFY(subCompositorAnnouncedSpy.isValid());
+    QSignalSpy screenManagementAnnouncedSpy(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
+    QVERIFY(screenManagementAnnouncedSpy.isValid());
 
     QVERIFY(!registry.isValid());
     registry.create(connection.display());
@@ -248,6 +253,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(!shellAnnouncedSpy.isEmpty());
     QVERIFY(!seatAnnouncedSpy.isEmpty());
     QVERIFY(!subCompositorAnnouncedSpy.isEmpty());
+    QVERIFY(!screenManagementAnnouncedSpy.isEmpty());
 
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::Compositor));
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::Output));
@@ -256,6 +262,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::Shm));
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::SubCompositor));
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::FullscreenShell));
+    QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::ScreenManagement));
 
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::Compositor).isEmpty());
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::Output).isEmpty());
@@ -264,6 +271,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::Shm).isEmpty());
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::SubCompositor).isEmpty());
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::FullscreenShell).isEmpty());
+    QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::ScreenManagement).isEmpty());
 
     QSignalSpy seatRemovedSpy(&registry, SIGNAL(seatRemoved(quint32)));
     QVERIFY(seatRemovedSpy.isValid());
@@ -309,6 +317,15 @@ void TestWaylandRegistry::testRemoval()
     QCOMPARE(subCompositorRemovedSpy.first().first(), subCompositorAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::SubCompositor));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::SubCompositor).isEmpty());
+
+    QSignalSpy screenManagementRemovedSpy(&registry, SIGNAL(screenManagementRemoved(quint32)));
+    QVERIFY(screenManagementRemovedSpy.isValid());
+
+    delete m_screenManagement;
+    QVERIFY(screenManagementRemovedSpy.wait());
+    QCOMPARE(screenManagementRemovedSpy.first().first(), screenManagementAnnouncedSpy.first().first());
+    QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::ScreenManagement));
+    QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::ScreenManagement).isEmpty());
 
     // cannot test shmRemoved as there is no functionality for it
 }

@@ -174,11 +174,6 @@ void ScreenManagement::setup(org_kde_kwin_screen_management *output)
     d->setup(output);
 }
 
-org_kde_kwin_screen_management *ScreenManagement::screen_management()
-{
-    return d->screen_management;
-}
-
 bool ScreenManagement::isValid() const
 {
     return d->screen_management.isValid();

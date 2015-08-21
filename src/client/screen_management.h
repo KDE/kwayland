@@ -101,7 +101,6 @@ public:
     bool isValid() const;
     operator org_kde_kwin_screen_management*();
     operator org_kde_kwin_screen_management*() const;
-    org_kde_kwin_screen_management *screen_management();
 
     QList<DisabledOutput*> disabledOutputs() const;
 

@@ -56,9 +56,6 @@ public Q_SLOTS:
     void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
     void removeDisabledOutput(const QString &name, const QString &connector);
 
-private Q_SLOTS:
-    void done();
-
 private:
     explicit ScreenManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;

@@ -49,6 +49,7 @@ public:
 private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
+    void sendDone();
 
     ScreenManagementInterface *q;
 };
@@ -97,7 +98,7 @@ void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t versio
                                                        qPrintable(op.connector));
     }
 
-    q->done();
+    sendDone();
 
     c->flush();
     qDebug() << "Flushed";
@@ -157,11 +158,9 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
 }
 
 
-void ScreenManagementInterface::done()
+void ScreenManagementInterface::Private::sendDone()
 {
-    Q_D();
-
-    for (auto r : d->resources) {
+    for (auto r : resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_done(resource);
     }

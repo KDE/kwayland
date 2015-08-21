@@ -46,6 +46,8 @@ private Q_SLOTS:
 
     void testGetOutputs();
 
+    void testRemoval();
+
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::ScreenManagementInterface *m_kwinInterface;
@@ -169,6 +171,30 @@ void TestWaylandScreenManagement::testGetOutputs()
 
 }
 
+void TestWaylandScreenManagement::testRemoval()
+{
+    KWayland::Client::Registry registry;
+
+    QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
+    QVERIFY(announced.isValid());
+    QSignalSpy screenManagementRemovedSpy(&registry, SIGNAL(screenManagementRemoved(quint32)));
+    QVERIFY(screenManagementRemovedSpy.isValid());
+
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+
+    QVERIFY(announced.wait());
+    QCOMPARE(announced.count(), 1);
+
+    delete m_kwinInterface;
+    QVERIFY(screenManagementRemovedSpy.wait());
+    QCOMPARE(screenManagementRemovedSpy.first().first(), announced.first().first());
+    QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::ScreenManagement));
+    QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::ScreenManagement).isEmpty());
+
+}
 
 
 QTEST_GUILESS_MAIN(TestWaylandScreenManagement)

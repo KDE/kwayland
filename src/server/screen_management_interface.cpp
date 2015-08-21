@@ -113,24 +113,20 @@ void ScreenManagementInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void ScreenManagementInterface::addDisabledOutput(const QString& edid, const QString& name, const QString& connector)
+void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterface::DisabledOutput& output)
 {
     Q_D();
 
-    qDebug() << "New Output! :: " << edid << name << connector;
+    qDebug() << "New Output! :: " << output.edid << output.name << output.connector;
 
-    DisabledOutput op;
-    op.edid = edid;
-    op.name = name;
-    op.connector = connector;
-    d->disabledOutputs << op;
+    d->disabledOutputs << output;
 
     for (auto r : d->resources) {
         wl_resource *resource = r.resource;
         org_kde_kwin_screen_management_send_disabled_output_added(resource,
-                                                       qPrintable(op.edid),
-                                                       qPrintable(op.name),
-                                                       qPrintable(op.connector));
+                                                       qPrintable(output.edid),
+                                                       qPrintable(output.name),
+                                                       qPrintable(output.connector));
     }
 
 }

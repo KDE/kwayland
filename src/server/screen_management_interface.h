@@ -43,17 +43,18 @@ class KWAYLANDSERVER_EXPORT ScreenManagementInterface : public Global
 {
     Q_OBJECT
 
+public:
+    virtual ~ScreenManagementInterface();
+
     struct DisabledOutput {
         QString edid;
         QString name;
         QString connector;
     };
 
-public:
-    virtual ~ScreenManagementInterface();
-
 public Q_SLOTS:
-    void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
+    void addDisabledOutput(const ScreenManagementInterface::DisabledOutput &output);
+//     void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
     void removeDisabledOutput(const QString &name, const QString &connector);
 
 private:

@@ -94,8 +94,19 @@ void TestWaylandScreenManagement::init()
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 
-    m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
-    m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    //m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
+
+    KWayland::Server::ScreenManagementInterface::DisabledOutput d_o1;
+    d_o1.edid = "";
+    d_o1.name = "DiscoScreen";
+    d_o1.connector = "HDMI1";
+    m_kwinInterface->addDisabledOutput(d_o1);
+
+    KWayland::Server::ScreenManagementInterface::DisabledOutput d_o;
+    d_o.edid = "INVALID_EDID_INFO";
+    d_o.name = "LargeMonitor";
+    d_o.connector = "DisplayPort-0";
+    m_kwinInterface->addDisabledOutput(d_o);
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;

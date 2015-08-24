@@ -1,6 +1,6 @@
 /********************************************************************
-Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
-Copyright 2015  Sebastian Kügler <sebas@kde.org>
+Copyright 2014 Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2015 Sebastian Kügler <sebas@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -77,7 +77,7 @@ ScreenManagementInterface::Private *ScreenManagementInterface::d_func() const
 
 void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
-    qDebug() << "Bound!";
+    //qDebug() << "Bound!";
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&org_kde_kwin_screen_management_interface, qMin(version, s_version), id);
     if (!resource) {
@@ -101,7 +101,7 @@ void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t versio
     sendDone();
 
     c->flush();
-    qDebug() << "Flushed";
+    //qDebug() << "Flushed";
 }
 
 void ScreenManagementInterface::Private::unbind(wl_resource *resource)
@@ -117,7 +117,7 @@ void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterfac
 {
     Q_D();
 
-    qDebug() << "New Output! :: " << output.edid << output.name << output.connector;
+    //qDebug() << "New Output! :: " << output.edid << output.name << output.connector;
 
     d->disabledOutputs << output;
 
@@ -134,12 +134,12 @@ void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterfac
 void ScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
     Q_D();
-    qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
+    //qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
 
     QList<DisabledOutput>::iterator i;
     for (i = d->disabledOutputs.begin(); i != d->disabledOutputs.end(); ++i) {
         if ((*i).name == name) {
-            qDebug() << "Kill me" << name;
+            //qDebug() << "Kill me" << name;
             foreach (auto r, d->resources) {
                 wl_resource *resource = r.resource;
                 org_kde_kwin_screen_management_send_disabled_output_removed(resource,
@@ -150,7 +150,7 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
         }
         i++;
     }
-    qDebug() << "d->DisabledOutputs is now " << d->disabledOutputs.count();
+    //qDebug() << "d->DisabledOutputs is now " << d->disabledOutputs.count();
 }
 
 

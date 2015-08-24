@@ -96,7 +96,7 @@ void TestWaylandScreenManagement::init()
     //m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
 
     KWayland::Server::ScreenManagementInterface::DisabledOutput d_o1;
-    d_o1.edid = "";
+    d_o1.edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
     d_o1.name = "DiscoScreen";
     d_o1.connector = "HDMI1";
     m_kwinInterface->addDisabledOutput(d_o1);

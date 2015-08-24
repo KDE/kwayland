@@ -92,7 +92,7 @@ ScreenManagement::~ScreenManagement()
 
 void ScreenManagement::destroy()
 {
-    qDebug() << "SM destroy" << d->screen_management.isValid();
+    //qDebug() << "SM destroy" << d->screen_management.isValid();
     if (!d->screen_management) {
         return;
     }
@@ -102,7 +102,7 @@ void ScreenManagement::destroy()
 
 void ScreenManagement::release()
 {
-    qDebug() << "SM release";
+    //qDebug() << "SM release";
     if (!d->screen_management) {
         return;
     }
@@ -128,7 +128,7 @@ org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListe
 
 void ScreenManagement::Private::disabledOutputAddedCallback(void* data, org_kde_kwin_screen_management* output, const char* edid, const char* name, const char* connector)
 {
-    qDebug() << "disabledOutputAddedCallback!" << name << connector;
+    //qDebug() << "disabledOutputAddedCallback!" << name << connector;
     auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
 
@@ -139,13 +139,12 @@ void ScreenManagement::Private::disabledOutputAddedCallback(void* data, org_kde_
 
     o->disabledOutputs << op;
 
-    emit o->q->disabledOutputAdded(QString::fromLocal8Bit(edid), QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
-
+    emit o->q->disabledOutputAdded(op);
 }
 
 void ScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_screen_management* output, const char* name, const char* connector)
 {
-    qDebug() << "disabledOutputRemovedCallback! FIXME" << name << connector;
+    //qDebug() << "disabledOutputRemovedCallback!" << name << connector;
     auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
 

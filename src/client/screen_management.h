@@ -106,10 +106,19 @@ public:
 
 Q_SIGNALS:
     /**
-     * Emitted whenever at least one of the data changed.
+     * Emitted after all DisabledOutputs have been announced initially. This signal
+     * can be tracked to get notified once all currently connected, but
+     * disabled outputs have been signalled. After done() is fired, disabledOutputs()
+     * is up to date.
      **/
     void done();
-    void disabledOutputAdded(const QString &edid, const QString &name, const QString &connector);
+
+    /**
+     * An output has been connected, but is not enabled yet.
+     * @param output A pointer to the DisabledOutput. This pointers lifetime is
+     * managed by the ScreenManagement class. Do not delete it yourself.
+     */
+    void disabledOutputAdded(const KWayland::Client::DisabledOutput*);
     void disabledOutputRemoved(const QString &name, const QString &connector);
 
     /**

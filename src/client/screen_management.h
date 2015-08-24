@@ -43,28 +43,25 @@ class EventQueue;
  * @short Wrapper for the org_kde_kwin_screen_management interface.
  *
  * This class provides a convenient wrapper for the org_kde_kwin_screen_management interface.
- * Its main purpose is to hold the information about one KWinScreenManagement.
+ * Its main purpose is to provide information about connected, but disabled screens, i.e.
+ * outputs that are not visible in the wl_output interface, but could be enabled by the
+ * compositor.
  *
  * To use this class one needs to interact with the Registry. There are two
  * possible ways to create an KWinScreenManagement interface:
  * @code
- * KWinScreenManagement *c = registry->createKWinScreenManagement(name, version);
+ * KWayland::Client::ScreenManagement *c = registry->createScreenManagement(name, version);
  * @endcode
  *
  * This creates the KWinScreenManagement and sets it up directly. As an alternative this
- * can also be done in a more low level way:
- * @code
- * KWinScreenManagement *c = new KWinScreenManagement;
- * c->setup(registry->bindKWinScreenManagement(name, version));
- * @endcode
  *
- * The KWinScreenManagement can be used as a drop-in replacement for any org_kde_kwin_screen_management
- * pointer as it provides matching cast operators.
+ * The ScreenManagement can be used as a drop-in replacement for any
+ * org_kde_kwin_screen_management * pointer as it provides matching cast operators.
  *
- * Please note that all properties of KWinScreenManagement are not valid until the
- * changed signal has been emitted. The wayland server is pushing the
- * information in an async way to the KWinScreenManagement instance. By emitting changed
- * the KWinScreenManagement indicates that all relevant information is available.
+ * Please note that all properties of ScreenManagement are not valid until the
+ * done signal has been emitted. The wayland server is pushing the
+ * information in an async way to the ScreenManagement instance. By emitting done,
+ * the ScreenManagement indicates that all relevant information is available.
  *
  * @see Registry
  **/
@@ -76,8 +73,8 @@ public:
     virtual ~ScreenManagement();
 
     /**
-     * Setup this Compositor to manage the @p output.
-     * When using Registry::createKWinScreenManagement there is no need to call this
+     * Setup this ScreenManagement.
+     * When using Registry::createScreenManagement there is no need to call this
      * method.
      **/
     void setup(org_kde_kwin_screen_management *screen_management);
@@ -119,6 +116,13 @@ Q_SIGNALS:
      * managed by the ScreenManagement class. Do not delete it yourself.
      */
     void disabledOutputAdded(const KWayland::Client::DisabledOutput*);
+
+    /**
+     * A disabled output has been disconnected.
+     * @param output A pointer to the DisabledOutput. This pointer may already have
+     * been deleted, so do not dereference any of its data, only use its address to
+     * identify it.
+     */
     void disabledOutputRemoved(const KWayland::Client::DisabledOutput*);
 
     /**
@@ -126,7 +130,7 @@ Q_SIGNALS:
      **/
     void interfaceAboutToBeReleased();
     /**
-     * This signal is emitted right before the data is destroyed.
+     * This signal is emitted right before the interface is destroyed.
      **/
     void interfaceAboutToBeDestroyed();
 

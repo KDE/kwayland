@@ -119,7 +119,7 @@ Q_SIGNALS:
      * managed by the ScreenManagement class. Do not delete it yourself.
      */
     void disabledOutputAdded(const KWayland::Client::DisabledOutput*);
-    void disabledOutputRemoved(const QString &name, const QString &connector);
+    void disabledOutputRemoved(const KWayland::Client::DisabledOutput*);
 
     /**
      * This signal is emitted right before the interface is released.

@@ -167,7 +167,7 @@ void TestWaylandScreenManagement::testGetOutputs()
     //QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
     QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
     QVERIFY(oSpy.isValid());
-    QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const QString&, const QString&)));
+    QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const KWayland::Client::DisabledOutput*)));
     QSignalSpy doneSpy(kwin, SIGNAL(done()));
 
     QVERIFY(doneSpy.wait(200));

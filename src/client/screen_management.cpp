@@ -148,17 +148,13 @@ void ScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kd
     auto o = reinterpret_cast<ScreenManagement::Private*>(data);
     Q_ASSERT(o->screen_management == output);
 
-    DisabledOutput *op = new DisabledOutput();
-    op->setName(name);
-    op->setConnector(connector);
-
     auto it = std::find_if(o->disabledOutputs.begin(), o->disabledOutputs.end(),
-                           [op](const DisabledOutput *r) {
-                               return (r->name() == op->name() && r->connector() == op->connector());
+                           [name, connector](const DisabledOutput *r) {
+                               return (r->name() == name && r->connector() == connector);
                         });
     o->disabledOutputs.erase(it);
 
-    emit o->q->disabledOutputRemoved(QString::fromLocal8Bit(name), QString::fromLocal8Bit(connector));
+    emit o->q->disabledOutputRemoved(*it);
 }
 
 void ScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)

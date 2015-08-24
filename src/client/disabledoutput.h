@@ -72,8 +72,8 @@ public:
     explicit DisabledOutput(QObject *parent = nullptr);
     virtual ~DisabledOutput();
 
-    QByteArray edid() const;
-    void setEdid(const QByteArray &e);
+    QString edid() const;
+    void setEdid(const QString &e);
 
     QString name() const;
     void setName(const QString &n);

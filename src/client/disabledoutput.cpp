@@ -38,7 +38,7 @@ class DisabledOutput::Private
 public:
     Private(DisabledOutput *q);
 
-    QByteArray edid;
+    QString edid;
     QString name;
     QString connector;
 
@@ -61,12 +61,12 @@ DisabledOutput::~DisabledOutput()
 }
 
 
-QByteArray DisabledOutput::edid() const
+QString DisabledOutput::edid() const
 {
     return d->edid;
 }
 
-void DisabledOutput::setEdid(const QByteArray& e)
+void DisabledOutput::setEdid(const QString& e)
 {
     d->edid = e;
 }

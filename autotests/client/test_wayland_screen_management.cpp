@@ -146,13 +146,8 @@ void TestWaylandScreenManagement::cleanup()
 
 void TestWaylandScreenManagement::testGetOutputs()
 {
-    /*-*/
-    //auto kwin = m_display->createKWinScreenManagement();
-    //kwin->getOutputs();
 
     KWayland::Client::Registry registry;
-    //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
-    //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
     QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -164,10 +159,10 @@ void TestWaylandScreenManagement::testGetOutputs()
     KWayland::Client::ScreenManagement *kwin = registry.createScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
     QVERIFY(kwin->isValid());
 
-    //QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
     QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
     QVERIFY(oSpy.isValid());
     QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const KWayland::Client::DisabledOutput*)));
+    QVERIFY(rSpy.isValid());
     QSignalSpy doneSpy(kwin, SIGNAL(done()));
 
     QVERIFY(doneSpy.wait(200));

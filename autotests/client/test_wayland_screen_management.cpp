@@ -89,7 +89,6 @@ void TestWaylandScreenManagement::init()
     m_serverOutput->setCurrentMode(QSize(1024, 768));
     m_serverOutput->create();
 
-    qDebug() << "creating m_kwinInterface";
     m_kwinInterface = m_display->createScreenManagement(this);
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
@@ -147,38 +146,41 @@ void TestWaylandScreenManagement::cleanup()
 
 void TestWaylandScreenManagement::testGetOutputs()
 {
-     /*-*/
-     //auto kwin = m_display->createKWinScreenManagement();
-     //kwin->getOutputs();
+    /*-*/
+    //auto kwin = m_display->createKWinScreenManagement();
+    //kwin->getOutputs();
 
-     KWayland::Client::Registry registry;
-     //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
-     //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
-     QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
-     registry.create(m_connection->display());
-     QVERIFY(registry.isValid());
-     registry.setup();
-     wl_display_flush(m_connection->display());
-     QVERIFY(announced.wait(1000));
-
-
-     KWayland::Client::ScreenManagement *kwin = registry.createScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
-     QVERIFY(kwin->isValid());
-
-     QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
-     QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const QString&, const QString&)));
-     QSignalSpy doneSpy(kwin, SIGNAL(done()));
-
-     QVERIFY(doneSpy.wait(200));
-     QCOMPARE(oSpy.count(), 2);
-
-     m_kwinInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
-     QVERIFY(rSpy.wait(1000));
-     QCOMPARE(rSpy.count(), 1);
-     //m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-     QCOMPARE(kwin->disabledOutputs().count(), 1);
+    KWayland::Client::Registry registry;
+    //QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    //QSignalSpy announced(&registry, SIGNAL(interfacesAnnounced()));
+    QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait(1000));
 
 
+    KWayland::Client::ScreenManagement *kwin = registry.createScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
+    QVERIFY(kwin->isValid());
+
+    //QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const QString&, const QString&, const QString&)));
+    QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
+    QVERIFY(oSpy.isValid());
+    QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const QString&, const QString&)));
+    QSignalSpy doneSpy(kwin, SIGNAL(done()));
+
+    QVERIFY(doneSpy.wait(200));
+    QCOMPARE(oSpy.count(), 2);
+    QCOMPARE(kwin->disabledOutputs().count(), oSpy.count());
+
+    qDebug() << "FIRST" << oSpy.first().first();
+
+    m_kwinInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
+    QVERIFY(rSpy.wait(1000));
+    QCOMPARE(rSpy.count(), 1);
+    //m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    QCOMPARE(kwin->disabledOutputs().count(), 1);
 
 }
 

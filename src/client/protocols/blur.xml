@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="blur">
+  <copyright><![CDATA[
+    Copyright (C) 2015 Martin Gräßlin
+    Copyright (C) 2015 Marco Martin
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ]]></copyright>
+  <interface name="org_kde_kwin_blur_manager" version="1">
+      <request name="create">
+          <arg name="id" type="new_id" interface="org_kde_kwin_blur"/>
+          <arg name="surface" type="object" interface="wl_surface"/>
+      </request>
+      <request name="unset">
+          <arg name="surface" type="object" interface="wl_surface"/>
+      </request>
+  </interface>
+  <interface name="org_kde_kwin_blur" version="1">
+      <request name="commit">
+      </request>
+      <request name="set_region">
+        <arg name="region" type="object" interface="wl_region" allow-null="true"/>
+      </request>
+  </interface>
+</protocol>

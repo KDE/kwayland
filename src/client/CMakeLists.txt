@@ -7,6 +7,7 @@ include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
     buffer.cpp
+    blur.cpp
     compositor.cpp
     connection_thread.cpp
     event_queue.cpp
@@ -63,6 +64,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
     BASENAME shadow
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/blur.xml
+    BASENAME blur
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})

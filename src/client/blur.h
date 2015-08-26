@@ -1,0 +1,191 @@
+/********************************************************************
+Copyright 2015  Martin Gräßlin <mgraesslin@kde.org>
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) version 3, or any
+later version accepted by the membership of KDE e.V. (or its
+successor approved by the membership of KDE e.V.), which shall
+act as a proxy defined in Section 6 of version 3 of the license.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*********************************************************************/
+#ifndef KWAYLAND_BLUR_H
+#define KWAYLAND_BLUR_H
+
+#include "buffer.h"
+
+#include <QObject>
+#include <QPoint>
+#include <QSize>
+
+#include <KWayland/Client/kwaylandclient_export.h>
+
+struct wl_buffer;
+struct wl_region;
+struct org_kde_kwin_blur;
+struct org_kde_kwin_blur_manager;
+
+class QMarginsF;
+class QWindow;
+
+namespace KWayland
+{
+namespace Client
+{
+
+class EventQueue;
+class Blur;
+class Surface;
+
+class KWAYLANDCLIENT_EXPORT BlurManager : public QObject
+{
+    Q_OBJECT
+public:
+    /**
+     * Creates a new BlurManager.
+     * Note: after constructing the BlurManager it is not yet valid and one needs
+     * to call setup. In order to get a ready to use BlurManager prefer using
+     * Registry::createBlurManager.
+     **/
+    explicit BlurManager(QObject *parent = nullptr);
+    virtual ~BlurManager();
+
+    /**
+     * @returns @c true if managing a org_kde_kwin_blur_manager.
+     **/
+    bool isValid() const;
+    /**
+     * Setup this BlurManager to manage the @p compositor.
+     * When using Registry::createBlurManager there is no need to call this
+     * method.
+     **/
+    void setup(org_kde_kwin_blur_manager *compositor);
+    /**
+     * Releases the org_kde_kwin_blur_manager interface.
+     * After the interface has been released the BlurManager instance is no
+     * longer valid and can be setup with another org_kde_kwin_blur_manager interface.
+     **/
+    void release();
+    /**
+     * Destroys the data hold by this BlurManager.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new org_kde_kwin_blur_manager interface
+     * once there is a new connection available.
+     *
+     * It is suggested to connect this method to ConnectionThread::connectionDied:
+     * @code
+     * connect(connection, &ConnectionThread::connectionDied, compositor, &BlurManager::destroyed);
+     * @endcode
+     *
+     * @see release
+     **/
+    void destroy();
+
+    /**
+     * Sets the @p queue to use for creating a Blur.
+     **/
+    void setEventQueue(EventQueue *queue);
+    /**
+     * @returns The event queue to use for creating a Blur.
+     **/
+    EventQueue *eventQueue();
+
+    /**
+     * Creates and setup a new Blur with @p parent.
+     * @param parent The parent to pass to the Blur.
+     * @returns The new created Blur
+     **/
+    Blur *createBlur(Surface *surface, QObject *parent = nullptr);
+    void removeBlur(Surface *surface);
+
+    operator org_kde_kwin_blur_manager*();
+    operator org_kde_kwin_blur_manager*() const;
+
+private:
+    class Private;
+    QScopedPointer<Private> d;
+};
+
+/**
+ * @short Wrapper for the org_kde_kwin_blur interface.
+ *
+ * This class is a convenient wrapper for the org_kde_kwin_blur interface.
+ * To create a Blur call Compositor::createBlur.
+ *
+ * The main purpose of this class is to setup the next frame which
+ * should be rendered. Therefore it provides methods to add damage
+ * and to attach a new Buffer and to finalize the frame by calling
+ * commit.
+ *
+ * @see Compositor
+ **/
+class KWAYLANDCLIENT_EXPORT Blur : public QObject
+{
+    Q_OBJECT
+public:
+    virtual ~Blur();
+
+    /**
+     * Setup this Blur to manage the @p blur.
+     * When using Compositor::createSurface there is no need to call this
+     * method.
+     **/
+    void setup(org_kde_kwin_blur *blur);
+    /**
+     * Releases the org_kde_kwin_blur interface.
+     * After the interface has been released the Blur instance is no
+     * longer valid and can be setup with another org_kde_kwin_blur interface.
+     **/
+    void release();
+    /**
+     * Destroys the data hold by this Blur.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new org_kde_kwin_blur interface
+     * once there is a new connection available.
+     *
+     * It is suggested to connect this method to ConnectionThread::connectionDied:
+     * @code
+     * connect(connection, &ConnectionThread::connectionDied, blur, &Blur::destroyed);
+     * @endcode
+     *
+     * @see release
+     **/
+    void destroy();
+    /**
+     * @returns @c true if managing a org_kde_kwin_blur.
+     **/
+    bool isValid() const;
+
+    void commit();
+    
+    void setRegion(wl_region *region);
+
+    operator org_kde_kwin_blur*();
+    operator org_kde_kwin_blur*() const;
+
+private:
+    friend class BlurManager;
+    explicit Blur(QObject *parent = nullptr);
+    class Private;
+    QScopedPointer<Private> d;
+};
+
+}
+}
+
+#endif
+

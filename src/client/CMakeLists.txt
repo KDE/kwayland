@@ -7,6 +7,7 @@ include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
     buffer.cpp
+    blur.cpp
     compositor.cpp
     connection_thread.cpp
     event_queue.cpp
@@ -65,6 +66,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME shadow
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/blur.xml
+    BASENAME blur
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -96,6 +102,7 @@ install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
+  blur.h
   buffer.h
   compositor.h
   connection_thread.h

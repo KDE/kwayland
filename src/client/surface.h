@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QPoint>
 #include <QSize>
+#include <QWindow>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -70,6 +71,18 @@ public:
      * @since 5.4
      **/
     static Surface *fromWindow(QWindow *window);
+
+    /**
+     * Creates a Surface for the given @p winId.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr as well as for not created QWindows.
+     *
+     * The returned Surface will be fully setup, but won't be released. It gets automatically
+     * destroyed together with the QWindow corresponding
+     * the @p wid.
+     * @since 5.5
+     **/
+    static Surface *fromQtWinId(WId wid);
 
     /**
      * Setup this Surface to manage the @p surface.

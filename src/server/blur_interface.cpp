@@ -138,7 +138,8 @@ public:
     Private(BlurInterface *q, BlurManagerInterface *c, wl_resource *parentResource);
     ~Private();
 
-    QRegion region;
+    QRegion pendingRegion;
+    QRegion currentRegion;
 
 private:
     void commit();
@@ -166,7 +167,7 @@ void BlurInterface::Private::commitCallback(wl_client *client, wl_resource *reso
 
 void BlurInterface::Private::commit()
 {
-
+    currentRegion = pendingRegion;
 }
 
 void BlurInterface::Private::setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region)
@@ -174,7 +175,11 @@ void BlurInterface::Private::setRegionCallback(wl_client *client, wl_resource *r
     Q_UNUSED(client)
     Private *p = cast<Private>(resource);
     RegionInterface *r = RegionInterface::get(region);
-    p->region = r->region();
+    if (r) {
+        p->pendingRegion = r->region();
+    } else {
+        p->pendingRegion = QRegion();
+    }
 }
 
 BlurInterface::Private::Private(BlurInterface *q, BlurManagerInterface *c, wl_resource *parentResource)
@@ -200,7 +205,7 @@ BlurInterface::~BlurInterface() = default;
 QRegion BlurInterface::region()
 {
     Q_D();
-    return d->region;
+    return d->currentRegion;
 }
 
 BlurInterface::Private *BlurInterface::d_func() const

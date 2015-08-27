@@ -85,7 +85,7 @@ public:
     QPointer<ShadowInterface> shadow() const;
 
     /**
-     * @returns The Shadow for this Surface.
+     * @returns The Blur for this Surface.
      * @since 5.5
      **/
     QPointer<BlurInterface> blur() const;

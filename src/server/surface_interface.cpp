@@ -486,6 +486,12 @@ QPointer< ShadowInterface > SurfaceInterface::shadow() const
     return d->current.shadow;
 }
 
+QPointer< BlurInterface > SurfaceInterface::blur() const
+{
+    Q_D();
+    return d->current.blur;
+}
+
 SurfaceInterface::Private *SurfaceInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());

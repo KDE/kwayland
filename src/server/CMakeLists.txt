@@ -21,6 +21,7 @@ set(SERVER_LIB_SRCS
     resource.cpp
     seat_interface.cpp
     shadow_interface.cpp
+    blur_interface.cpp
     shell_interface.cpp
     surface_interface.cpp
     subcompositor_interface.cpp
@@ -55,6 +56,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/shadow.xml
     BASENAME shadow
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/blur.xml
+    BASENAME blur
 )
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})

@@ -130,6 +130,12 @@ void SurfaceInterface::Private::setShadow(const QPointer<ShadowInterface> &shado
     pending.shadowIsSet = true;
 }
 
+void SurfaceInterface::Private::setBlur(const QPointer<BlurInterface> &blur)
+{
+    pending.blur = blur;
+    pending.blurIsSet = true;
+}
+
 const struct wl_surface_interface SurfaceInterface::Private::s_interface = {
     destroyCallback,
     attachCallback,

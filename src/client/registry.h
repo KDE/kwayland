@@ -38,6 +38,7 @@ struct _wl_fullscreen_shell;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
 struct org_kde_kwin_shadow_manager;
+struct org_kde_kwin_blur_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 
@@ -58,6 +59,7 @@ class PlasmaShell;
 class PlasmaWindowManagement;
 class Seat;
 class ShadowManager;
+class BlurManager;
 class Shell;
 class ShmPool;
 class SubCompositor;
@@ -110,7 +112,8 @@ public:
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
-        Shadow /// Refers to org_kde_kwin_shadow_manager interface
+        Shadow, /// Refers to org_kde_kwin_shadow_manager interface
+        Blur /// refers to org_kde_kwin_blur_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -288,6 +291,7 @@ public:
     org_kde_kwin_idle *bindIdle(uint32_t name, uint32_t version) const;
     org_kde_kwin_fake_input *bindFakeInput(uint32_t name, uint32_t version) const;
     org_kde_kwin_shadow_manager *bindShadowManager(uint32_t name, uint32_t version) const;
+    org_kde_kwin_blur_manager *bindBlurManager(uint32_t name, uint32_t version) const;
 
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
@@ -400,6 +404,7 @@ public:
     Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
     FakeInput *createFakeInput(quint32 name, quint32 version, QObject *parent = nullptr);
     ShadowManager *createShadowManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    BlurManager *createBlurManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
     operator wl_registry*();
     operator wl_registry*() const;
@@ -454,6 +459,7 @@ Q_SIGNALS:
     void idleAnnounced(quint32 name, quint32 version);
     void fakeInputAnnounced(quint32 name, quint32 version);
     void shadowAnnounced(quint32 name, quint32 version);
+    void blurAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
@@ -495,6 +501,7 @@ Q_SIGNALS:
     void idleRemoved(quint32 name);
     void fakeInputRemoved(quint32 name);
     void shadowRemoved(quint32 name);
+    void blurRemoved(quint32 name);
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

@@ -102,6 +102,7 @@ install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
+  blur.h
   buffer.h
   compositor.h
   connection_thread.h

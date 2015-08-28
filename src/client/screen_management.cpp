@@ -93,6 +93,12 @@ private:
                              const int physical_width,
                              const int physical_height);
 
+    static void modeCallback(void *data, org_kde_kwin_screen_management *sm,
+                             const int id,
+                             const int width,
+                             const int height,
+                             const int refresh_rate);
+
     static void outputDeviceRemovedCallback(void *data, org_kde_kwin_screen_management *sm,
                                             const int id);
 
@@ -165,6 +171,7 @@ org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListe
     /* the following are for real */
     outputDeviceAddedCallback,
     edidCallback,
+    modeCallback,
     outputDeviceRemovedCallback,
     doneCallback
 };
@@ -211,6 +218,10 @@ void ScreenManagement::Private::edidCallback(void* data, org_kde_kwin_screen_man
     qDebug() << "Edid arrived" << id << monitor_name;
 }
 
+void ScreenManagement::Private::modeCallback(void* data, org_kde_kwin_screen_management* sm, const int id, const int width, const int height, const int refresh_rate)
+{
+    qDebug() << "modeCallback" << id << width << height << refresh_rate;
+}
 
 
 void ScreenManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_kwin_screen_management* output, const int id)

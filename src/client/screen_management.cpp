@@ -78,6 +78,20 @@ private:
                                           const int enabled, /* a bool, really */
                                           const int primary, /* also a bool */
                                           const int rotation);
+    /*          <arg name="id" type="int" summary="the ID of the output for this EDID information"/>
+     *        <arg name="eisa_id" type="string" summary="EISA ID of the output device"/>
+     *        <arg name="monitor_name" type="string" summary="human-readable name of the output device"/>
+     *        <arg name="serial_number" type="string" summary="serial number of the output device"/>
+     *        <arg name="physical_width" type="int" summary="physical width in millimeter"/>
+     *        <arg name="physical_height" type="int" summary="physical height in millimeter"/>
+     */
+    static void edidCallback(void *data, org_kde_kwin_screen_management *sm,
+                             const int id,
+                             const char *eisa_id,
+                             const char *monitor_name,
+                             const char *serial_number,
+                             const int physical_width,
+                             const int physical_height);
 
     static void outputDeviceRemovedCallback(void *data, org_kde_kwin_screen_management *sm,
                                             const int id);
@@ -150,6 +164,7 @@ org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListe
     disabledOutputRemovedCallback,
     /* the following are for real */
     outputDeviceAddedCallback,
+    edidCallback,
     outputDeviceRemovedCallback,
     doneCallback
 };
@@ -190,6 +205,12 @@ void ScreenManagement::Private::outputDeviceAddedCallback(void* data, org_kde_kw
     qDebug() << "OutputDeviceAdded!" << id << width << height;
 
 }
+
+void ScreenManagement::Private::edidCallback(void* data, org_kde_kwin_screen_management* sm, const int id, const char* eisa_id, const char* monitor_name, const char* serial_number, const int physical_width, const int physical_height)
+{
+    qDebug() << "Edid arrived" << id << monitor_name;
+}
+
 
 
 void ScreenManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_kwin_screen_management* output, const int id)

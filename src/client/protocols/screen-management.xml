@@ -76,7 +76,6 @@
         <arg name="rotation" type="int" summary="output rotation in degree"/>
     </event>
 
-    <!--
     <event name="edid">
         <description summary="emitted when an output disappears from the list">
             EDID information for an output is announced.
@@ -89,6 +88,7 @@
         <arg name="physical_height" type="int" summary="physical height in millimeter"/>
     </event>
 
+    <!--
     <event name="mode">
         <description summary="emitted per mode and per outputdevice">
             A new mode is announced for a given output.

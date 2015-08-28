@@ -60,7 +60,6 @@
     </event>
 
 
-<!--
     <event name="outputdevice_added">
         <description summary="emitted when an output is connected">
             The output is connected, but not used for rendering yet. This means that
@@ -77,6 +76,7 @@
         <arg name="rotation" type="int" summary="output rotation in degree"/>
     </event>
 
+    <!--
     <event name="edid">
         <description summary="emitted when an output disappears from the list">
             EDID information for an output is announced.
@@ -97,13 +97,6 @@
         <arg name="width" type="int" summary="horizontal resolution in pixels"/>
         <arg name="height" type="int" summary="vertical resolution in pixels"/>
         <arg name="refresh_rate" type="int" summary="human-readable name of the output device"/>
-    </event>
-
-    <event name="outputdevice_removed">
-        <description summary="emitted when an output disappears from the list">
-            The output is disconnected or otherwise gone.
-        </description>
-        <arg name="id" type="int" summary="output's id"/>
     </event>
 
     -->

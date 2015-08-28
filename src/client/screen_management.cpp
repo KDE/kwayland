@@ -58,7 +58,28 @@ private:
                                               const char *name,
                                               const char *connector);
 
-    static void outputDeviceRemovedCallback(void *data, org_kde_kwin_screen_management *output,
+    /*
+     *        <arg name="id" type="int" summary="the unique output's device ID"/>
+     *        <arg name="width" type="int" summary="current resolution's height in pixel"/>
+     *        <arg name="height" type="int" summary="current resolution's width in pixel"/>
+     *        <arg name="x" type="int" summary="the outputs EDID string"/>
+     *        <arg name="y" type="int" summary="output's name"/>
+     *        <arg name="enabled" type="int" summary="is the output currently used to display screen content?"/>
+     *        <arg name="primary" type="int" summary="is the output the primary display?"/>
+     *        <arg name="rotation" type="int" summary="output rotation in degree"/>
+     *
+     */
+    static void outputDeviceAddedCallback(void *data, org_kde_kwin_screen_management *sm,
+                                          const int id,
+                                          const int width,
+                                          const int height,
+                                          const int x,
+                                          const int y,
+                                          const int enabled, /* a bool, really */
+                                          const int primary, /* also a bool */
+                                          const int rotation);
+
+    static void outputDeviceRemovedCallback(void *data, org_kde_kwin_screen_management *sm,
                                             const int id);
 
     static void doneCallback(void *data, org_kde_kwin_screen_management *output);
@@ -124,9 +145,11 @@ EventQueue *ScreenManagement::eventQueue()
 }
 
 org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListener = {
+    /* these two just left in for testing right now, remove later */
     disabledOutputAddedCallback,
     disabledOutputRemovedCallback,
-    //outputDeviceAddedCallback,
+    /* the following are for real */
+    outputDeviceAddedCallback,
     outputDeviceRemovedCallback,
     doneCallback
 };
@@ -161,6 +184,13 @@ void ScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kd
 
     emit o->q->disabledOutputRemoved(*it);
 }
+
+void ScreenManagement::Private::outputDeviceAddedCallback(void* data, org_kde_kwin_screen_management* sm, const int id, const int width, const int height, const int x, const int y, const int enabled, const int primary, const int rotation)
+{
+    qDebug() << "OutputDeviceAdded!" << id << width << height;
+
+}
+
 
 void ScreenManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_kwin_screen_management* output, const int id)
 {

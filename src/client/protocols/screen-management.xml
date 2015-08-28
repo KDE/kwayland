@@ -19,8 +19,25 @@
 
   <interface name="org_kde_kwin_screen_management" version="1">
     <description summary="list connected, but disabled outputs">
-    This interface allows to enlist connected outputs that are not used by the
-    compositor. These outputs are currently disabled, so not rendered to.
+    This interface allows to connected output devices for screen configuration purposes.
+
+    - provide info about all outputs, per OutputDevice:
+        - id (unique int, only handed out by kwin, used to identify and refer to an OD throughout the protocol)
+        - resolution: resX, resY
+        - position: posX, posY
+        - orientation: degree
+        - primary: bool
+        - enabled: bool
+        - modes: sizeX, sizeY, refreshRate (separate signal)
+        - edid: eisaId, monitorName, serialNumber, physicalSizeX, physicalSizeY (separate signal)
+    - allows to set, per outputdevice:
+        - set enabled
+        - set mode
+        - set orientation
+        - set position
+        - set primary
+
+
     </description>
 
     <event name="disabled_output_added">
@@ -42,11 +59,66 @@
       <arg name="connector" type="string" summary="output's connector"/>
     </event>
 
+
+<!--
+    <event name="outputdevice_added">
+        <description summary="emitted when an output is connected">
+            The output is connected, but not used for rendering yet. This means that
+            this output has either just been plugged in, or disabled and excluded from
+            the registry object.
+        </description>
+        <arg name="id" type="int" summary="the unique output's device ID"/>
+        <arg name="width" type="int" summary="current resolution's height in pixel"/>
+        <arg name="height" type="int" summary="current resolution's width in pixel"/>
+        <arg name="x" type="int" summary="the outputs EDID string"/>
+        <arg name="y" type="int" summary="output's name"/>
+        <arg name="enabled" type="int" summary="is the output currently used to display screen content?"/>
+        <arg name="primary" type="int" summary="is the output the primary display?"/>
+        <arg name="rotation" type="int" summary="output rotation in degree"/>
+    </event>
+
+    <event name="edid">
+        <description summary="emitted when an output disappears from the list">
+            EDID information for an output is announced.
+        </description>
+        <arg name="id" type="int" summary="the ID of the output for this EDID information"/>
+        <arg name="eisa_id" type="string" summary="EISA ID of the output device"/>
+        <arg name="monitor_name" type="string" summary="human-readable name of the output device"/>
+        <arg name="serial_number" type="string" summary="serial number of the output device"/>
+        <arg name="physical_width" type="int" summary="physical width in millimeter"/>
+        <arg name="physical_height" type="int" summary="physical height in millimeter"/>
+    </event>
+
+    <event name="mode">
+        <description summary="emitted per mode and per outputdevice">
+            A new mode is announced for a given output.
+        </description>
+        <arg name="id" type="int" summary="the ID of the output this mode applies to"/>
+        <arg name="width" type="int" summary="horizontal resolution in pixels"/>
+        <arg name="height" type="int" summary="vertical resolution in pixels"/>
+        <arg name="refresh_rate" type="int" summary="human-readable name of the output device"/>
+    </event>
+
+    <event name="outputdevice_removed">
+        <description summary="emitted when an output disappears from the list">
+            The output is disconnected or otherwise gone.
+        </description>
+        <arg name="id" type="int" summary="output's id"/>
+    </event>
+
+    -->
+    <event name="outputdevice_removed">
+        <description summary="emitted when an output disappears from the list">
+            The output is disconnected or otherwise gone.
+        </description>
+        <arg name="id" type="int" summary="output's id"/>
+    </event>
+
     <event name="done">
-        <description summary="emitted when the listing initiated by get_disabled_outputs is done">
-            This event is fired once the listing of outputs triggered after binding
-            the protocol is done, i.e. after all disabled outputs have been announced.
-            In case there are no disabled outputs, this event is fired anyway.
+        <description summary="emitted after all initial events have been fired">
+            This event is fired once the listing of outputdevices triggered after binding
+            the protocol is done, i.e. after all outputs, their edid and their modes have
+            been announced. In case there are no outputdevices, this event is fired anyway.
         </description>
     </event>
 

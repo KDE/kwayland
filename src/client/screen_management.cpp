@@ -55,8 +55,11 @@ private:
                                        const char *connector);
 
     static void disabledOutputRemovedCallback(void *data, org_kde_kwin_screen_management *output,
-                                          const char *name,
-                                          const char *connector);
+                                              const char *name,
+                                              const char *connector);
+
+    static void outputDeviceRemovedCallback(void *data, org_kde_kwin_screen_management *output,
+                                            const int id);
 
     static void doneCallback(void *data, org_kde_kwin_screen_management *output);
 
@@ -123,6 +126,8 @@ EventQueue *ScreenManagement::eventQueue()
 org_kde_kwin_screen_management_listener ScreenManagement::Private::s_outputListener = {
     disabledOutputAddedCallback,
     disabledOutputRemovedCallback,
+    //outputDeviceAddedCallback,
+    outputDeviceRemovedCallback,
     doneCallback
 };
 
@@ -156,6 +161,12 @@ void ScreenManagement::Private::disabledOutputRemovedCallback(void* data, org_kd
 
     emit o->q->disabledOutputRemoved(*it);
 }
+
+void ScreenManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_kwin_screen_management* output, const int id)
+{
+    qDebug() << "OutputDeviceRemoved!" << id;
+}
+
 
 void ScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {

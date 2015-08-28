@@ -21,21 +21,54 @@
     <description summary="list connected, but disabled outputs">
     This interface allows to connected output devices for screen configuration purposes.
 
+    - keep protocol flat for simplicity, use id to tell which output this signal refers to
     - provide info about all outputs, per OutputDevice:
+
+    events:
+    - outputdevice_added
         - id (unique int, only handed out by kwin, used to identify and refer to an OD throughout the protocol)
         - resolution: resX, resY
         - position: posX, posY
         - orientation: degree
         - primary: bool
         - enabled: bool
-        - modes: sizeX, sizeY, refreshRate (separate signal)
-        - edid: eisaId, monitorName, serialNumber, physicalSizeX, physicalSizeY (separate signal)
-    - allows to set, per outputdevice:
+    - modes: width, height, refresh_rate (separate signal)
+    - edid: eisa_id, monitor_name, serial_number, physical_width, physical_height (separate signal)
+    - outputdevice_removed: id
+
+    methods:
+    - per outputdevice:
         - set enabled
         - set mode
         - set orientation
         - set position
         - set primary
+    - apply: client is done sending set* calls, "dear compositor, please apply the settings now"
+
+
+    server:
+        - wayland_server.cpp gets a ScreenManagement interface
+        - initOutputs also triggers events in the screenmanagement interface
+        - announces the outputs on the ScreenManagementInterface when bound
+        - sends device announced, edid and mode callbacks in order
+        - solely responsible for handing out ids
+        - is responsible for state changes through backends
+        - decides what to do with the information
+
+    client:
+        - connects to server
+        - receives the info about all the outputs
+        - ignores wl_output otherwise
+        - can set properties of outputs (enable/disable, mode, position, etc.)
+
+    why?
+        - keeps everything in one place
+        - one interface for a specific purpose
+        - bi-directional, so defined config interface, no config writing/picking up etc.
+        - one place to housekeep ids
+        - interface is purpose-made, not trying to shoe-horn kscreen in and around wl_output
+        - server really seems to be the right place to keep state and logic
+        - makes concertation less complex, since there's exactly one place to handle state, like mode, on/off, etc.
 
 
     </description>

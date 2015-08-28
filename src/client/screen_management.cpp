@@ -229,7 +229,6 @@ void ScreenManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_
     qDebug() << "OutputDeviceRemoved!" << id;
 }
 
-
 void ScreenManagement::Private::doneCallback(void* data, org_kde_kwin_screen_management* output)
 {
     auto o = reinterpret_cast<ScreenManagement::Private*>(data);

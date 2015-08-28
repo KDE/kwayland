@@ -111,12 +111,12 @@ void TestBlur::init()
     m_compositorInterface->create();
     QVERIFY(m_compositorInterface->isValid());
 
+    QVERIFY(compositorSpy.wait());
+    m_compositor = m_registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
+
     m_blurManagerInterface = m_display->createBlurManager(m_display);
     m_blurManagerInterface->create();
     QVERIFY(m_blurManagerInterface->isValid());
-
-    QVERIFY(compositorSpy.wait());
-    m_compositor = m_registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
 
     QVERIFY(blurSpy.wait());
     m_blurManager = m_registry.createBlurManager(blurSpy.first().first().value<quint32>(), blurSpy.first().last().value<quint32>(), this);
@@ -147,12 +147,22 @@ void TestBlur::cleanup()
 
 void TestBlur::testCreate()
 {
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QVERIFY(serverSurfaceCreated.isValid());
+
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
+    QVERIFY(serverSurfaceCreated.wait());
+
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    QSignalSpy blurChanged(serverSurface, SIGNAL(blurChanged()));
 
     auto blur = m_blurManager->createBlur(surface.data(), surface.data());
-    blur->setRegion(KWayland::Client::Region(QRect(QPoint(0,0), QSize(10, 10))));
+    blur->setRegion(*m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));
     blur->commit();
     surface->commit(KWayland::Client::Surface::CommitFlag::None);
+
+    QVERIFY(blurChanged.wait());
+    QCOMPARE(serverSurface->blur()->region(), QRegion(0, 0, 10, 20));
 }
 
 QTEST_MAIN(TestBlur)

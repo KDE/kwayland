@@ -192,6 +192,7 @@ void SurfaceInterface::Private::commit()
     const bool scaleFactorChanged = current.scale != pending.scale;
     const bool transformFactorChanged = current.transform != pending.transform;
     const bool shadowChanged = pending.shadowIsSet;
+    const bool blurChanged = pending.blurIsSet;
     bool sizeChanged = false;
     auto buffer = current.buffer;
     if (bufferChanged) {
@@ -260,6 +261,9 @@ void SurfaceInterface::Private::commit()
     }
     if (shadowChanged) {
         emit q->shadowChanged();
+    }
+    if (blurChanged) {
+        emit q->blurChanged();
     }
 }
 

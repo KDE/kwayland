@@ -36,10 +36,10 @@ namespace KWayland
 namespace Client
 {
 
-class ScreenManagement;
+class OutputManagement;
 /**
  * @short Wrapper for the connected, but disabled outputs.
- * @see ScreenManagement
+ * @see OutputManagement
  **/
 class KWAYLANDCLIENT_EXPORT DisabledOutput : public QObject
 {
@@ -63,7 +63,7 @@ public:
     QString connector() const;
 
 private:
-    friend class ScreenManagement;
+    friend class OutputManagement;
     explicit DisabledOutput(QObject *parent = nullptr);
     void setConnector(const QString &c);
     void setEdid(const QString &e);

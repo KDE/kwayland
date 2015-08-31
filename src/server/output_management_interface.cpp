@@ -18,12 +18,12 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "screen_management_interface.h"
+#include "output_management_interface.h"
 #include "global_p.h"
 #include "display.h"
 
 #include <wayland-server.h>
-#include "wayland-org_kde_kwin_screen_management-server-protocol.h"
+#include "wayland-org_kde_kwin_output_management-server-protocol.h"
 
 #include <QDebug>
 
@@ -34,14 +34,14 @@ namespace Server
 
 static const quint32 s_version = 1;
 
-class ScreenManagementInterface::Private : public Global::Private
+class OutputManagementInterface::Private : public Global::Private
 {
 public:
     struct ResourceData {
         wl_resource *resource;
         uint32_t version;
     };
-    Private(ScreenManagementInterface *q, Display *d);
+    Private(OutputManagementInterface *q, Display *d);
 
     QList<ResourceData> resources;
     QList<DisabledOutput> disabledOutputs;
@@ -51,35 +51,35 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
     void sendDone();
 
-    ScreenManagementInterface *q;
+    OutputManagementInterface *q;
 };
 
-ScreenManagementInterface::Private::Private(ScreenManagementInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_screen_management_interface, s_version)
+OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
+    : Global::Private(d, &org_kde_kwin_output_management_interface, s_version)
     , q(q)
 {
 
 }
 
-ScreenManagementInterface::ScreenManagementInterface(Display *display, QObject *parent)
+OutputManagementInterface::OutputManagementInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
 }
 
-ScreenManagementInterface::~ScreenManagementInterface() = default;
+OutputManagementInterface::~OutputManagementInterface() = default;
 
 
-ScreenManagementInterface::Private *ScreenManagementInterface::d_func() const
+OutputManagementInterface::Private *OutputManagementInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void OutputManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     //qDebug() << "Bound!";
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kde_kwin_screen_management_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_output_management_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -92,7 +92,7 @@ void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t versio
     resources << r;
 
     foreach (auto op, disabledOutputs) {
-        org_kde_kwin_screen_management_send_disabled_output_added(resource,
+        org_kde_kwin_output_management_send_disabled_output_added(resource,
                                                        qPrintable(op.edid),
                                                        qPrintable(op.name),
                                                        qPrintable(op.connector));
@@ -104,16 +104,16 @@ void ScreenManagementInterface::Private::bind(wl_client *client, uint32_t versio
     //qDebug() << "Flushed";
 }
 
-void ScreenManagementInterface::Private::unbind(wl_resource *resource)
+void OutputManagementInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<ScreenManagementInterface::Private*>(wl_resource_get_user_data(resource));
+    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
     auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
 }
 
-void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterface::DisabledOutput& output)
+void OutputManagementInterface::addDisabledOutput(const OutputManagementInterface::DisabledOutput& output)
 {
     Q_D();
 
@@ -123,7 +123,7 @@ void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterfac
 
     foreach (auto r, d->resources) {
         wl_resource *resource = r.resource;
-        org_kde_kwin_screen_management_send_disabled_output_added(resource,
+        org_kde_kwin_output_management_send_disabled_output_added(resource,
                                                        qPrintable(output.edid),
                                                        qPrintable(output.name),
                                                        qPrintable(output.connector));
@@ -131,7 +131,7 @@ void ScreenManagementInterface::addDisabledOutput(const ScreenManagementInterfac
 
 }
 
-void ScreenManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
+void OutputManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
 {
     Q_D();
     //qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
@@ -142,7 +142,7 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
             //qDebug() << "Kill me" << name;
             foreach (auto r, d->resources) {
                 wl_resource *resource = r.resource;
-                org_kde_kwin_screen_management_send_disabled_output_removed(resource,
+                org_kde_kwin_output_management_send_disabled_output_removed(resource,
                                                                           qPrintable((*i).name),
                                                                           qPrintable((*i).connector));
             }
@@ -154,11 +154,11 @@ void ScreenManagementInterface::removeDisabledOutput(const QString& name, const 
 }
 
 
-void ScreenManagementInterface::Private::sendDone()
+void OutputManagementInterface::Private::sendDone()
 {
     foreach (auto r, resources) {
         wl_resource *resource = r.resource;
-        org_kde_kwin_screen_management_send_done(resource);
+        org_kde_kwin_output_management_send_done(resource);
     }
 }
 

@@ -35,7 +35,7 @@ struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
-struct org_kde_kwin_screen_management;
+struct org_kde_kwin_output_management;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
 struct org_kde_kwin_shadow_manager;
@@ -53,7 +53,7 @@ class DataDeviceManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
-class ScreenManagement;
+class OutputManagement;
 class Idle;
 class Output;
 class PlasmaShell;
@@ -112,7 +112,7 @@ public:
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
-        ScreenManagement, ///< Refers to the wl_data_device_manager interface
+        OutputManagement, ///< Refers to the wl_data_device_manager interface
         Shadow /// Refers to org_kde_kwin_shadow_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
@@ -261,7 +261,7 @@ public:
     /**
      * FIXME: docs.
      **/
-    org_kde_kwin_screen_management *bindScreenManagement(uint32_t name, uint32_t version) const;
+    org_kde_kwin_output_management *bindOutputManagement(uint32_t name, uint32_t version) const;
     /**
      * Binds the wl_subcompositor with @p name and @p version.
      * If the @p name does not exist or is not for the subcompositor interface,
@@ -387,20 +387,20 @@ public:
      **/
     Output *createOutput(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
-     * Creates an KWinScreenManagement and sets it up to manage the interface identified
+     * Creates an KWinOutputManagement and sets it up to manage the interface identified
      * by @p name and @p version.
      *
      * Note: in case @p name is invalid or isn't for the wl_output interface,
      * the returned KWinConnectors will not be valid. Therefore it's recommended to call
      * isValid on the created instance.
      *
-     * @param name The name of the org_kde_kwin_screen_management interface to bind
-     * @param version The version or the org_kde_kwin_screen_management interface to use
-     * @param parent The parent for KWinScreenManagement
+     * @param name The name of the org_kde_kwin_output_management interface to bind
+     * @param version The version or the org_kde_kwin_output_management interface to use
+     * @param parent The parent for KWinOutputManagement
      *
-     * @returns The created KWinScreenManagement.
+     * @returns The created KWinOutputManagement.
      **/
-    ScreenManagement *createScreenManagement(quint32 name, quint32 version, QObject *parent = nullptr);
+    OutputManagement *createOutputManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a FullscreenShell and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -471,7 +471,7 @@ Q_SIGNALS:
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
-    void screenManagementAnnounced(quint32 name, quint32 version);
+    void outputManagementAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     void idleAnnounced(quint32 name, quint32 version);
@@ -513,7 +513,7 @@ Q_SIGNALS:
      **/
     void fullscreenShellRemoved(quint32 name);
     void dataDeviceManagerRemoved(quint32 name);
-    void screenManagementRemoved(quint32 name);
+    void outputManagementRemoved(quint32 name);
     void plasmaShellRemoved(quint32 name);
     void plasmaWindowManagementRemoved(quint32 name);
     void idleRemoved(quint32 name);

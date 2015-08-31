@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fullscreen_shell.h"
 #include "idle.h"
 #include "logging_p.h"
-#include "screen_management.h"
+#include "output_management.h"
 #include "output.h"
 #include "plasmashell.h"
 #include "plasmawindowmanagement.h"
@@ -41,13 +41,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
-#include <wayland-org_kde_kwin_screen_management-client-protocol.h>
+#include <wayland-org_kde_kwin_output_management-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
-#include <wayland-org_kde_kwin_screen_management-client-protocol.h>
+#include <wayland-org_kde_kwin_output_management-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -151,12 +151,12 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::fakeInputAnnounced,
         &Registry::fakeInputRemoved
     }},
-    {Registry::Interface::ScreenManagement, {
+    {Registry::Interface::OutputManagement, {
         1,
-        QByteArrayLiteral("org_kde_kwin_screen_management"),
-        &org_kde_kwin_screen_management_interface,
-        &Registry::screenManagementAnnounced,
-        &Registry::screenManagementRemoved
+        QByteArrayLiteral("org_kde_kwin_output_management"),
+        &org_kde_kwin_output_management_interface,
+        &Registry::outputManagementAnnounced,
+        &Registry::outputManagementRemoved
     }},
     {Registry::Interface::Shadow, {
         1,
@@ -444,7 +444,7 @@ BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(FakeInput, org_kde_kwin_fake_input)
-BIND(ScreenManagement, org_kde_kwin_screen_management)
+BIND(OutputManagement, org_kde_kwin_output_management)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 
 #undef BIND
@@ -478,7 +478,7 @@ CREATE(PlasmaShell)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
 CREATE(FakeInput)
-CREATE(ScreenManagement)
+CREATE(OutputManagement)
 CREATE(ShadowManager)
 CREATE2(ShmPool, Shm)
 

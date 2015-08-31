@@ -39,12 +39,12 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT ScreenManagementInterface : public Global
+class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
 {
     Q_OBJECT
 
 public:
-    virtual ~ScreenManagementInterface();
+    virtual ~OutputManagementInterface();
 
     struct DisabledOutput {
         QString edid;
@@ -53,14 +53,14 @@ public:
     };
 
 public Q_SLOTS:
-    void addDisabledOutput(const ScreenManagementInterface::DisabledOutput &output);
+    void addDisabledOutput(const OutputManagementInterface::DisabledOutput &output);
 //     void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
     void removeDisabledOutput(const QString &name, const QString &connector);
 
     
 
 private:
-    explicit ScreenManagementInterface(Display *display, QObject *parent = nullptr);
+    explicit OutputManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

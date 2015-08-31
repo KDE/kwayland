@@ -23,23 +23,23 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/screen_management.h"
+#include "../../src/client/output_management.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/output_interface.h"
-#include "../../src/server/screen_management_interface.h"
+#include "../../src/server/output_management_interface.h"
 
 // Wayland
 #include <wayland-client-protocol.h>
 
-class TestWaylandScreenManagement : public QObject
+class TestWaylandOutputManagement : public QObject
 {
     Q_OBJECT
 public:
-    explicit TestWaylandScreenManagement(QObject *parent = nullptr);
+    explicit TestWaylandOutputManagement(QObject *parent = nullptr);
 private Q_SLOTS:
     void init();
     void cleanup();
@@ -50,7 +50,7 @@ private Q_SLOTS:
 
 private:
     KWayland::Server::Display *m_display;
-    KWayland::Server::ScreenManagementInterface *m_kwinInterface;
+    KWayland::Server::OutputManagementInterface *m_kwinInterface;
     KWayland::Server::OutputInterface *m_serverOutput;
     //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
@@ -60,7 +60,7 @@ private:
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-output-0");
 
-TestWaylandScreenManagement::TestWaylandScreenManagement(QObject *parent)
+TestWaylandOutputManagement::TestWaylandOutputManagement(QObject *parent)
     : QObject(parent)
     , m_display(nullptr)
     , m_connection(nullptr)
@@ -68,7 +68,7 @@ TestWaylandScreenManagement::TestWaylandScreenManagement(QObject *parent)
 {
 }
 
-void TestWaylandScreenManagement::init()
+void TestWaylandOutputManagement::init()
 {
     using namespace KWayland::Server;
     delete m_display;
@@ -89,19 +89,19 @@ void TestWaylandScreenManagement::init()
     m_serverOutput->setCurrentMode(QSize(1024, 768));
     m_serverOutput->create();
 
-    m_kwinInterface = m_display->createScreenManagement(this);
+    m_kwinInterface = m_display->createOutputManagement(this);
     m_kwinInterface->create();
     QVERIFY(m_kwinInterface->isValid());
 
     //m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
 
-    KWayland::Server::ScreenManagementInterface::DisabledOutput d_o1;
+    KWayland::Server::OutputManagementInterface::DisabledOutput d_o1;
     d_o1.edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
     d_o1.name = "DiscoScreen";
     d_o1.connector = "HDMI1";
     m_kwinInterface->addDisabledOutput(d_o1);
 
-    KWayland::Server::ScreenManagementInterface::DisabledOutput d_o;
+    KWayland::Server::OutputManagementInterface::DisabledOutput d_o;
     d_o.edid = "INVALID_EDID_INFO";
     d_o.name = "LargeMonitor";
     d_o.connector = "DisplayPort-0";
@@ -125,7 +125,7 @@ void TestWaylandScreenManagement::init()
     QVERIFY(m_queue->isValid());
 }
 
-void TestWaylandScreenManagement::cleanup()
+void TestWaylandOutputManagement::cleanup()
 {
     if (m_queue) {
         delete m_queue;
@@ -144,11 +144,11 @@ void TestWaylandScreenManagement::cleanup()
     m_display = nullptr;
 }
 
-void TestWaylandScreenManagement::testGetOutputs()
+void TestWaylandOutputManagement::testGetOutputs()
 {
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -156,7 +156,7 @@ void TestWaylandScreenManagement::testGetOutputs()
     QVERIFY(announced.wait(1000));
 
 
-    KWayland::Client::ScreenManagement *kwin = registry.createScreenManagement(announced.first().first().value<quint32>(), 1, &registry);
+    KWayland::Client::OutputManagement *kwin = registry.createOutputManagement(announced.first().first().value<quint32>(), 1, &registry);
     QVERIFY(kwin->isValid());
 
     QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
@@ -179,14 +179,14 @@ void TestWaylandScreenManagement::testGetOutputs()
 
 }
 
-void TestWaylandScreenManagement::testRemoval()
+void TestWaylandOutputManagement::testRemoval()
 {
     KWayland::Client::Registry registry;
 
-    QSignalSpy announced(&registry, SIGNAL(screenManagementAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
     QVERIFY(announced.isValid());
-    QSignalSpy screenManagementRemovedSpy(&registry, SIGNAL(screenManagementRemoved(quint32)));
-    QVERIFY(screenManagementRemovedSpy.isValid());
+    QSignalSpy outputManagementRemovedSpy(&registry, SIGNAL(outputManagementRemoved(quint32)));
+    QVERIFY(outputManagementRemovedSpy.isValid());
 
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -197,13 +197,13 @@ void TestWaylandScreenManagement::testRemoval()
     QCOMPARE(announced.count(), 1);
 
     delete m_kwinInterface;
-    QVERIFY(screenManagementRemovedSpy.wait());
-    QCOMPARE(screenManagementRemovedSpy.first().first(), announced.first().first());
-    QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::ScreenManagement));
-    QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::ScreenManagement).isEmpty());
+    QVERIFY(outputManagementRemovedSpy.wait());
+    QCOMPARE(outputManagementRemovedSpy.first().first(), announced.first().first());
+    QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));
+    QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
 
 }
 
 
-QTEST_GUILESS_MAIN(TestWaylandScreenManagement)
-#include "test_wayland_screen_management.moc"
+QTEST_GUILESS_MAIN(TestWaylandOutputManagement)
+#include "test_wayland_output_management.moc"

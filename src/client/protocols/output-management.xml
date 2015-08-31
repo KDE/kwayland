@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol name="org_kde_kwin_screen_management">
+<protocol name="org_kde_kwin_output_management">
   <copyright><![CDATA[
     Copyright 2015 Sebastian Kügler <sebas@kde.org>
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_kwin_screen_management" version="1">
+  <interface name="org_kde_kwin_output_management" version="1">
     <description summary="list connected, but disabled outputs">
     This interface allows to connected output devices for screen configuration purposes.
 
@@ -47,9 +47,9 @@
 
 
     server:
-        - wayland_server.cpp gets a ScreenManagement interface
+        - wayland_server.cpp gets a OutputManagement interface
         - initOutputs also triggers events in the screenmanagement interface
-        - announces the outputs on the ScreenManagementInterface when bound
+        - announces the outputs on the OutputManagementInterface when bound
         - sends device announced, edid and mode callbacks in order
         - solely responsible for handing out ids
         - is responsible for state changes through backends

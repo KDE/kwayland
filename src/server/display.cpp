@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
-#include "screen_management_interface.h"
+#include "output_management_interface.h"
 #include "idle_interface.h"
 #include "fakeinput_interface.h"
 #include "logging_p.h"
@@ -209,9 +209,9 @@ ShellInterface *Display::createShell(QObject *parent)
     return shell;
 }
 
-ScreenManagementInterface *Display::createScreenManagement(QObject *parent)
+OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
-    ScreenManagementInterface *kwin = new ScreenManagementInterface(this, parent);
+    OutputManagementInterface *kwin = new OutputManagementInterface(this, parent);
     connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
     return kwin;
 }

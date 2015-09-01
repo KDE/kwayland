@@ -20,10 +20,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "blur.h"
 #include "event_queue.h"
+#include "region.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
-
-#include <QMarginsF>
 
 #include <wayland-blur-client-protocol.h>
 
@@ -158,9 +157,9 @@ void Blur::commit()
     org_kde_kwin_blur_commit(d->blur);
 }
 
-void Blur::setRegion(wl_region *region)
+void Blur::setRegion(Region *region)
 {
-    org_kde_kwin_blur_set_region(d->blur, region);
+    org_kde_kwin_blur_set_region(d->blur, *region);
 }
 
 Blur::operator org_kde_kwin_blur*()

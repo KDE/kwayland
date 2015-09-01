@@ -45,6 +45,7 @@ namespace Client
 class EventQueue;
 class Blur;
 class Surface;
+class Region;
 
 class KWAYLANDCLIENT_EXPORT BlurManager : public QObject
 {
@@ -122,14 +123,14 @@ private:
  * @short Wrapper for the org_kde_kwin_blur interface.
  *
  * This class is a convenient wrapper for the org_kde_kwin_blur interface.
- * To create a Blur call Compositor::createBlur.
+ * To create a Blur call BlurManager::createBlur.
  *
  * The main purpose of this class is to setup the next frame which
  * should be rendered. Therefore it provides methods to add damage
  * and to attach a new Buffer and to finalize the frame by calling
  * commit.
  *
- * @see Compositor
+ * @see BlurManager
  **/
 class KWAYLANDCLIENT_EXPORT Blur : public QObject
 {
@@ -139,7 +140,7 @@ public:
 
     /**
      * Setup this Blur to manage the @p blur.
-     * When using Compositor::createSurface there is no need to call this
+     * When using BlurManager::createBlur there is no need to call this
      * method.
      **/
     void setup(org_kde_kwin_blur *blur);
@@ -172,8 +173,14 @@ public:
     bool isValid() const;
 
     void commit();
-    
-    void setRegion(wl_region *region);
+
+    /**
+     * Sets the area of the window that will have a blurred
+     * background.
+     * The region will have to be created with 
+     * Compositor::createRegion(QRegion)
+     */
+    void setRegion(Region *region);
 
     operator org_kde_kwin_blur*();
     operator org_kde_kwin_blur*() const;

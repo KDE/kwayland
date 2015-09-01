@@ -157,7 +157,7 @@ void TestBlur::testCreate()
     QSignalSpy blurChanged(serverSurface, SIGNAL(blurChanged()));
 
     auto blur = m_blurManager->createBlur(surface.data(), surface.data());
-    blur->setRegion(*m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));
+    blur->setRegion(m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));
     blur->commit();
     surface->commit(KWayland::Client::Surface::CommitFlag::None);
 

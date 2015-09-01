@@ -214,6 +214,10 @@ void SurfaceInterface::Private::commit()
     if (shadowChanged) {
         shadow = pending.shadow;
     }
+    auto blur = current.blur;
+    if (blurChanged) {
+        blur = pending.blur;
+    }
     QList<wl_resource*> callbacks = current.callbacks;
     callbacks.append(pending.callbacks);
     // copy values
@@ -221,6 +225,7 @@ void SurfaceInterface::Private::commit()
     current.buffer = buffer;
     current.callbacks = callbacks;
     current.shadow = shadow;
+    current.blur = blur;
     pending = State{};
     pending.children = current.children;
     pending.input = current.input;

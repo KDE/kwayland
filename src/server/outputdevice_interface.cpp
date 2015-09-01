@@ -44,6 +44,9 @@ public:
     void updateGeometry();
     void updateScale();
 
+    void sendEdid();
+    void sendEnabled();
+
     QSize physicalSize;
     QPoint globalPosition;
     QString manufacturer = QStringLiteral("org.kde.kwin");
@@ -292,6 +295,9 @@ void OutputDeviceInterface::Private::bind(wl_client *client, uint32_t version, u
         sendMode(resource, *currentModeIt);
     }
 
+    sendEdid();
+    sendEnabled();
+
     sendDone(r);
     c->flush();
 }
@@ -445,6 +451,7 @@ void OutputDeviceInterface::setEdid(Edid& edid)
 {
     Q_D();
     d->edid = edid;
+    d->sendEdid();
     emit edidChanged();
 }
 
@@ -459,6 +466,7 @@ void OutputDeviceInterface::setEnabled(bool enabled)
     Q_D();
     if (d->enabled != enabled) {
         d->enabled = enabled;
+        d->sendEnabled();
         emit enabledChanged();
     }
 }
@@ -468,6 +476,29 @@ bool OutputDeviceInterface::enabled() const
     Q_D();
     return d->enabled;
 }
+
+void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
+{
+    for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+        org_kde_kwin_outputdevice_send_edid((*it).resource,
+                                            edid.eisaId.toUtf8().constData(),
+                                            edid.monitorName.toUtf8().constData(),
+                                            edid.serialNumber.toUtf8().constData(),
+                                            edid.physicalSize.width(),
+                                            edid.physicalSize.height(),
+                                            edid.data.toUtf8().constData());
+    }
+
+}
+
+void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
+{
+    for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+        org_kde_kwin_outputdevice_send_enabled((*it).resource, enabled ? 1 : 0);
+    }
+
+}
+
 
 }
 }

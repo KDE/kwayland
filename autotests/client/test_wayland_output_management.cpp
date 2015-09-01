@@ -44,7 +44,7 @@ private Q_SLOTS:
     void init();
     void cleanup();
 
-    void testGetOutputs();
+    void testDisabledOutputs();
 
     void testRemoval();
 
@@ -95,18 +95,6 @@ void TestWaylandOutputManagement::init()
 
     //m_outputManagementInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
 
-    KWayland::Server::OutputManagementInterface::DisabledOutput d_o1;
-    d_o1.edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
-    d_o1.name = "DiscoScreen";
-    d_o1.connector = "HDMI1";
-    m_outputManagementInterface->addDisabledOutput(d_o1);
-
-    KWayland::Server::OutputManagementInterface::DisabledOutput d_o;
-    d_o.edid = "INVALID_EDID_INFO";
-    d_o.name = "LargeMonitor";
-    d_o.connector = "DisplayPort-0";
-    m_outputManagementInterface->addDisabledOutput(d_o);
-
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
     QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
@@ -144,7 +132,7 @@ void TestWaylandOutputManagement::cleanup()
     m_display = nullptr;
 }
 
-void TestWaylandOutputManagement::testGetOutputs()
+void TestWaylandOutputManagement::testDisabledOutputs()
 {
 
     KWayland::Client::Registry registry;
@@ -154,6 +142,18 @@ void TestWaylandOutputManagement::testGetOutputs()
     registry.setup();
     wl_display_flush(m_connection->display());
     QVERIFY(announced.wait(1000));
+
+    KWayland::Server::OutputManagementInterface::DisabledOutput d_o1;
+    d_o1.edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
+    d_o1.name = "DiscoScreen";
+    d_o1.connector = "HDMI1";
+    m_outputManagementInterface->addDisabledOutput(d_o1);
+
+    KWayland::Server::OutputManagementInterface::DisabledOutput d_o;
+    d_o.edid = "INVALID_EDID_INFO";
+    d_o.name = "LargeMonitor";
+    d_o.connector = "DisplayPort-0";
+    m_outputManagementInterface->addDisabledOutput(d_o);
 
 
     KWayland::Client::OutputManagement *kwin = registry.createOutputManagement(announced.first().first().value<quint32>(), 1, &registry);

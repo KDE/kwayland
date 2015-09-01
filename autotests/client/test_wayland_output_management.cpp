@@ -93,8 +93,6 @@ void TestWaylandOutputManagement::init()
     m_outputManagementInterface->create();
     QVERIFY(m_outputManagementInterface->isValid());
 
-    //m_outputManagementInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
-
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
     QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
@@ -156,27 +154,25 @@ void TestWaylandOutputManagement::testDisabledOutputs()
     m_outputManagementInterface->addDisabledOutput(d_o);
 
 
-    KWayland::Client::OutputManagement *kwin = registry.createOutputManagement(announced.first().first().value<quint32>(), 1, &registry);
-    QVERIFY(kwin->isValid());
+    KWayland::Client::OutputManagement *outputManagement = registry.createOutputManagement(announced.first().first().value<quint32>(), 1, &registry);
+    QVERIFY(outputManagement->isValid());
 
-    QSignalSpy oSpy(kwin, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
+    QSignalSpy oSpy(outputManagement, SIGNAL(disabledOutputAdded(const KWayland::Client::DisabledOutput*)));
     QVERIFY(oSpy.isValid());
-    QSignalSpy rSpy(kwin, SIGNAL(disabledOutputRemoved(const KWayland::Client::DisabledOutput*)));
+    QSignalSpy rSpy(outputManagement, SIGNAL(disabledOutputRemoved(const KWayland::Client::DisabledOutput*)));
     QVERIFY(rSpy.isValid());
-    QSignalSpy doneSpy(kwin, SIGNAL(done()));
+    QSignalSpy doneSpy(outputManagement, SIGNAL(done()));
 
     QVERIFY(doneSpy.wait(200));
     QCOMPARE(oSpy.count(), 2);
-    QCOMPARE(kwin->disabledOutputs().count(), oSpy.count());
+    QCOMPARE(outputManagement->disabledOutputs().count(), oSpy.count());
 
     qDebug() << "FIRST" << oSpy.first().first();
 
     m_outputManagementInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
     QVERIFY(rSpy.wait(1000));
     QCOMPARE(rSpy.count(), 1);
-    //m_outputManagementInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
-    QCOMPARE(kwin->disabledOutputs().count(), 1);
-
+    QCOMPARE(outputManagement->disabledOutputs().count(), 1);
 }
 
 void TestWaylandOutputManagement::testRemoval()

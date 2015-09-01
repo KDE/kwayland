@@ -129,7 +129,7 @@ void TestWaylandOutputDevice::testRegistry()
     m_serverOutputDevice->setPhysicalSize(QSize(200, 100));
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();

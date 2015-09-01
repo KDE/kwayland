@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct org_kwin_outputdevice;
+struct org_kde_kwin_outputdevice;
 class QPoint;
 class QRect;
 
@@ -38,9 +38,9 @@ namespace Client
 class EventQueue;
 
 /**
- * @short Wrapper for the org_kwin_outputdevice interface.
+ * @short Wrapper for the org_kde_kwin_outputdevice interface.
  *
- * This class provides a convenient wrapper for the org_kwin_outputdevice interface.
+ * This class provides a convenient wrapper for the org_kde_kwin_outputdevice interface.
  * Its main purpose is to hold the information about one OutputDevice.
  *
  * To use this class one needs to interact with the Registry. There are two
@@ -56,7 +56,7 @@ class EventQueue;
  * c->setup(registry->bindOutputDevice(name, version));
  * @endcode
  *
- * The OutputDevice can be used as a drop-in replacement for any org_kwin_outputdevice
+ * The OutputDevice can be used as a drop-in replacement for any org_kde_kwin_outputdevice
  * pointer as it provides matching cast operators.
  *
  * Please note that all properties of OutputDevice are not valid until the
@@ -123,15 +123,15 @@ public:
      * When using Registry::createOutputDevice there is no need to call this
      * method.
      **/
-    void setup(org_kwin_outputdevice *output);
+    void setup(org_kde_kwin_outputdevice *output);
 
     /**
-     * @returns @c true if managing a org_kwin_outputdevice.
+     * @returns @c true if managing a org_kde_kwin_outputdevice.
      **/
     bool isValid() const;
-    operator org_kwin_outputdevice*();
-    operator org_kwin_outputdevice*() const;
-    org_kwin_outputdevice *output();
+    operator org_kde_kwin_outputdevice*();
+    operator org_kde_kwin_outputdevice*() const;
+    org_kde_kwin_outputdevice *output();
     /**
      * Size in millimeters.
      **/

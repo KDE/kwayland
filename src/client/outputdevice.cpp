@@ -39,9 +39,9 @@ class OutputDevice::Private
 {
 public:
     Private(OutputDevice *q);
-    void setup(org_kwin_outputdevice *o);
+    void setup(org_kde_kwin_outputdevice *o);
 
-    WaylandPointer<org_kwin_outputdevice, org_kwin_outputdevice_destroy> output;
+    WaylandPointer<org_kde_kwin_outputdevice, org_kde_kwin_outputdevice_destroy> output;
     EventQueue *queue = nullptr;
     QSize physicalSize;
     QPoint globalPosition;
@@ -54,12 +54,12 @@ public:
     Modes::iterator currentMode = modes.end();
 
 private:
-    static void geometryCallback(void *data, org_kwin_outputdevice *output, int32_t x, int32_t y,
+    static void geometryCallback(void *data, org_kde_kwin_outputdevice *output, int32_t x, int32_t y,
                                  int32_t physicalWidth, int32_t physicalHeight, int32_t subPixel,
                                  const char *make, const char *model, int32_t transform);
-    static void modeCallback(void *data, org_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
-    static void doneCallback(void *data, org_kwin_outputdevice *output);
-    static void scaleCallback(void *data, org_kwin_outputdevice *output, int32_t scale);
+    static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+    static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
+    static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
@@ -70,7 +70,7 @@ private:
     void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh);
 
     OutputDevice *q;
-    static struct org_kwin_outputdevice_listener s_outputListener;
+    static struct org_kde_kwin_outputdevice_listener s_outputListener;
 };
 
 OutputDevice::Private::Private(OutputDevice *q)
@@ -78,12 +78,12 @@ OutputDevice::Private::Private(OutputDevice *q)
 {
 }
 
-void OutputDevice::Private::setup(org_kwin_outputdevice *o)
+void OutputDevice::Private::setup(org_kde_kwin_outputdevice *o)
 {
     Q_ASSERT(o);
     Q_ASSERT(!output);
     output.setup(o);
-    org_kwin_outputdevice_add_listener(output, &s_outputListener, this);
+    org_kde_kwin_outputdevice_add_listener(output, &s_outputListener, this);
 }
 
 bool OutputDevice::Mode::operator==(const OutputDevice::Mode &m) const
@@ -105,14 +105,14 @@ OutputDevice::~OutputDevice()
     d->output.release();
 }
 
-org_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
+org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     geometryCallback,
     modeCallback,
     doneCallback,
     scaleCallback
 };
 
-void OutputDevice::Private::geometryCallback(void *data, org_kwin_outputdevice *output,
+void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
                               int32_t x, int32_t y,
                               int32_t physicalWidth, int32_t physicalHeight,
                               int32_t subPixel, const char *make, const char *model, int32_t transform)
@@ -166,7 +166,7 @@ void OutputDevice::Private::geometryCallback(void *data, org_kwin_outputdevice *
     o->setTransform(toTransform());
 }
 
-void OutputDevice::Private::modeCallback(void *data, org_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+void OutputDevice::Private::modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
@@ -211,21 +211,21 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
     }
 }
 
-void OutputDevice::Private::scaleCallback(void *data, org_kwin_outputdevice *output, int32_t scale)
+void OutputDevice::Private::scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
     o->setScale(scale);
 }
 
-void OutputDevice::Private::doneCallback(void *data, org_kwin_outputdevice *output)
+void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *output)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
     emit o->q->changed();
 }
 
-void OutputDevice::setup(org_kwin_outputdevice *output)
+void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
 }
@@ -298,7 +298,7 @@ QString OutputDevice::model() const
     return d->model;
 }
 
-org_kwin_outputdevice *OutputDevice::output()
+org_kde_kwin_outputdevice *OutputDevice::output()
 {
     return d->output;
 }
@@ -349,11 +349,11 @@ QList< OutputDevice::Mode > OutputDevice::modes() const
     return d->modes;
 }
 
-OutputDevice::operator org_kwin_outputdevice*() {
+OutputDevice::operator org_kde_kwin_outputdevice*() {
     return d->output;
 }
 
-OutputDevice::operator org_kwin_outputdevice*() const {
+OutputDevice::operator org_kde_kwin_outputdevice*() const {
     return d->output;
 }
 

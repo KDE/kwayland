@@ -29,7 +29,7 @@
         ]]></copyright>
 
 
-<interface name="org_kwin_outputdevice" version="2">
+<interface name="org_kde_kwin_outputdevice" version="2">
     <description summary="compositor output region">
         An output describes part of the compositor geometry.  The
         compositor works in the 'compositor coordinate system' and an
@@ -125,8 +125,8 @@
                     The size of a mode is given in physical hardware units of
                     the output device. This is not necessarily the same as
                     the output size in the global compositor space. For instance,
-                    the output may be scaled, as described in org_kwin_outputdevice.scale,
-                    or transformed , as described in org_kwin_outputdevice.transform.
+                    the output may be scaled, as described in org_kde_kwin_outputdevice.scale,
+                    or transformed , as described in org_kde_kwin_outputdevice.transform.
                 </description>
                 <arg name="flags" type="uint" summary="bitfield of mode flags"/>
                 <arg name="width" type="int" summary="width of the mode in hardware units"/>

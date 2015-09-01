@@ -66,7 +66,7 @@ private:
 };
 
 OutputDeviceInterface::Private::Private(OutputDeviceInterface *q, Display *d)
-    : Global::Private(d, &org_kwin_outputdevice_interface, s_version)
+    : Global::Private(d, &org_kde_kwin_outputdevice_interface, s_version)
     , q(q)
 {
 }
@@ -259,7 +259,7 @@ int32_t OutputDeviceInterface::Private::toSubPixel() const
 void OutputDeviceInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kwin_outputdevice_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_outputdevice_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -311,7 +311,7 @@ void OutputDeviceInterface::Private::sendMode(wl_resource *resource, const Mode 
     if (mode.flags.testFlag(ModeFlag::Preferred)) {
         flags |= WL_OUTPUT_MODE_PREFERRED;
     }
-    org_kwin_outputdevice_send_mode(resource,
+    org_kde_kwin_outputdevice_send_mode(resource,
                         flags,
                         mode.size.width(),
                         mode.size.height(),
@@ -321,7 +321,7 @@ void OutputDeviceInterface::Private::sendMode(wl_resource *resource, const Mode 
 
 void OutputDeviceInterface::Private::sendGeometry(wl_resource *resource)
 {
-    org_kwin_outputdevice_send_geometry(resource,
+    org_kde_kwin_outputdevice_send_geometry(resource,
                             globalPosition.x(),
                             globalPosition.y(),
                             physicalSize.width(),
@@ -337,7 +337,7 @@ void OutputDeviceInterface::Private::sendScale(const ResourceData &data)
     if (data.version < 2) {
         return;
     }
-    org_kwin_outputdevice_send_scale(data.resource, scale);
+    org_kde_kwin_outputdevice_send_scale(data.resource, scale);
 }
 
 void OutputDeviceInterface::Private::sendDone(const ResourceData &data)
@@ -345,7 +345,7 @@ void OutputDeviceInterface::Private::sendDone(const ResourceData &data)
     if (data.version < 2) {
         return;
     }
-    org_kwin_outputdevice_send_done(data.resource);
+    org_kde_kwin_outputdevice_send_done(data.resource);
 }
 
 void OutputDeviceInterface::Private::updateGeometry()

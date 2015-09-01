@@ -36,6 +36,7 @@ struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_output_management;
+struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
 struct org_kde_kwin_shadow_manager;
@@ -54,6 +55,7 @@ class EventQueue;
 class FakeInput;
 class FullscreenShell;
 class OutputManagement;
+class OutputDevice;
 class Idle;
 class Output;
 class PlasmaShell;
@@ -113,6 +115,7 @@ public:
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
         OutputManagement, ///< Refers to the wl_data_device_manager interface
+        OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         Shadow /// Refers to org_kde_kwin_shadow_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
@@ -263,6 +266,15 @@ public:
      **/
     org_kde_kwin_output_management *bindOutputManagement(uint32_t name, uint32_t version) const;
     /**
+     * Binds the org_kde_kwin_outputdevice with @p name and @p version.
+     * If the @p name does not exist or is not for the outputdevice interface,
+     * @c null will be returned.
+     *
+     * Prefer using createOutputDevice instead.
+     * @see createOutputDevice
+     **/
+    wl_output *bindOutput(uint32_t name, uint32_t version) const;
+    /**
      * Binds the wl_subcompositor with @p name and @p version.
      * If the @p name does not exist or is not for the subcompositor interface,
      * @c null will be returned.
@@ -279,7 +291,8 @@ public:
      * Prefer using createOutput instead.
      * @see createOutput
      **/
-    wl_output *bindOutput(uint32_t name, uint32_t version) const;
+    org_kde_kwin_outputdevice *bindOutputDevice(uint32_t name, uint32_t version) const;
+
     /**
      * Binds the _wl_fullscreen_shell with @p name and @p version.
      * If the @p name does not exist or is not for the fullscreen shell interface,
@@ -402,6 +415,21 @@ public:
      **/
     OutputManagement *createOutputManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
+     * Creates an OutputDevice and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_outputdevice interface,
+     * the returned OutputDevice will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_outputdevice interface to bind
+     * @param version The version or the org_kde_kwin_outputdevice interface to use
+     * @param parent The parent for OutputDevice
+     *
+     * @returns The created Output.
+     **/
+    OutputDevice *createOutputDevice(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
      * Creates a FullscreenShell and sets it up to manage the interface identified by
      * @p name and @p version.
      *
@@ -472,6 +500,12 @@ Q_SIGNALS:
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
     void outputManagementAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_outputdevice interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     **/
+    void outputDeviceAnnounced(quint32 name, quint32 version);
     void plasmaShellAnnounced(quint32 name, quint32 version);
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     void idleAnnounced(quint32 name, quint32 version);
@@ -514,6 +548,11 @@ Q_SIGNALS:
     void fullscreenShellRemoved(quint32 name);
     void dataDeviceManagerRemoved(quint32 name);
     void outputManagementRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_outputdevice interface gets removed.
+     * @param name The name for the removed interface
+     **/
+    void outputDeviceRemoved(quint32 name);
     void plasmaShellRemoved(quint32 name);
     void plasmaWindowManagementRemoved(quint32 name);
     void idleRemoved(quint32 name);

@@ -399,7 +399,7 @@ public:
      **/
     FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
     DataDeviceManager *createDataDeviceManager(quint32 name, quint32 version, QObject *parent = nullptr);
-    PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);;
+    PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);
     PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
     FakeInput *createFakeInput(quint32 name, quint32 version, QObject *parent = nullptr);

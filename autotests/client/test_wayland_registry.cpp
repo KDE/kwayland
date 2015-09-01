@@ -59,7 +59,6 @@ private Q_SLOTS:
     void testDestroy();
     void testAnnounceMultiple();
     void testAnnounceMultipleOutputDevices();
-    void testBindOutputManagement();
 
 private:
     KWayland::Server::Display *m_display;
@@ -207,11 +206,6 @@ void TestWaylandRegistry::testBindSeat()
 void TestWaylandRegistry::testBindShm()
 {
     TEST_BIND(KWayland::Client::Registry::Interface::Shm, SIGNAL(shmAnnounced(quint32,quint32)), bindShm, wl_shm_destroy)
-}
-
-void TestWaylandRegistry::testBindOutputManagement()
-{
-    //TEST_BIND(KWayland::Client::Registry::Interface::OutputManagement, SIGNAL(outputManagementAnnounced(quint32,quint32)), bindOutputManagement, org_kde_kwin_output_management_destroy)
 }
 
 void TestWaylandRegistry::testBindSubCompositor()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol name="org_kde_kwin_output_management">
+<protocol name="org_kde_kwin_outputdevice">
   <copyright><![CDATA[
         Copyright © 2015 Sebastian Kügler <sebas@kde.org>
         Copyright © 2008-2011 Kristian Høgsberg

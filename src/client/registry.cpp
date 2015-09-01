@@ -42,13 +42,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
-#include <wayland-org_kde_kwin_output_management-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-org_kde_kwin_output_management-client-protocol.h>
+#include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -158,6 +158,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_output_management_interface,
         &Registry::outputManagementAnnounced,
         &Registry::outputManagementRemoved
+    }},
+    {Registry::Interface::OutputDevice, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_outputdevice"),
+        &org_kde_kwin_outputdevice_interface,
+        &Registry::outputDeviceAnnounced,
+        &Registry::outputDeviceRemoved
     }},
     {Registry::Interface::Shadow, {
         1,

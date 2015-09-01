@@ -154,6 +154,7 @@ void TestWaylandOutputDevice::testRegistry()
 
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
+
     QVERIFY(outputChanged.wait());
 
     QCOMPARE(output.geometry(), QRect(100, 50, 1024, 768));
@@ -174,7 +175,7 @@ void TestWaylandOutputDevice::testModeChanges()
 {
     using namespace KWayland::Client;
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -266,7 +267,7 @@ void TestWaylandOutputDevice::testModeChanges()
 void TestWaylandOutputDevice::testScaleChange()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -316,7 +317,7 @@ void TestWaylandOutputDevice::testSubPixel()
     m_serverOutputDevice->setSubPixel(actual);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -367,7 +368,7 @@ void TestWaylandOutputDevice::testTransform()
     m_serverOutputDevice->setTransform(actual);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();

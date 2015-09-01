@@ -37,6 +37,7 @@ struct wl_subcompositor;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
+struct org_kde_kwin_dpms_manager;
 struct org_kde_kwin_shadow_manager;
 struct org_kde_kwin_blur_manager;
 struct org_kde_kwin_contrast_manager;
@@ -52,6 +53,7 @@ namespace Client
 class Compositor;
 class ConnectionThread;
 class DataDeviceManager;
+class DpmsManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
@@ -119,7 +121,8 @@ public:
         Shadow, /// Refers to org_kde_kwin_shadow_manager interface
         Blur, /// refers to org_kde_kwin_blur_manager interface
         Contrast, /// refers to org_kde_kwin_contrast_manager interface
-        Slide /// refers to org_kde_kwin_slide_manager
+        Slide, /// refers to org_kde_kwin_slide_manager
+        Dpms /// Refers to org_kde_kwin_dpms_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -371,6 +374,16 @@ public:
      **/
     org_kde_kwin_contrast_manager *bindContrastManager(uint32_t name, uint32_t version) const;
     org_kde_kwin_slide_manager * bindSlideManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_dpms_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the dpms manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createDpmsManager instead.
+     * @see createDpmsManager
+     * @since 5.5
+     **/
+    org_kde_kwin_dpms_manager *bindDpmsManager(uint32_t name, uint32_t version) const;
 
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
@@ -620,6 +633,22 @@ public:
      * @since 5.5
      **/
     SlideManager *createSlideManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a DpmsManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_dpms_manager interface,
+     * the returned DpmsManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_dpms_manager interface to bind
+     * @param version The version or the org_kde_kwin_dpms_manager interface to use
+     * @param parent The parent for DpmsManager
+     *
+     * @returns The created DpmsManager.
+     * @since 5.5
+     **/
+    DpmsManager *createDpmsManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
     /**
      * cast operator to the low-level Wayland @c wl_registry
@@ -740,6 +769,13 @@ Q_SIGNALS:
      **/
     void slideAnnounced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a org_kde_kwin_dpms_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.5
+     **/
+    void dpmsAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
      **/
@@ -827,6 +863,12 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void slideRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_dpms_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
+    void dpmsRemoved(quint32 name);
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

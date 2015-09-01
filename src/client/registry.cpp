@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor.h"
 #include "connection_thread.h"
 #include "datadevicemanager.h"
+#include "dpms.h"
 #include "event_queue.h"
 #include "fakeinput.h"
 #include "fullscreen_shell.h"
@@ -51,6 +52,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-blur-client-protocol.h>
 #include <wayland-contrast-client-protocol.h>
 #include <wayland-slide-client-protocol.h>
+#include <wayland-dpms-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -188,6 +190,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &_wl_fullscreen_shell_interface,
         &Registry::fullscreenShellAnnounced,
         &Registry::fullscreenShellRemoved
+    }},
+    {Registry::Interface::Dpms, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_dpms_manager"),
+        &org_kde_kwin_dpms_manager_interface,
+        &Registry::dpmsAnnounced,
+        &Registry::dpmsRemoved
     }}
 };
 
@@ -465,6 +474,7 @@ BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
+BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
 
 #undef BIND
 #undef BIND2
@@ -508,6 +518,7 @@ CREATE(ShadowManager)
 CREATE(BlurManager)
 CREATE(ContrastManager)
 CREATE(SlideManager)
+CREATE(DpmsManager)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

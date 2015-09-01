@@ -17,6 +17,7 @@ set(CLIENT_LIB_SRCS
     datadevicemanager.cpp
     dataoffer.cpp
     datasource.cpp
+    dpms.cpp
     fakeinput.cpp
     fullscreen_shell.cpp
     idle.cpp
@@ -83,6 +84,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME slide
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/dpms.xml
+    BASENAME dpms
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -124,6 +130,7 @@ install(FILES
   datadevicemanager.h
   dataoffer.h
   datasource.h
+  dpms.h
   fakeinput.h
   fullscreen_shell.h
   idle.h

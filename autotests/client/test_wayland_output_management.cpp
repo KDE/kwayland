@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../src/server/display.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/compositor_interface.h"
-#include "../../src/server/output_interface.h"
+#include "../../src/server/outputdevice_interface.h"
 #include "../../src/server/output_management_interface.h"
 
 // Wayland
@@ -51,7 +51,7 @@ private Q_SLOTS:
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputManagementInterface *m_outputManagementInterface;
-    KWayland::Server::OutputInterface *m_serverOutput;
+    KWayland::Server::OutputDeviceInterface *m_serverOutput;
     //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
@@ -82,10 +82,10 @@ void TestWaylandOutputManagement::init()
     auto comp = m_display->createCompositor(this);
     comp->create();
 
-    m_serverOutput = m_display->createOutput(this);
-    m_serverOutput->addMode(QSize(800, 600), OutputInterface::ModeFlags(OutputInterface::ModeFlag::Preferred));
+    m_serverOutput = m_display->createOutputDevice(this);
+    m_serverOutput->addMode(QSize(800, 600), OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred));
     m_serverOutput->addMode(QSize(1024, 768));
-    m_serverOutput->addMode(QSize(1280, 1024), OutputInterface::ModeFlags(), 90000);
+    m_serverOutput->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
     m_serverOutput->setCurrentMode(QSize(1024, 768));
     m_serverOutput->create();
 

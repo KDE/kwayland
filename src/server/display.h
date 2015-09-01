@@ -39,6 +39,7 @@ namespace Server
 class CompositorInterface;
 class DataDeviceManagerInterface;
 class OutputManagementInterface;
+class OutputDeviceInterface;
 class IdleInterface;
 class FakeInputInterface;
 class OutputInterface;
@@ -114,6 +115,10 @@ public:
     OutputInterface *createOutput(QObject *parent = nullptr);
     void removeOutput(OutputInterface *output);
     QList<OutputInterface*> outputs() const;
+
+    OutputDeviceInterface *createOutputDevice(QObject *parent = nullptr);
+    void removeOutputDevice(OutputDeviceInterface *output);
+    QList<OutputDeviceInterface*> outputDevices() const;
 
     CompositorInterface *createCompositor(QObject *parent = nullptr);
     void createShm();

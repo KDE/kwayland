@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
 #include "output_management_interface.h"
+#include "outputdevice_interface.h"
 #include "idle_interface.h"
 #include "fakeinput_interface.h"
 #include "logging_p.h"
@@ -62,6 +63,7 @@ public:
     QString socketName = QStringLiteral("wayland-0");
     bool running = false;
     QList<OutputInterface*> outputs;
+    QList<OutputDeviceInterface*> outputdevices;
     QVector<ClientConnection*> clients;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
 
@@ -209,6 +211,15 @@ ShellInterface *Display::createShell(QObject *parent)
     return shell;
 }
 
+OutputDeviceInterface *Display::createOutputDevice(QObject *parent)
+{
+    OutputDeviceInterface *output = new OutputDeviceInterface(this, parent);
+    connect(output, &QObject::destroyed, this, [this,output] { d->outputdevices.removeAll(output); });
+    connect(this, &Display::aboutToTerminate, output, [this,output] { removeOutputDevice(output); });
+    d->outputdevices << output;
+    return output;
+}
+
 OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
     OutputManagementInterface *kwin = new OutputManagementInterface(this, parent);
@@ -288,6 +299,12 @@ void Display::createShm()
 void Display::removeOutput(OutputInterface *output)
 {
     d->outputs.removeAll(output);
+    delete output;
+}
+
+void Display::removeOutputDevice(OutputDeviceInterface *output)
+{
+    d->outputdevices.removeAll(output);
     delete output;
 }
 

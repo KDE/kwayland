@@ -54,6 +54,9 @@ public:
     QList<Mode> modes;
     QList<ResourceData> resources;
 
+    Edid edid;
+    bool enabled = false;
+
 private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -436,6 +439,34 @@ QList< OutputDeviceInterface::Mode > OutputDeviceInterface::modes() const
 OutputDeviceInterface::Private *OutputDeviceInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
+}
+
+void OutputDeviceInterface::setEdid(Edid& edid)
+{
+    Q_D();
+    d->edid = edid;
+    emit edidChanged();
+}
+
+OutputDeviceInterface::Edid OutputDeviceInterface::edid() const
+{
+    Q_D();
+    return d->edid;
+}
+
+void OutputDeviceInterface::setEnabled(bool enabled)
+{
+    Q_D();
+    if (d->enabled != enabled) {
+        d->enabled = enabled;
+        emit enabledChanged();
+    }
+}
+
+bool OutputDeviceInterface::enabled() const
+{
+    Q_D();
+    return d->enabled;
 }
 
 }

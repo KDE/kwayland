@@ -133,6 +133,7 @@ void TestWaylandOutputManagement::cleanup()
 void TestWaylandOutputManagement::testDisabledOutputs()
 {
 
+    return;
     KWayland::Client::Registry registry;
     QSignalSpy announced(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
     registry.create(m_connection->display());

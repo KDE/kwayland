@@ -167,6 +167,38 @@
         </description>
         <arg name="factor" type="int" summary="scaling factor of output"/>
     </event>
+
+    <event name="edid">
+        <description summary="advertise available modes for the output">
+            The mode event encapsulates the EDID data for the output.
+
+            The event is sent when binding to the output object. The EDID
+            data may be empty, in which case this event is fired, anyway.
+            If the EDID information is empty, you can fall back to the name
+            et al. properties.
+
+            The data argument can be used to decode custom EDID extensions.
+        </description>
+        <arg name="eisaId" type="string" summary="EISA identification number"/>
+        <arg name="monitorName" type="string" summary="unique human-readable monitor name"/>
+        <arg name="serialNumber" type="string" summary="serial number of the output"/>
+        <arg name="physicalWidth" type="int" summary="physical width of the monitor in mm"/>
+        <arg name="physicalHeight" type="int" summary="physical height of the monitor in mm"/>
+        <arg name="raw" type="string" summary="raw EDID string"/>
+    </event>
+
+    <event name="enabled">
+        <description summary="advertise available modes for the output">
+            The enabled event notifies whether this output is currently
+            enabled and used for the wayland server.
+
+            The event is sent when binding to the output object, and when
+            an output is enabled or disabled.
+        </description>
+        <arg name="enabled" type="int" summary="output is enabled in the wayland server"/>
+    </event>
+
+
 </interface>
 
 

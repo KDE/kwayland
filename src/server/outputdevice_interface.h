@@ -52,10 +52,11 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 public:
     struct Edid {
-        QByteArray eisaId;
-        QByteArray monitorName;
-        QByteArray serialNumber;
+        QString eisaId;
+        QString monitorName;
+        QString serialNumber;
         QSize physicalSize;
+        QString data;
     };
     enum class SubPixel {
         Unknown,

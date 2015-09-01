@@ -50,7 +50,7 @@ private Q_SLOTS:
 
 private:
     KWayland::Server::Display *m_display;
-    KWayland::Server::OutputManagementInterface *m_kwinInterface;
+    KWayland::Server::OutputManagementInterface *m_outputManagementInterface;
     KWayland::Server::OutputInterface *m_serverOutput;
     //     KWayland::Server::KWin *m_kwin;
     KWayland::Client::ConnectionThread *m_connection;
@@ -89,23 +89,23 @@ void TestWaylandOutputManagement::init()
     m_serverOutput->setCurrentMode(QSize(1024, 768));
     m_serverOutput->create();
 
-    m_kwinInterface = m_display->createOutputManagement(this);
-    m_kwinInterface->create();
-    QVERIFY(m_kwinInterface->isValid());
+    m_outputManagementInterface = m_display->createOutputManagement(this);
+    m_outputManagementInterface->create();
+    QVERIFY(m_outputManagementInterface->isValid());
 
-    //m_kwinInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
+    //m_outputManagementInterface->addDisabledOutput("", "DiscoScreen", "HDMI1");
 
     KWayland::Server::OutputManagementInterface::DisabledOutput d_o1;
     d_o1.edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
     d_o1.name = "DiscoScreen";
     d_o1.connector = "HDMI1";
-    m_kwinInterface->addDisabledOutput(d_o1);
+    m_outputManagementInterface->addDisabledOutput(d_o1);
 
     KWayland::Server::OutputManagementInterface::DisabledOutput d_o;
     d_o.edid = "INVALID_EDID_INFO";
     d_o.name = "LargeMonitor";
     d_o.connector = "DisplayPort-0";
-    m_kwinInterface->addDisabledOutput(d_o);
+    m_outputManagementInterface->addDisabledOutput(d_o);
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
@@ -171,10 +171,10 @@ void TestWaylandOutputManagement::testGetOutputs()
 
     qDebug() << "FIRST" << oSpy.first().first();
 
-    m_kwinInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
+    m_outputManagementInterface->removeDisabledOutput("DiscoScreen", "HDMI1");
     QVERIFY(rSpy.wait(1000));
     QCOMPARE(rSpy.count(), 1);
-    //m_kwinInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
+    //m_outputManagementInterface->addDisabledOutput("INVALID_EDID_INFO", "LargeMonitor", "DisplayPort-0");
     QCOMPARE(kwin->disabledOutputs().count(), 1);
 
 }
@@ -196,7 +196,7 @@ void TestWaylandOutputManagement::testRemoval()
     QVERIFY(announced.wait());
     QCOMPARE(announced.count(), 1);
 
-    delete m_kwinInterface;
+    delete m_outputManagementInterface;
     QVERIFY(outputManagementRemovedSpy.wait());
     QCOMPARE(outputManagementRemovedSpy.first().first(), announced.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));

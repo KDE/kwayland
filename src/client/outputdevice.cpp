@@ -257,7 +257,6 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
 
     if (o->enabled != enabled) {
-        qDebug() << "enabled is" << enabled << "was" << o->enabled;
         o->enabled = enabled;
         emit o->q->enabledChanged(o->enabled);
         emit o->q->changed();

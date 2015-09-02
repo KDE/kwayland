@@ -178,7 +178,7 @@ static Buffer::Format toBufferFormat(const QImage &image)
         qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
         return Buffer::Format::ARGB32;
     }
-};
+}
 
 Buffer::Ptr ShmPool::createBuffer(const QImage& image)
 {

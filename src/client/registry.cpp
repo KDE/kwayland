@@ -32,6 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "shadow.h"
 #include "blur.h"
+#include "contrast.h"
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
@@ -47,6 +48,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-blur-client-protocol.h>
+#include <wayland-contrast-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -163,6 +165,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_blur_manager_interface,
         &Registry::blurAnnounced,
         &Registry::blurRemoved
+    }},
+    {Registry::Interface::Contrast, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_contrast_manager"),
+        &org_kde_kwin_contrast_manager_interface,
+        &Registry::contrastAnnounced,
+        &Registry::contrastRemoved
     }},
     {Registry::Interface::FullscreenShell, {
         1,
@@ -443,6 +452,7 @@ BIND(Idle, org_kde_kwin_idle)
 BIND(FakeInput, org_kde_kwin_fake_input)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
+BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 
 #undef BIND
 #undef BIND2
@@ -484,6 +494,7 @@ CREATE(Idle)
 CREATE(FakeInput)
 CREATE(ShadowManager)
 CREATE(BlurManager)
+CREATE(ContrastManager)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

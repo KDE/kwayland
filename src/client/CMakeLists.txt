@@ -10,6 +10,7 @@ set(CLIENT_LIB_SRCS
     blur.cpp
     compositor.cpp
     connection_thread.cpp
+    contrast.cpp
     event_queue.cpp
     datadevice.cpp
     datadevicemanager.cpp
@@ -71,6 +72,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME blur
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/contrast.xml
+    BASENAME contrast
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -106,6 +112,7 @@ install(FILES
   buffer.h
   compositor.h
   connection_thread.h
+  contrast.h
   event_queue.h
   datadevice.h
   datadevicemanager.h

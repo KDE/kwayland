@@ -250,8 +250,6 @@ void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* 
     o->edid->serialNumber = QString::fromUtf8(serialNumber);
     o->edid->physicalSize = QSize(physicalWidth, physicalHeight);
     o->edid->data = QString::fromUtf8(raw);
-
-    //emit o->q->changed();
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)

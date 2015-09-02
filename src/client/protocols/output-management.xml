@@ -28,135 +28,90 @@
         THIS SOFTWARE.
         ]]></copyright>
 
-  <interface name="org_kde_kwin_output_management" version="1">
+<interface name="org_kde_kwin_output_management" version="1">
     <description summary="list connected, but disabled outputs">
     This interface allows to connected output devices for screen configuration purposes.
 
-    - keep protocol flat for simplicity, use id to tell which output this signal refers to
-    - provide info about all outputs, per OutputDevice:
+    OutputManagement (wl_global)
+    --------------------------
+    request:
+    * createConfiguration -> OutputConfiguration (wl_resource)
+
+    OutputConfiguration (wl_resource)
+    --------------------------
+    requests:
+    * enable(output, bool)
+    * mode(output, mode_id)
+    * transformation(output, flag)
+    * position(output, x, y)
+    * apply
 
     events:
-    - outputdevice_added
-        - id (unique int, only handed out by kwin, used to identify and refer to an OD throughout the protocol)
-        - resolution: resX, resY
-        - position: posX, posY
-        - orientation: degree
-        - primary: bool
-        - enabled: bool
-    - modes: width, height, refresh_rate (separate signal)
-    - edid: eisa_id, monitor_name, serial_number, physical_width, physical_height (separate signal)
-    - outputdevice_removed: id
+    * applied
+    * failed
 
-    methods:
-    - per outputdevice:
-        - set enabled
-        - set mode
-        - set orientation
-        - set position
-        - set primary
-    - apply: client is done sending set* calls, "dear compositor, please apply the settings now"
+    The idea is that we register one OutputManagement as a global. When KScreen
+    wants to configure it calls createConfiguration which provides a resource
+    referencing an OutputConfiguration for one-time configuration. That way we can
+    easily group all requests and know on the server which one belong together. On
+    the OutputConfiguration it calls for each Output whether it's enabled, which
+    mode to use (by referencing the mode from the list of announced modes) and the
+    global position. Once all outputs are configured that way, it calls apply.  At
+    that point and not earlier the server emits a signal to KWin with the complete
+    wanted configuration which KWin can then try to apply. If that succeeds it
+    emits the applied signal, otherwise the failed. So even KScreen can know about
+    it.
 
-
-    server:
-        - wayland_server.cpp gets a OutputManagement interface
-        - initOutputs also triggers events in the screenmanagement interface
-        - announces the outputs on the OutputManagementInterface when bound
-        - sends device announced, edid and mode callbacks in order
-        - solely responsible for handing out ids
-        - is responsible for state changes through backends
-        - decides what to do with the information
-
-    client:
-        - connects to server
-        - receives the info about all the outputs
-        - ignores wl_output otherwise
-        - can set properties of outputs (enable/disable, mode, position, etc.)
-
-    why?
-        - keeps everything in one place
-        - one interface for a specific purpose
-        - bi-directional, so defined config interface, no config writing/picking up etc.
-        - one place to housekeep ids
-        - interface is purpose-made, not trying to shoe-horn kscreen in and around wl_output
-        - server really seems to be the right place to keep state and logic
-        - makes concertation less complex, since there's exactly one place to handle state, like mode, on/off, etc.
+    That interface is nicely atomic (as KWin only gets the apply for everything
+    setup), it solves the 1:n mapping problem: each OutputConfiguration is only a
+    1:1 mapping, and we do not need to copy all the requests again by just
+    referencing a mode id.
 
 
     </description>
-
-    <event name="disabled_output_added">
-      <description summary="emitted when anutp output is connected">
-        The output is connected, but not used for rendering yet. This means that
-        this output has either just been plugged in, or disabled and excluded from
-        the registry object.
-      </description>
-      <arg name="edid" type="string" summary="the outputs EDID string"/>
-      <arg name="name" type="string" summary="output's name"/>
-      <arg name="connector" type="string" summary="output's connector"/>
-    </event>
-
-    <event name="disabled_output_removed">
-      <description summary="emitted when an output disappears from the list">
-        The output is disconnected, or has been enabled.
-      </description>
-      <arg name="name" type="string" summary="output's name"/>
-      <arg name="connector" type="string" summary="output's connector"/>
-    </event>
-
-
-    <event name="outputdevice_added">
-        <description summary="emitted when an output is connected">
-            The output is connected, but not used for rendering yet. This means that
-            this output has either just been plugged in, or disabled and excluded from
-            the registry object.
+    <request name="createConfiguration">
+        <description summary="change the shell surface position">
+            Request an output configuration, which can be changed and then applied.
         </description>
-        <arg name="id" type="int" summary="the unique output's device ID"/>
-        <arg name="width" type="int" summary="current resolution's height in pixel"/>
-        <arg name="height" type="int" summary="current resolution's width in pixel"/>
-        <arg name="x" type="int" summary="the outputs EDID string"/>
-        <arg name="y" type="int" summary="output's name"/>
-        <arg name="enabled" type="int" summary="is the output currently used to display screen content?"/>
-        <arg name="primary" type="int" summary="is the output the primary display?"/>
-        <arg name="rotation" type="int" summary="output rotation in degree"/>
-    </event>
+    </request>
 
-    <event name="edid">
-        <description summary="emitted when an output disappears from the list">
-            EDID information for an output is announced.
+    <event name="configurationCreated">
+        <description summary="change the shell surface position">
+            Retrieve an output configuration, which can be changed and then applied.
         </description>
-        <arg name="id" type="int" summary="the ID of the output for this EDID information"/>
-        <arg name="eisa_id" type="string" summary="EISA ID of the output device"/>
-        <arg name="monitor_name" type="string" summary="human-readable name of the output device"/>
-        <arg name="serial_number" type="string" summary="serial number of the output device"/>
-        <arg name="physical_width" type="int" summary="physical width in millimeter"/>
-        <arg name="physical_height" type="int" summary="physical height in millimeter"/>
-    </event>
+    </request>
 
-    <event name="mode">
-        <description summary="emitted per mode and per outputdevice">
-            A new mode is announced for a given output.
+</interface>
+
+<interface name="org_kde_kwin_output_management" version="1">
+    <description summary="list connected, but disabled outputs">
+
+        OutputConfiguration (wl_resource)
+        --------------------------
+        requests:
+        * enable(output, bool)
+        * mode(output, mode_id)
+        * transformation(output, flag)
+        * position(output, x, y)
+        * apply
+
+        events:
+        * applied
+        * failed
+
+
+        - Per outputdevice, set the properties like mode, enabled, transformation and position
+        - hit apply after everything has been set to ask the compositor to apply these changes
+        - catch applied / failed signals, handle them client-side
+    </description>
+
+    <request name="enable">
+        <description summary="enable or disable an output">
+            Mark the output as enabled or disabled.
         </description>
-        <arg name="id" type="int" summary="the ID of the output this mode applies to"/>
-        <arg name="width" type="int" summary="horizontal resolution in pixels"/>
-        <arg name="height" type="int" summary="vertical resolution in pixels"/>
-        <arg name="refresh_rate" type="int" summary="human-readable name of the output device"/>
-    </event>
-
-    <event name="outputdevice_removed">
-        <description summary="emitted when an output disappears from the list">
-            The output is disconnected or otherwise gone.
-        </description>
-        <arg name="id" type="int" summary="output's id"/>
-    </event>
-
-    <event name="done">
-        <description summary="emitted after all initial events have been fired">
-            This event is fired once the listing of outputdevices triggered after binding
-            the protocol is done, i.e. after all outputs, their edid and their modes have
-            been announced. In case there are no outputdevices, this event is fired anyway.
-        </description>
-    </event>
-
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice"/>
+        <arg name="enable" type="int" summary="request to enable or disable this output"/>
+    </request>
 </interface>
 
 </protocol>

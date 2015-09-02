@@ -142,7 +142,7 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void removed();
-    
+
 private:
     class Private;
     QScopedPointer<Private> d;

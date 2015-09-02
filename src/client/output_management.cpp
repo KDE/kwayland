@@ -136,7 +136,6 @@ OutputManagement::~OutputManagement()
 
 void OutputManagement::destroy()
 {
-    //qDebug() << "SM destroy" << d->output_management.isValid();
     if (!d->output_management) {
         return;
     }
@@ -146,7 +145,6 @@ void OutputManagement::destroy()
 
 void OutputManagement::release()
 {
-    //qDebug() << "SM release";
     if (!d->output_management) {
         return;
     }

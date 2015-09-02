@@ -49,6 +49,7 @@ private Q_SLOTS:
     void testTransform();
 
     void testEnabled();
+    void testEdid();
 
 private:
     KWayland::Server::Display *m_display;
@@ -446,6 +447,37 @@ void TestWaylandOutputDevice::testEnabled()
     QCOMPARE(output.enabled(), true);
 
 
+}
+
+void TestWaylandOutputDevice::testEdid()
+{
+    KWayland::Client::Registry registry;
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait());
+
+    KWayland::Client::OutputDevice output;
+
+    QCOMPARE(output.edid()->eisaId, QString());
+    QCOMPARE(output.edid()->monitorName, QString());
+    QCOMPARE(output.edid()->serialNumber, QString());
+    QCOMPARE(output.edid()->physicalSize, QSize());
+    QCOMPARE(output.edid()->data, QString());
+
+    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QVERIFY(outputChanged.isValid());
+    output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
+    wl_display_flush(m_connection->display());
+    QVERIFY(outputChanged.wait());
+
+    QCOMPARE(output.edid()->eisaId, m_edid.eisaId);
+    QCOMPARE(output.edid()->monitorName, m_edid.monitorName);
+    QCOMPARE(output.edid()->serialNumber, m_edid.serialNumber);
+    QCOMPARE(output.edid()->physicalSize, m_edid.physicalSize);
+    QCOMPARE(output.edid()->data, m_edid.data);
 }
 
 

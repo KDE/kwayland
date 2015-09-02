@@ -168,7 +168,7 @@
         <arg name="factor" type="int" summary="scaling factor of output"/>
     </event>
 
-    <event name="edid">
+    <event name="edid" since="2">
         <description summary="advertise available modes for the output">
             The mode event encapsulates the EDID data for the output.
 
@@ -187,7 +187,7 @@
         <arg name="raw" type="string" summary="raw EDID string"/>
     </event>
 
-    <event name="enabled">
+    <event name="enabled" since="2">
         <description summary="advertise available modes for the output">
             The enabled event notifies whether this output is currently
             enabled and used for the wayland server.

@@ -53,6 +53,9 @@ public:
     Modes modes;
     Modes::iterator currentMode = modes.end();
 
+    Edid *edid = new Edid;
+    bool enabled = true;
+
 private:
     static void geometryCallback(void *data, org_kde_kwin_outputdevice *output, int32_t x, int32_t y,
                                  int32_t physicalWidth, int32_t physicalHeight, int32_t subPixel,
@@ -60,6 +63,16 @@ private:
     static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
+
+    static void edidCallback(void *data, org_kde_kwin_outputdevice *output,
+                             const char *eisaId,
+                             const char *monitorName,
+                             const char *serialNumber,
+                             int32_t physicalWidth,
+                             int32_t physicalHeight,
+                             const char *raw);
+    static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
+
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
@@ -225,6 +238,29 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
     emit o->q->changed();
 }
 
+void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* eisaId, const char* monitorName, const char* serialNumber, int32_t physicalWidth, int32_t physicalHeight, const char* raw)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    o->edid->eisaId = QString::fromUtf8(eisaId);
+    o->edid->monitorName = QString::fromUtf8(monitorName);
+    o->edid->serialNumber = QString::fromUtf8(serialNumber);
+    o->edid->physicalSize = QSize(physicalWidth, physicalHeight);
+    o->edid->data = QString::fromUtf8(raw);
+
+    emit o->q->changed();
+}
+
+void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    if (o->enabled != (enabled != 0)) {
+        o->enabled = !o->enabled;
+        emit o->q->changed();
+    }
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -356,6 +392,17 @@ OutputDevice::operator org_kde_kwin_outputdevice*() {
 OutputDevice::operator org_kde_kwin_outputdevice*() const {
     return d->output;
 }
+
+OutputDevice::Edid* OutputDevice::edid() const
+{
+    return d->edid;
+}
+
+bool OutputDevice::enabled() const
+{
+    return d->enabled;
+}
+
 
 }
 }

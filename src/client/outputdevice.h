@@ -70,6 +70,13 @@ class KWAYLANDCLIENT_EXPORT OutputDevice : public QObject
 {
     Q_OBJECT
 public:
+    struct Edid {
+        QString eisaId;
+        QString monitorName;
+        QString serialNumber;
+        QSize physicalSize;
+        QString data;
+    };
     enum class SubPixel {
         Unknown,
         None,
@@ -197,6 +204,16 @@ public:
      * @returns The event queue to use for bound proxies.
      **/
     EventQueue *eventQueue() const;
+
+    /**
+     * @returns The EDID information for this output.
+     **/
+    Edid* edid() const;
+
+    /**
+     * @returns Whether this output is enabled or not.
+     **/
+    bool enabled() const;
 
 Q_SIGNALS:
     /**

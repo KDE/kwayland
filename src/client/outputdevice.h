@@ -221,6 +221,10 @@ Q_SIGNALS:
      **/
     void changed();
     /**
+     * Emitted whenever the enabled property changes.
+     **/
+    void enabledChanged(bool enabled);
+    /**
      * Emitted whenever a new Mode is added.
      * This normally only happens during the initial promoting of modes.
      * Afterwards only modeChanged should be emitted.

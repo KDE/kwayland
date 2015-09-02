@@ -48,12 +48,16 @@ private Q_SLOTS:
     void testTransform_data();
     void testTransform();
 
+    void testEnabled();
+
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputDeviceInterface *m_serverOutputDevice;
+    KWayland::Server::OutputDeviceInterface::Edid m_edid;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
     QThread *m_thread;
+
 };
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-output-0");
@@ -81,6 +85,14 @@ void TestWaylandOutputDevice::init()
     m_serverOutputDevice->addMode(QSize(1024, 768));
     m_serverOutputDevice->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
     m_serverOutputDevice->setCurrentMode(QSize(1024, 768));
+
+    m_edid.eisaId = "0xDEADBEEF";
+    m_edid.monitorName = "DisplayPort-0";
+    m_edid.serialNumber = "2222222";
+    m_edid.physicalSize = QSize(1600, 900); // in mm
+    m_edid.data = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
+    m_serverOutputDevice->setEdid(m_edid);
+
     m_serverOutputDevice->create();
 
     // setup connection
@@ -148,6 +160,8 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.scale(), 1);
     QCOMPARE(output.subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
+    QCOMPARE(output.enabled(), true);
+    QCOMPARE(output.edid()->eisaId, QString());
 
     QSignalSpy outputChanged(&output, SIGNAL(changed()));
     QVERIFY(outputChanged.isValid());
@@ -169,6 +183,10 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     // for xwayland transform is normal
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
+
+    QCOMPARE(output.edid()->eisaId, QStringLiteral("0xDEADBEEF"));
+    QCOMPARE(output.enabled(), true);
+
 }
 
 void TestWaylandOutputDevice::testModeChanges()
@@ -393,6 +411,43 @@ void TestWaylandOutputDevice::testTransform()
     }
     QCOMPARE(output->transform(), OutputDevice::Transform::Normal);
 }
+
+void TestWaylandOutputDevice::testEnabled()
+{
+    KWayland::Client::Registry registry;
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait());
+
+    KWayland::Client::OutputDevice output;
+    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QVERIFY(outputChanged.isValid());
+    output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
+    wl_display_flush(m_connection->display());
+    QVERIFY(outputChanged.wait());
+
+    QCOMPARE(output.enabled(), true);
+
+    QSignalSpy enabledChanged(&output, SIGNAL(changed()));
+    QVERIFY(enabledChanged.isValid());
+
+    m_serverOutputDevice->setEnabled(false);
+    //wl_display_flush(m_connection->display());
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output.enabled(), false);
+
+    m_serverOutputDevice->setEnabled(true);
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output.enabled(), true);
+
+
+}
+
 
 QTEST_GUILESS_MAIN(TestWaylandOutputDevice)
 #include "test_wayland_outputdevice.moc"

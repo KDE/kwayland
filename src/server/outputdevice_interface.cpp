@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-server.h>
 #include "wayland-org_kde_kwin_outputdevice-server-protocol.h"
+#include <QDebug>
 
 namespace KWayland
 {
@@ -58,7 +59,7 @@ public:
     QList<ResourceData> resources;
 
     Edid edid;
-    bool enabled = false;
+    bool enabled = true;
 
 private:
     static void unbind(wl_resource *resource);
@@ -494,9 +495,8 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
 void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
-        org_kde_kwin_outputdevice_send_enabled((*it).resource, enabled ? 1 : 0);
+        org_kde_kwin_outputdevice_send_enabled((*it).resource, enabled);
     }
-
 }
 
 

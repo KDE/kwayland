@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // wayland
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 #include <wayland-client-protocol.h>
+#include <QDebug>
 
 namespace KWayland
 {
@@ -122,7 +123,9 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     geometryCallback,
     modeCallback,
     doneCallback,
-    scaleCallback
+    scaleCallback,
+    edidCallback,
+    enabledCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -248,15 +251,17 @@ void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* 
     o->edid->physicalSize = QSize(physicalWidth, physicalHeight);
     o->edid->data = QString::fromUtf8(raw);
 
-    emit o->q->changed();
+    //emit o->q->changed();
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
 
-    if (o->enabled != (enabled != 0)) {
-        o->enabled = !o->enabled;
+    if (o->enabled != enabled) {
+        qDebug() << "enabled is" << enabled << "was" << o->enabled;
+        o->enabled = enabled;
+        emit o->q->enabledChanged(o->enabled);
         emit o->q->changed();
     }
 }

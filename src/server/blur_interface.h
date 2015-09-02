@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2015  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2015  Marco Martin <mart@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,5 +18,56 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "logging_p.h"
-Q_LOGGING_CATEGORY(KWAYLAND_CLIENT, "kwayland-client", QtCriticalMsg)
+#ifndef KWAYLAND_SERVER_BLUR_INTERFACE_H
+#define KWAYLAND_SERVER_BLUR_INTERFACE_H
+
+#include "global.h"
+#include "resource.h"
+
+#include <QObject>
+#include <QMarginsF>
+
+#include <KWayland/Server/kwaylandserver_export.h>
+
+struct wl_region;
+
+namespace KWayland
+{
+namespace Server
+{
+
+class BufferInterface;
+class Display;
+
+class KWAYLANDSERVER_EXPORT BlurManagerInterface : public Global
+{
+    Q_OBJECT
+public:
+    virtual ~BlurManagerInterface();
+
+private:
+    explicit BlurManagerInterface(Display *display, QObject *parent = nullptr);
+    friend class Display;
+    class Private;
+};
+
+class KWAYLANDSERVER_EXPORT BlurInterface : public Resource
+{
+    Q_OBJECT
+public:
+    virtual ~BlurInterface();
+
+    QRegion region();
+
+private:
+    explicit BlurInterface(BlurManagerInterface *parent, wl_resource *parentResource);
+    friend class BlurManagerInterface;
+
+    class Private;
+    Private *d_func() const;
+};
+
+}
+}
+
+#endif

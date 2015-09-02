@@ -238,6 +238,15 @@ Q_SIGNALS:
      * @param mode The changed Mode
      **/
     void modeChanged(const KWayland::Client::OutputDevice::Mode &mode);
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the OutputDevice got created by
+     * Registry::createOutputDevice
+     *
+     * @since 5.5
+     **/
+    void removed();
 
 private:
     class Private;

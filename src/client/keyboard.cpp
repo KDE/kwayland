@@ -36,6 +36,11 @@ public:
 
     WaylandPointer<wl_keyboard, wl_keyboard_destroy> keyboard;
     Surface *enteredSurface = nullptr;
+
+    struct {
+        qint32 charactersPerSecond = 0;
+        qint32 delay = 0;
+    } repeatInfo;
 private:
     void enter(uint32_t serial, wl_surface *surface, wl_array *keys);
     void leave(uint32_t serial);
@@ -45,6 +50,7 @@ private:
     static void keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
     static void modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
                                   uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+    static void repeatInfoCallback(void *data, wl_keyboard *keyboard, int32_t charactersPerSecond, int32_t delay);
     Keyboard *q;
     static const wl_keyboard_listener s_listener;
 };
@@ -67,7 +73,8 @@ const wl_keyboard_listener Keyboard::Private::s_listener = {
     enterCallback,
     leaveCallback,
     keyCallback,
-    modifiersCallback
+    modifiersCallback,
+    repeatInfoCallback
 };
 
 Keyboard::Keyboard(QObject *parent)
@@ -158,6 +165,15 @@ void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uin
     emit k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
 }
 
+void Keyboard::Private::repeatInfoCallback(void *data, wl_keyboard *keyboard, int32_t charactersPerSecond, int32_t delay)
+{
+    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    Q_ASSERT(k->keyboard == keyboard);
+    k->repeatInfo.charactersPerSecond = qMax(charactersPerSecond, 0);
+    k->repeatInfo.delay = qMax(delay, 0);
+    emit k->q->keyRepeatChanged();
+}
+
 Surface *Keyboard::enteredSurface()
 {
     return d->enteredSurface;
@@ -171,6 +187,21 @@ Surface *Keyboard::enteredSurface() const
 bool Keyboard::isValid() const
 {
     return d->keyboard.isValid();
+}
+
+bool Keyboard::isKeyRepeatEnabled() const
+{
+    return d->repeatInfo.charactersPerSecond > 0;
+}
+
+qint32 Keyboard::keyRepeatDelay() const
+{
+    return d->repeatInfo.delay;
+}
+
+qint32 Keyboard::keyRepeatRate() const
+{
+    return d->repeatInfo.charactersPerSecond;
 }
 
 Keyboard::operator wl_keyboard*()

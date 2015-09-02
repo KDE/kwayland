@@ -144,6 +144,16 @@ Q_SIGNALS:
     void windowCreated(KWayland::Client::PlasmaWindow *window);
     void activeWindowChanged();
 
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createPlasmaWindowManagement
+     *
+     * @since 5.5
+     **/
+    void removed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

@@ -33,6 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "plasmawindowmanagement.h"
 #include "seat.h"
 #include "shadow.h"
+#include "blur.h"
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
@@ -49,6 +50,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-org_kde_kwin_output_management-client-protocol.h>
 #include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
+#include <wayland-blur-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -104,7 +106,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::shmRemoved
     }},
     {Registry::Interface::Seat, {
-        3,
+        4,
         QByteArrayLiteral("wl_seat"),
         &wl_seat_interface,
         &Registry::seatAnnounced,
@@ -172,6 +174,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_shadow_manager_interface,
         &Registry::shadowAnnounced,
         &Registry::shadowRemoved
+    }},
+    {Registry::Interface::Blur, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_blur_manager"),
+        &org_kde_kwin_blur_manager_interface,
+        &Registry::blurAnnounced,
+        &Registry::blurRemoved
     }},
     {Registry::Interface::FullscreenShell, {
         1,
@@ -455,6 +464,7 @@ BIND(FakeInput, org_kde_kwin_fake_input)
 BIND(OutputManagement, org_kde_kwin_output_management)
 BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
+BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 
 #undef BIND
 #undef BIND2
@@ -465,6 +475,13 @@ T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL 
     T *t = new T(parent);
     t->setEventQueue(queue);
     t->setup((q->*bindMethod)(name, version));
+    QObject::connect(q, &Registry::interfaceRemoved, t,
+        [t, name] (quint32 removed) {
+            if (name == removed) {
+                emit t->removed();
+            }
+        }
+    );
     return t;
 }
 
@@ -490,6 +507,7 @@ CREATE(FakeInput)
 CREATE(OutputManagement)
 CREATE(OutputDevice)
 CREATE(ShadowManager)
+CREATE(BlurManager)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

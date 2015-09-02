@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "qtsurfaceextension_interface.h"
 #include "seat_interface.h"
 #include "shadow_interface.h"
+#include "blur_interface.h"
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
 
@@ -288,6 +289,13 @@ ShadowManagerInterface *Display::createShadowManager(QObject *parent)
     auto s = new ShadowManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
     return s;
+}
+
+BlurManagerInterface *Display::createBlurManager(QObject *parent)
+{
+    auto b = new BlurManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
+    return b;
 }
 
 void Display::createShm()

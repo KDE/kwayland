@@ -96,6 +96,23 @@ Surface *Surface::fromWindow(QWindow *window)
     return surface;
 }
 
+Surface *Surface::fromQtWinId(WId wid)
+{
+    QWindow *window = nullptr;
+
+    for (auto win : qApp->allWindows()) {
+        if (win->winId() == wid) {
+            window = win;
+            break;
+        }
+    }
+
+    if (!window) {
+        return nullptr;
+    }
+    return fromWindow(window);
+}
+
 void Surface::release()
 {
     d->surface.release();

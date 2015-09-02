@@ -20,15 +20,21 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Qt
 #include <QtTest/QtTest>
 // KWin
+#include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/registry.h"
+#include "../../src/client/output.h"
+#include "../../src/client/seat.h"
+#include "../../src/client/shell.h"
+#include "../../src/client/subcompositor.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/datadevicemanager_interface.h"
 #include "../../src/server/display.h"
 #include "../../src/server/output_interface.h"
 #include "../../src/server/seat_interface.h"
 #include "../../src/server/shell_interface.h"
+#include "../../src/server/blur_interface.h"
 #include "../../src/server/subcompositor_interface.h"
 #include "../../src/server/output_management_interface.h"
 #include "../../src/server/outputdevice_interface.h"
@@ -53,6 +59,7 @@ private Q_SLOTS:
     void testBindSeat();
     void testBindSubCompositor();
     void testBindDataDeviceManager();
+    void testBindBlurManager();
     void testGlobalSync();
     void testGlobalSyncThreaded();
     void testRemoval();
@@ -111,6 +118,7 @@ void TestWaylandRegistry::init()
     m_outputDevice = m_display->createOutputDevice();
     m_outputDevice->create();
     QVERIFY(m_outputManagement->isValid());
+    m_display->createBlurManager(this)->create();
 }
 
 void TestWaylandRegistry::cleanup()
@@ -218,10 +226,16 @@ void TestWaylandRegistry::testBindDataDeviceManager()
     TEST_BIND(KWayland::Client::Registry::Interface::DataDeviceManager, SIGNAL(dataDeviceManagerAnnounced(quint32,quint32)), bindDataDeviceManager, wl_data_device_manager_destroy)
 }
 
+void TestWaylandRegistry::testBindBlurManager()
+{
+    TEST_BIND(KWayland::Client::Registry::Interface::Blur, SIGNAL(blurAnnounced(quint32,quint32)), bindBlurManager, free)
+}
+
 #undef TEST_BIND
 
 void TestWaylandRegistry::testRemoval()
 {
+    using namespace KWayland::Client;
     KWayland::Client::ConnectionThread connection;
     QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
     connection.setSocketName(s_socketName);
@@ -287,11 +301,30 @@ void TestWaylandRegistry::testRemoval()
     QSignalSpy seatRemovedSpy(&registry, SIGNAL(seatRemoved(quint32)));
     QVERIFY(seatRemovedSpy.isValid());
 
+    Seat *seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, registry.interface(Registry::Interface::Seat).version, &registry);
+    Shell *shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry);
+    Output *output = registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
+    Compositor *compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, &registry);
+    SubCompositor *subcompositor = registry.createSubCompositor(registry.interface(Registry::Interface::SubCompositor).name, registry.interface(Registry::Interface::SubCompositor).version, &registry);
+    connection.flush();
+    m_display->dispatchEvents();
+    QSignalSpy seatObjectRemovedSpy(seat, &Seat::removed);
+    QVERIFY(seatObjectRemovedSpy.isValid());
+    QSignalSpy shellObjectRemovedSpy(shell, &Shell::removed);
+    QVERIFY(shellObjectRemovedSpy.isValid());
+    QSignalSpy outputObjectRemovedSpy(output, &Output::removed);
+    QVERIFY(outputObjectRemovedSpy.isValid());
+    QSignalSpy compositorObjectRemovedSpy(compositor, &Compositor::removed);
+    QVERIFY(compositorObjectRemovedSpy.isValid());
+    QSignalSpy subcompositorObjectRemovedSpy(subcompositor, &SubCompositor::removed);
+    QVERIFY(subcompositorObjectRemovedSpy.isValid());
+
     delete m_seat;
     QVERIFY(seatRemovedSpy.wait());
     QCOMPARE(seatRemovedSpy.first().first(), seatAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::Seat));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Seat).isEmpty());
+    QCOMPARE(seatObjectRemovedSpy.count(), 1);
 
     QSignalSpy shellRemovedSpy(&registry, SIGNAL(shellRemoved(quint32)));
     QVERIFY(shellRemovedSpy.isValid());
@@ -301,6 +334,7 @@ void TestWaylandRegistry::testRemoval()
     QCOMPARE(shellRemovedSpy.first().first(), shellAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::Shell));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Shell).isEmpty());
+    QCOMPARE(shellObjectRemovedSpy.count(), 1);
 
     QSignalSpy outputRemovedSpy(&registry, SIGNAL(outputRemoved(quint32)));
     QVERIFY(outputRemovedSpy.isValid());
@@ -310,6 +344,7 @@ void TestWaylandRegistry::testRemoval()
     QCOMPARE(outputRemovedSpy.first().first(), outputAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::Output));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Output).isEmpty());
+    QCOMPARE(outputObjectRemovedSpy.count(), 1);
 
     QSignalSpy outputDeviceRemovedSpy(&registry, SIGNAL(outputDeviceRemoved(quint32)));
     QVERIFY(outputDeviceRemovedSpy.isValid());
@@ -328,6 +363,7 @@ void TestWaylandRegistry::testRemoval()
     QCOMPARE(compositorRemovedSpy.first().first(), compositorAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::Compositor));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Compositor).isEmpty());
+    QCOMPARE(compositorObjectRemovedSpy.count(), 1);
 
     QSignalSpy subCompositorRemovedSpy(&registry, SIGNAL(subCompositorRemoved(quint32)));
     QVERIFY(subCompositorRemovedSpy.isValid());
@@ -337,6 +373,7 @@ void TestWaylandRegistry::testRemoval()
     QCOMPARE(subCompositorRemovedSpy.first().first(), subCompositorAnnouncedSpy.first().first());
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::SubCompositor));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::SubCompositor).isEmpty());
+    QCOMPARE(subcompositorObjectRemovedSpy.count(), 1);
 
     QSignalSpy outputManagementRemovedSpy(&registry, SIGNAL(outputManagementRemoved(quint32)));
     QVERIFY(outputManagementRemovedSpy.isValid());
@@ -348,6 +385,13 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
 
     // cannot test shmRemoved as there is no functionality for it
+
+    // verify everything has been removed only once
+    QCOMPARE(seatObjectRemovedSpy.count(), 1);
+    QCOMPARE(shellObjectRemovedSpy.count(), 1);
+    QCOMPARE(outputObjectRemovedSpy.count(), 1);
+    QCOMPARE(compositorObjectRemovedSpy.count(), 1);
+    QCOMPARE(subcompositorObjectRemovedSpy.count(), 1);
 }
 
 void TestWaylandRegistry::testDestroy()

@@ -97,6 +97,31 @@ public:
      **/
     Surface *enteredSurface();
 
+    /**
+     * @returns Whether key repeat is enabled on this keyboard
+     * @see keyRepeatRate
+     * @see keyRepeatDelay
+     * @see keyRepeatChanged
+     * @since 5.5
+     **/
+    bool isKeyRepeatEnabled() const;
+    /**
+     * @returns the key repeat rate in characters per second.
+     * @see isKeyRepeatEnabled
+     * @see keyRepeatDelay
+     * @see keyRepeatChanged
+     * @since 5.5
+     **/
+    qint32 keyRepeatRate() const;
+    /**
+     * @returns the delay in millisecond for key repeat after a press.
+     * @see isKeyRepeatEnabled
+     * @see keyRepeatRate
+     * @see keyRepeatChanged
+     * @since 5.5
+     **/
+    qint32 keyRepeatDelay() const;
+
     operator wl_keyboard*();
     operator wl_keyboard*() const;
 
@@ -138,6 +163,14 @@ Q_SIGNALS:
      * and it should update its local state.
      **/
     void modifiersChanged(quint32 depressed, quint32 latched, quint32 locked, quint32 group);
+    /**
+     * Emitted whenever information on key repeat changed.
+     * @see isKeyRepeatEnabled
+     * @see keyRepeatRate
+     * @see keyRepeatDelay
+     * @since 5.5
+     **/
+    void keyRepeatChanged();
 
 private:
     class Private;

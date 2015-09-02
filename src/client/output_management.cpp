@@ -46,63 +46,9 @@ public:
 
     WaylandPointer<org_kde_kwin_output_management, org_kde_kwin_output_management_destroy> output_management;
 
-    QList<DisabledOutput*> disabledOutputs;
-
 private:
-    static void disabledOutputAddedCallback(void *data, org_kde_kwin_output_management *output,
-                                       const char *edid,
-                                       const char *name,
-                                       const char *connector);
 
-    static void disabledOutputRemovedCallback(void *data, org_kde_kwin_output_management *output,
-                                              const char *name,
-                                              const char *connector);
-
-    /*
-     *        <arg name="id" type="int" summary="the unique output's device ID"/>
-     *        <arg name="width" type="int" summary="current resolution's height in pixel"/>
-     *        <arg name="height" type="int" summary="current resolution's width in pixel"/>
-     *        <arg name="x" type="int" summary="the outputs EDID string"/>
-     *        <arg name="y" type="int" summary="output's name"/>
-     *        <arg name="enabled" type="int" summary="is the output currently used to display screen content?"/>
-     *        <arg name="primary" type="int" summary="is the output the primary display?"/>
-     *        <arg name="rotation" type="int" summary="output rotation in degree"/>
-     *
-     */
-    static void outputDeviceAddedCallback(void *data, org_kde_kwin_output_management *sm,
-                                          const int id,
-                                          const int width,
-                                          const int height,
-                                          const int x,
-                                          const int y,
-                                          const int enabled, /* a bool, really */
-                                          const int primary, /* also a bool */
-                                          const int rotation);
-    /*          <arg name="id" type="int" summary="the ID of the output for this EDID information"/>
-     *        <arg name="eisa_id" type="string" summary="EISA ID of the output device"/>
-     *        <arg name="monitor_name" type="string" summary="human-readable name of the output device"/>
-     *        <arg name="serial_number" type="string" summary="serial number of the output device"/>
-     *        <arg name="physical_width" type="int" summary="physical width in millimeter"/>
-     *        <arg name="physical_height" type="int" summary="physical height in millimeter"/>
-     */
-    static void edidCallback(void *data, org_kde_kwin_output_management *sm,
-                             const int id,
-                             const char *eisa_id,
-                             const char *monitor_name,
-                             const char *serial_number,
-                             const int physical_width,
-                             const int physical_height);
-
-    static void modeCallback(void *data, org_kde_kwin_output_management *sm,
-                             const int id,
-                             const int width,
-                             const int height,
-                             const int refresh_rate);
-
-    static void outputDeviceRemovedCallback(void *data, org_kde_kwin_output_management *sm,
-                                            const int id);
-
-    static void doneCallback(void *data, org_kde_kwin_output_management *output);
+    static void configurationCreatedCallback(void *data, org_kde_kwin_outputconfiguration *output);
 
     OutputManagement *q;
     static struct org_kde_kwin_output_management_listener s_outputListener;
@@ -131,7 +77,6 @@ OutputManagement::OutputManagement(QObject *parent)
 OutputManagement::~OutputManagement()
 {
     release();
-    qDeleteAll(d->disabledOutputs);
 }
 
 void OutputManagement::destroy()
@@ -163,75 +108,14 @@ EventQueue *OutputManagement::eventQueue()
 }
 
 org_kde_kwin_output_management_listener OutputManagement::Private::s_outputListener = {
-    /* these two just left in for testing right now, remove later */
-    disabledOutputAddedCallback,
-    disabledOutputRemovedCallback,
-    /* the following are for real */
-    outputDeviceAddedCallback,
-    edidCallback,
-    modeCallback,
-    outputDeviceRemovedCallback,
-    doneCallback
+    configurationCreatedCallback
 };
 
-void OutputManagement::Private::disabledOutputAddedCallback(void* data, org_kde_kwin_output_management* output, const char* edid, const char* name, const char* connector)
-{
-    //qDebug() << "disabledOutputAddedCallback!" << name << connector;
-    auto o = reinterpret_cast<OutputManagement::Private*>(data);
-    Q_ASSERT(o->output_management == output);
-
-    DisabledOutput *op = new DisabledOutput(o->q);
-    op->setEdid(edid);
-    op->setName(name);
-    op->setConnector(connector);
-
-    o->disabledOutputs << op;
-
-    emit o->q->disabledOutputAdded(op);
-}
-
-void OutputManagement::Private::disabledOutputRemovedCallback(void* data, org_kde_kwin_output_management* output, const char* name, const char* connector)
-{
-    //qDebug() << "disabledOutputRemovedCallback!" << name << connector;
-    auto o = reinterpret_cast<OutputManagement::Private*>(data);
-    Q_ASSERT(o->output_management == output);
-
-    auto it = std::find_if(o->disabledOutputs.begin(), o->disabledOutputs.end(),
-                           [name, connector](const DisabledOutput *r) {
-                               return (r->name() == name && r->connector() == connector);
-                        });
-    o->disabledOutputs.erase(it);
-
-    emit o->q->disabledOutputRemoved(*it);
-}
-
-void OutputManagement::Private::outputDeviceAddedCallback(void* data, org_kde_kwin_output_management* sm, const int id, const int width, const int height, const int x, const int y, const int enabled, const int primary, const int rotation)
-{
-    qDebug() << "OutputDeviceAdded!" << id << width << height;
-
-}
-
-void OutputManagement::Private::edidCallback(void* data, org_kde_kwin_output_management* sm, const int id, const char* eisa_id, const char* monitor_name, const char* serial_number, const int physical_width, const int physical_height)
-{
-    qDebug() << "Edid arrived" << id << monitor_name;
-}
-
-void OutputManagement::Private::modeCallback(void* data, org_kde_kwin_output_management* sm, const int id, const int width, const int height, const int refresh_rate)
-{
-    qDebug() << "modeCallback" << id << width << height << refresh_rate;
-}
-
-
-void OutputManagement::Private::outputDeviceRemovedCallback(void* data, org_kde_kwin_output_management* output, const int id)
-{
-    qDebug() << "OutputDeviceRemoved!" << id;
-}
-
-void OutputManagement::Private::doneCallback(void* data, org_kde_kwin_output_management* output)
+void OutputManagement::Private::doneCallback(void* data, org_kde_kwin_output_management* output, org_kde_kwin_outputconfiguration* outputconfiguration)
 {
     auto o = reinterpret_cast<OutputManagement::Private*>(data);
     Q_ASSERT(o->output_management == output);
-    emit o->q->done();
+    //emit o->q->done(); FIXME
 }
 
 void OutputManagement::setup(org_kde_kwin_output_management *output)
@@ -250,11 +134,6 @@ OutputManagement::operator org_kde_kwin_output_management*() {
 
 OutputManagement::operator org_kde_kwin_output_management*() const {
     return d->output_management;
-}
-
-QList< DisabledOutput* > OutputManagement::disabledOutputs() const
-{
-    return d->disabledOutputs;
 }
 
 

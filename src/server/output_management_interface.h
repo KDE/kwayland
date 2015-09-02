@@ -46,18 +46,8 @@ class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
 public:
     virtual ~OutputManagementInterface();
 
-    struct DisabledOutput {
-        QString edid;
-        QString name;
-        QString connector;
-    };
-
 public Q_SLOTS:
-    void addDisabledOutput(const OutputManagementInterface::DisabledOutput &output);
-//     void addDisabledOutput(const QString &edid, const QString &name, const QString &connector);
-    void removeDisabledOutput(const QString &name, const QString &connector);
-
-    
+    void createConfiguration();
 
 private:
     explicit OutputManagementInterface(Display *display, QObject *parent = nullptr);

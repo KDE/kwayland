@@ -18,14 +18,12 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef WAYLAND_KWIN_SCREEN_MANAGEMENT_H
-#define WAYLAND_KWIN_SCREEN_MANAGEMENT_H
+#ifndef WAYLAND_KWIN_OUTPUT_MANAGEMENT_H
+#define WAYLAND_KWIN_OUTPUT_MANAGEMENT_H
 
 #include <QObject>
 #include <QPointer>
 #include <QSize>
-
-#include "disabledoutput.h"
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -37,6 +35,7 @@ namespace KWayland
 {
 namespace Client
 {
+class OutputConfiguration;
 class EventQueue;
 
 /**
@@ -99,40 +98,15 @@ public:
     operator org_kde_kwin_output_management*();
     operator org_kde_kwin_output_management*() const;
 
-    QList<DisabledOutput*> disabledOutputs() const;
-
 Q_SIGNALS:
-    /**
-     * Emitted after all DisabledOutputs have been announced initially. This signal
-     * can be tracked to get notified once all currently connected, but
-     * disabled outputs have been signalled. After done() is fired, disabledOutputs()
-     * is up to date.
-     **/
-    void done();
 
     /**
      * An output has been connected, but is not enabled yet.
      * @param output A pointer to the DisabledOutput. This pointers lifetime is
      * managed by the OutputManagement class. Do not delete it yourself.
      */
-    void disabledOutputAdded(const KWayland::Client::DisabledOutput*);
+    void configurationCreated(const KWayland::Client::OutputConfiguration*);
 
-    /**
-     * A disabled output has been disconnected.
-     * @param output A pointer to the DisabledOutput. This pointer may already have
-     * been deleted, so do not dereference any of its data, only use its address to
-     * identify it.
-     */
-    void disabledOutputRemoved(const KWayland::Client::DisabledOutput*);
-
-    /**
-     * This signal is emitted right before the interface is released.
-     **/
-    void interfaceAboutToBeReleased();
-    /**
-     * This signal is emitted right before the interface is destroyed.
-     **/
-    void interfaceAboutToBeDestroyed();
     /**
      * The corresponding global for this interface on the Registry got removed.
      *

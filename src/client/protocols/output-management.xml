@@ -69,13 +69,13 @@
 
 
     </description>
-    <request name="createConfiguration">
+    <request name="create_configuration">
         <description summary="change the shell surface position">
             Request an output configuration, which can be changed and then applied.
         </description>
     </request>
 
-    <event name="configurationCreated">
+    <event name="configuration_created">
         <description summary="change the shell surface position">
             Retrieve an output configuration, which can be changed and then applied.
         </description>

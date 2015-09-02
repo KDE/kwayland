@@ -44,12 +44,11 @@ public:
     Private(OutputManagementInterface *q, Display *d);
 
     QList<ResourceData> resources;
-    QList<DisabledOutput> disabledOutputs;
-
+    void sendConfigurationCreated();
+    
 private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
-    void sendDone();
 
     OutputManagementInterface *q;
 };
@@ -91,14 +90,7 @@ void OutputManagementInterface::Private::bind(wl_client *client, uint32_t versio
     r.version = version;
     resources << r;
 
-    foreach (auto op, disabledOutputs) {
-        org_kde_kwin_output_management_send_disabled_output_added(resource,
-                                                       qPrintable(op.edid),
-                                                       qPrintable(op.name),
-                                                       qPrintable(op.connector));
-    }
-
-    sendDone();
+    // sendConfigurationCreated(); should we do this here already and skip the request?
 
     c->flush();
     //qDebug() << "Flushed";
@@ -113,52 +105,19 @@ void OutputManagementInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void OutputManagementInterface::addDisabledOutput(const OutputManagementInterface::DisabledOutput& output)
+void OutputManagementInterface::createConfiguration()
 {
     Q_D();
+    /* ... */
 
-    //qDebug() << "New Output! :: " << output.edid << output.name << output.connector;
-
-    d->disabledOutputs << output;
-
-    foreach (auto r, d->resources) {
-        wl_resource *resource = r.resource;
-        org_kde_kwin_output_management_send_disabled_output_added(resource,
-                                                       qPrintable(output.edid),
-                                                       qPrintable(output.name),
-                                                       qPrintable(output.connector));
-    }
-
+    d->sendConfigurationCreated();
 }
 
-void OutputManagementInterface::removeDisabledOutput(const QString& name, const QString& connector)
-{
-    Q_D();
-    //qDebug() << "removeDisabledOutput" << name << connector << d->disabledOutputs.count();
-
-    QList<DisabledOutput>::iterator i;
-    for (i = d->disabledOutputs.begin(); i != d->disabledOutputs.end(); ++i) {
-        if ((*i).name == name) {
-            //qDebug() << "Kill me" << name;
-            foreach (auto r, d->resources) {
-                wl_resource *resource = r.resource;
-                org_kde_kwin_output_management_send_disabled_output_removed(resource,
-                                                                          qPrintable((*i).name),
-                                                                          qPrintable((*i).connector));
-            }
-            d->disabledOutputs.erase(i);
-        }
-        i++;
-    }
-    //qDebug() << "d->DisabledOutputs is now " << d->disabledOutputs.count();
-}
-
-
-void OutputManagementInterface::Private::sendDone()
+void OutputManagementInterface::Private::sendConfigurationCreated()
 {
     foreach (auto r, resources) {
         wl_resource *resource = r.resource;
-        org_kde_kwin_output_management_send_done(resource);
+        org_kde_kwin_output_management_send_configuration_created(resource);
     }
 }
 

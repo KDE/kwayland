@@ -55,7 +55,7 @@ private:
     KWayland::Client::Registry m_registry;
 };
 
-static const QString s_socketName = QStringLiteral("kwayland-test-wayland-region-0");
+static const QString s_socketName = QStringLiteral("kwayland-test-wayland-blur-0");
 
 TestBlur::TestBlur(QObject *parent)
     : QObject(parent)

@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSize>
 // wayland
 #include <wayland-client-protocol.h>
-#include "wayland-org_kde_kwin_output_management-client-protocol.h"
+#include "wayland-output-management-client-protocol.h"
 
 #include <QDebug>
 
@@ -48,7 +48,7 @@ public:
 
 private:
 
-    static void configurationCreatedCallback(void *data, org_kde_kwin_outputconfiguration *output);
+    static void configurationCreatedCallback(void *data, org_kde_kwin_output_management *output_management, org_kde_kwin_outputconfiguration *config);
 
     OutputManagement *q;
     static struct org_kde_kwin_output_management_listener s_outputListener;
@@ -111,7 +111,7 @@ org_kde_kwin_output_management_listener OutputManagement::Private::s_outputListe
     configurationCreatedCallback
 };
 
-void OutputManagement::Private::doneCallback(void* data, org_kde_kwin_output_management* output, org_kde_kwin_outputconfiguration* outputconfiguration)
+void OutputManagement::Private::configurationCreatedCallback(void* data, org_kde_kwin_output_management* output, org_kde_kwin_outputconfiguration* outputconfiguration)
 {
     auto o = reinterpret_cast<OutputManagement::Private*>(data);
     Q_ASSERT(o->output_management == output);

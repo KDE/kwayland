@@ -20,6 +20,7 @@ set(CLIENT_LIB_SRCS
     fullscreen_shell.cpp
     idle.cpp
     keyboard.cpp
+    outputconfiguration.cpp
     output_management.cpp
     outputdevice.cpp
     logging.cpp
@@ -47,7 +48,7 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/output-management.xml
-    BASENAME org_kde_kwin_output_management
+    BASENAME output-management
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -129,6 +130,7 @@ install(FILES
   fullscreen_shell.h
   idle.h
   keyboard.h
+  outputconfiguration.h
   output_management.h
   outputdevice.h
   output.h

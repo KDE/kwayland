@@ -204,6 +204,9 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
     case Role::Panel:
         wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_PANEL;
         break;
+    case Role::OnScreenDisplay:
+        wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_ONSCREENDISPLAY;
+        break;
     default:
         Q_UNREACHABLE();
         break;

@@ -187,6 +187,7 @@
       <entry name="normal" value="0"/>
       <entry name="desktop" value="1"/>
       <entry name="panel" value="2"/>
+      <entry name="onscreendisplay" value="3"/>
 <!--
       <entry name="splash" value="1"/>
       <entry name="dashboard" value="3"/>

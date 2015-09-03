@@ -218,7 +218,8 @@ public:
     enum class Role {
         Normal,
         Desktop,
-        Panel
+        Panel,
+        OnScreenDisplay
     };
     void setRole(Role role);
     void setPosition(const QPoint &point);

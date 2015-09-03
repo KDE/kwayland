@@ -18,7 +18,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "output_management_interface.h"
+#include "outputconfiguration_interface.h"
 #include "global_p.h"
 #include "display.h"
 
@@ -34,51 +34,52 @@ namespace Server
 
 static const quint32 s_version = 1;
 
-class OutputManagementInterface::Private : public Global::Private
+class OutputConfigurationInterface::Private : public Global::Private
 {
 public:
     struct ResourceData {
         wl_resource *resource;
         uint32_t version;
     };
-    Private(OutputManagementInterface *q, Display *d);
+    Private(OutputConfigurationInterface *q, Display *d);
 
     QList<ResourceData> resources;
-    void sendConfigurationCreated();
+    void sendApplied();
+
 
 private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    OutputManagementInterface *q;
+    OutputConfigurationInterface *q;
 };
 
-OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_output_management_interface, s_version)
+OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, Display *d)
+    : Global::Private(d, &org_kde_kwin_outputconfiguration_interface, s_version)
     , q(q)
 {
 
 }
 
-OutputManagementInterface::OutputManagementInterface(Display *display, QObject *parent)
+OutputConfigurationInterface::OutputConfigurationInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
 }
 
-OutputManagementInterface::~OutputManagementInterface() = default;
+OutputConfigurationInterface::~OutputConfigurationInterface() = default;
 
 
-OutputManagementInterface::Private *OutputManagementInterface::d_func() const
+OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-void OutputManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void OutputConfigurationInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     //qDebug() << "Bound!";
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kde_kwin_output_management_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_outputconfiguration_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -96,29 +97,28 @@ void OutputManagementInterface::Private::bind(wl_client *client, uint32_t versio
     //qDebug() << "Flushed";
 }
 
-void OutputManagementInterface::Private::unbind(wl_resource *resource)
+void OutputConfigurationInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
+    auto o = reinterpret_cast<OutputConfigurationInterface::Private*>(wl_resource_get_user_data(resource));
     auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
 }
 
-void OutputManagementInterface::createConfiguration()
+void OutputConfigurationInterface::applied()
 {
     Q_D();
     /* ... */
 
-    d->sendConfigurationCreated();
+    d->sendApplied();
 }
 
-void OutputManagementInterface::Private::sendConfigurationCreated()
+void OutputConfigurationInterface::Private::sendApplied()
 {
     foreach (auto r, resources) {
         wl_resource *resource = r.resource;
-        wl_resource* config = 0;
-        org_kde_kwin_output_management_send_configuration_created(resource, config);
+        org_kde_kwin_outputconfiguration_send_applied(resource);
     }
 }
 

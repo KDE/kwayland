@@ -18,8 +18,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef WAYLAND_SERVER_OUTPUTMANAGEMENT_INTERFACE_H
-#define WAYLAND_SERVER_OUTPUTMANAGEMENT_INTERFACE_H
+#ifndef WAYLAND_SERVER_OUTPUTCONFIGURATION_INTERFACE_H
+#define WAYLAND_SERVER_OUTPUTCONFIGURATION_INTERFACE_H
 
 #include <QObject>
 #include <QPoint>
@@ -39,18 +39,22 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
+class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Global
 {
     Q_OBJECT
 
 public:
-    virtual ~OutputManagementInterface();
+    virtual ~OutputConfigurationInterface();
 
 public Q_SLOTS:
-    void createConfiguration();
+    /**
+     * The configuration has been applied. This method is to be called by
+     * the compositor after changes have successfully been applied.
+     */
+    void applied();
 
 private:
-    explicit OutputManagementInterface(Display *display, QObject *parent = nullptr);
+    explicit OutputConfigurationInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;

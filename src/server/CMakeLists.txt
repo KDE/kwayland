@@ -13,6 +13,7 @@ set(SERVER_LIB_SRCS
     idle_interface.cpp
     fakeinput_interface.cpp
     keyboard_interface.cpp
+    outputconfiguration_interface.cpp
     output_management_interface.cpp
     outputdevice_interface.cpp
     logging.cpp
@@ -34,7 +35,7 @@ set(SERVER_LIB_SRCS
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/output-management.xml
-    BASENAME org_kde_kwin_output_management
+    BASENAME output-management
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -127,6 +128,7 @@ install(FILES
   keyboard_interface.h
   output_management_interface.h
   outputdevice_interface.h
+  outputconfiguration_interface.h
   output_interface.h
   pointer_interface.h
   plasmashell_interface.h

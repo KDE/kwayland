@@ -44,12 +44,14 @@ public:
     Private(OutputManagementInterface *q, Display *d);
 
     QList<ResourceData> resources;
-    void sendConfigurationCreated();
 
 private:
+    static void createConfigurationCallback(wl_client *client, wl_resource *resource);
+
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
+    static const struct org_kde_kwin_output_management_interface s_interface;
     OutputManagementInterface *q;
 };
 
@@ -59,6 +61,10 @@ OutputManagementInterface::Private::Private(OutputManagementInterface *q, Displa
 {
 
 }
+
+const struct org_kde_kwin_output_management_interface OutputManagementInterface::Private::s_interface = {
+    createConfigurationCallback
+};
 
 OutputManagementInterface::OutputManagementInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
@@ -105,21 +111,11 @@ void OutputManagementInterface::Private::unbind(wl_resource *resource)
     }
 }
 
-void OutputManagementInterface::createConfiguration()
+void OutputManagementInterface::Private::createConfigurationCallback(wl_client* client, wl_resource* resource)
 {
-    Q_D();
-    /* ... */
-
-    d->sendConfigurationCreated();
-}
-
-void OutputManagementInterface::Private::sendConfigurationCreated()
-{
-    foreach (auto r, resources) {
-        wl_resource *resource = r.resource;
-        wl_resource* config = 0;
-        org_kde_kwin_output_management_send_configuration_created(resource, config);
-    }
+    qDebug() << "configCallback";
+    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
+    emit o->q->configurationRequested();
 }
 
 

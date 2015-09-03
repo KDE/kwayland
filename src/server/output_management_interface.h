@@ -46,8 +46,8 @@ class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
 public:
     virtual ~OutputManagementInterface();
 
-public Q_SLOTS:
-    void createConfiguration();
+Q_SIGNALS:
+    void configurationRequested();
 
 private:
     explicit OutputManagementInterface(Display *display, QObject *parent = nullptr);

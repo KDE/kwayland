@@ -120,6 +120,8 @@ void OutputManagement::Private::configurationCreatedCallback(void* data, org_kde
 
 void OutputManagement::createConfiguration()
 {
+    qDebug() << "send create" << (d->output_management.isValid());
+
     org_kde_kwin_output_management_create_configuration(d->output_management);
 }
 

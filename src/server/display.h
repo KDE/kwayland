@@ -38,6 +38,7 @@ namespace Server
 
 class CompositorInterface;
 class DataDeviceManagerInterface;
+class OutputConfigurationInterface;
 class OutputManagementInterface;
 class OutputDeviceInterface;
 class IdleInterface;
@@ -127,6 +128,7 @@ public:
     SeatInterface *createSeat(QObject *parent = nullptr);
     SubCompositorInterface *createSubCompositor(QObject *parent = nullptr);
     DataDeviceManagerInterface *createDataDeviceManager(QObject *parent = nullptr);
+    OutputConfigurationInterface *createOutputConfiguration(QObject *parent = nullptr);
     OutputManagementInterface *createOutputManagement(QObject *parent = nullptr);
     PlasmaShellInterface *createPlasmaShell(QObject *parent = nullptr);
     PlasmaWindowManagementInterface *createPlasmaWindowManagement(QObject *parent = nullptr);

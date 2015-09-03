@@ -58,6 +58,7 @@ OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, 
     : Global::Private(d, &org_kde_kwin_outputconfiguration_interface, s_version)
     , q(q)
 {
+    qDebug() << "create config interface";
 
 }
 
@@ -77,7 +78,7 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
 
 void OutputConfigurationInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
-    //qDebug() << "Bound!";
+    qDebug() << "Bound!";
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&org_kde_kwin_outputconfiguration_interface, qMin(version, s_version), id);
     if (!resource) {

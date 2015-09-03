@@ -145,15 +145,17 @@ void TestWaylandOutputManagement::createConfig()
 
     KWayland::Client::OutputManagement outputmanagement;
     outputmanagement.setup(registry.bindOutputManagement(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
-    wl_display_flush(m_connection->display());
+//    wl_display_flush(m_connection->display());
 
-    outputmanagement.createConfiguration();
-
-    QSignalSpy configSpy(&outputmanagement, SIGNAL(configurationCreated(const KWayland::Client::OutputConfiguration*)));
+    QVERIFY(outputmanagement.isValid());
+    QSignalSpy configSpy(&registry, SIGNAL(outputConfigurationAnnounced(quint32,quint32)));
     QVERIFY(configSpy.isValid());
-    outputmanagement.createConfiguration();
-    QVERIFY(configSpy.wait(1000));
+    qDebug() << "om" << outputmanagement;
 
+    outputmanagement.createConfiguration();
+    wl_display_flush(m_connection->display());
+    //QVERIFY(configSpy.wait());
+    configSpy.wait(500);
 }
 
 

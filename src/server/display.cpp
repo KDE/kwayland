@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
+#include "outputconfiguration_interface.h"
 #include "output_management_interface.h"
 #include "outputdevice_interface.h"
 #include "idle_interface.h"
@@ -221,10 +222,26 @@ OutputDeviceInterface *Display::createOutputDevice(QObject *parent)
     return output;
 }
 
+OutputConfigurationInterface *Display::createOutputConfiguration(QObject *parent)
+{
+    OutputConfigurationInterface *config = new OutputConfigurationInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, config, [this,config] { delete config; });
+    qDebug() << "new config";
+    return config;
+}
+
 OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
+    qDebug() << "create management";
     OutputManagementInterface *kwin = new OutputManagementInterface(this, parent);
+    return kwin;
     connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
+    connect(kwin, &OutputManagementInterface::configurationRequested, this, [this,parent] {
+        qDebug() << "create config";
+        auto outputConfigurationInterface = createOutputConfiguration(parent);
+        outputConfigurationInterface->create();
+
+    }, Qt::QueuedConnection);
     return kwin;
 }
 

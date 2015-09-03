@@ -23,12 +23,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
+#include "../../src/client/outputdevice.h"
+#include "../../src/client/outputconfiguration.h"
 #include "../../src/client/output_management.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
 #include "../../src/server/shell_interface.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/outputconfiguration_interface.h"
 #include "../../src/server/outputdevice_interface.h"
 #include "../../src/server/output_management_interface.h"
 
@@ -43,6 +46,8 @@ public:
 private Q_SLOTS:
     void init();
     void cleanup();
+
+    void createConfig();
 
     void testRemoval();
 
@@ -126,6 +131,29 @@ void TestWaylandOutputManagement::cleanup()
 
     delete m_display;
     m_display = nullptr;
+}
+
+void TestWaylandOutputManagement::createConfig()
+{
+    KWayland::Client::Registry registry;
+    QSignalSpy announced(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait());
+
+    KWayland::Client::OutputManagement outputmanagement;
+    outputmanagement.setup(registry.bindOutputManagement(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
+    wl_display_flush(m_connection->display());
+
+    outputmanagement.createConfiguration();
+
+    QSignalSpy configSpy(&outputmanagement, SIGNAL(configurationCreated(const KWayland::Client::OutputConfiguration*)));
+    QVERIFY(configSpy.isValid());
+    outputmanagement.createConfiguration();
+    QVERIFY(configSpy.wait(1000));
+
 }
 
 

@@ -385,7 +385,6 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
 
 void Registry::Private::handleRemove(uint32_t name)
 {
-    qDebug() << "interface remove: " << name;
     auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
         [name](const InterfaceData &data) {
             return data.name == name;
@@ -399,7 +398,6 @@ void Registry::Private::handleRemove(uint32_t name)
             emit (q->*sit.value().removedSignal)(data.name);
         }
     }
-    qDebug() << "emit removed" << name;
     emit q->interfaceRemoved(name);
 }
 

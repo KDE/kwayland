@@ -118,6 +118,12 @@ void OutputManagement::Private::configurationCreatedCallback(void* data, org_kde
     //emit o->q->done(); FIXME
 }
 
+void OutputManagement::createConfiguration()
+{
+    org_kde_kwin_output_management_create_configuration(d->output_management);
+}
+
+
 void OutputManagement::setup(org_kde_kwin_output_management *output)
 {
     d->setup(output);

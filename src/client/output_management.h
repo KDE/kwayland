@@ -91,6 +91,8 @@ public:
      **/
     EventQueue *eventQueue();
 
+    void createConfiguration();
+
     /**
      * @returns @c true if managing a org_kde_kwin_output_management.
      **/
@@ -107,7 +109,7 @@ Q_SIGNALS:
      * This signal is emitted right before the data is destroyed.
      **/
     void interfaceAboutToBeDestroyed();
-    
+
     /**
      * An output has been connected, but is not enabled yet.
      * @param output A pointer to the DisabledOutput. This pointers lifetime is
@@ -132,5 +134,6 @@ private:
 
 }
 }
+//Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration)
 
 #endif

@@ -111,11 +111,11 @@ org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_output
     appliedCallback
 };
 
-void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* output)
+void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* outputconfiguration)
 {
     auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
-    Q_ASSERT(o->outputconfiguration == output);
-    //emit o->q->done(); FIXME
+    Q_ASSERT(o->outputconfiguration == outputconfiguration);
+    emit o->q->applied();
 }
 
 void OutputConfiguration::setup(org_kde_kwin_outputconfiguration *output)

@@ -91,6 +91,9 @@ Surface *Surface::fromWindow(QWindow *window)
     if (!s) {
         return nullptr;
     }
+    if (auto surface = get(s)) {
+        return surface;
+    }
     Surface *surface = new Surface(window);
     surface->d->surface.setup(s, true);
     return surface;

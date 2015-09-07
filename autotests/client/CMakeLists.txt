@@ -169,6 +169,17 @@ add_test(kwayland-testBlur testBlur)
 ecm_mark_as_test(testBlur)
 
 ########################################################
+# Test Contrast
+########################################################
+set( testContrast_SRCS
+        test_wayland_contrast.cpp
+    )
+add_executable(testContrast ${testContrast_SRCS})
+target_link_libraries( testContrast Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client)
+add_test(kwayland-testContrast testContrast)
+ecm_mark_as_test(testContrast)
+
+########################################################
 # Test DataSource
 ########################################################
 set( testDataSource_SRCS

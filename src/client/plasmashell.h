@@ -121,6 +121,9 @@ public:
     /**
      * Creates a PlasmaShellSurface for the given @p surface and sets it up.
      *
+     * If a PlasmaShellSurface for the given @p surface has already been created
+     * a pointer to the existing one is returned instead of creating a new surface.
+     *
      * @param surface The native surface to create the PlasmaShellSurface for
      * @param parent The parent to use for the PlasmaShellSurface
      * @returns created PlasmaShellSurface
@@ -128,6 +131,9 @@ public:
     PlasmaShellSurface *createSurface(wl_surface *surface, QObject *parent = nullptr);
     /**
      * Creates a PlasmaShellSurface for the given @p surface and sets it up.
+     *
+     * If a PlasmaShellSurface for the given @p surface has already been created
+     * a pointer to the existing one is returned instead of creating a new surface.
      *
      * @param surface The Surface to create the PlasmaShellSurface for
      * @param parent The parent to use for the PlasmaShellSurface
@@ -218,7 +224,8 @@ public:
     enum class Role {
         Normal,
         Desktop,
-        Panel
+        Panel,
+        OnScreenDisplay
     };
     void setRole(Role role);
     void setPosition(const QPoint &point);
@@ -232,6 +239,7 @@ public:
     void setPanelBehavior(PanelBehavior behavior);
 
 private:
+    friend class PlasmaShell;
     class Private;
     QScopedPointer<Private> d;
 };

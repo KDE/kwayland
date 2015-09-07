@@ -35,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "shadow.h"
 #include "blur.h"
+#include "contrast.h"
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
@@ -52,6 +53,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-output-management-client-protocol.h>
 #include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
 #include <wayland-blur-client-protocol.h>
+#include <wayland-contrast-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -189,6 +191,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_blur_manager_interface,
         &Registry::blurAnnounced,
         &Registry::blurRemoved
+    }},
+    {Registry::Interface::Contrast, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_contrast_manager"),
+        &org_kde_kwin_contrast_manager_interface,
+        &Registry::contrastAnnounced,
+        &Registry::contrastRemoved
     }},
     {Registry::Interface::FullscreenShell, {
         1,
@@ -472,6 +481,7 @@ BIND(OutputManagement, org_kde_kwin_output_management)
 BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
+BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 
 #undef BIND
 #undef BIND2
@@ -516,6 +526,7 @@ CREATE(OutputManagement)
 CREATE(OutputDevice)
 CREATE(ShadowManager)
 CREATE(BlurManager)
+CREATE(ContrastManager)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

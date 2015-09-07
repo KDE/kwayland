@@ -18,8 +18,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef KWAYLAND_SERVER_BLUR_INTERFACE_H
-#define KWAYLAND_SERVER_BLUR_INTERFACE_H
+#ifndef KWAYLAND_SERVER_CONTRAST_INTERFACE_H
+#define KWAYLAND_SERVER_CONTRAST_INTERFACE_H
 
 #include "global.h"
 #include "resource.h"
@@ -35,29 +35,32 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT BlurManagerInterface : public Global
+class KWAYLANDSERVER_EXPORT ContrastManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~BlurManagerInterface();
+    virtual ~ContrastManagerInterface();
 
 private:
-    explicit BlurManagerInterface(Display *display, QObject *parent = nullptr);
+    explicit ContrastManagerInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
 };
 
-class KWAYLANDSERVER_EXPORT BlurInterface : public Resource
+class KWAYLANDSERVER_EXPORT ContrastInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~BlurInterface();
+    virtual ~ContrastInterface();
 
-    QRegion region();
+    QRegion region() const;
+    qreal contrast() const;
+    qreal intensity() const;
+    qreal saturation() const;
 
 private:
-    explicit BlurInterface(BlurManagerInterface *parent, wl_resource *parentResource);
-    friend class BlurManagerInterface;
+    explicit ContrastInterface(ContrastManagerInterface *parent, wl_resource *parentResource);
+    friend class ContrastManagerInterface;
 
     class Private;
     Private *d_func() const;

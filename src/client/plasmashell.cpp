@@ -37,6 +37,26 @@ public:
     EventQueue *queue = nullptr;
 };
 
+class PlasmaShellSurface::Private
+{
+public:
+    Private(PlasmaShellSurface *q);
+    ~Private();
+    void setup(org_kde_plasma_surface *surface);
+
+    WaylandPointer<org_kde_plasma_surface, org_kde_plasma_surface_destroy> surface;
+    QSize size;
+    QPointer<Surface> parentSurface;
+
+    static PlasmaShellSurface *get(Surface *surface);
+
+private:
+    PlasmaShellSurface *q;
+    static QVector<Private*> s_surfaces;
+};
+
+QVector<PlasmaShellSurface::Private*> PlasmaShellSurface::Private::s_surfaces;
+
 PlasmaShell::PlasmaShell(QObject *parent)
     : QObject(parent)
     , d(new Private)
@@ -86,6 +106,12 @@ EventQueue *PlasmaShell::eventQueue()
 PlasmaShellSurface *PlasmaShell::createSurface(wl_surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
+    auto kwS = Surface::get(surface);
+    if (kwS) {
+        if (auto s = PlasmaShellSurface::Private::get(kwS)) {
+            return s;
+        }
+    }
     PlasmaShellSurface *s = new PlasmaShellSurface(parent);
     connect(this, &PlasmaShell::interfaceAboutToBeReleased, s, &PlasmaShellSurface::release);
     connect(this, &PlasmaShell::interfaceAboutToBeDestroyed, s, &PlasmaShellSurface::destroy);
@@ -94,12 +120,12 @@ PlasmaShellSurface *PlasmaShell::createSurface(wl_surface *surface, QObject *par
         d->queue->addProxy(w);
     }
     s->setup(w);
+    s->d->parentSurface = QPointer<Surface>(kwS);
     return s;
 }
 
 PlasmaShellSurface *PlasmaShell::createSurface(Surface *surface, QObject *parent)
 {
-    Q_ASSERT(surface);
     return createSurface(*surface, parent);
 }
 
@@ -118,22 +144,28 @@ PlasmaShell::operator org_kde_plasma_shell*() const
     return d->shell;
 }
 
-class PlasmaShellSurface::Private
-{
-public:
-    Private(PlasmaShellSurface *q);
-    void setup(org_kde_plasma_surface *surface);
-
-    WaylandPointer<org_kde_plasma_surface, org_kde_plasma_surface_destroy> surface;
-    QSize size;
-
-private:
-    PlasmaShellSurface *q;
-};
-
 PlasmaShellSurface::Private::Private(PlasmaShellSurface *q)
     : q(q)
 {
+    s_surfaces << this;
+}
+
+PlasmaShellSurface::Private::~Private()
+{
+    s_surfaces.removeAll(this);
+}
+
+PlasmaShellSurface *PlasmaShellSurface::Private::get(Surface *surface)
+{
+    if (!surface) {
+        return nullptr;
+    }
+    for (auto it = s_surfaces.constBegin(); it != s_surfaces.constEnd(); ++it) {
+        if ((*it)->parentSurface == surface) {
+            return (*it)->q;
+        }
+    }
+    return nullptr;
 }
 
 void PlasmaShellSurface::Private::setup(org_kde_plasma_surface *s)
@@ -203,6 +235,9 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
         break;
     case Role::Panel:
         wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_PANEL;
+        break;
+    case Role::OnScreenDisplay:
+        wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_ONSCREENDISPLAY;
         break;
     default:
         Q_UNREACHABLE();

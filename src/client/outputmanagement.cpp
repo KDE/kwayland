@@ -18,7 +18,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "output_management.h"
+#include "outputmanagement.h"
 #include "wayland_pointer_p.h"
 #include "event_queue.h"
 // Qt
@@ -41,31 +41,31 @@ class OutputManagement::Private
 {
 public:
     Private(OutputManagement *q);
-    void setup(org_kde_kwin_output_management *o);
+    void setup(org_kde_kwin_outputmanagement *o);
     EventQueue *queue = nullptr;
 
-    WaylandPointer<org_kde_kwin_output_management, org_kde_kwin_output_management_destroy> output_management;
+    WaylandPointer<org_kde_kwin_outputmanagement, org_kde_kwin_outputmanagement_destroy> outputmanagement;
 
 private:
 
-    static void configurationCreatedCallback(void *data, org_kde_kwin_output_management *output_management, org_kde_kwin_outputconfiguration *config);
+    static void configurationCreatedCallback(void *data, org_kde_kwin_outputmanagement *outputmanagement, org_kde_kwin_outputconfiguration *config);
 
     OutputManagement *q;
-    static struct org_kde_kwin_output_management_listener s_outputListener;
+    static struct org_kde_kwin_outputmanagement_listener s_outputListener;
 };
 
 OutputManagement::Private::Private(OutputManagement *q)
-    : output_management(nullptr)
+    : outputmanagement(nullptr)
     , q(q)
 {
 }
 
-void OutputManagement::Private::setup(org_kde_kwin_output_management *o)
+void OutputManagement::Private::setup(org_kde_kwin_outputmanagement *o)
 {
     Q_ASSERT(o);
-    Q_ASSERT(!output_management);
-    output_management.setup(o);
-    org_kde_kwin_output_management_add_listener(output_management, &s_outputListener, this);
+    Q_ASSERT(!outputmanagement);
+    outputmanagement.setup(o);
+    org_kde_kwin_outputmanagement_add_listener(outputmanagement, &s_outputListener, this);
 }
 
 OutputManagement::OutputManagement(QObject *parent)
@@ -81,20 +81,20 @@ OutputManagement::~OutputManagement()
 
 void OutputManagement::destroy()
 {
-    if (!d->output_management) {
+    if (!d->outputmanagement) {
         return;
     }
     emit interfaceAboutToBeDestroyed();
-    d->output_management.destroy();
+    d->outputmanagement.destroy();
 }
 
 void OutputManagement::release()
 {
-    if (!d->output_management) {
+    if (!d->outputmanagement) {
         return;
     }
     emit interfaceAboutToBeReleased();
-    d->output_management.release();
+    d->outputmanagement.release();
 }
 
 void OutputManagement::setEventQueue(EventQueue *queue)
@@ -107,41 +107,41 @@ EventQueue *OutputManagement::eventQueue()
     return d->queue;
 }
 
-org_kde_kwin_output_management_listener OutputManagement::Private::s_outputListener = {
+org_kde_kwin_outputmanagement_listener OutputManagement::Private::s_outputListener = {
     configurationCreatedCallback
 };
 
-void OutputManagement::Private::configurationCreatedCallback(void* data, org_kde_kwin_output_management* output, org_kde_kwin_outputconfiguration* outputconfiguration)
+void OutputManagement::Private::configurationCreatedCallback(void* data, org_kde_kwin_outputmanagement* output, org_kde_kwin_outputconfiguration* outputconfiguration)
 {
     auto o = reinterpret_cast<OutputManagement::Private*>(data);
-    Q_ASSERT(o->output_management == output);
+    Q_ASSERT(o->outputmanagement == output);
     //emit o->q->done(); FIXME
 }
 
 void OutputManagement::createConfiguration()
 {
-    qDebug() << "send create" << (d->output_management.isValid());
+    qDebug() << "send create" << (d->outputmanagement.isValid());
 
-    org_kde_kwin_output_management_create_configuration(d->output_management);
+    org_kde_kwin_outputmanagement_create_configuration(d->outputmanagement);
 }
 
 
-void OutputManagement::setup(org_kde_kwin_output_management *output)
+void OutputManagement::setup(org_kde_kwin_outputmanagement *output)
 {
     d->setup(output);
 }
 
 bool OutputManagement::isValid() const
 {
-    return d->output_management.isValid();
+    return d->outputmanagement.isValid();
 }
 
-OutputManagement::operator org_kde_kwin_output_management*() {
-    return d->output_management;
+OutputManagement::operator org_kde_kwin_outputmanagement*() {
+    return d->outputmanagement;
 }
 
-OutputManagement::operator org_kde_kwin_output_management*() const {
-    return d->output_management;
+OutputManagement::operator org_kde_kwin_outputmanagement*() const {
+    return d->outputmanagement;
 }
 
 

@@ -22,7 +22,7 @@ set(CLIENT_LIB_SRCS
     idle.cpp
     keyboard.cpp
     outputconfiguration.cpp
-    output_management.cpp
+    outputmanagement.cpp
     outputdevice.cpp
     logging.cpp
     output.cpp
@@ -138,7 +138,7 @@ install(FILES
   idle.h
   keyboard.h
   outputconfiguration.h
-  output_management.h
+  outputmanagement.h
   outputdevice.h
   output.h
   pointer.h

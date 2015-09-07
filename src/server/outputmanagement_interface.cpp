@@ -18,7 +18,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#include "output_management_interface.h"
+#include "outputmanagement_interface.h"
 #include "global_p.h"
 #include "display.h"
 
@@ -51,18 +51,18 @@ private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    static const struct org_kde_kwin_output_management_interface s_interface;
+    static const struct org_kde_kwin_outputmanagement_interface s_interface;
     OutputManagementInterface *q;
 };
 
 OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_output_management_interface, s_version)
+    : Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)
     , q(q)
 {
 
 }
 
-const struct org_kde_kwin_output_management_interface OutputManagementInterface::Private::s_interface = {
+const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {
     createConfigurationCallback
 };
 
@@ -84,7 +84,7 @@ void OutputManagementInterface::Private::bind(wl_client *client, uint32_t versio
 {
     //qDebug() << "Bound!";
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kde_kwin_output_management_interface, qMin(version, s_version), id);
+    wl_resource *resource = c->createResource(&org_kde_kwin_outputmanagement_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;

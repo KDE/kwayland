@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
 #include "outputconfiguration_interface.h"
-#include "output_management_interface.h"
+#include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
 #include "idle_interface.h"
 #include "fakeinput_interface.h"

@@ -37,7 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../src/server/blur_interface.h"
 #include "../../src/server/contrast_interface.h"
 #include "../../src/server/subcompositor_interface.h"
-#include "../../src/server/output_management_interface.h"
+#include "../../src/server/outputmanagement_interface.h"
 #include "../../src/server/outputdevice_interface.h"
 // Wayland
 #include <wayland-client-protocol.h>

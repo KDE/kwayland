@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "idle.h"
 #include "logging_p.h"
 #include "outputconfiguration.h"
-#include "output_management.h"
+#include "outputmanagement.h"
 #include "outputdevice.h"
 #include "output.h"
 #include "plasmashell.h"
@@ -166,8 +166,8 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
     }},
     {Registry::Interface::OutputManagement, {
         1,
-        QByteArrayLiteral("org_kde_kwin_output_management"),
-        &org_kde_kwin_output_management_interface,
+        QByteArrayLiteral("org_kde_kwin_outputmanagement"),
+        &org_kde_kwin_outputmanagement_interface,
         &Registry::outputManagementAnnounced,
         &Registry::outputManagementRemoved
     }},
@@ -477,7 +477,7 @@ BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(FakeInput, org_kde_kwin_fake_input)
 BIND(OutputConfiguration, org_kde_kwin_outputconfiguration)
-BIND(OutputManagement, org_kde_kwin_output_management)
+BIND(OutputManagement, org_kde_kwin_outputmanagement)
 BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)

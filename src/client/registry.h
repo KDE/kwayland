@@ -35,7 +35,7 @@ struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
-struct org_kde_kwin_output_management;
+struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputconfiguration;
 struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
@@ -277,7 +277,7 @@ public:
     /**
      * FIXME: docs.
      **/
-    org_kde_kwin_output_management *bindOutputManagement(uint32_t name, uint32_t version) const;
+    org_kde_kwin_outputmanagement *bindOutputManagement(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_outputdevice with @p name and @p version.
      * If the @p name does not exist or is not for the outputdevice interface,
@@ -422,8 +422,8 @@ public:
      * the returned KWinConnectors will not be valid. Therefore it's recommended to call
      * isValid on the created instance.
      *
-     * @param name The name of the org_kde_kwin_output_management interface to bind
-     * @param version The version or the org_kde_kwin_output_management interface to use
+     * @param name The name of the org_kde_kwin_outputmanagement interface to bind
+     * @param version The version or the org_kde_kwin_outputmanagement interface to use
      * @param parent The parent for KWinOutputManagement
      *
      * @returns The created KWinOutputManagement.

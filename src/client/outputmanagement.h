@@ -18,8 +18,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-#ifndef WAYLAND_KWIN_OUTPUT_MANAGEMENT_H
-#define WAYLAND_KWIN_OUTPUT_MANAGEMENT_H
+#ifndef WAYLAND_KWIN_OUTPUTMANAGEMENT_H
+#define WAYLAND_KWIN_OUTPUTMANAGEMENT_H
 
 #include <QObject>
 #include <QPointer>
@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct org_kde_kwin_output_management;
+struct org_kde_kwin_outputmanagement;
 class QPoint;
 class QRect;
 
@@ -39,9 +39,9 @@ class OutputConfiguration;
 class EventQueue;
 
 /**
- * @short Wrapper for the org_kde_kwin_output_management interface.
+ * @short Wrapper for the org_kde_kwin_outputmanagement interface.
  *
- * This class provides a convenient wrapper for the org_kde_kwin_output_management interface.
+ * This class provides a convenient wrapper for the org_kde_kwin_outputmanagement interface.
  * Its main purpose is to provide information about connected, but disabled screens, i.e.
  * outputs that are not visible in the wl_output interface, but could be enabled by the
  * compositor.
@@ -55,7 +55,7 @@ class EventQueue;
  * This creates the KWinOutputManagement and sets it up directly. As an alternative this
  *
  * The OutputManagement can be used as a drop-in replacement for any
- * org_kde_kwin_output_management * pointer as it provides matching cast operators.
+ * org_kde_kwin_outputmanagement * pointer as it provides matching cast operators.
  *
  * Please note that all properties of OutputManagement are not valid until the
  * done signal has been emitted. The wayland server is pushing the
@@ -76,7 +76,7 @@ public:
      * When using Registry::createOutputManagement there is no need to call this
      * method.
      **/
-    void setup(org_kde_kwin_output_management *output_management);
+    void setup(org_kde_kwin_outputmanagement *outputmanagement);
 
     void release();
     void destroy();
@@ -94,11 +94,11 @@ public:
     void createConfiguration();
 
     /**
-     * @returns @c true if managing a org_kde_kwin_output_management.
+     * @returns @c true if managing a org_kde_kwin_outputmanagement.
      **/
     bool isValid() const;
-    operator org_kde_kwin_output_management*();
-    operator org_kde_kwin_output_management*() const;
+    operator org_kde_kwin_outputmanagement*();
+    operator org_kde_kwin_outputmanagement*() const;
 
 Q_SIGNALS:
     /**

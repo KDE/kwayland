@@ -14,7 +14,7 @@ set(SERVER_LIB_SRCS
     fakeinput_interface.cpp
     keyboard_interface.cpp
     outputconfiguration_interface.cpp
-    output_management_interface.cpp
+    outputmanagement_interface.cpp
     outputdevice_interface.cpp
     logging.cpp
     output_interface.cpp
@@ -133,7 +133,7 @@ install(FILES
   global.h
   idle_interface.h
   keyboard_interface.h
-  output_management_interface.h
+  outputmanagement_interface.h
   outputdevice_interface.h
   outputconfiguration_interface.h
   output_interface.h

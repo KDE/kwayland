@@ -779,7 +779,7 @@ void Generator::generateServerPrivateGlobalCtorBindClass(const Interface &interf
 {
     QString templateString = QStringLiteral(
 "%1::Private::Private(%1 *q, Display *d)\n"
-"    : Global::Private(d, &org_kde_kwin_blur_manager_interface, s_version)\n"
+"    : Global::Private(d, &%2_interface, s_version)\n"
 "    , q(q)\n"
 "{\n"
 "}\n"

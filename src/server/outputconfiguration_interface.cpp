@@ -19,6 +19,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputconfiguration_interface.h"
+#include "outputdevice_interface.h"
 //#include "global_p.h"
 #include "resource_p.h"
 #include "display.h"
@@ -43,6 +44,7 @@ public:
     void sendApplied();
 
     static const quint32 s_version = 1;
+    Display *display = nullptr;
 
 private:
     static void enableCallback(wl_client *client, wl_resource *resource,
@@ -73,12 +75,30 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
     applyCallback
 };
 
+Display *OutputConfigurationInterface::display() const
+{
+    Q_D();
+    return d->display;
+}
+
+void OutputConfigurationInterface::setDisplay(Display* display)
+{
+    Q_D();
+    d->display = display;
+}
+
+
 OutputConfigurationInterface::~OutputConfigurationInterface()
 {
 }
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
+    Private *d = cast<Private>(resource);
+    qDebug() << "server enable:" << outputdevice << enable;
+    Q_FOREACH (auto od, d->display->outputDevices()) {
+        qDebug() << "list od:" << od << od->enabled();
+    }
     // TODO: implement
 }
 

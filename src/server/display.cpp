@@ -357,6 +357,11 @@ QList< OutputInterface* > Display::outputs() const
     return d->outputs;
 }
 
+QList< OutputDeviceInterface* > Display::outputDevices() const
+{
+    return d->outputdevices;
+}
+
 ClientConnection *Display::getConnection(wl_client *client)
 {
     Q_ASSERT(client);

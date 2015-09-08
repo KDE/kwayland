@@ -93,7 +93,7 @@ void TestWaylandOutputManagement::init()
     m_serverOutput->setCurrentMode(QSize(1024, 768));
     m_serverOutput->create();
 
-    m_outputManagementInterface = m_display->createOutputManagement(this);
+    m_outputManagementInterface = m_display->createOutputManagement(0);
     m_outputManagementInterface->create();
     QVERIFY(m_outputManagementInterface->isValid());
 

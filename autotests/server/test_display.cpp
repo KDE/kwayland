@@ -200,7 +200,7 @@ void TestWaylandServerDisplay::testKWin()
     auto display = new KWayland::Server::Display(this);
     display->setSocketName("kwayland-test-0");
     display->start();
-    auto kwin = display->createOutputManagement(this);
+    auto kwin = display->createOutputManagement(0);
     kwin->create();
     QVERIFY(kwin->isValid());
 }

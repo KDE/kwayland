@@ -47,9 +47,10 @@ private Q_SLOTS:
     void init();
     void cleanup();
 
-    void createConfig();
+
 
     void testRemoval();
+    void createConfig();
 
 private:
     KWayland::Server::Display *m_display;
@@ -152,11 +153,9 @@ void TestWaylandOutputManagement::createConfig()
     QVERIFY(configSpy.isValid());
     qDebug() << "om" << outputmanagement;
 
-    return;
-    outputmanagement.createConfiguration();
-    wl_display_flush(m_connection->display());
-    //QVERIFY(configSpy.wait());
-    configSpy.wait(500);
+    auto config = outputmanagement.createConfiguration();
+
+    QVERIFY(config == nullptr);
 }
 
 

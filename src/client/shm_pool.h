@@ -56,7 +56,7 @@ class EventQueue;
  * @endcode
  *
  * The ShmPool holds a memory-mapped file from which it provides Buffers.
- * All Buffers are hold by the ShmPool and can be reused. Whenever a Buffer
+ * All Buffers are held by the ShmPool and can be reused. Whenever a Buffer
  * is requested the ShmPool tries to reuse an existing Buffer. A Buffer can
  * be reused if the following conditions hold
  * @li it's no longer marked as used
@@ -154,19 +154,19 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this ShmPool.
+     * Destroys the data held by this ShmPool.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new wl_shm interface
+     * that the instance can be deleted or set up to a new wl_shm interface
      * once there is a new connection available.
      *
      * All Buffers are destroyed!
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, shmPool, &ShmPool::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, shmPool, &ShmPool::destroy);
      * @endcode
      *
      * @see release

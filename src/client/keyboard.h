@@ -73,12 +73,12 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Keyboard.
+     * Destroys the data held by this Keyboard.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new wl_keyboard interface
+     * that the instance can be deleted or set up to a new wl_keyboard interface
      * once there is a new connection available.
      *
      * This method is automatically invoked when the Seat which created this

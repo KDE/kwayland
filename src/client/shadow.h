@@ -74,17 +74,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this ShadowManager.
+     * Destroys the data held by this ShadowManager.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_shadow_manager interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_shadow_manager interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, compositor, &ShadowManager::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, compositor, &ShadowManager::destroy);
      * @endcode
      *
      * @see release
@@ -159,17 +159,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Shadow.
+     * Destroys the data held by this Shadow.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_shadow interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_shadow interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, shadow, &Shadow::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, shadow, &Shadow::destroy);
      * @endcode
      *
      * @see release

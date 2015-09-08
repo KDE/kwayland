@@ -672,7 +672,7 @@ void Generator::generateServerGlobalClass(const Interface &interface)
 "    explicit %1(Display *display, QObject *parent = nullptr);\n"
 "    friend class Display;\n"
 "    class Private;\n"
-"}\n"
+"};\n"
 "\n");
     *m_stream.localData() << templateString.arg(interface.kwaylandServerName());
 }
@@ -692,7 +692,7 @@ void Generator::generateServerResourceClass(const Interface &interface)
 "\n"
 "    class Private;\n"
 "    Private *d_func() const;\n"
-"}\n"
+"};\n"
 "\n");
     *m_stream.localData() << templateString.arg(interface.kwaylandServerName()).arg(interface.factory()->kwaylandServerName());
 }
@@ -825,7 +825,7 @@ void Generator::generateServerPrivateResourceClass(const Interface &interface)
 "    }\n"
 "\n"
 "    static const struct %2_interface s_interface;\n"
-"}\n"
+"};\n"
 "\n");
     *m_stream.localData() << templateString.arg(interface.kwaylandServerName()).arg(interface.name());
 

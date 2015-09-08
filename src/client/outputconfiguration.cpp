@@ -1,76 +1,47 @@
-/********************************************************************
-Copyright 2013  Martin Gräßlin <mgraesslin@kde.org>
-Copyright 2015  Sebastian Kügler <sebas@kde.org>
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) version 3, or any
-later version accepted by the membership of KDE e.V. (or its
-successor approved by the membership of KDE e.V.), which shall
-act as a proxy defined in Section 6 of version 3 of the license.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library.  If not, see <http://www.gnu.org/licenses/>.
-*********************************************************************/
+/****************************************************************************
+ * Copyright 2015  Sebastian Kügler <sebas@kde.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) version 3, or any
+ * later version accepted by the membership of KDE e.V. (or its
+ * successor approved by the membership of KDE e.V.), which shall
+ * act as a proxy defined in Section 6 of version 3 of the license.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ ****************************************************************************/
 #include "outputconfiguration.h"
-#include "wayland_pointer_p.h"
+#include "outputmanagement.h"
 #include "event_queue.h"
-// Qt
-#include <QPoint>
-#include <QRect>
-#include <QSize>
-// wayland
-#include <wayland-client-protocol.h>
-#include "wayland-output-management-client-protocol.h"
+#include "wayland_pointer_p.h"
 
-#include <QDebug>
+#include "wayland-output-management-client-protocol.h"
 
 namespace KWayland
 {
-
 namespace Client
 {
+
 
 class OutputConfiguration::Private
 {
 public:
-    Private(OutputConfiguration *q);
-    void setup(org_kde_kwin_outputconfiguration *o);
-    EventQueue *queue = nullptr;
+    Private() = default;
 
     WaylandPointer<org_kde_kwin_outputconfiguration, org_kde_kwin_outputconfiguration_destroy> outputconfiguration;
-
-private:
-
-    static void appliedCallback(void *data, org_kde_kwin_outputconfiguration *outputconfiguration);
-
-    OutputConfiguration *q;
-    static struct org_kde_kwin_outputconfiguration_listener s_outputListener;
+    EventQueue *queue = nullptr;
 };
 
-OutputConfiguration::Private::Private(OutputConfiguration *q)
-    : outputconfiguration(nullptr)
-    , q(q)
-{
-}
-
-void OutputConfiguration::Private::setup(org_kde_kwin_outputconfiguration *o)
-{
-    Q_ASSERT(o);
-    Q_ASSERT(!outputconfiguration);
-    outputconfiguration.setup(o);
-    org_kde_kwin_outputconfiguration_add_listener(outputconfiguration, &s_outputListener, this);
-}
-
 OutputConfiguration::OutputConfiguration(QObject *parent)
-    : QObject(parent)
-    , d(new Private(this))
+: QObject(parent)
+, d(new Private)
 {
 }
 
@@ -79,22 +50,21 @@ OutputConfiguration::~OutputConfiguration()
     release();
 }
 
-void OutputConfiguration::destroy()
+void OutputConfiguration::setup(org_kde_kwin_outputconfiguration *outputconfiguration)
 {
-    if (!d->outputconfiguration) {
-        return;
-    }
-    emit interfaceAboutToBeDestroyed();
-    d->outputconfiguration.destroy();
+    Q_ASSERT(outputconfiguration);
+    Q_ASSERT(!d->outputconfiguration);
+    d->outputconfiguration.setup(outputconfiguration);
 }
 
 void OutputConfiguration::release()
 {
-    if (!d->outputconfiguration) {
-        return;
-    }
-    emit interfaceAboutToBeReleased();
     d->outputconfiguration.release();
+}
+
+void OutputConfiguration::destroy()
+{
+    d->outputconfiguration.destroy();
 }
 
 void OutputConfiguration::setEventQueue(EventQueue *queue)
@@ -107,27 +77,6 @@ EventQueue *OutputConfiguration::eventQueue()
     return d->queue;
 }
 
-org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_outputListener = {
-    appliedCallback
-};
-
-void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* outputconfiguration)
-{
-    auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
-    Q_ASSERT(o->outputconfiguration == outputconfiguration);
-    emit o->q->applied();
-}
-
-void OutputConfiguration::setup(org_kde_kwin_outputconfiguration *output)
-{
-    d->setup(output);
-}
-
-bool OutputConfiguration::isValid() const
-{
-    return d->outputconfiguration.isValid();
-}
-
 OutputConfiguration::operator org_kde_kwin_outputconfiguration*() {
     return d->outputconfiguration;
 }
@@ -136,6 +85,36 @@ OutputConfiguration::operator org_kde_kwin_outputconfiguration*() const {
     return d->outputconfiguration;
 }
 
+bool OutputConfiguration::isValid() const
+{
+    return d->outputconfiguration.isValid();
+}
+
+void OutputConfiguration::enable(OutputDevice *outputdevice, qint32 enable)
+{
+}
+
+void OutputConfiguration::mode(OutputDevice *outputdevice, qint32 modeId)
+{
+}
+
+void OutputConfiguration::transform(OutputDevice *outputdevice, qint32 transform)
+{
+}
+
+void OutputConfiguration::position(OutputDevice *outputdevice, qint32 x, qint32 y)
+{
+}
+
+void OutputConfiguration::scale(OutputDevice *outputdevice, qint32 scale)
+{
+}
+
+void OutputConfiguration::apply()
+{
+}
+
 
 }
 }
+

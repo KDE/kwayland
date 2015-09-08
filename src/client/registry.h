@@ -36,7 +36,6 @@ struct wl_shm;
 struct wl_subcompositor;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_outputmanagement;
-struct org_kde_kwin_outputconfiguration;
 struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
@@ -57,7 +56,6 @@ class DataDeviceManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
-class OutputConfiguration;
 class OutputManagement;
 class OutputDevice;
 class Idle;
@@ -120,7 +118,6 @@ public:
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
-        OutputConfiguration, ///< Refers to the org_kde_kwin_outputconfiguration interface
         OutputManagement, ///< Refers to the wl_data_device_manager interface
         OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         Shadow, /// Refers to org_kde_kwin_shadow_manager interface
@@ -270,10 +267,6 @@ public:
      * @see createShmPool
      **/
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
-    /**
-     * FIXME: docs.
-     **/
-    org_kde_kwin_outputconfiguration *bindOutputConfiguration(uint32_t name, uint32_t version) const;
     /**
      * FIXME: docs.
      **/
@@ -428,7 +421,6 @@ public:
      *
      * @returns The created KWinOutputManagement.
      **/
-    OutputConfiguration *createOutputConfiguration(quint32 name, quint32 version, QObject *parent = nullptr);
     OutputManagement *createOutputManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates an OutputDevice and sets it up to manage the interface identified by

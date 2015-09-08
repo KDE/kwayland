@@ -83,15 +83,15 @@ public:
      **/
     EventQueue *eventQueue();
 
-    void enable(OutputDevice *outputdevice, qint32 enable);
+    void setEnabled(OutputDevice *outputdevice, qint32 enable);
 
-    void mode(OutputDevice *outputdevice, qint32 modeId);
+    void setMode(OutputDevice *outputdevice, qint32 modeId);
 
-    void transform(OutputDevice *outputdevice, qint32 transform);
+    void setTransform(OutputDevice *outputdevice, qint32 transform);
 
-    void position(OutputDevice *outputdevice, qint32 x, qint32 y);
+    void setPosition(OutputDevice *outputdevice, qint32 x, qint32 y);
 
-    void scale(OutputDevice *outputdevice, qint32 scale);
+    void setScale(OutputDevice *outputdevice, qint32 scale);
 
     void apply();
 

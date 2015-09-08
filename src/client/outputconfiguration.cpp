@@ -18,11 +18,14 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 #include "outputconfiguration.h"
+#include "outputdevice.h"
 #include "outputmanagement.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
 
+#include <QDebug>
 #include "wayland-output-management-client-protocol.h"
+#include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 
 namespace KWayland
 {
@@ -90,23 +93,28 @@ bool OutputConfiguration::isValid() const
     return d->outputconfiguration.isValid();
 }
 
-void OutputConfiguration::enable(OutputDevice *outputdevice, qint32 enable)
+void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
+{
+    qDebug() << " => " << outputdevice << enable;
+    //org_kde_plasma_surface_set_position(d->surface, point.x(), point.y());
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, enable);
+
+}
+
+void OutputConfiguration::setMode(OutputDevice *outputdevice, qint32 modeId)
 {
 }
 
-void OutputConfiguration::mode(OutputDevice *outputdevice, qint32 modeId)
+void OutputConfiguration::setTransform(OutputDevice *outputdevice, qint32 transform)
 {
 }
 
-void OutputConfiguration::transform(OutputDevice *outputdevice, qint32 transform)
+void OutputConfiguration::setPosition(OutputDevice *outputdevice, qint32 x, qint32 y)
 {
 }
 
-void OutputConfiguration::position(OutputDevice *outputdevice, qint32 x, qint32 y)
-{
-}
-
-void OutputConfiguration::scale(OutputDevice *outputdevice, qint32 scale)
+void OutputConfiguration::setScale(OutputDevice *outputdevice, qint32 scale)
 {
 }
 

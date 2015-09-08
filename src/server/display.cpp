@@ -223,27 +223,13 @@ OutputDeviceInterface *Display::createOutputDevice(QObject *parent)
     return output;
 }
 
-OutputConfigurationInterface *Display::createOutputConfiguration(QObject *parent)
-{
-    OutputConfigurationInterface *config = new OutputConfigurationInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, config, [this,config] { delete config; });
-    qDebug() << "new config";
-    return config;
-}
-
 OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
     qDebug() << "create management";
-    OutputManagementInterface *kwin = new OutputManagementInterface(this, parent);
-    return kwin;
-    connect(this, &Display::aboutToTerminate, kwin, [this,kwin] { delete kwin; });
-    connect(kwin, &OutputManagementInterface::configurationRequested, this, [this,parent] {
-        qDebug() << "create config";
-        auto outputConfigurationInterface = createOutputConfiguration(parent);
-        outputConfigurationInterface->create();
-
-    }, Qt::QueuedConnection);
-    return kwin;
+    OutputManagementInterface *om = new OutputManagementInterface(this, parent);
+    return om;
+    connect(this, &Display::aboutToTerminate, om, [this,om] { delete om; });
+    return om;
 }
 
 SeatInterface *Display::createSeat(QObject *parent)

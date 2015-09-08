@@ -19,7 +19,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputconfiguration_interface.h"
-#include "global_p.h"
+//#include "global_p.h"
+#include "resource_p.h"
 #include "display.h"
 
 #include <wayland-server.h>
@@ -32,79 +33,96 @@ namespace KWayland
 namespace Server
 {
 
-static const quint32 s_version = 1;
 
-class OutputConfigurationInterface::Private : public Global::Private
+class OutputConfigurationInterface::Private : public Resource::Private
 {
 public:
-    struct ResourceData {
-        wl_resource *resource;
-        uint32_t version;
-    };
-    Private(OutputConfigurationInterface *q, Display *d);
+    Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource);
+    ~Private();
 
-    QList<ResourceData> resources;
     void sendApplied();
 
+    static const quint32 s_version = 1;
 
 private:
-    static void unbind(wl_resource *resource);
-    void bind(wl_client *client, uint32_t version, uint32_t id) override;
+    static void enableCallback(wl_client *client, wl_resource *resource,
+                               wl_resource * outputdevice, int32_t enable);
+    static void modeCallback(wl_client *client, wl_resource *resource,
+                             wl_resource * outputdevice, int32_t mode_id);
+    static void transformCallback(wl_client *client, wl_resource *resource,
+                                  wl_resource * outputdevice, int32_t transform);
+    static void positionCallback(wl_client *client, wl_resource *resource,
+                                 wl_resource * outputdevice, int32_t x, int32_t y);
+    static void scaleCallback(wl_client *client, wl_resource *resource,
+                              wl_resource * outputdevice, int32_t scale);
+    static void applyCallback(wl_client *client, wl_resource *resource);
 
-    OutputConfigurationInterface *q;
+    OutputConfigurationInterface *q_func() {
+        return reinterpret_cast<OutputConfigurationInterface *>(q);
+    }
+
+    static const struct org_kde_kwin_outputconfiguration_interface s_interface;
 };
 
-OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_outputconfiguration_interface, s_version)
-    , q(q)
-{
-    qDebug() << "create config interface";
+const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInterface::Private::s_interface = {
+    enableCallback,
+    modeCallback,
+    transformCallback,
+    positionCallback,
+    scaleCallback,
+    applyCallback
+};
 
+OutputConfigurationInterface::~OutputConfigurationInterface()
+{
 }
 
-OutputConfigurationInterface::OutputConfigurationInterface(Display *display, QObject *parent)
-    : Global(new Private(this, display), parent)
+void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
-    Q_D();
+    // TODO: implement
 }
 
-OutputConfigurationInterface::~OutputConfigurationInterface() = default;
+void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
+{
+    // TODO: implement
+}
 
+void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
+{
+    // TODO: implement
+}
+
+void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
+{
+    // TODO: implement
+}
+
+void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
+{
+    // TODO: implement
+}
+
+void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)
+{
+    // TODO: implement
+}
+
+OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource)
+: Resource::Private(q, c, parentResource, &org_kde_kwin_outputconfiguration_interface, &s_interface)
+{
+}
+
+OutputConfigurationInterface::Private::~Private()
+{
+    if (resource) {
+        wl_resource_destroy(resource);
+        resource = nullptr;
+    }
+}
 
 OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
-}
-
-void OutputConfigurationInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
-{
-    qDebug() << "Bound!";
-    auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&org_kde_kwin_outputconfiguration_interface, qMin(version, s_version), id);
-    if (!resource) {
-        wl_client_post_no_memory(client);
-        return;
-    }
-    wl_resource_set_user_data(resource, this);
-    wl_resource_set_destructor(resource, unbind);
-    ResourceData r;
-    r.resource = resource;
-    r.version = version;
-    resources << r;
-
-    // sendConfigurationCreated(); should we do this here already and skip the request?
-
-    c->flush();
-    //qDebug() << "Flushed";
-}
-
-void OutputConfigurationInterface::Private::unbind(wl_resource *resource)
-{
-    auto o = reinterpret_cast<OutputConfigurationInterface::Private*>(wl_resource_get_user_data(resource));
-    auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
-    if (it != o->resources.end()) {
-        o->resources.erase(it);
-    }
 }
 
 void OutputConfigurationInterface::applied()
@@ -117,9 +135,8 @@ void OutputConfigurationInterface::applied()
 
 void OutputConfigurationInterface::Private::sendApplied()
 {
-    foreach (auto r, resources) {
-        wl_resource *resource = r.resource;
-        org_kde_kwin_outputconfiguration_send_applied(resource);
+    foreach (auto r, s_allResources) {
+        org_kde_kwin_outputconfiguration_send_applied(r->resource);
     }
 }
 

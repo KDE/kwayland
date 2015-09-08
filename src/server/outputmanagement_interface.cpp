@@ -19,6 +19,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputmanagement_interface.h"
+#include "outputconfiguration_interface.h"
 #include "global_p.h"
 #include "display.h"
 
@@ -31,91 +32,69 @@ namespace KWayland
 {
 namespace Server
 {
-
 static const quint32 s_version = 1;
 
 class OutputManagementInterface::Private : public Global::Private
 {
 public:
-    struct ResourceData {
-        wl_resource *resource;
-        uint32_t version;
-    };
     Private(OutputManagementInterface *q, Display *d);
 
-    QList<ResourceData> resources;
-
 private:
-    static void createConfigurationCallback(wl_client *client, wl_resource *resource);
-
-    static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    static const struct org_kde_kwin_outputmanagement_interface s_interface;
+    static void unbind(wl_resource *resource);
+    static Private *cast(wl_resource *r) {
+        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    }
+
+    static void createConfigurationCallback(wl_client *client, wl_resource *resource, uint32_t id);
+
     OutputManagementInterface *q;
+    static const struct org_kde_kwin_outputmanagement_interface s_interface;
 };
-
-OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
-    : Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)
-    , q(q)
-{
-
-}
 
 const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {
     createConfigurationCallback
 };
 
 OutputManagementInterface::OutputManagementInterface(Display *display, QObject *parent)
-    : Global(new Private(this, display), parent)
+: Global(new Private(this, display), parent)
 {
-    Q_D();
 }
 
-OutputManagementInterface::~OutputManagementInterface() = default;
-
-
-OutputManagementInterface::Private *OutputManagementInterface::d_func() const
+OutputManagementInterface::~OutputManagementInterface()
 {
-    return reinterpret_cast<Private*>(d.data());
+}
+
+void OutputManagementInterface::Private::createConfigurationCallback(wl_client *client, wl_resource *resource, uint32_t id)
+{
+    // TODO: implement
+    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
+    emit o->q->configurationRequested();
+}
+
+OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
+: Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)
+, q(q)
+{
 }
 
 void OutputManagementInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
-    //qDebug() << "Bound!";
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&org_kde_kwin_outputmanagement_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
     }
-    wl_resource_set_user_data(resource, this);
-    wl_resource_set_destructor(resource, unbind);
-    ResourceData r;
-    r.resource = resource;
-    r.version = version;
-    resources << r;
-
-    // sendConfigurationCreated(); should we do this here already and skip the request?
-
-    c->flush();
-    //qDebug() << "Flushed";
+    wl_resource_set_implementation(resource, &s_interface, this, unbind);
+    // TODO: should we track?
 }
 
 void OutputManagementInterface::Private::unbind(wl_resource *resource)
 {
-    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
-    auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
-    if (it != o->resources.end()) {
-        o->resources.erase(it);
-    }
-}
-
-void OutputManagementInterface::Private::createConfigurationCallback(wl_client* client, wl_resource* resource)
-{
-    qDebug() << "configCallback";
-    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
-    emit o->q->configurationRequested();
+    Q_UNUSED(resource)
+    // TODO: implement?
 }
 
 

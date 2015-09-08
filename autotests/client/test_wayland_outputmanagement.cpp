@@ -47,10 +47,10 @@ private Q_SLOTS:
     void init();
     void cleanup();
 
-
-
     void testRemoval();
     void createConfig();
+
+    void testEnable();
 
 private:
     KWayland::Server::Display *m_display;
@@ -134,6 +134,62 @@ void TestWaylandOutputManagement::cleanup()
     m_display = nullptr;
 }
 
+void TestWaylandOutputManagement::testEnable()
+{
+    KWayland::Client::Registry registry;
+    QSignalSpy opannounced(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait());
+
+
+    KWayland::Client::OutputDevice output;
+    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QVERIFY(outputChanged.isValid());
+    output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
+    wl_display_flush(m_connection->display());
+    QVERIFY(outputChanged.wait());
+
+
+    KWayland::Client::OutputManagement outputmanagement;
+    outputmanagement.setup(registry.bindOutputManagement(opannounced.first().first().value<quint32>(), opannounced.first().last().value<quint32>()));
+    //    wl_display_flush(m_connection->display());
+
+    QVERIFY(outputmanagement.isValid());
+    QSignalSpy configSpy(&registry, SIGNAL(outputConfigurationAnnounced(quint32,quint32)));
+    QVERIFY(configSpy.isValid());
+    qDebug() << "om" << outputmanagement;
+
+    auto config = outputmanagement.createConfiguration();
+
+    QVERIFY(config == nullptr);
+
+
+    QCOMPARE(output.enabled(), true);
+
+    QSignalSpy enabledChanged(&output, SIGNAL(changed()));
+    QVERIFY(enabledChanged.isValid());
+
+    //m_serverOutput->setEnabled(false);
+    ////wl_display_flush(m_connection->display());
+
+    config->setEnabled(&output, false);
+
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output.enabled(), false);
+
+    m_serverOutput->setEnabled(true);
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output.enabled(), true);
+
+}
+
+
 void TestWaylandOutputManagement::createConfig()
 {
     KWayland::Client::Registry registry;
@@ -156,6 +212,20 @@ void TestWaylandOutputManagement::createConfig()
     auto config = outputmanagement.createConfiguration();
 
     QVERIFY(config == nullptr);
+    return;
+
+    //config->enable(m_serverOutput, false);
+
+
+    //config->setScale(m_serverOutput, 2);
+    //config->setPosition(m_serverOutput, QPoint(0, 1920); // right of full HD display
+    //config->setMode(m_serverOutput, 0);
+    //config->setTransform(m_serverOutput, 0);
+
+    //QSignalSpy enabledChangedSpy(&m_serverOutput, SIGNAL(enabledChanged()));
+
+    //config->apply();
+    //QVERIFY(enabledChangedSpy.wait(1000));
 }
 
 

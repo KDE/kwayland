@@ -78,6 +78,21 @@ namespace Client
  * thread->wait();
  * @endcode
  *
+ * In addition the ConnectionThread provides integration with QtWayland QPA plugin. For that
+ * it provides a static factory method:
+ *
+ * @code
+ * auto connection = ConnectionThread::fromApplication();
+ * @endcode
+ *
+ * The semantics of the ConnectionThread are slightly changed if it's integrated with QtWayland.
+ * The ConnectionThread does not hold the connection, does not emit connected or released signals
+ * (one can safely assume that the connection is valid when integrating with the Qt application),
+ * does not dispatch events. Given that the use case of the ConnectionThread is rather limited to
+ * a convenient API around wl_display to allow easily setup an own Registry in a QtWayland powered
+ * application. Also moving the ConnectionThread to a different thread is not necessarily recommended
+ * in that case as QtWayland holds it's connection in an own thread anyway.
+ *
  **/
 class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject
 {

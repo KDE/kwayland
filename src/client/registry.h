@@ -509,7 +509,6 @@ Q_SIGNALS:
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
-    void outputConfigurationAnnounced(quint32 name, quint32 version);
     void outputManagementAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a org_kde_kwin_outputdevice interface gets announced.

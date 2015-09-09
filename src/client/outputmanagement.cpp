@@ -23,6 +23,8 @@
 #include "wayland_pointer_p.h"
 #include "wayland-output-management-client-protocol.h"
 
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Client
@@ -90,8 +92,17 @@ bool OutputManagement::isValid() const
 
 OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
 {
+    OutputConfiguration *config = new OutputConfiguration(this);
+    qDebug() << "newed" << config << d->outputmanagement.isValid();
+    auto w = org_kde_kwin_outputmanagement_create_configuration(d->outputmanagement);
 
-    return nullptr;
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+
+    config->setup(w);
+    qDebug() << "config valid?" << config->isValid();
+    return config;
 }
 
 

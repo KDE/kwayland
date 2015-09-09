@@ -49,8 +49,6 @@ public:
 private:
     static void appliedCallback(void *data, org_kde_kwin_outputconfiguration *config);
     static void failedCallback(void *data, org_kde_kwin_outputconfiguration *config);
-
-
 };
 
 OutputConfiguration::OutputConfiguration(QObject *parent)
@@ -116,11 +114,8 @@ bool OutputConfiguration::isValid() const
 
 void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
 {
-    qDebug() << " => " << outputdevice << enable;
-    //org_kde_plasma_surface_set_position(d->surface, point.x(), point.y());
     org_kde_kwin_outputdevice *od = outputdevice->output();
     org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, enable);
-
 }
 
 void OutputConfiguration::setMode(OutputDevice *outputdevice, qint32 modeId)
@@ -152,14 +147,12 @@ org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_output
 
 void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* config)
 {
-    qDebug() << "APPLIED";
     auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
     emit o->q->applied();
 }
 
 void OutputConfiguration::Private::failedCallback(void* data, org_kde_kwin_outputconfiguration* config)
 {
-    qDebug() << "FAILED";
     auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
     emit o->q->failed();
 }

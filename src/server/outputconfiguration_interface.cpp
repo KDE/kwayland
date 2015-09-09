@@ -79,9 +79,7 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
 
 OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface* parent, wl_resource* parentResource): Resource(new Private(this, parent, parentResource))
 {
-    qDebug() << "constructing config" << this;
 }
-
 
 Display *OutputConfigurationInterface::display() const
 {
@@ -95,7 +93,6 @@ void OutputConfigurationInterface::setDisplay(Display* display)
     d->display = display;
 }
 
-
 OutputConfigurationInterface::~OutputConfigurationInterface()
 {
 }
@@ -103,8 +100,6 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
     Private *d = cast<Private>(resource);
-    qDebug() << "server enable:" << outputdevice << enable << resource;
-
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     o->setEnabled(enable);
 }
@@ -156,17 +151,14 @@ void OutputConfigurationInterface::setApplied()
 {
     Q_D();
     /* ... */
-    qDebug() << "set applied";
     d->sendApplied();
     emit applied();
 }
 
 void OutputConfigurationInterface::Private::sendApplied()
 {
-    qDebug() << "Sending";
     foreach (auto r, s_allResources) {
         org_kde_kwin_outputconfiguration_send_applied(r->resource);
-        qDebug() << "  Sent!";
     }
 }
 

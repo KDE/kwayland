@@ -232,6 +232,8 @@ void TestWaylandOutputManagement::testRemoval()
     QCOMPARE(outputManagementRemovedSpy.first().first(), m_announcedSpy->first().first());
     QVERIFY(!m_registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));
     QVERIFY(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
+
+    delete m_outputConfigurationInterface;
 }
 
 void TestWaylandOutputManagement::createConfig()
@@ -297,14 +299,14 @@ void TestWaylandOutputManagement::testApplied()
 void TestWaylandOutputManagement::testFailed()
 {
     QVERIFY(m_outputConfiguration->isValid());
-    QSignalSpy appliedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::failed);
+    QSignalSpy failedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::failed);
 
     m_outputConfiguration->apply();
     // At this point, we fake the compositor and just
     // tell the server to emit the applied signal
     m_outputConfigurationInterface->setFailed();
 
-    QVERIFY(appliedSpy.wait(1000));
+    QVERIFY(failedSpy.wait(1000));
 }
 
 

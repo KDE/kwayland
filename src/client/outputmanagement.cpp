@@ -93,7 +93,6 @@ bool OutputManagement::isValid() const
 OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
 {
     OutputConfiguration *config = new OutputConfiguration(this);
-    qDebug() << "newed" << config << d->outputmanagement.isValid();
     auto w = org_kde_kwin_outputmanagement_create_configuration(d->outputmanagement);
 
     if (d->queue) {
@@ -101,7 +100,6 @@ OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
     }
 
     config->setup(w);
-    qDebug() << "config valid?" << config->isValid();
     return config;
 }
 

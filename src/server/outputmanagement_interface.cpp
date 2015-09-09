@@ -87,10 +87,8 @@ void OutputManagementInterface::Private::createConfiguration(wl_client* client, 
     }
 
     configurationInterfaces[resource] = config;
-    qDebug() << "config added: " << configurationInterfaces.count();
     connect(config, &QObject::destroyed, [this, resource] {
         configurationInterfaces.remove(resource);
-        qDebug() << "config removed: " << configurationInterfaces.count();
     });
 
     emit q->configurationCreated(config);

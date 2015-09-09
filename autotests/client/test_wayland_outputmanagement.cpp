@@ -47,17 +47,15 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+
     void testCreate();
-
     void testOutputDevices();
-
-
     void createConfig();
 
     void testEnable();
-    
-private:
     void testRemoval();
+
+private:
 
 
     KWayland::Server::Display *m_display;
@@ -96,7 +94,6 @@ TestWaylandOutputManagement::TestWaylandOutputManagement(QObject *parent)
 
 void TestWaylandOutputManagement::initTestCase()
 {
-    qDebug() << "INIT";
     using namespace KWayland::Server;
     delete m_display;
     m_display = new Display(this);
@@ -142,7 +139,6 @@ void TestWaylandOutputManagement::initTestCase()
 
 void TestWaylandOutputManagement::cleanupTestCase()
 {
-    qDebug() << "CLEANUP";
     if (m_queue) {
         delete m_queue;
         m_queue = nullptr;
@@ -162,7 +158,7 @@ void TestWaylandOutputManagement::cleanupTestCase()
 
 void TestWaylandOutputManagement::testCreate()
 {
-    m_announcedSpy = new QSignalSpy(&m_registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
+    m_announcedSpy = new QSignalSpy(&m_registry, &KWayland::Client::Registry::outputManagementAnnounced);
     m_omSpy = new QSignalSpy(&m_registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
 
     QVERIFY(m_announcedSpy->isValid());
@@ -203,7 +199,7 @@ void TestWaylandOutputManagement::testOutputDevices()
     QCOMPARE(output->enabled(), true);
     QCOMPARE(output->edid()->eisaId, QString());
 
-    QSignalSpy outputChanged(output, SIGNAL(changed()));
+    QSignalSpy outputChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
 
     output->setup(m_registry.bindOutputDevice(m_omSpy->first().first().value<quint32>(), m_omSpy->first().last().value<quint32>()));
@@ -223,7 +219,7 @@ void TestWaylandOutputManagement::testOutputDevices()
 
 void TestWaylandOutputManagement::testRemoval()
 {
-    QSignalSpy outputManagementRemovedSpy(&m_registry, SIGNAL(outputManagementRemoved(quint32)));
+    QSignalSpy outputManagementRemovedSpy(&m_registry,&KWayland::Client::Registry::outputManagementRemoved);
     QVERIFY(outputManagementRemovedSpy.isValid());
 
     delete m_outputManagementInterface;
@@ -231,7 +227,6 @@ void TestWaylandOutputManagement::testRemoval()
     QCOMPARE(outputManagementRemovedSpy.first().first(), m_announcedSpy->first().first());
     QVERIFY(!m_registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));
     QVERIFY(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
-
 }
 
 void TestWaylandOutputManagement::createConfig()

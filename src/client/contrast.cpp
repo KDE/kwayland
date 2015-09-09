@@ -115,7 +115,7 @@ ContrastManager::operator org_kde_kwin_contrast_manager*() const
 class Contrast::Private
 {
 public:
-    WaylandPointer<org_kde_kwin_contrast, org_kde_kwin_contrast_destroy> contrast;
+    WaylandPointer<org_kde_kwin_contrast, org_kde_kwin_contrast_release> contrast;
 };
 
 Contrast::Contrast(QObject *parent)

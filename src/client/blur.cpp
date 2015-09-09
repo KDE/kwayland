@@ -115,7 +115,7 @@ BlurManager::operator org_kde_kwin_blur_manager*() const
 class Blur::Private
 {
 public:
-    WaylandPointer<org_kde_kwin_blur, org_kde_kwin_blur_destroy> blur;
+    WaylandPointer<org_kde_kwin_blur, org_kde_kwin_blur_release> blur;
 };
 
 Blur::Blur(QObject *parent)

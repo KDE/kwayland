@@ -37,6 +37,29 @@ class EventQueue;
 class Surface;
 class Output;
 
+/**
+ * @short Wrapper for the _wl_fullscreen_shell interface.
+ *
+ * This class provides a convenient wrapper for the _wl_fullscreen_shell interface.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create the FullscreenShell interface:
+ * @code
+ * FullscreenShell *f = registry->createFullscreenShell(name, version);
+ * @endcode
+ *
+ * This creates the FullscreenShell and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * FullscreenShell *f = new FullscreenShell;
+ * f->setup(registry->bindFullscreenShell(name, version));
+ * @endcode
+ *
+ * The FullscreenShell can be used as a drop-in replacement for any _wl_fullscreen_shell
+ * pointer as it provides matching cast operators.
+ *
+ * @see Registry
+ **/
 class KWAYLANDCLIENT_EXPORT FullscreenShell : public QObject
 {
     Q_OBJECT

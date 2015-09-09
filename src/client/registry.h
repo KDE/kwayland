@@ -203,7 +203,7 @@ public:
      * The first value of the returned pair is the "name", the second value is the "version".
      * If the @p interface has not been announced, both values are set to 0.
      * If there @p interface has been announced multiple times, the last announced is returned.
-     * In case one is interested in all announced interfaces, one should prefer @link{interfaces(Interface)}.
+     * In case one is interested in all announced interfaces, one should prefer @link interfaces(Interface) @endlink.
      *
      * The returned information can be passed into the bind or create methods.
      *

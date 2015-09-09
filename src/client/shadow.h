@@ -44,6 +44,30 @@ class EventQueue;
 class Shadow;
 class Surface;
 
+/**
+ * @short Wrapper for the org_kde_kwin_shadow_manager interface.
+ *
+ * This class provides a convenient wrapper for the org_kde_kwin_shadow_manager interface.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create the ShadowManager interface:
+ * @code
+ * ShadowManager *s = registry->createShadowManager(name, version);
+ * @endcode
+ *
+ * This creates the ShadowManager and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * ShadowManager *s = new ShadowManager;
+ * s->setup(registry->bindShadowManager(name, version));
+ * @endcode
+ *
+ * The ShadowManager can be used as a drop-in replacement for any org_kde_kwin_shadow_manager
+ * pointer as it provides matching cast operators.
+ *
+ * @see Registry
+ * @since 5.4
+ **/
 class KWAYLANDCLIENT_EXPORT ShadowManager : public QObject
 {
     Q_OBJECT

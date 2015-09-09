@@ -136,12 +136,19 @@ void SurfaceInterface::Private::setBlur(const QPointer<BlurInterface> &blur)
     pending.blurIsSet = true;
 }
 
+void SurfaceInterface::Private::setSlide(const QPointer<SlideInterface> &slide)
+{
+    pending.slide = slide;
+    pending.slideIsSet = true;
+}
+
 void SurfaceInterface::Private::setContrast(const QPointer<ContrastInterface> &contrast)
 {
     pending.contrast = contrast;
     pending.contrastIsSet = true;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_surface_interface SurfaceInterface::Private::s_interface = {
     destroyCallback,
     attachCallback,
@@ -153,6 +160,7 @@ const struct wl_surface_interface SurfaceInterface::Private::s_interface = {
     bufferTransformCallback,
     bufferScaleCallback
 };
+#endif
 
 SurfaceInterface::SurfaceInterface(CompositorInterface *parent, wl_resource *parentResource)
     : Resource(new Private(this, parent, parentResource))
@@ -200,6 +208,7 @@ void SurfaceInterface::Private::commit()
     const bool shadowChanged = pending.shadowIsSet;
     const bool blurChanged = pending.blurIsSet;
     const bool contrastChanged = pending.contrastIsSet;
+    const bool slideChanged = pending.slideIsSet;
     bool sizeChanged = false;
     auto buffer = current.buffer;
     if (bufferChanged) {
@@ -229,6 +238,10 @@ void SurfaceInterface::Private::commit()
     if (contrastChanged) {
         contrast = pending.contrast;
     }
+    auto slide = current.slide;
+    if (slideChanged) {
+        slide = pending.slide;
+    }
     QList<wl_resource*> callbacks = current.callbacks;
     callbacks.append(pending.callbacks);
     // copy values
@@ -238,6 +251,7 @@ void SurfaceInterface::Private::commit()
     current.shadow = shadow;
     current.blur = blur;
     current.contrast = contrast;
+    current.slide = slide;
     pending = State{};
     pending.children = current.children;
     pending.input = current.input;
@@ -284,6 +298,9 @@ void SurfaceInterface::Private::commit()
     }
     if (contrastChanged) {
         emit q->contrastChanged();
+    }
+    if (slideChanged) {
+        emit q->slideOnShowHideChanged();
     }
 }
 
@@ -520,6 +537,12 @@ QPointer< ContrastInterface > SurfaceInterface::contrast() const
 {
     Q_D();
     return d->current.contrast;
+}
+
+QPointer< SlideInterface > SurfaceInterface::slideOnShowHide() const
+{
+    Q_D();
+    return d->current.slide;
 }
 
 SurfaceInterface::Private *SurfaceInterface::d_func() const

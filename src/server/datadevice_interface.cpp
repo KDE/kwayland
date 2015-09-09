@@ -57,14 +57,18 @@ private:
     void setSelection(DataSourceInterface *dataSource);
     static void startDragCallback(wl_client *client, wl_resource *resource, wl_resource *source, wl_resource *origin, wl_resource *icon, uint32_t serial);
     static void setSelectionCallback(wl_client *client, wl_resource *resource, wl_resource *source, uint32_t serial);
+    static void releaseCallback(wl_client *client, wl_resource *resource);
 
     static const struct wl_data_device_interface s_interface;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_data_device_interface DataDeviceInterface::Private::s_interface = {
     startDragCallback,
-    setSelectionCallback
+    setSelectionCallback,
+    releaseCallback
 };
+#endif
 
 DataDeviceInterface::Private::Private(SeatInterface *seat, DataDeviceInterface *q, DataDeviceManagerInterface *manager, wl_resource *parentResource)
     : Resource::Private(q, manager, parentResource, &wl_data_device_interface, &s_interface)
@@ -101,6 +105,14 @@ void DataDeviceInterface::Private::setSelectionCallback(wl_client *client, wl_re
     Q_UNUSED(serial)
     // TODO: verify serial
     cast<Private>(resource)->setSelection(DataSourceInterface::get(source));
+}
+
+void DataDeviceInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client);
+    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    wl_resource_destroy(resource);
+    p->q->deleteLater();
 }
 
 void DataDeviceInterface::Private::setSelection(DataSourceInterface *dataSource)

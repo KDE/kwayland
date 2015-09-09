@@ -55,10 +55,12 @@ private:
     static const struct org_kde_kwin_blur_manager_interface s_interface;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_kwin_blur_manager_interface BlurManagerInterface::Private::s_interface = {
     createCallback,
     unsetCallback
 };
+#endif
 
 BlurManagerInterface::Private::Private(BlurManagerInterface *q, Display *d)
     : Global::Private(d, &org_kde_kwin_blur_manager_interface, s_version)
@@ -150,14 +152,18 @@ private:
 
     static void commitCallback(wl_client *client, wl_resource *resource);
     static void setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region);
+    static void releaseCallback(wl_client *client, wl_resource *resource);
 
     static const struct org_kde_kwin_blur_interface s_interface;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_kwin_blur_interface BlurInterface::Private::s_interface = {
     commitCallback,
-    setRegionCallback
+    setRegionCallback,
+    releaseCallback
 };
+#endif
 
 void BlurInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
 {
@@ -180,6 +186,14 @@ void BlurInterface::Private::setRegionCallback(wl_client *client, wl_resource *r
     } else {
         p->pendingRegion = QRegion();
     }
+}
+
+void BlurInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client);
+    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    wl_resource_destroy(resource);
+    p->q->deleteLater();
 }
 
 BlurInterface::Private::Private(BlurInterface *q, BlurManagerInterface *c, wl_resource *parentResource)

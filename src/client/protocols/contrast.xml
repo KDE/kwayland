@@ -41,5 +41,8 @@
       <request name="set_saturation">
         <arg name="saturation" type="fixed"/>
       </request>
+      <request name="release" type="destructor">
+        <description summary="release the contrast object"/>
+      </request>
   </interface>
 </protocol>

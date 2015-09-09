@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "display.h"
 #include "compositor_interface.h"
 #include "datadevicemanager_interface.h"
+#include "dpms_interface.h"
 #include "outputconfiguration_interface.h"
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
@@ -34,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shadow_interface.h"
 #include "blur_interface.h"
 #include "contrast_interface.h"
+#include "slide_interface.h"
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
 
@@ -306,6 +308,20 @@ ContrastManagerInterface *Display::createContrastManager(QObject *parent)
     auto b = new ContrastManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
     return b;
+}
+
+SlideManagerInterface *Display::createSlideManager(QObject *parent)
+{
+    auto b = new SlideManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
+    return b;
+}
+
+DpmsManagerInterface *Display::createDpmsManager(QObject *parent)
+{
+    auto d = new DpmsManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, d, [this, d] { delete d; });
+    return d;
 }
 
 void Display::createShm()

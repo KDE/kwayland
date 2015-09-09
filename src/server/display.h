@@ -38,12 +38,13 @@ namespace Server
 
 class CompositorInterface;
 class DataDeviceManagerInterface;
-class OutputConfigurationInterface;
-class OutputManagementInterface;
-class OutputDeviceInterface;
+class DpmsManagerInterface;
 class IdleInterface;
 class FakeInputInterface;
 class OutputInterface;
+class OutputDeviceInterface;
+class OutputConfigurationInterface;
+class OutputManagementInterface;
 class PlasmaShellInterface;
 class PlasmaWindowManagementInterface;
 class QtSurfaceExtensionInterface;
@@ -51,9 +52,15 @@ class SeatInterface;
 class ShadowManagerInterface;
 class BlurManagerInterface;
 class ContrastManagerInterface;
+class SlideManagerInterface;
 class ShellInterface;
 class SubCompositorInterface;
 
+/**
+ * @brief Class holding the Wayland server display loop.
+ *
+ * @todo Improve documentation
+ **/
 class KWAYLANDSERVER_EXPORT Display : public QObject
 {
     Q_OBJECT
@@ -138,6 +145,8 @@ public:
     ShadowManagerInterface *createShadowManager(QObject *parent = nullptr);
     BlurManagerInterface *createBlurManager(QObject *parent = nullptr);
     ContrastManagerInterface *createContrastManager(QObject *parent = nullptr);
+    SlideManagerInterface *createSlideManager(QObject *parent = nullptr);
+    DpmsManagerInterface *createDpmsManager(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

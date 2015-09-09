@@ -55,10 +55,12 @@ private:
     static const struct org_kde_kwin_contrast_manager_interface s_interface;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_kwin_contrast_manager_interface ContrastManagerInterface::Private::s_interface = {
     createCallback,
     unsetCallback
 };
+#endif
 
 ContrastManagerInterface::Private::Private(ContrastManagerInterface *q, Display *d)
     : Global::Private(d, &org_kde_kwin_contrast_manager_interface, s_version)
@@ -159,17 +161,21 @@ private:
     static void setContrastCallback(wl_client *client, wl_resource *resource, wl_fixed_t contrast);
     static void setIntensityCallback(wl_client *client, wl_resource *resource, wl_fixed_t intensity);
     static void setSaturationCallback(wl_client *client, wl_resource *resource, wl_fixed_t saturation);
+    static void releaseCallback(wl_client *client, wl_resource *resource);
 
     static const struct org_kde_kwin_contrast_interface s_interface;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_kwin_contrast_interface ContrastInterface::Private::s_interface = {
     commitCallback,
     setRegionCallback,
     setContrastCallback,
     setIntensityCallback,
-    setSaturationCallback
+    setSaturationCallback,
+    releaseCallback
 };
+#endif
 
 void ContrastInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
 {
@@ -216,6 +222,14 @@ void ContrastInterface::Private::setSaturationCallback(wl_client *client, wl_res
     Q_UNUSED(client)
     Private *p = cast<Private>(resource);
     p->pendingSaturation = wl_fixed_to_double(saturation);
+}
+
+void ContrastInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client);
+    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    wl_resource_destroy(resource);
+    p->q->deleteLater();
 }
 
 ContrastInterface::Private::Private(ContrastInterface *q, ContrastManagerInterface *c, wl_resource *parentResource)

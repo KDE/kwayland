@@ -836,6 +836,7 @@ void Generator::generateServerPrivateResourceClass(const Interface &interface)
 
 void Generator::generateServerPrivateInterfaceClass(const Interface &interface)
 {
+    *m_stream.localData() << QStringLiteral("#ifndef DOXYGEN_SHOULD_SKIP_THIS\n");
     *m_stream.localData() << QStringLiteral("const struct %2_interface %1::Private::s_interface = {\n").arg(interface.kwaylandServerName()).arg(interface.name());
     bool first = true;
     for (auto r: interface.requests()) {
@@ -846,7 +847,7 @@ void Generator::generateServerPrivateInterfaceClass(const Interface &interface)
         }
         *m_stream.localData() << QStringLiteral("    %1Callback").arg(toCamelCase(r.name()));
     }
-    *m_stream.localData() << QStringLiteral("\n};\n\n");
+    *m_stream.localData() << QStringLiteral("\n};\n#endif\n\n");
 }
 
 void Generator::generateServerPrivateResourceCtorDtorClass(const Interface &interface)
@@ -1014,12 +1015,12 @@ void Generator::generateClientClassReleaseDestroy(const Interface &interface)
 "     **/\n"
 "    void release();\n"
 "    /**\n"
-"     * Destroys the data hold by this %1.\n"
+"     * Destroys the data held by this %1.\n"
 "     * This method is supposed to be used when the connection to the Wayland\n"
-"     * server goes away. If the connection is not valid any more, it's not\n"
-"     * possible to call release any more as that calls into the Wayland\n"
+"     * server goes away. If the connection is not valid anymore, it's not\n"
+"     * possible to call release anymore as that calls into the Wayland\n"
 "     * connection and the call would fail. This method cleans up the data, so\n"
-"     * that the instance can be deleted or setup to a new %2 interface\n"
+"     * that the instance can be deleted or set up to a new %2 interface\n"
 "     * once there is a new connection available.\n"
 "     *\n"
 "     * It is suggested to connect this method to ConnectionThread::connectionDied:\n"

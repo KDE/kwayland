@@ -30,9 +30,11 @@ namespace KWayland
 namespace Client
 {
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_buffer_listener Buffer::Private::s_listener = {
     Buffer::Private::releasedCallback
 };
+#endif
 
 Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset, Format format)
     : shm(parent)

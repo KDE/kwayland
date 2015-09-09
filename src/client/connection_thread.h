@@ -47,9 +47,9 @@ namespace Client
  * thread->start();
  * @endcode
  *
- * To finalize the initialization of the connection one needs to call @link ::initConnection.
+ * To finalize the initialization of the connection one needs to call @link ::initConnection @endlink.
  * This starts an asynchronous connection initialization. In case the initialization
- * succeeds the signal @link ::connected will be emitted, otherwise @link ::failed will
+ * succeeds the signal @link ::connected @endlink will be emitted, otherwise @link ::failed @endlink will
  * be emitted:
  *
  * @code
@@ -63,7 +63,7 @@ namespace Client
  * @endcode
  *
  * This class is also responsible for dispatching events. Whenever new data is available on
- * the Wayland socket, it will be dispatched and the signal @link ::eventsRead is emitted.
+ * the Wayland socket, it will be dispatched and the signal @link ::eventsRead @endlink is emitted.
  * This allows further event queues in other threads to also dispatch their events.
  *
  * Furthermore this class flushes the Wayland connection whenever the QAbstractEventDispatcher
@@ -77,6 +77,21 @@ namespace Client
  * thread->quit();
  * thread->wait();
  * @endcode
+ *
+ * In addition the ConnectionThread provides integration with QtWayland QPA plugin. For that
+ * it provides a static factory method:
+ *
+ * @code
+ * auto connection = ConnectionThread::fromApplication();
+ * @endcode
+ *
+ * The semantics of the ConnectionThread are slightly changed if it's integrated with QtWayland.
+ * The ConnectionThread does not hold the connection, does not emit connected or released signals
+ * (one can safely assume that the connection is valid when integrating with the Qt application),
+ * does not dispatch events. Given that the use case of the ConnectionThread is rather limited to
+ * a convenient API around wl_display to allow easily setup an own Registry in a QtWayland powered
+ * application. Also moving the ConnectionThread to a different thread is not necessarily recommended
+ * in that case as QtWayland holds it's connection in an own thread anyway.
  *
  **/
 class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject
@@ -115,7 +130,7 @@ public:
      * The default socket name is derived from environment variable WAYLAND_DISPLAY
      * and if not set is hard coded to "wayland-0".
      *
-     * The socket name will be ignored if a file descriptor has been set through @link{setSocketFd}.
+     * The socket name will be ignored if a file descriptor has been set through @link setSocketFd @endlink.
      *
      * @see setSocketFd
      **/
@@ -124,7 +139,7 @@ public:
      * Sets the socket @p fd to connect to.
      * Only applies if called before calling initConnection.
      * If this method is invoked, the connection will be created on the file descriptor
-     * and not on the socket name passed through @link{setSocketName} or through the
+     * and not on the socket name passed through @link setSocketName @endlink or through the
      * default environment variable WAYLAND_DISPLAY.
      * @see setSocketName
      **/
@@ -141,8 +156,8 @@ public:
 public Q_SLOTS:
     /**
      * Initializes the connection in an asynchronous way.
-     * In case the connection gets established the signal @link ::connected will be
-     * emitted, on failure the signal @link ::failed will be emitted.
+     * In case the connection gets established the signal @link ::connected @endlink will be
+     * emitted, on failure the signal @link ::failed @endlink will be emitted.
      *
      * @see connected
      * @see failed

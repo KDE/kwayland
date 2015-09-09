@@ -70,17 +70,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this ContrastManager.
+     * Destroys the data held by this ContrastManager.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_contrast_manager interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_contrast_manager interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, contrastManager, &ContrastManager::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, contrastManager, &ContrastManager::destroy);
      * @endcode
      *
      * @see release
@@ -155,17 +155,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Contrast.
+     * Destroys the data held by this Contrast.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_contrast interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_contrast interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, contrast, &Contrast::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, contrast, &Contrast::destroy);
      * @endcode
      *
      * @see release

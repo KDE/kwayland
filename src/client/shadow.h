@@ -44,6 +44,30 @@ class EventQueue;
 class Shadow;
 class Surface;
 
+/**
+ * @short Wrapper for the org_kde_kwin_shadow_manager interface.
+ *
+ * This class provides a convenient wrapper for the org_kde_kwin_shadow_manager interface.
+ *
+ * To use this class one needs to interact with the Registry. There are two
+ * possible ways to create the ShadowManager interface:
+ * @code
+ * ShadowManager *s = registry->createShadowManager(name, version);
+ * @endcode
+ *
+ * This creates the ShadowManager and sets it up directly. As an alternative this
+ * can also be done in a more low level way:
+ * @code
+ * ShadowManager *s = new ShadowManager;
+ * s->setup(registry->bindShadowManager(name, version));
+ * @endcode
+ *
+ * The ShadowManager can be used as a drop-in replacement for any org_kde_kwin_shadow_manager
+ * pointer as it provides matching cast operators.
+ *
+ * @see Registry
+ * @since 5.4
+ **/
 class KWAYLANDCLIENT_EXPORT ShadowManager : public QObject
 {
     Q_OBJECT
@@ -74,17 +98,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this ShadowManager.
+     * Destroys the data held by this ShadowManager.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_shadow_manager interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_shadow_manager interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, compositor, &ShadowManager::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, compositor, &ShadowManager::destroy);
      * @endcode
      *
      * @see release
@@ -159,17 +183,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Shadow.
+     * Destroys the data held by this Shadow.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new org_kde_kwin_shadow interface
+     * that the instance can be deleted or set up to a new org_kde_kwin_shadow interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, shadow, &Shadow::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, shadow, &Shadow::destroy);
      * @endcode
      *
      * @see release

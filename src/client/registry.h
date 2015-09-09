@@ -39,9 +39,11 @@ struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
+struct org_kde_kwin_dpms_manager;
 struct org_kde_kwin_shadow_manager;
 struct org_kde_kwin_blur_manager;
 struct org_kde_kwin_contrast_manager;
+struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 
@@ -53,6 +55,7 @@ namespace Client
 class Compositor;
 class ConnectionThread;
 class DataDeviceManager;
+class DpmsManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
@@ -66,6 +69,7 @@ class Seat;
 class ShadowManager;
 class BlurManager;
 class ContrastManager;
+class SlideManager;
 class Shell;
 class ShmPool;
 class SubCompositor;
@@ -122,7 +126,9 @@ public:
         OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         Shadow, /// Refers to org_kde_kwin_shadow_manager interface
         Blur, /// refers to org_kde_kwin_blur_manager interface
-        Contrast /// refers to org_kde_kwin_contrast_manager interface
+        Contrast, /// refers to org_kde_kwin_contrast_manager interface
+        Slide, /// refers to org_kde_kwin_slide_manager
+        Dpms /// Refers to org_kde_kwin_dpms_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -134,17 +140,17 @@ public:
      **/
     void release();
     /**
-     * Destroys the data hold by this Registry.
+     * Destroys the data held by this Registry.
      * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid any more, it's not
-     * possible to call release any more as that calls into the Wayland
+     * server goes away. If the connection is not valid anymore, it's not
+     * possible to call release anymore as that calls into the Wayland
      * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or setup to a new wl_registry interface
+     * that the instance can be deleted or set up to a new wl_registry interface
      * once there is a new connection available.
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, registry, &Registry::destroyed);
+     * connect(connection, &ConnectionThread::connectionDied, registry, &Registry::destroy);
      * @endcode
      *
      * @see release
@@ -209,7 +215,7 @@ public:
      * The first value of the returned pair is the "name", the second value is the "version".
      * If the @p interface has not been announced, both values are set to 0.
      * If there @p interface has been announced multiple times, the last announced is returned.
-     * In case one is interested in all announced interfaces, one should prefer @link{interfaces(Interface)}.
+     * In case one is interested in all announced interfaces, one should prefer @link interfaces(Interface) @endlink.
      *
      * The returned information can be passed into the bind or create methods.
      *
@@ -308,14 +314,96 @@ public:
      * @see createFullscreenShell
      **/
     _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the wl_data_device_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the data device manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createDataDeviceManager instead.
+     * @see createDataDeviceManager
+     **/
     wl_data_device_manager *bindDataDeviceManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_plasma_shell with @p name and @p version.
+     * If the @p name does not exist or is not for the Plasma shell interface,
+     * @c null will be returned.
+     *
+     * Prefer using createPlasmaShell instead.
+     * @see createPlasmaShell
+     * @since 5.4
+     **/
     org_kde_plasma_shell *bindPlasmaShell(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_plasma_window_management with @p name and @p version.
+     * If the @p name does not exist or is not for the Plasma window management interface,
+     * @c null will be returned.
+     *
+     * Prefer using createPlasmaWindowManagement instead.
+     * @see createPlasmaWindowManagement
+     * @since 5.4
+     **/
     org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_idle with @p name and @p version.
+     * If the @p name does not exist or is not for the idle interface,
+     * @c null will be returned.
+     *
+     * Prefer using createIdle instead.
+     * @see createIdle
+     * @since 5.4
+     **/
     org_kde_kwin_idle *bindIdle(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_fake_input with @p name and @p version.
+     * If the @p name does not exist or is not for the fake input interface,
+     * @c null will be returned.
+     *
+     * Prefer using createFakeInput instead.
+     * @see createFakeInput
+     * @since 5.4
+     **/
     org_kde_kwin_fake_input *bindFakeInput(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_shadow_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the shadow manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createShadowManager instead.
+     * @see createShadowManager
+     * @since 5.4
+     **/
     org_kde_kwin_shadow_manager *bindShadowManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_blur_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the blur manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createBlurManager instead.
+     * @see createBlurManager
+     * @since 5.5
+     **/
     org_kde_kwin_blur_manager *bindBlurManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_contrast_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the contrast manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createContrastManager instead.
+     * @see createContrastManager
+     * @since 5.5
+     **/
     org_kde_kwin_contrast_manager *bindContrastManager(uint32_t name, uint32_t version) const;
+    org_kde_kwin_slide_manager * bindSlideManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_dpms_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the dpms manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createDpmsManager instead.
+     * @see createDpmsManager
+     * @since 5.5
+     **/
+    org_kde_kwin_dpms_manager *bindDpmsManager(uint32_t name, uint32_t version) const;
 
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
@@ -452,17 +540,177 @@ public:
      * @returns The created FullscreenShell.
      **/
     FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a DataDeviceManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the wl_data_device_manager interface,
+     * the returned DataDeviceManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the wl_data_device_manager interface to bind
+     * @param version The version or the wl_data_device_manager interface to use
+     * @param parent The parent for DataDeviceManager
+     *
+     * @returns The created DataDeviceManager.
+     **/
     DataDeviceManager *createDataDeviceManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a PlasmaShell and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_plasma_shell interface,
+     * the returned PlasmaShell will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_plasma_shell interface to bind
+     * @param version The version or the org_kde_plasma_shell interface to use
+     * @param parent The parent for PlasmaShell
+     *
+     * @returns The created PlasmaShell.
+     * @since 5.4
+     **/
     PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a PlasmaWindowManagement and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_plasma_window_management interface,
+     * the returned PlasmaWindowManagement will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_plasma_window_management interface to bind
+     * @param version The version or the org_kde_plasma_window_management interface to use
+     * @param parent The parent for PlasmaWindowManagement
+     *
+     * @returns The created PlasmaWindowManagement.
+     * @since 5.4
+     **/
     PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates an Idle and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_idle interface,
+     * the returned Idle will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_idle interface to bind
+     * @param version The version or the org_kde_kwin_idle interface to use
+     * @param parent The parent for Idle
+     *
+     * @returns The created Idle.
+     * @since 5.4
+     **/
     Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a FakeInput and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_fake_input interface,
+     * the returned FakeInput will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_fake_input interface to bind
+     * @param version The version or the org_kde_kwin_fake_input interface to use
+     * @param parent The parent for FakeInput
+     *
+     * @returns The created FakeInput.
+     * @since 5.4
+     **/
     FakeInput *createFakeInput(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a ShadowManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_shadow_manager interface,
+     * the returned ShadowManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_shadow_manager interface to bind
+     * @param version The version or the org_kde_kwin_shadow_manager interface to use
+     * @param parent The parent for ShadowManager
+     *
+     * @returns The created ShadowManager.
+     * @since 5.4
+     **/
     ShadowManager *createShadowManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a BlurManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_blur_manager interface,
+     * the returned BlurManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_blur_manager interface to bind
+     * @param version The version or the org_kde_kwin_blur_manager interface to use
+     * @param parent The parent for BlurManager
+     *
+     * @returns The created BlurManager.
+     * @since 5.5
+     **/
     BlurManager *createBlurManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a ContrastManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_contrast_manager interface,
+     * the returned ContrastManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_contrast_manager interface to bind
+     * @param version The version or the org_kde_kwin_contrast_manager interface to use
+     * @param parent The parent for ContrastManager
+     *
+     * @returns The created ContrastManager.
+     * @since 5.5
+     **/
     ContrastManager *createContrastManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a SlideManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_slide_manager interface,
+     * the returned SlideManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_slide_manager interface to bind
+     * @param version The version or the org_kde_kwin_slide_manager interface to use
+     * @param parent The parent for SlideManager
+     *
+     * @returns The created SlideManager.
+     * @since 5.5
+     **/
+    SlideManager *createSlideManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a DpmsManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_dpms_manager interface,
+     * the returned DpmsManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_dpms_manager interface to bind
+     * @param version The version or the org_kde_kwin_dpms_manager interface to use
+     * @param parent The parent for DpmsManager
+     *
+     * @returns The created DpmsManager.
+     * @since 5.5
+     **/
+    DpmsManager *createDpmsManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
+    /**
+     * cast operator to the low-level Wayland @c wl_registry
+     **/
     operator wl_registry*();
+    /**
+     * cast operator to the low-level Wayland @c wl_registry
+     **/
     operator wl_registry*() const;
+    /**
+     * @returns access to the low-level Wayland @c wl_registry
+     **/
     wl_registry *registry();
 
 Q_SIGNALS:
@@ -508,7 +756,13 @@ Q_SIGNALS:
      * @param version The maximum supported version of the announced interface
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a wl_data_device_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     **/
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
+
     void outputManagementAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a org_kde_kwin_outputdevice interface gets announced.
@@ -516,13 +770,69 @@ Q_SIGNALS:
      * @param version The maximum supported version of the announced interface
      **/
     void outputDeviceAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_plasma_shell interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.4
+     **/
     void plasmaShellAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_plasma_window_management interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.4
+     **/
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_idle interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.4
+     **/
     void idleAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_fake_input interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.4
+     **/
     void fakeInputAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_shadow_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.4
+     **/
     void shadowAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_blur_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.5
+     **/
     void blurAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_contrast_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.5
+     **/
     void contrastAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_slide_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.5
+     **/
+    void slideAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_dpms_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.5
+     **/
+    void dpmsAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
@@ -558,6 +868,10 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void fullscreenShellRemoved(quint32 name);
+    /**
+     * Emitted whenever a wl_data_device_manager interface gets removed.
+     * @param name The name for the removed interface
+     **/
     void dataDeviceManagerRemoved(quint32 name);
     void outputManagementRemoved(quint32 name);
     void outputConfigurationRemoved(quint32 name);
@@ -566,13 +880,60 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void outputDeviceRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_plasma_shell interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.4
+     **/
     void plasmaShellRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_plasma_window_management interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.4
+     **/
     void plasmaWindowManagementRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_idle interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.4
+     **/
     void idleRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_fake_input interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.4
+     **/
     void fakeInputRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_shadow_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.4
+     **/
     void shadowRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_blur_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
     void blurRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_contrast_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
     void contrastRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_slide_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
+    void slideRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_dpms_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
+    void dpmsRemoved(quint32 name);
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

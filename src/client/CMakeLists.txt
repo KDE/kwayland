@@ -11,12 +11,13 @@ set(CLIENT_LIB_SRCS
     compositor.cpp
     connection_thread.cpp
     contrast.cpp
+    slide.cpp
     event_queue.cpp
     datadevice.cpp
     datadevicemanager.cpp
     dataoffer.cpp
     datasource.cpp
-    disabledoutput.cpp
+    dpms.cpp
     fakeinput.cpp
     fullscreen_shell.cpp
     idle.cpp
@@ -91,6 +92,16 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME contrast
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/slide.xml
+    BASENAME slide
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/dpms.xml
+    BASENAME dpms
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -132,7 +143,7 @@ install(FILES
   datadevicemanager.h
   dataoffer.h
   datasource.h
-  disabledoutput.h
+  dpms.h
   fakeinput.h
   fullscreen_shell.h
   idle.h
@@ -151,6 +162,7 @@ install(FILES
   shadow.h
   shell.h
   shm_pool.h
+  slide.h
   subcompositor.h
   subsurface.h
   surface.h

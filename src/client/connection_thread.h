@@ -28,6 +28,29 @@ struct wl_display;
 
 namespace KWayland
 {
+/**
+ * @short KWayland Client.
+ *
+ * This namespace groups all classes related to the Client module.
+ *
+ * The main entry point into the KWayland::Client API is the ConnectionThread class.
+ * It allows to create a Wayland client connection either in a native way or wrap a
+ * connection created by the QtWayland QPA plugin.
+ *
+ * KWayland::Client provides one the one hand a low-level API to interact with the
+ * Wayland API, on the other hand an easy to use convenience API. Each class directly
+ * relates to a low-level Wayland type and allows direct casting into the type.
+ *
+ * On the convenience side KWayland::Client allows easy creation of objects, signals
+ * emitted for Wayland events and easy conversion from Qt to Wayland types.
+ *
+ * Once one has a ConnectionThread created, it's possible to setup a Registry to
+ * get a listing of all registered globals. For each global the Registry provides a convenience
+ * method to create the resource.
+ *
+ * @see ConnectionThread
+ * @see Registry
+ **/
 namespace Client
 {
 

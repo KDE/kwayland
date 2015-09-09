@@ -294,6 +294,19 @@ void TestWaylandOutputManagement::testApplied()
     QVERIFY(appliedSpy.wait(1000));
 }
 
+void TestWaylandOutputManagement::testFailed()
+{
+    QVERIFY(m_outputConfiguration->isValid());
+    QSignalSpy appliedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::failed);
+
+    m_outputConfiguration->apply();
+    // At this point, we fake the compositor and just
+    // tell the server to emit the applied signal
+    m_outputConfigurationInterface->setFailed();
+
+    QVERIFY(appliedSpy.wait(1000));
+}
+
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)
 #include "test_wayland_outputmanagement.moc"

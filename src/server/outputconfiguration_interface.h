@@ -40,9 +40,6 @@ class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 public:
     virtual ~OutputConfigurationInterface();
 
-    Display *display() const;
-    void setDisplay(Display *display);
-
 public Q_SLOTS:
     /**
     * The configuration has been applied by the compositor. This method is to

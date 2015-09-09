@@ -77,8 +77,6 @@ void OutputManagementInterface::Private::createConfigurationCallback(wl_client *
 void OutputManagementInterface::Private::createConfiguration(wl_client* client, wl_resource* resource, uint32_t id)
 {
     auto config = new OutputConfigurationInterface(q, resource);
-
-    config->setDisplay(display);
     config->create(display->getConnection(client), wl_resource_get_version(resource), id);
     if (!config->resource()) {
         wl_resource_post_no_memory(resource);

@@ -90,11 +90,8 @@ void OutputManagementInterface::Private::createConfiguration(wl_client* client, 
     connect(config, &QObject::destroyed, [this, resource] {
         configurationInterfaces.remove(resource);
     });
-
     emit q->configurationCreated(config);
-
 }
-
 
 OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
 : Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)

@@ -46,11 +46,14 @@ private:
     static Private *cast(wl_resource *r) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
     }
+    void createConfiguration(wl_client *client, wl_resource *resource, uint32_t id);
 
     static void createConfigurationCallback(wl_client *client, wl_resource *resource, uint32_t id);
 
     OutputManagementInterface *q;
     static const struct org_kde_kwin_outputmanagement_interface s_interface;
+
+    QHash<wl_resource*, OutputConfigurationInterface*> configurationInterfaces;
 };
 
 const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {
@@ -68,10 +71,26 @@ OutputManagementInterface::~OutputManagementInterface()
 
 void OutputManagementInterface::Private::createConfigurationCallback(wl_client *client, wl_resource *resource, uint32_t id)
 {
-    // TODO: implement
-    auto o = reinterpret_cast<OutputManagementInterface::Private*>(wl_resource_get_user_data(resource));
-    emit o->q->configurationRequested();
+    cast(resource)->createConfiguration(client, resource, id);
 }
+
+void OutputManagementInterface::Private::createConfiguration(wl_client* client, wl_resource* resource, uint32_t id)
+{
+    auto config = new OutputConfigurationInterface(q, resource);
+    config->setDisplay(display);
+    config->create(display->getConnection(client), wl_resource_get_version(resource), id);
+    if (!config->resource()) {
+        wl_resource_post_no_memory(resource);
+        delete config;
+        return;
+    }
+
+    configurationInterfaces[resource] = config;
+
+    emit q->configurationRequested();
+
+}
+
 
 OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
 : Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)

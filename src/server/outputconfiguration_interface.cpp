@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-server.h>
 #include "wayland-output-management-server-protocol.h"
+#include "wayland-org_kde_kwin_outputdevice-server-protocol.h"
 
 #include <QDebug>
 
@@ -75,6 +76,12 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
     applyCallback
 };
 
+OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface* parent, wl_resource* parentResource): Resource(new Private(this, parent, parentResource))
+{
+    qDebug() << "constructing config" << this;
+}
+
+
 Display *OutputConfigurationInterface::display() const
 {
     Q_D();
@@ -95,9 +102,13 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
     Private *d = cast<Private>(resource);
-    qDebug() << "server enable:" << outputdevice << enable;
+    qDebug() << "server enable:" << outputdevice << enable << resource;
     Q_FOREACH (auto od, d->display->outputDevices()) {
-        qDebug() << "list od:" << od << od->enabled();
+        qDebug() << "list od:" << od << od->enabled() << resource;
+        if (true /*FIXME*/) {
+            qDebug() << "Condition hardcoded!!!! FIXME";
+            od->setEnabled(enable);
+        }
     }
     // TODO: implement
 }

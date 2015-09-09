@@ -33,6 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shadow.h"
 #include "blur.h"
 #include "contrast.h"
+#include "slide.h"
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
@@ -49,6 +50,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-blur-client-protocol.h>
 #include <wayland-contrast-client-protocol.h>
+#include <wayland-slide-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -172,6 +174,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_contrast_manager_interface,
         &Registry::contrastAnnounced,
         &Registry::contrastRemoved
+    }},
+    {Registry::Interface::Slide, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_slide_manager"),
+        &org_kde_kwin_slide_manager_interface,
+        &Registry::slideAnnounced,
+        &Registry::slideRemoved
     }},
     {Registry::Interface::FullscreenShell, {
         1,
@@ -455,6 +464,7 @@ BIND(FakeInput, org_kde_kwin_fake_input)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
+BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 
 #undef BIND
 #undef BIND2
@@ -497,6 +507,7 @@ CREATE(FakeInput)
 CREATE(ShadowManager)
 CREATE(BlurManager)
 CREATE(ContrastManager)
+CREATE(SlideManager)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

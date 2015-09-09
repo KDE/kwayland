@@ -11,6 +11,7 @@ set(CLIENT_LIB_SRCS
     compositor.cpp
     connection_thread.cpp
     contrast.cpp
+    slide.cpp
     event_queue.cpp
     datadevice.cpp
     datadevicemanager.cpp
@@ -77,6 +78,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME contrast
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/slide.xml
+    BASENAME slide
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -133,6 +139,7 @@ install(FILES
   shadow.h
   shell.h
   shm_pool.h
+  slide.h
   subcompositor.h
   subsurface.h
   surface.h

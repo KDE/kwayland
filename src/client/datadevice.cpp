@@ -36,7 +36,7 @@ public:
     explicit Private(DataDevice *q);
     void setup(wl_data_device *d);
 
-    WaylandPointer<wl_data_device, wl_data_device_destroy> device;
+    WaylandPointer<wl_data_device, wl_data_device_release> device;
     QScopedPointer<DataOffer> selectionOffer;
 
 private:

@@ -40,6 +40,8 @@ public:
         uint32_t version;
     };
     Private(OutputDeviceInterface *q, Display *d);
+    ~Private();
+
     void sendMode(wl_resource *resource, const Mode &mode);
     void sendDone(const ResourceData &data);
     void updateGeometry();
@@ -61,6 +63,8 @@ public:
     Edid edid;
     bool enabled = true;
 
+    static OutputDeviceInterface *get(wl_resource *native);
+
 private:
     static void unbind(wl_resource *resource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -70,12 +74,33 @@ private:
     void sendScale(const ResourceData &data);
 
     OutputDeviceInterface *q;
+    static QVector<Private*> s_privates;
 };
+
+QVector<OutputDeviceInterface::Private*> OutputDeviceInterface::Private::s_privates;
 
 OutputDeviceInterface::Private::Private(OutputDeviceInterface *q, Display *d)
     : Global::Private(d, &org_kde_kwin_outputdevice_interface, s_version)
     , q(q)
 {
+    s_privates << this;
+}
+
+OutputDeviceInterface::Private::~Private()
+{
+    s_privates.removeAll(this);
+}
+
+OutputDeviceInterface *OutputDeviceInterface::Private::get(wl_resource *native)
+{
+    for (auto it = s_privates.constBegin(); it != s_privates.constEnd(); ++it) {
+        const auto &resources = (*it)->resources;
+        auto rit = std::find_if(resources.begin(), resources.end(), [native] (const ResourceData &data) { return data.resource == native; });
+        if (rit != resources.end()) {
+            return (*it)->q;
+        }
+    }
+    return nullptr;
 }
 
 OutputDeviceInterface::OutputDeviceInterface(Display *display, QObject *parent)
@@ -117,6 +142,11 @@ QSize OutputDeviceInterface::pixelSize() const
         return QSize();
     }
     return (*it).size;
+}
+
+OutputDeviceInterface *OutputDeviceInterface::get(wl_resource* native)
+{
+    return Private::get(native);
 }
 
 int OutputDeviceInterface::refreshRate() const

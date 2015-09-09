@@ -103,14 +103,9 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 {
     Private *d = cast<Private>(resource);
     qDebug() << "server enable:" << outputdevice << enable << resource;
-    Q_FOREACH (auto od, d->display->outputDevices()) {
-        qDebug() << "list od:" << od << od->enabled() << resource;
-        if (true /*FIXME*/) {
-            qDebug() << "Condition hardcoded!!!! FIXME";
-            od->setEnabled(enable);
-        }
-    }
-    // TODO: implement
+
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    o->setEnabled(enable);
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)

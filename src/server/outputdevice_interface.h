@@ -115,6 +115,8 @@ public:
     void setEdid(Edid &edid);
     void setEnabled(bool enabled);
 
+    static OutputDeviceInterface *get(wl_resource *native);
+
 Q_SIGNALS:
     void physicalSizeChanged(const QSize&);
     void globalPositionChanged(const QPoint&);

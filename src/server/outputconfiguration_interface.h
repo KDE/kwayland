@@ -45,14 +45,25 @@ public:
 
 public Q_SLOTS:
     /**
-    * The configuration has been applied. This method is to be called by
-    * the compositor after changes have successfully been applied.
+    * The configuration has been applied by the compositor. This method is to
+    * be called by the compositor after changes have successfully been applied.
     */
     void setApplied();
+    /**
+     * The compositor failed to apply the suggested configuration.
+     * This method is to be called by the compositor after failing to apply the
+     * changes.
+     */
     void setFailed();
 
 Q_SIGNALS:
+    /**
+     * Fired after the compositor has successfully applied the configuration.
+     */
     void applied();
+    /**
+     * Fired after the compositor has failed to apply the configuration.
+     */
     void failed();
 
 private:

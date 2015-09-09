@@ -40,6 +40,14 @@ public:
     virtual ~OutputManagementInterface();
 
 Q_SIGNALS:
+    /**
+     * Emitted after the client has requested an OutputConfiguration though
+     * OutputManagement::createConfiguration.
+     * @param config The OutputConfigurationInterface corresponding to the client
+     * that was created. The compositor can use this object to get notified by the
+     * client that the configuration should be applied, and to signal back that it
+     * is successfully applied() or failed().
+     */
     void configurationCreated(KWayland::Server::OutputConfigurationInterface *config);
 
 private:

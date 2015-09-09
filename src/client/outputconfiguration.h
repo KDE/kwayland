@@ -98,6 +98,10 @@ public:
     operator org_kde_kwin_outputconfiguration*();
     operator org_kde_kwin_outputconfiguration*() const;
 
+Q_SIGNALS:
+    void applied();
+    void failed();
+
 private:
     friend class OutputManagement;
     explicit OutputConfiguration(QObject *parent = nullptr);
@@ -108,5 +112,6 @@ private:
 
 }
 }
+
 
 #endif

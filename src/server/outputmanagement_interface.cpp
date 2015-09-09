@@ -77,6 +77,7 @@ void OutputManagementInterface::Private::createConfigurationCallback(wl_client *
 void OutputManagementInterface::Private::createConfiguration(wl_client* client, wl_resource* resource, uint32_t id)
 {
     auto config = new OutputConfigurationInterface(q, resource);
+
     config->setDisplay(display);
     config->create(display->getConnection(client), wl_resource_get_version(resource), id);
     if (!config->resource()) {
@@ -86,8 +87,13 @@ void OutputManagementInterface::Private::createConfiguration(wl_client* client, 
     }
 
     configurationInterfaces[resource] = config;
+    qDebug() << "config added: " << configurationInterfaces.count();
+    connect(config, &QObject::destroyed, [this, resource] {
+        configurationInterfaces.remove(resource);
+        qDebug() << "config removed: " << configurationInterfaces.count();
+    });
 
-    emit q->configurationRequested();
+    emit q->configurationCreated(config);
 
 }
 

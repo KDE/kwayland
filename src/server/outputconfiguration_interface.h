@@ -48,7 +48,12 @@ public Q_SLOTS:
     * The configuration has been applied. This method is to be called by
     * the compositor after changes have successfully been applied.
     */
+    void setApplied();
+    void setFailed();
+
+Q_SIGNALS:
     void applied();
+    void failed();
 
 private:
     explicit OutputConfigurationInterface(OutputManagementInterface *parent, wl_resource *parentResource);
@@ -61,5 +66,7 @@ private:
 
 }
 }
+
+//Q_DECLARE_METATYPE(KWayland::Server::OutputConfigurationInterface)
 
 #endif

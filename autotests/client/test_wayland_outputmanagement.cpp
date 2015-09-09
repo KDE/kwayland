@@ -53,6 +53,10 @@ private Q_SLOTS:
     void createConfig();
 
     void testEnable();
+
+    void testApplied();
+    void testFailed();
+
     void testRemoval();
 
 private:
@@ -76,6 +80,7 @@ private:
 
     QSignalSpy *m_announcedSpy;
     QSignalSpy *m_omSpy;
+    QSignalSpy *m_configSpy;
 };
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-output-0");
@@ -231,34 +236,33 @@ void TestWaylandOutputManagement::testRemoval()
 
 void TestWaylandOutputManagement::createConfig()
 {
+    //qRegisterMetaType<KWayland::Server::OutputConfigurationInterface>();
+    m_configSpy = new QSignalSpy(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated);
+    connect(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated,
+            [this] (KWayland::Server::OutputConfigurationInterface *config) {
+                m_outputConfigurationInterface = config;
+            });
+    QVERIFY(m_configSpy->isValid());
+
     m_outputConfiguration = m_outputManagement.createConfiguration();
     //m_outputConfiguration->setEnabled(0, 0);
     QVERIFY(m_outputConfiguration->isValid());
+    QVERIFY(m_outputConfigurationInterface == nullptr);
 
-    //config->enable(m_serverOutput, false);
-
-
-    //config->setScale(m_serverOutput, 2);
-    //config->setPosition(m_serverOutput, QPoint(0, 1920); // right of full HD display
-    //config->setMode(m_serverOutput, 0);
-    //config->setTransform(m_serverOutput, 0);
-
-    //QSignalSpy enabledChangedSpy(&m_serverOutput, SIGNAL(enabledChanged()));
-
-    //config->apply();
-    //QVERIFY(enabledChangedSpy.wait(1000));
+    // make sure the server side emits the signal that a config has been created
+    QVERIFY(m_configSpy->wait(200));
+    QVERIFY(m_outputConfigurationInterface != nullptr);
 }
 
 void TestWaylandOutputManagement::testEnable()
 {
     auto config = m_outputConfiguration;
-
     QVERIFY(config->isValid());
-    //m_registry.interfaces(KWayland::Client::Registry::Interface::OutputDevice)
+
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
     QCOMPARE(output->enabled(), true);
 
-    QSignalSpy enabledChanged(output, SIGNAL(changed()));
+    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(enabledChanged.isValid());
 
     //m_serverOutput->setEnabled(false);
@@ -275,6 +279,19 @@ void TestWaylandOutputManagement::testEnable()
     QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output->enabled(), true);
 
+}
+
+void TestWaylandOutputManagement::testApplied()
+{
+    QVERIFY(m_outputConfiguration->isValid());
+    QSignalSpy appliedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::applied);
+
+    m_outputConfiguration->apply();
+    // At this point, we fake the compositor and just
+    // tell the server to emit the applied signal
+    m_outputConfigurationInterface->setApplied();
+
+    QVERIFY(appliedSpy.wait(1000));
 }
 
 

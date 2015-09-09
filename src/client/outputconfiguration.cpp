@@ -38,14 +38,26 @@ class OutputConfiguration::Private
 public:
     Private() = default;
 
+    void setup(org_kde_kwin_outputconfiguration *outputconfiguration);
+
     WaylandPointer<org_kde_kwin_outputconfiguration, org_kde_kwin_outputconfiguration_destroy> outputconfiguration;
+    static struct org_kde_kwin_outputconfiguration_listener s_outputconfigurationListener;
     EventQueue *queue = nullptr;
+
+    OutputConfiguration *q;
+
+private:
+    static void appliedCallback(void *data, org_kde_kwin_outputconfiguration *config);
+    static void failedCallback(void *data, org_kde_kwin_outputconfiguration *config);
+
+
 };
 
 OutputConfiguration::OutputConfiguration(QObject *parent)
 : QObject(parent)
 , d(new Private)
 {
+    d->q = this;
 }
 
 OutputConfiguration::~OutputConfiguration()
@@ -58,7 +70,14 @@ void OutputConfiguration::setup(org_kde_kwin_outputconfiguration *outputconfigur
     Q_ASSERT(outputconfiguration);
     Q_ASSERT(!d->outputconfiguration);
     d->outputconfiguration.setup(outputconfiguration);
+    d->setup(outputconfiguration);
 }
+
+void OutputConfiguration::Private::setup(org_kde_kwin_outputconfiguration* outputconfiguration)
+{
+    org_kde_kwin_outputconfiguration_add_listener(outputconfiguration, &s_outputconfigurationListener, this);
+}
+
 
 void OutputConfiguration::release()
 {
@@ -93,6 +112,8 @@ bool OutputConfiguration::isValid() const
     return d->outputconfiguration.isValid();
 }
 
+// Requests
+
 void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
 {
     qDebug() << " => " << outputdevice << enable;
@@ -120,6 +141,27 @@ void OutputConfiguration::setScale(OutputDevice *outputdevice, qint32 scale)
 
 void OutputConfiguration::apply()
 {
+    org_kde_kwin_outputconfiguration_apply(d->outputconfiguration);
+}
+
+// Callbacks
+org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_outputconfigurationListener = {
+    appliedCallback,
+    failedCallback
+};
+
+void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* config)
+{
+    qDebug() << "APPLIED";
+    auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
+    emit o->q->applied();
+}
+
+void OutputConfiguration::Private::failedCallback(void* data, org_kde_kwin_outputconfiguration* config)
+{
+    qDebug() << "FAILED";
+    auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
+    emit o->q->failed();
 }
 
 

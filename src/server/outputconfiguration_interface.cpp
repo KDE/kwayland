@@ -43,6 +43,7 @@ public:
     ~Private();
 
     void sendApplied();
+    void sendFailed();
 
     static const quint32 s_version = 1;
     Display *display = nullptr;
@@ -151,18 +152,37 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
     return reinterpret_cast<Private*>(d.data());
 }
 
-void OutputConfigurationInterface::applied()
+void OutputConfigurationInterface::setApplied()
 {
     Q_D();
     /* ... */
-
+    qDebug() << "set applied";
     d->sendApplied();
+    emit applied();
 }
 
 void OutputConfigurationInterface::Private::sendApplied()
 {
+    qDebug() << "Sending";
     foreach (auto r, s_allResources) {
         org_kde_kwin_outputconfiguration_send_applied(r->resource);
+        qDebug() << "  Sent!";
+    }
+}
+
+void OutputConfigurationInterface::setFailed()
+{
+    Q_D();
+    /* ... */
+
+    d->sendFailed();
+    emit failed();
+}
+
+void OutputConfigurationInterface::Private::sendFailed()
+{
+    foreach (auto r, s_allResources) {
+        org_kde_kwin_outputconfiguration_send_failed(r->resource);
     }
 }
 

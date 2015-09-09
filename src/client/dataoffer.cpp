@@ -47,9 +47,11 @@ private:
     static const struct wl_data_offer_listener s_listener;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_data_offer_listener DataOffer::Private::s_listener = {
     offerCallback
 };
+#endif
 
 DataOffer::Private::Private(wl_data_offer *offer, DataOffer *q)
     : q(q)

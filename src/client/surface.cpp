@@ -149,9 +149,11 @@ void Surface::Private::handleFrameCallback()
     emit q->frameRendered();
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_callback_listener Surface::Private::s_listener = {
         frameCallback
 };
+#endif
 
 void Surface::Private::setupFrameCallback()
 {

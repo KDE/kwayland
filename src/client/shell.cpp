@@ -171,11 +171,13 @@ void ShellSurface::destroy()
     d->surface.destroy();
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {
     pingCallback,
     configureCallback,
     popupDoneCallback
 };
+#endif
 
 void ShellSurface::Private::configureCallback(void *data, wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height)
 {

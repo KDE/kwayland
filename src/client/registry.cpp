@@ -303,6 +303,7 @@ EventQueue *Registry::eventQueue()
     return d->queue;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct wl_registry_listener Registry::Private::s_registryListener = {
     globalAnnounce,
     globalRemove
@@ -311,6 +312,7 @@ const struct wl_registry_listener Registry::Private::s_registryListener = {
 const struct wl_callback_listener Registry::Private::s_callbackListener = {
    globalSync
 };
+#endif
 
 void Registry::Private::globalAnnounce(void *data, wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
 {

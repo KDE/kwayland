@@ -227,7 +227,6 @@ OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
     qDebug() << "create management";
     OutputManagementInterface *om = new OutputManagementInterface(this, parent);
-    return om;
     connect(this, &Display::aboutToTerminate, om, [this,om] { delete om; });
     return om;
 }

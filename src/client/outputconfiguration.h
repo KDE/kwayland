@@ -21,7 +21,9 @@
 #define KWAYLAND_CLIENT_OUTPUTCONFIGURATION_H
 
 #include <QObject>
+#include <QPoint>
 
+#include "outputdevice.h"
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct org_kde_kwin_outputmanagement;
@@ -33,7 +35,6 @@ namespace Client
 {
 
 class EventQueue;
-class OutputDevice;
 
 class KWAYLANDCLIENT_EXPORT OutputConfiguration : public QObject
 {
@@ -85,12 +86,17 @@ public:
 
     void setEnabled(OutputDevice *outputdevice, qint32 enable);
 
-    void setMode(OutputDevice *outputdevice, qint32 modeId);
+    void setMode(OutputDevice *outputdevice, const QSize &size, int refreshRate = 60000);
+    void setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform);
 
-    void setTransform(OutputDevice *outputdevice, qint32 transform);
+    /**
+     * Position this output in the global space, relative to other outputs.
+     */
+    void setPosition(OutputDevice *outputdevice, const QPoint &pos);
 
-    void setPosition(OutputDevice *outputdevice, qint32 x, qint32 y);
-
+    /**
+     * Scale rendering of this output.
+     */
     void setScale(OutputDevice *outputdevice, qint32 scale);
 
     void apply();

@@ -118,20 +118,61 @@ void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
     org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, enable);
 }
 
-void OutputConfiguration::setMode(OutputDevice *outputdevice, qint32 modeId)
+void OutputConfiguration::setMode(OutputDevice* outputdevice, const QSize &size, int refreshRate)
 {
+    int i = 0;
+    foreach (auto m, outputdevice->modes()) {
+        //qDebug() << "  mode: " << m.size << m.refreshRate;
+        if (m.size == size && m.refreshRate == refreshRate) {
+            //qDebug() << "This is our mode!";
+            qDebug() << "set mode" << size << refreshRate;
+            org_kde_kwin_outputdevice *od = outputdevice->output();
+            org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od, i);
+            return;
+        }
+        i++;
+    }
+    qDebug() << "mode not found. :(";
 }
 
-void OutputConfiguration::setTransform(OutputDevice *outputdevice, qint32 transform)
+void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform)
 {
+    auto toTransform = [transform]() {
+        switch (transform) {
+            using KWayland::Client::OutputDevice;
+            case KWayland::Client::OutputDevice::Transform::Normal:
+                return WL_OUTPUT_TRANSFORM_NORMAL;
+            case KWayland::Client::OutputDevice::Transform::Rotated90:
+                return WL_OUTPUT_TRANSFORM_90;
+            case KWayland::Client::OutputDevice::Transform::Rotated180:
+                return WL_OUTPUT_TRANSFORM_180;
+            case KWayland::Client::OutputDevice::Transform::Rotated270:
+                return WL_OUTPUT_TRANSFORM_270;
+            case KWayland::Client::OutputDevice::Transform::Flipped:
+                return WL_OUTPUT_TRANSFORM_FLIPPED;
+            case KWayland::Client::OutputDevice::Transform::Flipped90:
+                return WL_OUTPUT_TRANSFORM_FLIPPED_90;
+            case KWayland::Client::OutputDevice::Transform::Flipped180:
+                return WL_OUTPUT_TRANSFORM_FLIPPED_180;
+            case KWayland::Client::OutputDevice::Transform::Flipped270:
+                return WL_OUTPUT_TRANSFORM_FLIPPED_270;
+        }
+        abort();
+    };
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    org_kde_kwin_outputconfiguration_transform(d->outputconfiguration, od, toTransform());
 }
 
-void OutputConfiguration::setPosition(OutputDevice *outputdevice, qint32 x, qint32 y)
+void OutputConfiguration::setPosition(OutputDevice *outputdevice, const QPoint &pos)
 {
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    org_kde_kwin_outputconfiguration_position(d->outputconfiguration, od, pos.x(), pos.y());
 }
 
 void OutputConfiguration::setScale(OutputDevice *outputdevice, qint32 scale)
 {
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    org_kde_kwin_outputconfiguration_scale(d->outputconfiguration, od, scale);
 }
 
 void OutputConfiguration::apply()

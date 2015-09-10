@@ -37,7 +37,7 @@ following technologies:
 - QtQuick
 
 Although the library does not perform any output, it makes it very easy to enable rendering.
-The representation for a `wl_buffer` (KWayland::Server::BufferInterface) allows easy conversion
+The representation for a [Buffer](@ref KWayland::Server::BufferInterface) allows easy conversion
 to a (memory-shared) QImage in case the buffer represents a shared memory buffer. This QImage
 can be used for rendering in a QPainter based API or to generate an OpenGL texture.
 
@@ -53,13 +53,15 @@ client to reuse it. This happens fully automatically when a surface no longer re
 As long as a buffer is attached surface, the surface has it referenced and the user of the API can
 access the buffer without needing to care about referencing it.
 
-The API of KWayland is hand-crafted to make usage easier. The representation of Surface combines
-multiple aspects about a Surface even if in Wayland API it is added to other elements. E.g. a Surface
-contains all SubSurfaces attached to it instead of the user having to monitor for which Surface a
-SubSurface got created.
+The API of KWayland is hand-crafted to make usage easier. The representation of a
+[Surface](@ref KWayland::Server::SurfaceInterface) combines multiple aspects about a Surface even
+if in Wayland API it is added to other elements. E.g. a Surface contains all
+[SubSurfaces](@ref KWayland::Server::SubSurfaceInterface) attached to it instead of the user
+having to monitor for which Surface a SubSurface got created.
 
-Similar the representation of a Seat combines all aspects of the Seat. A user of the API only needs
-to interact with the Seat, there is no need to track all the created keyboards, pointers, etc. The
+Similar the representation of a [Seat](@ref KWayland::Server::SeatInterface) combines all aspects of
+the Seat. A user of the API only needs to interact with the Seat, there is no need to track all the
+created [keyboards](@ref KWayland::Server::KeyboardInterface), [pointers](@ref KWayland::Server::PointerInterface), etc. The
 representation of Seat tracks which keyboards are generated and is able to forward events to the
 proper focus surface, send enter and leave notifications when needed without the user of the API
 to care about it.
@@ -83,7 +85,7 @@ Applications built on top of KWayland Server integrated input events with the fo
 
 ### Private IPC with child processes
 
-KWayland Server is well suited for having a private IPC with child processes. The Display can be
+KWayland Server is well suited for having a private IPC with child processes. The [Display](@ref KWayland::Server::Display) can be
 setup in a way that it doesn't create a public socket but only allows connections through socket
 pairs. This allows to create a socketpair, pass one file descriptor to KWayland server and the other
 to the forked process, e.g. through the WAYLAND_SOCKET environment variable. Thus a dedicated IPC
@@ -108,7 +110,7 @@ The convenience API in KWayland Client provides one class wrapping a Wayland obj
 be casted into the wrapped Wayland type. The API represents events as signals and provides simple
 method calls for requests.
 
-Classes representing global Wayland resources can be created through the Registry. This class eases
+Classes representing global Wayland resources can be created through the [Registry](@ref KWayland::Client::Registry). This class eases
 the interaction with the Wayland registry and emits signals whenever a new global is announced or gets
 removed. The Registry has a list of known interfaces (e.g. common Wayland protocols like `wl_compositor`
 or `wl_shell`) which have dedicated announce/removed signals and objects can be factored by the Registry

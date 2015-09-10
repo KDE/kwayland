@@ -179,12 +179,14 @@ void DataDevice::startDragInternally(quint32 serial, Surface *origin, Surface *i
     startDrag(serial, nullptr, origin, icon);
 }
 
+namespace {
 static wl_data_source *dataSource(const DataSource *source)
 {
     if (!source) {
         return nullptr;
     }
     return *source;
+}
 }
 
 void DataDevice::startDrag(quint32 serial, DataSource *source, Surface *origin, Surface *icon)

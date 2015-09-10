@@ -51,11 +51,16 @@ private Q_SLOTS:
     void testCreate();
     void testOutputDevices();
     void createConfig();
-
-    void testEnable();
-
     void testApplied();
     void testFailed();
+    void testEnable();
+    void testPosition();
+    void testScale();
+
+    void testTransform();
+    void testMode();
+
+
 
     void testRemoval();
 
@@ -211,9 +216,7 @@ void TestWaylandOutputManagement::testOutputDevices()
     wl_display_flush(m_connection->display());
 
     QVERIFY(outputChanged.wait());
-    //KWayland::Client::OutputManagement outputmanagement;
-    //    wl_display_flush(m_connection->display());
-    QCOMPARE(output->globalPosition(), QPoint(0,1920));
+    QCOMPARE(output->globalPosition(), QPoint(0, 1920));
     QCOMPARE(output->enabled(), true);
 
     m_clientOutputs << output;
@@ -232,8 +235,6 @@ void TestWaylandOutputManagement::testRemoval()
     QCOMPARE(outputManagementRemovedSpy.first().first(), m_announcedSpy->first().first());
     QVERIFY(!m_registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));
     QVERIFY(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
-
-    delete m_outputConfigurationInterface;
 }
 
 void TestWaylandOutputManagement::createConfig()
@@ -267,11 +268,7 @@ void TestWaylandOutputManagement::testEnable()
     QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(enabledChanged.isValid());
 
-    //m_serverOutput->setEnabled(false);
-    ////wl_display_flush(m_connection->display());
-
     config->setEnabled(output, false);
-
 
     QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output->enabled(), false);
@@ -307,6 +304,107 @@ void TestWaylandOutputManagement::testFailed()
     m_outputConfigurationInterface->setFailed();
 
     QVERIFY(failedSpy.wait(1000));
+}
+
+void TestWaylandOutputManagement::testPosition()
+{
+
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(changedSpy.isValid());
+
+    QPoint pos = QPoint(500, 600);
+    QVERIFY(m_outputConfiguration->isValid());
+    m_outputConfiguration->setPosition(output, pos);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->globalPosition(), pos);
+
+    m_serverOutputs.first()->setScale(1);
+
+    pos = QPoint(0, 1920);
+    m_outputConfiguration->setPosition(output, pos);
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->globalPosition(), pos);
+}
+
+void TestWaylandOutputManagement::testScale()
+{
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QCOMPARE(output->scale(), 1);
+
+    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(changedSpy.isValid());
+
+    QVERIFY(m_outputConfiguration->isValid());
+    m_outputConfiguration->setScale(output, 2);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->scale(), 2);
+
+    m_serverOutputs.first()->setScale(1);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->scale(), 1);
+}
+
+void TestWaylandOutputManagement::testMode()
+{
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+
+    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(changedSpy.isValid());
+
+    QVERIFY(m_outputConfiguration->isValid());
+    m_outputConfiguration->setMode(output, QSize(800, 600), 60000);
+
+    QVERIFY(changedSpy.wait(200));
+
+    auto currentMode = [] (KWayland::Client::OutputDevice *output) {
+        foreach (auto m, output->modes()) {
+            if (m.flags.testFlag(KWayland::Client::OutputDevice::Mode::Flag::Current)) {
+                //qDebug() << "Current mode is " << m.size;
+                return m;
+            }
+        }
+        KWayland::Client::OutputDevice::Mode m;
+        return m;
+    };
+
+    QCOMPARE(currentMode(output).size, QSize(800, 600));
+    QCOMPARE(output->refreshRate(), 60000);
+
+    auto m = output->modes().last();
+    qDebug() << " now: " << m.size << m.refreshRate;
+    m_outputConfiguration->setMode(output, m.size, m.refreshRate);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(currentMode(output).size, m.size);
+    QCOMPARE(output->refreshRate(), m.refreshRate);
+
+    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+}
+
+void TestWaylandOutputManagement::testTransform()
+{
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+
+    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(changedSpy.isValid());
+
+    QVERIFY(m_outputConfiguration->isValid());
+    m_outputConfiguration->setTransform(output, KWayland::Client::OutputDevice::Transform::Rotated270);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Rotated270);
+
+    m_outputConfiguration->setTransform(output, KWayland::Client::OutputDevice::Transform::Normal);
+
+    QVERIFY(changedSpy.wait(200));
+    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+
 }
 
 

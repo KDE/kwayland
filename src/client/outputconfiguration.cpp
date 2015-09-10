@@ -120,19 +120,9 @@ void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
 
 void OutputConfiguration::setMode(OutputDevice* outputdevice, const QSize &size, int refreshRate)
 {
-    int i = 0;
-    foreach (auto m, outputdevice->modes()) {
-        //qDebug() << "  mode: " << m.size << m.refreshRate;
-        if (m.size == size && m.refreshRate == refreshRate) {
-            //qDebug() << "This is our mode!";
-            qDebug() << "set mode" << size << refreshRate;
-            org_kde_kwin_outputdevice *od = outputdevice->output();
-            org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od, i);
-            return;
-        }
-        i++;
-    }
-    qDebug() << "mode not found. :(";
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od,
+                                          size.width(), size.height(), refreshRate);
 }
 
 void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform)

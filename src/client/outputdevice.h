@@ -196,6 +196,9 @@ public:
      **/
     QList<Mode> modes() const;
 
+    KWayland::Client::OutputDevice::Mode currentMode() const;
+
+
     /**
      * Sets the @p queue to use for bound proxies.
      **/

@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland-org_kde_kwin_outputdevice-server-protocol.h"
 
 #include <QDebug>
+#include <QSize>
 
 namespace KWayland
 {
@@ -49,7 +50,7 @@ private:
     static void enableCallback(wl_client *client, wl_resource *resource,
                                wl_resource * outputdevice, int32_t enable);
     static void modeCallback(wl_client *client, wl_resource *resource,
-                             wl_resource * outputdevice, int32_t mode_id);
+                             wl_resource * outputdevice, int32_t width, int32_t height, int32_t refresh);
     static void transformCallback(wl_client *client, wl_resource *resource,
                                   wl_resource * outputdevice, int32_t transform);
     static void positionCallback(wl_client *client, wl_resource *resource,
@@ -89,24 +90,19 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
     o->setEnabled(enable);
 }
 
-void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
+void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t width, int32_t height, int32_t refresh)
 {
-    // TODO: implement
+    bool modeValid = false;
     OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
 
-//     auto currentMode = [output] () {
-//         foreach (auto m, output->modes()) {
-//             if (m.flags.testFlag(KWayland::Server::OutputDeviceInterface::Mode::Flag::Current)) {
-//                 qDebug() << "Current mode is " << m.size;
-//                 return m;
-//             }
-//         }
-//         KWayland::Client::OutputDevice::Mode m;
-//         return m;
-//     };
-    auto mode = output->modes().at(mode_id);
-    qDebug() << "Setting mode: " << mode.size << mode.refreshRate;
-    output->setCurrentMode(mode.size, mode.refreshRate);
+    foreach (auto m, output->modes()) {
+        if (m.size == QSize(width, height) && m.refreshRate == refresh) {
+            modeValid = true;
+        }
+    }
+    if (modeValid) {
+        output->setCurrentMode(QSize(width, height), refresh);
+    }
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)

@@ -120,6 +120,7 @@ void TestWaylandOutputManagement::initTestCase()
     outputDeviceInterface->addMode(QSize(800, 600), OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred));
     outputDeviceInterface->addMode(QSize(1024, 768));
     outputDeviceInterface->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
+    outputDeviceInterface->addMode(QSize(1920, 1080), OutputDeviceInterface::ModeFlags(), 100000);
     outputDeviceInterface->setCurrentMode(QSize(1024, 768));
     outputDeviceInterface->setGlobalPosition(QPoint(0, 1920));
     outputDeviceInterface->create();
@@ -351,39 +352,37 @@ void TestWaylandOutputManagement::testScale()
 void TestWaylandOutputManagement::testMode()
 {
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+    int cnt = output->modes().count();
 
-    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
+    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::modeChanged);
     QVERIFY(changedSpy.isValid());
 
     QVERIFY(m_outputConfiguration->isValid());
-    m_outputConfiguration->setMode(output, QSize(800, 600), 60000);
+
+    KWayland::Client::OutputDevice::Mode m1;
+    m1.size = QSize(1920, 1080);
+    m1.refreshRate = 100000;
+
+    KWayland::Client::OutputDevice::Mode m2;
+    m2.size = QSize(800, 600);
+    m2.refreshRate = 60000;
+
+
+    m_outputConfiguration->setMode(output, m1.size, m1.refreshRate);
 
     QVERIFY(changedSpy.wait(200));
 
-    auto currentMode = [] (KWayland::Client::OutputDevice *output) {
-        foreach (auto m, output->modes()) {
-            if (m.flags.testFlag(KWayland::Client::OutputDevice::Mode::Flag::Current)) {
-                //qDebug() << "Current mode is " << m.size;
-                return m;
-            }
-        }
-        KWayland::Client::OutputDevice::Mode m;
-        return m;
-    };
+    QCOMPARE(output->currentMode().size, m1.size);
+    QCOMPARE(output->refreshRate(), m1.refreshRate);
 
-    QCOMPARE(currentMode(output).size, QSize(800, 600));
-    QCOMPARE(output->refreshRate(), 60000);
-
-    auto m = output->modes().last();
-    qDebug() << " now: " << m.size << m.refreshRate;
-    m_outputConfiguration->setMode(output, m.size, m.refreshRate);
+    m_outputConfiguration->setMode(output, m2.size, m2.refreshRate);
 
     QVERIFY(changedSpy.wait(200));
-    QCOMPARE(currentMode(output).size, m.size);
-    QCOMPARE(output->refreshRate(), m.refreshRate);
+    QCOMPARE(output->currentMode().size, m2.size);
+    QCOMPARE(output->refreshRate(), m2.refreshRate);
 
-    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+    m_outputConfiguration->setMode(output, QSize());
+    QVERIFY(!changedSpy.wait(200));
 }
 
 void TestWaylandOutputManagement::testTransform()

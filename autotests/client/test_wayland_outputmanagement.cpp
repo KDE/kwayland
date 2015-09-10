@@ -177,6 +177,7 @@ void TestWaylandOutputManagement::testCreate()
 
     m_registry.create(m_connection->display());
     QVERIFY(m_registry.isValid());
+    m_registry.setEventQueue(m_queue);
     m_registry.setup();
     wl_display_flush(m_connection->display());
 

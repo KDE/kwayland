@@ -166,6 +166,7 @@ void Shadow::commit()
     org_kde_kwin_shadow_commit(d->shadow);
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #define attach( __PART__, __WAYLAND_PART__ ) \
 void Shadow::attach##__PART__(wl_buffer *buffer) \
 { \
@@ -191,6 +192,7 @@ attach(Bottom, bottom)
 attach(BottomLeft, bottom_left)
 
 #undef attach
+#endif
 
 Shadow::operator org_kde_kwin_shadow*()
 {

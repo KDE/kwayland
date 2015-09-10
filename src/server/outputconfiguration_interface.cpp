@@ -84,7 +84,7 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
-    Private *d = cast<Private>(resource);
+    //Private *d = cast<Private>(resource);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     o->setEnabled(enable);
 }
@@ -92,21 +92,60 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
     // TODO: implement
+    OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
+
+//     auto currentMode = [output] () {
+//         foreach (auto m, output->modes()) {
+//             if (m.flags.testFlag(KWayland::Server::OutputDeviceInterface::Mode::Flag::Current)) {
+//                 qDebug() << "Current mode is " << m.size;
+//                 return m;
+//             }
+//         }
+//         KWayland::Client::OutputDevice::Mode m;
+//         return m;
+//     };
+    auto mode = output->modes().at(mode_id);
+    qDebug() << "Setting mode: " << mode.size << mode.refreshRate;
+    output->setCurrentMode(mode.size, mode.refreshRate);
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
 {
-    // TODO: implement
+    auto toTransform = [transform]() {
+        switch (transform) {
+            case WL_OUTPUT_TRANSFORM_90:
+                return OutputDeviceInterface::Transform::Rotated90;
+            case WL_OUTPUT_TRANSFORM_180:
+                return OutputDeviceInterface::Transform::Rotated180;
+            case WL_OUTPUT_TRANSFORM_270:
+                return OutputDeviceInterface::Transform::Rotated270;
+            case WL_OUTPUT_TRANSFORM_FLIPPED:
+                return OutputDeviceInterface::Transform::Flipped;
+            case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+                return OutputDeviceInterface::Transform::Flipped90;
+            case WL_OUTPUT_TRANSFORM_FLIPPED_180:
+                return OutputDeviceInterface::Transform::Flipped180;
+            case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+                return OutputDeviceInterface::Transform::Flipped270;
+            case WL_OUTPUT_TRANSFORM_NORMAL:
+            default:
+                return OutputDeviceInterface::Transform::Normal;
+        }
+    };
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    o->setTransform(toTransform());
 }
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
-    // TODO: implement
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    o->setGlobalPosition(QPoint(x, y));
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
 {
-    // TODO: implement
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    o->setScale(scale);
 }
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)

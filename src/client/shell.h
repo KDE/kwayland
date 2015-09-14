@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_SHELL_H
 
 #include <QObject>
+#include <QPoint>
 #include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
@@ -224,6 +225,25 @@ public:
     void setFullscreen(Output *output = nullptr);
     void setMaximized(Output *output = nullptr);
     void setToplevel();
+    /**
+     * Flags which can be passed to a transient surface.
+     * @see setTransient
+     * @since 5.5
+     **/
+    enum class TransientFlag {
+        Default = 0x0, ///< Default: transient surface accepts keyboard focus
+        NoFocus = 0x1 ///< Transient surface does not accept keyboard focus
+    };
+    Q_DECLARE_FLAGS(TransientFlags, TransientFlag)
+    /**
+     * Sets this Surface as a transient for @p parent.
+     *
+     * @param parent The parent Surface of this surface
+     * @param offset The offset of this Surface in the parent coordinate system
+     * @param flags The flags for the transient
+     * @since 5.5
+     **/
+    void setTransient(Surface *parent, const QPoint &offset = QPoint(), TransientFlags flags = TransientFlag::Default);
 
     bool isValid() const;
     operator wl_shell_surface*();

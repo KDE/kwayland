@@ -239,6 +239,16 @@ void ShellSurface::setToplevel()
     wl_shell_surface_set_toplevel(d->surface);
 }
 
+void ShellSurface::setTransient(Surface *parent, const QPoint &offset, TransientFlags flags)
+{
+    Q_ASSERT(isValid());
+    uint32_t wlFlags = 0;
+    if (flags.testFlag(TransientFlag::NoFocus)) {
+        wlFlags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
+    }
+    wl_shell_surface_set_transient(d->surface, *parent, offset.x(), offset.y(), wlFlags);
+}
+
 QSize ShellSurface::size() const
 {
     return d->size;

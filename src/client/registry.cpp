@@ -169,7 +169,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::outputManagementRemoved
     }},
     {Registry::Interface::OutputDevice, {
-        2,
+        1,
         QByteArrayLiteral("org_kde_kwin_outputdevice"),
         &org_kde_kwin_outputdevice_interface,
         &Registry::outputDeviceAnnounced,

@@ -198,6 +198,14 @@
         <arg name="enabled" type="int" summary="output is enabled in the wayland server"/>
     </event>
 
+    <event name="id" since="2">
+        <description summary="A unique ID for this outputdevice">
+            The ID can be used to identify the output. It's controlled by the server entirely.
+            An ID of -1 is considered invalid.
+        </description>
+        <arg name="id" type="int" summary="Output devices ID"/>
+    </event>
+
 
 </interface>
 

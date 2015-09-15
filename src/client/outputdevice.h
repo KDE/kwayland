@@ -218,6 +218,13 @@ public:
      **/
     bool enabled() const;
 
+    /**
+     * @returns A unique identifier for this outputdevice, determined by the server.
+     **/
+    int id() const;
+
+
+
 Q_SIGNALS:
     /**
      * Emitted whenever at least one of the data changed.
@@ -227,6 +234,10 @@ Q_SIGNALS:
      * Emitted whenever the enabled property changes.
      **/
     void enabledChanged(bool enabled);
+    /**
+     * Emitted whenever the id property changes.
+     **/
+    void idChanged(bool id);
     /**
      * Emitted whenever a new Mode is added.
      * This normally only happens during the initial promoting of modes.

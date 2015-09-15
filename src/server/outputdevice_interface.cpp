@@ -47,6 +47,7 @@ public:
     void updateGeometry();
     void updateScale();
 
+    void sendId();
     void sendEdid();
     void sendEnabled();
 
@@ -62,6 +63,7 @@ public:
 
     Edid edid;
     bool enabled = true;
+    int id = -1;
 
     static OutputDeviceInterface *get(wl_resource *native);
 
@@ -326,6 +328,7 @@ void OutputDeviceInterface::Private::bind(wl_client *client, uint32_t version, u
         sendMode(resource, *currentModeIt);
     }
 
+    sendId();
     sendEdid();
     sendEnabled();
 
@@ -508,6 +511,22 @@ bool OutputDeviceInterface::enabled() const
     return d->enabled;
 }
 
+void OutputDeviceInterface::setId(int id)
+{
+    Q_D();
+    if (d->id != id) {
+        d->id = id;
+        d->sendId();
+        emit idChanged();
+    }
+}
+
+int OutputDeviceInterface::id() const
+{
+    Q_D();
+    return d->id;
+}
+
 void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
@@ -528,6 +547,14 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
         org_kde_kwin_outputdevice_send_enabled((*it).resource, enabled);
     }
 }
+
+void OutputDeviceInterface::Private::sendId()
+{
+    for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+        org_kde_kwin_outputdevice_send_id((*it).resource, id);
+    }
+}
+
 
 
 }

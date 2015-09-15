@@ -50,6 +50,7 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(int scale READ scale WRITE setScale NOTIFY scaleChanged)
     Q_PROPERTY(Edid edid READ edid WRITE setEdid NOTIFY edidChanged)
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
+    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
 public:
     struct Edid {
         QString eisaId;
@@ -101,6 +102,7 @@ public:
 
     Edid edid() const;
     bool enabled() const;
+    int id() const;
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -114,6 +116,7 @@ public:
 
     void setEdid(Edid &edid);
     void setEnabled(bool enabled);
+    void setId(int id);
 
     static OutputDeviceInterface *get(wl_resource *native);
 
@@ -132,6 +135,7 @@ Q_SIGNALS:
 
     void edidChanged();
     void enabledChanged();
+    void idChanged();
 
 private:
     friend class Display;

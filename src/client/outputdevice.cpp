@@ -56,6 +56,8 @@ public:
 
     Edid *edid = new Edid;
     bool enabled = true;
+    int id = -1;
+    bool done = false;
 
 private:
     static void geometryCallback(void *data, org_kde_kwin_outputdevice *output, int32_t x, int32_t y,
@@ -73,6 +75,7 @@ private:
                              int32_t physicalHeight,
                              const char *raw);
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
+    static void idCallback(void *data, org_kde_kwin_outputdevice *output, int32_t id);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -125,7 +128,8 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     doneCallback,
     scaleCallback,
     edidCallback,
-    enabledCallback
+    enabledCallback,
+    idCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -249,6 +253,7 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
+    o->done = true;
     emit o->q->changed();
 }
 
@@ -270,7 +275,21 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
     if (o->enabled != enabled) {
         o->enabled = enabled;
         emit o->q->enabledChanged(o->enabled);
-        emit o->q->changed();
+        if (o->done) {
+            emit o->q->changed();
+        }
+    }
+}
+
+void OutputDevice::Private::idCallback(void* data, org_kde_kwin_outputdevice* output, int32_t id)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    if (o->id != id) {
+        o->id = id;
+        emit o->q->idChanged(o->id);
+        if (o->done) {
+            emit o->q->changed();
+        }
     }
 }
 
@@ -414,6 +433,11 @@ OutputDevice::Edid* OutputDevice::edid() const
 bool OutputDevice::enabled() const
 {
     return d->enabled;
+}
+
+int OutputDevice::id() const
+{
+    return d->id;
 }
 
 

@@ -132,7 +132,7 @@ void TestWaylandOutputManagement::initTestCase()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -170,7 +170,7 @@ void TestWaylandOutputManagement::cleanupTestCase()
 void TestWaylandOutputManagement::testCreate()
 {
     m_announcedSpy = new QSignalSpy(&m_registry, &KWayland::Client::Registry::outputManagementAnnounced);
-    m_omSpy = new QSignalSpy(&m_registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    m_omSpy = new QSignalSpy(&m_registry, &KWayland::Client::Registry::outputDeviceAnnounced);
 
     QVERIFY(m_announcedSpy->isValid());
     QVERIFY(m_omSpy->isValid());

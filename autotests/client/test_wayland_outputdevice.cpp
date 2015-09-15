@@ -51,6 +51,7 @@ private Q_SLOTS:
     void testEnabled();
     void testEdid();
     void testId();
+    void testDone();
 
 private:
     KWayland::Server::Display *m_display;
@@ -509,6 +510,25 @@ void TestWaylandOutputDevice::testId()
     QVERIFY(idChanged.wait(200));
     QCOMPARE(output.id(), 4711);
 }
+
+void TestWaylandOutputDevice::testDone()
+{
+    KWayland::Client::Registry registry;
+    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+    wl_display_flush(m_connection->display());
+    QVERIFY(announced.wait());
+
+    KWayland::Client::OutputDevice output;
+    QSignalSpy outputDone(&output, &KWayland::Client::OutputDevice::done);
+    QVERIFY(outputDone.isValid());
+    output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
+    wl_display_flush(m_connection->display());
+    QVERIFY(outputDone.wait());
+}
+
 
 QTEST_GUILESS_MAIN(TestWaylandOutputDevice)
 #include "test_wayland_outputdevice.moc"

@@ -101,7 +101,7 @@ void TestWaylandOutputDevice::init()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -209,7 +209,7 @@ void TestWaylandOutputDevice::testModeChanges()
     KWayland::Client::OutputDevice output;
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
-    QSignalSpy modeAddedSpy(&output, SIGNAL(modeAdded(KWayland::Client::OutputDevice::Mode)));
+    QSignalSpy modeAddedSpy(&output, &KWayland::Client::OutputDevice::modeAdded);
     QVERIFY(modeAddedSpy.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
@@ -399,7 +399,7 @@ void TestWaylandOutputDevice::testTransform()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice *output = registry.createOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>(), &registry);
-    QSignalSpy outputChanged(output, SIGNAL(changed()));
+    QSignalSpy outputChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     wl_display_flush(m_connection->display());
     if (outputChanged.isEmpty()) {
@@ -436,16 +436,19 @@ void TestWaylandOutputDevice::testEnabled()
 
     QCOMPARE(output.enabled(), true);
 
-    QSignalSpy enabledChanged(&output, SIGNAL(changed()));
+    QSignalSpy changed(&output, &KWayland::Client::OutputDevice::changed);
+    QSignalSpy enabledChanged(&output, &KWayland::Client::OutputDevice::enabledChanged);
     QVERIFY(enabledChanged.isValid());
 
     m_serverOutputDevice->setEnabled(false);
     QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output.enabled(), false);
+    QCOMPARE(changed.count(), enabledChanged.count());
 
     m_serverOutputDevice->setEnabled(true);
     QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output.enabled(), true);
+    QCOMPARE(changed.count(), enabledChanged.count());
 }
 
 void TestWaylandOutputDevice::testEdid()

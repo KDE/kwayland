@@ -145,7 +145,7 @@ void TestWaylandOutputDevice::testRegistry()
     m_serverOutputDevice->setPhysicalSize(QSize(200, 100));
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -167,8 +167,7 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
     QCOMPARE(output.enabled(), true);
     QCOMPARE(output.edid()->eisaId, QString());
-
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
 
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
@@ -208,7 +207,7 @@ void TestWaylandOutputDevice::testModeChanges()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     QSignalSpy modeAddedSpy(&output, SIGNAL(modeAdded(KWayland::Client::OutputDevice::Mode)));
     QVERIFY(modeAddedSpy.isValid());
@@ -299,7 +298,7 @@ void TestWaylandOutputDevice::testScaleChange()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
@@ -349,7 +348,7 @@ void TestWaylandOutputDevice::testSubPixel()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
@@ -429,7 +428,7 @@ void TestWaylandOutputDevice::testEnabled()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
@@ -467,7 +466,7 @@ void TestWaylandOutputDevice::testEdid()
     QCOMPARE(output.edid()->physicalSize, QSize());
     QCOMPARE(output.edid()->data, QString());
 
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
@@ -491,7 +490,7 @@ void TestWaylandOutputDevice::testId()
     QVERIFY(announced.wait());
 
     KWayland::Client::OutputDevice output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());

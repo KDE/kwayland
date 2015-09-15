@@ -198,7 +198,7 @@ void TestWaylandOutputDevice::testModeChanges()
 {
     using namespace KWayland::Client;
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -290,7 +290,7 @@ void TestWaylandOutputDevice::testModeChanges()
 void TestWaylandOutputDevice::testScaleChange()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -340,7 +340,7 @@ void TestWaylandOutputDevice::testSubPixel()
     m_serverOutputDevice->setSubPixel(actual);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -391,7 +391,7 @@ void TestWaylandOutputDevice::testTransform()
     m_serverOutputDevice->setTransform(actual);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -420,7 +420,7 @@ void TestWaylandOutputDevice::testTransform()
 void TestWaylandOutputDevice::testEnabled()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -451,7 +451,7 @@ void TestWaylandOutputDevice::testEnabled()
 void TestWaylandOutputDevice::testEdid()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -482,7 +482,7 @@ void TestWaylandOutputDevice::testEdid()
 void TestWaylandOutputDevice::testId()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -513,7 +513,7 @@ void TestWaylandOutputDevice::testId()
 void TestWaylandOutputDevice::testDone()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();

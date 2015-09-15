@@ -241,7 +241,6 @@ void TestWaylandOutputManagement::testRemoval()
 
 void TestWaylandOutputManagement::createConfig()
 {
-    //qRegisterMetaType<KWayland::Server::OutputConfigurationInterface>();
     m_configSpy = new QSignalSpy(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated);
     connect(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated,
             [this] (KWayland::Server::OutputConfigurationInterface *config) {
@@ -250,7 +249,6 @@ void TestWaylandOutputManagement::createConfig()
     QVERIFY(m_configSpy->isValid());
 
     m_outputConfiguration = m_outputManagement.createConfiguration();
-    //m_outputConfiguration->setEnabled(0, 0);
     QVERIFY(m_outputConfiguration->isValid());
     QVERIFY(m_outputConfigurationInterface == nullptr);
 

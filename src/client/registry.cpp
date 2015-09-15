@@ -89,7 +89,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::compositorRemoved
     }},
     {Registry::Interface::DataDeviceManager, {
-        1,
+        2,
         QByteArrayLiteral("wl_data_device_manager"),
         &wl_data_device_manager_interface,
         &Registry::dataDeviceManagerAnnounced,

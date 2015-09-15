@@ -59,7 +59,6 @@ private Q_SLOTS:
     void testBindCompositor();
     void testBindShell();
     void testBindOutput();
-    void testBindOutputDevice();
     void testBindShm();
     void testBindSeat();
     void testBindSubCompositor();
@@ -210,11 +209,6 @@ void TestWaylandRegistry::testBindShell()
 void TestWaylandRegistry::testBindOutput()
 {
     TEST_BIND(KWayland::Client::Registry::Interface::Output, SIGNAL(outputAnnounced(quint32,quint32)), bindOutput, wl_output_destroy)
-}
-
-void TestWaylandRegistry::testBindOutputDevice()
-{
-    //TEST_BIND(KWayland::Client::Registry::Interface::OutputDevice, SIGNAL(outputDeviceAnnounced(quint32,quint32)), bindOutputDevice, org_kde_kwin_outputdevice_destroy)
 }
 
 void TestWaylandRegistry::testBindSeat()

@@ -30,7 +30,7 @@ namespace KWayland
 namespace Server
 {
 
-static const quint32 s_version = 2;
+static const quint32 s_version = 1;
 
 class OutputDeviceInterface::Private : public Global::Private
 {
@@ -377,17 +377,11 @@ void OutputDeviceInterface::Private::sendGeometry(wl_resource *resource)
 
 void OutputDeviceInterface::Private::sendScale(const ResourceData &data)
 {
-    if (data.version < 2) {
-        return;
-    }
     org_kde_kwin_outputdevice_send_scale(data.resource, scale);
 }
 
 void OutputDeviceInterface::Private::sendDone(const ResourceData &data)
 {
-    if (data.version < 2) {
-        return;
-    }
     org_kde_kwin_outputdevice_send_done(data.resource);
 }
 

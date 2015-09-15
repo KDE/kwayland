@@ -29,7 +29,7 @@
         ]]></copyright>
 
 
-<interface name="org_kde_kwin_outputdevice" version="2">
+<interface name="org_kde_kwin_outputdevice" version="1">
     <description summary="compositor output region">
         An output describes part of the compositor geometry.  The
         compositor works in the 'compositor coordinate system' and an
@@ -134,7 +134,7 @@
         <arg name="refresh" type="int" summary="vertical refresh rate in mHz"/>
     </event>
 
-    <event name="done" since="2">
+    <event name="done">
         <description summary="sent all information about output">
             This event is sent after all other properties has been
             sent after binding to the output object and after any
@@ -144,7 +144,7 @@
         </description>
     </event>
 
-    <event name="scale" since="2">
+    <event name="scale">
         <description summary="output scaling properties">
             This event contains scaling geometry information
             that is not in the geometry event. It may be sent after
@@ -168,7 +168,7 @@
         <arg name="factor" type="int" summary="scaling factor of output"/>
     </event>
 
-    <event name="edid" since="2">
+    <event name="edid">
         <description summary="advertise available modes for the output">
             The mode event encapsulates the EDID data for the output.
 
@@ -187,7 +187,7 @@
         <arg name="raw" type="string" summary="raw EDID string"/>
     </event>
 
-    <event name="enabled" since="2">
+    <event name="enabled">
         <description summary="advertise available modes for the output">
             The enabled event notifies whether this output is currently
             enabled and used for the wayland server.
@@ -198,7 +198,7 @@
         <arg name="enabled" type="int" summary="output is enabled in the wayland server"/>
     </event>
 
-    <event name="id" since="2">
+    <event name="id">
         <description summary="A unique ID for this outputdevice">
             The ID can be used to identify the output. It's controlled by the server entirely.
             An ID of -1 is considered invalid.

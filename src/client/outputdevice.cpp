@@ -254,6 +254,7 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
     o->done = true;
+    emit o->q->done();
     emit o->q->changed();
 }
 

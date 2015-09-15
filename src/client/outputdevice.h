@@ -227,6 +227,10 @@ public:
 
 Q_SIGNALS:
     /**
+     * Emitted when the output is fully initialized.
+     **/
+    void done();
+    /**
      * Emitted whenever at least one of the data changed.
      **/
     void changed();

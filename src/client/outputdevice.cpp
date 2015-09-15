@@ -254,8 +254,8 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
     o->done = true;
-    emit o->q->done();
     emit o->q->changed();
+    emit o->q->done();
 }
 
 void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* eisaId, const char* monitorName, const char* serialNumber, int32_t physicalWidth, int32_t physicalHeight, const char* raw)

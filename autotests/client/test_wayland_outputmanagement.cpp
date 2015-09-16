@@ -212,7 +212,7 @@ void TestWaylandOutputManagement::testOutputDevices()
     QCOMPARE(output->subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
     QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
-    QCOMPARE(output->edid()->eisaId, QString());
+    QCOMPARE(output->edid(), QString());
 
     QSignalSpy outputChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());

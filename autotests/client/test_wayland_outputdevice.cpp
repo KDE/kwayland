@@ -59,7 +59,7 @@ private Q_SLOTS:
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputDeviceInterface *m_serverOutputDevice;
-    KWayland::Server::OutputDeviceInterface::Edid m_edid;
+    QString m_edid;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
     QThread *m_thread;
@@ -93,11 +93,7 @@ void TestWaylandOutputDevice::init()
     m_serverOutputDevice->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
     m_serverOutputDevice->setCurrentMode(QSize(1024, 768));
 
-    m_edid.eisaId = "0xDEADBEEF";
-    m_edid.monitorName = "DisplayPort-0";
-    m_edid.serialNumber = "2222222";
-    m_edid.physicalSize = QSize(1600, 900); // in mm
-    m_edid.data = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
+    m_edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
     m_serverOutputDevice->setEdid(m_edid);
 
     m_serverOutputDevice->create();
@@ -169,7 +165,7 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
     QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
-    QCOMPARE(output.edid()->eisaId, QString());
+    QCOMPARE(output.edid(), QString());
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
 
@@ -191,7 +187,7 @@ void TestWaylandOutputDevice::testRegistry()
     // for xwayland transform is normal
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
 
-    QCOMPARE(output.edid()->eisaId, QStringLiteral("0xDEADBEEF"));
+    QCOMPARE(output.edid(), m_edid);
     QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
     QCOMPARE(output.id(), 1337);
 
@@ -466,23 +462,14 @@ void TestWaylandOutputDevice::testEdid()
 
     KWayland::Client::OutputDevice output;
 
-    QCOMPARE(output.edid()->eisaId, QString());
-    QCOMPARE(output.edid()->monitorName, QString());
-    QCOMPARE(output.edid()->serialNumber, QString());
-    QCOMPARE(output.edid()->physicalSize, QSize());
-    QCOMPARE(output.edid()->data, QString());
+    QCOMPARE(output.edid(), QString());
 
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
     output.setup(registry.bindOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     wl_display_flush(m_connection->display());
     QVERIFY(outputChanged.wait());
-
-    QCOMPARE(output.edid()->eisaId, m_edid.eisaId);
-    QCOMPARE(output.edid()->monitorName, m_edid.monitorName);
-    QCOMPARE(output.edid()->serialNumber, m_edid.serialNumber);
-    QCOMPARE(output.edid()->physicalSize, m_edid.physicalSize);
-    QCOMPARE(output.edid()->data, m_edid.data);
+    QCOMPARE(output.edid(), m_edid);
 }
 
 void TestWaylandOutputDevice::testId()

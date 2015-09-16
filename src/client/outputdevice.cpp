@@ -54,7 +54,7 @@ public:
     Modes modes;
     Modes::iterator currentMode = modes.end();
 
-    Edid *edid = new Edid;
+    QString edid;
     OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
     int id = -1;
     bool done = false;
@@ -67,13 +67,7 @@ private:
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
 
-    static void edidCallback(void *data, org_kde_kwin_outputdevice *output,
-                             const char *eisaId,
-                             const char *monitorName,
-                             const char *serialNumber,
-                             int32_t physicalWidth,
-                             int32_t physicalHeight,
-                             const char *raw);
+    static void edidCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw);
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
     static void idCallback(void *data, org_kde_kwin_outputdevice *output, int32_t id);
 
@@ -258,15 +252,10 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
     emit o->q->done();
 }
 
-void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* eisaId, const char* monitorName, const char* serialNumber, int32_t physicalWidth, int32_t physicalHeight, const char* raw)
+void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
-
-    o->edid->eisaId = QString::fromUtf8(eisaId);
-    o->edid->monitorName = QString::fromUtf8(monitorName);
-    o->edid->serialNumber = QString::fromUtf8(serialNumber);
-    o->edid->physicalSize = QSize(physicalWidth, physicalHeight);
-    o->edid->data = QString::fromUtf8(raw);
+    o->edid = QString::fromUtf8(raw);
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
@@ -430,7 +419,7 @@ OutputDevice::operator org_kde_kwin_outputdevice*() const {
     return d->output;
 }
 
-OutputDevice::Edid* OutputDevice::edid() const
+QString OutputDevice::edid() const
 {
     return d->edid;
 }

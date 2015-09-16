@@ -179,11 +179,6 @@
 
             The data argument can be used to decode custom EDID extensions.
         </description>
-        <arg name="eisaId" type="string" summary="EISA identification number"/>
-        <arg name="monitorName" type="string" summary="unique human-readable monitor name"/>
-        <arg name="serialNumber" type="string" summary="serial number of the output"/>
-        <arg name="physicalWidth" type="int" summary="physical width of the monitor in mm"/>
-        <arg name="physicalHeight" type="int" summary="physical height of the monitor in mm"/>
         <arg name="raw" type="string" summary="raw EDID string"/>
     </event>
 

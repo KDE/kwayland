@@ -61,7 +61,7 @@ public:
     QList<Mode> modes;
     QList<ResourceData> resources;
 
-    Edid edid;
+    QString edid;
     Enablement enabled = Enablement::Enabled;
     int id = -1;
 
@@ -475,7 +475,7 @@ OutputDeviceInterface::Private *OutputDeviceInterface::d_func() const
     return reinterpret_cast<Private*>(d.data());
 }
 
-void OutputDeviceInterface::setEdid(Edid& edid)
+void OutputDeviceInterface::setEdid(const QString& edid)
 {
     Q_D();
     d->edid = edid;
@@ -483,7 +483,7 @@ void OutputDeviceInterface::setEdid(Edid& edid)
     emit edidChanged();
 }
 
-OutputDeviceInterface::Edid OutputDeviceInterface::edid() const
+QString OutputDeviceInterface::edid() const
 {
     Q_D();
     return d->edid;
@@ -525,12 +525,7 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
         org_kde_kwin_outputdevice_send_edid((*it).resource,
-                                            edid.eisaId.toUtf8().constData(),
-                                            edid.monitorName.toUtf8().constData(),
-                                            edid.serialNumber.toUtf8().constData(),
-                                            edid.physicalSize.width(),
-                                            edid.physicalSize.height(),
-                                            edid.data.toUtf8().constData());
+                                            edid.toUtf8().constData());
     }
 
 }

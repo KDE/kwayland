@@ -70,13 +70,6 @@ class KWAYLANDCLIENT_EXPORT OutputDevice : public QObject
 {
     Q_OBJECT
 public:
-    struct Edid {
-        QString eisaId;
-        QString monitorName;
-        QString serialNumber;
-        QSize physicalSize;
-        QString data;
-    };
     enum class SubPixel {
         Unknown,
         None,
@@ -215,7 +208,7 @@ public:
     /**
      * @returns The EDID information for this output.
      **/
-    Edid* edid() const;
+    QString edid() const;
 
     /**
      * @returns Whether this output is enabled or not.

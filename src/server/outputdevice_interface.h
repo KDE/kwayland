@@ -48,17 +48,10 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(QSize pixelSize READ pixelSize NOTIFY pixelSizeChanged)
     Q_PROPERTY(int refreshRate READ refreshRate NOTIFY refreshRateChanged)
     Q_PROPERTY(int scale READ scale WRITE setScale NOTIFY scaleChanged)
-    Q_PROPERTY(Edid edid READ edid WRITE setEdid NOTIFY edidChanged)
+    Q_PROPERTY(QString edid READ edid WRITE setEdid NOTIFY edidChanged)
     Q_PROPERTY(OutputDeviceInterface::Enablement enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
 public:
-    struct Edid {
-        QString eisaId;
-        QString monitorName;
-        QString serialNumber;
-        QSize physicalSize;
-        QString data;
-    };
     enum class SubPixel {
         Unknown,
         None,
@@ -104,7 +97,7 @@ public:
     Transform transform() const;
     QList<Mode> modes() const;
 
-    Edid edid() const;
+    QString edid() const;
     OutputDeviceInterface::Enablement enabled() const;
     int id() const;
 
@@ -118,7 +111,7 @@ public:
     void addMode(const QSize &size, ModeFlags flags = ModeFlags(), int refreshRate = 60000);
     void setCurrentMode(const QSize &size, int refreshRate = 60000);
 
-    void setEdid(Edid &edid);
+    void setEdid(const QString &edid);
     void setEnabled(OutputDeviceInterface::Enablement enabled);
     void setId(int id);
 
@@ -152,7 +145,6 @@ private:
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::OutputDeviceInterface::ModeFlags)
-Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Edid)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Enablement)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Transform)

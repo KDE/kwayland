@@ -39,6 +39,12 @@ class Display;
 class SurfaceInterface;
 class ShellSurfaceInterface;
 
+/**
+ * @brief Global for the wl_shell interface.
+ *
+ * @see ShellSurfaceInterface
+ * @see SurfaceInterface
+ **/
 class KWAYLANDSERVER_EXPORT ShellInterface : public Global
 {
     Q_OBJECT
@@ -46,6 +52,9 @@ public:
     virtual ~ShellInterface();
 
 Q_SIGNALS:
+    /**
+     * Emitted whenever a new ShellSurfaceInterface gets created for a SurfaceInterface.
+     **/
     void surfaceCreated(KWayland::Server::ShellSurfaceInterface*);
 
 private:
@@ -54,23 +63,99 @@ private:
     class Private;
 };
 
+/**
+ * @brief Resource for a wl_shell_surface.
+ *
+ * The ShellSurfaceInterface represents a "normal window". It gets created for a
+ * SurfaceInterface, thus has visible content. Through the ShellSurfaceInterface the
+ * client can specify further meta-information about how the SurfaceInterface should be
+ * represented.
+ *
+ * @see SurfaceInterface
+ * @see ShellInterface
+ **/
 class KWAYLANDSERVER_EXPORT ShellSurfaceInterface : public Resource
 {
     Q_OBJECT
+    /**
+     * The window title
+     **/
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
+    /**
+     * The window class, representing the desktop file name.
+     **/
     Q_PROPERTY(QByteArray windowClass READ windowClass NOTIFY windowClassChanged)
+    /**
+     * Whether the window is fullscren.
+     **/
     Q_PROPERTY(bool fullscreen READ isFullscreen NOTIFY fullscreenChanged)
+    /**
+     * Whether the window is a normal toplevel window (not a child).
+     **/
     Q_PROPERTY(bool toplevel READ isToplevel NOTIFY toplevelChanged)
+    /**
+     * Whether the window is maximized.
+     **/
     Q_PROPERTY(bool maximized READ isMaximized NOTIFY maximizedChanged)
+    /**
+     * Whether the ShellSurfaceInterface is a popup for another SurfaceInterface.
+     *
+     * Popup implies transient.
+     * @since 5.5
+     **/
+    Q_PROPERTY(bool popup READ isPopup NOTIFY popupChanged)
+    /**
+     * Whether the ShellSurfaceInterface is a transient for another SurfaceInterface.
+     *
+     * Popup implies transient.
+     * @since 5.5
+     **/
+    Q_PROPERTY(bool transient READ isTransient NOTIFY transientChanged)
+    /**
+     * Offset of the upper left corner in the parent SurfaceInterface's coordinate system.
+     * @since 5.5
+     **/
+    Q_PROPERTY(QPoint transientOffset READ transientOffset NOTIFY transientOffsetChanged)
 public:
     virtual ~ShellSurfaceInterface();
 
+    /**
+     * Pings the client.
+     * The client is required to send a pong. If that is not received in the times tamp
+     * set through setPingTimeout the signal @link pingTimeout @endlink will be emitted.
+     * If a pong is received the signal @link pongReceived @endlink will be emitted.
+     *
+     * @see setPingTimeout
+     * @see pingTimeout
+     * @see pongReceived
+     * @see isPinged
+     **/
     void ping();
+    /**
+     * Sets the ping time out for @link ping @endlink requests to @p msec.
+     *
+     * @param msec The time out in msec
+     * @see ping
+     * @see isPinged
+     **/
     void setPingTimeout(uint msec);
+    /**
+     * @returns whether the ShellSurfaceInterface got pinged, but no pong received.
+     * @see ping
+     **/
     bool isPinged() const;
+    /**
+     * Requests that the ShellSurfaceInterface resizes the SurfaceInterface to @p size.
+     **/
     void requestSize(const QSize &size);
 
+    /**
+     * @return The SurfaceInterface this ShellSurfaceInterface got created for.
+     **/
     SurfaceInterface *surface() const;
+    /**
+     * @returns The ShellInterface which created this ShellSurfaceInterface.
+     **/
     ShellInterface *shell() const;
 
     QString title() const;
@@ -78,15 +163,87 @@ public:
     bool isFullscreen() const;
     bool isToplevel() const;
     bool isMaximized() const;
+    /**
+     * @returns @c true if the ShellSurfaceInterface is a popup.
+     * @see isTransient
+     * @see transientOffset
+     * @see transientFor
+     * @since 5.5
+     **/
+    bool isPopup() const;
+    /**
+     * @returns @c true if the ShellSurfaceInterface is a transient or popup for another SurfaceInterface.
+     * @see isPopup
+     * @see transientOffset
+     * @see transientFor
+     * @since 5.5
+     **/
+    bool isTransient() const;
+    /**
+     * In case the ShellSurfaceInterface is a transient this is the offset of the ShellSurfaceInterface
+     * in the coordinate system of the SurfaceInterface this surface is a transient for.
+     *
+     * @returns offset in parent coordinate system.
+     * @see isTransient
+     * @see transientFor
+     * @since 5.5
+     **/
+    QPoint transientOffset() const;
+    /**
+     * The SurfaceInterface for which this ShellSurfaceInterface is a transient.
+     * This is only relevant if the ShellSurfaceInterface is either a transient or a
+     * popup.
+     *
+     * The transientOffset is in the local coordinate system of the SurfaceInterface
+     * returned by this method.
+     *
+     * @returns The SurfaceInterface for which this Surface is a transient
+     * @see isTransient
+     * @see isPopup
+     * @see transientOffset
+     * @since 5.5
+     **/
+    QPointer<SurfaceInterface> transientFor() const;
 
 Q_SIGNALS:
+    /**
+     * Emitted whenever the title changes.
+     **/
     void titleChanged(const QString&);
+    /**
+     * Emitted whenever the window class changes.
+     **/
     void windowClassChanged(const QByteArray&);
+    /**
+     * Emitted when the ping timed out.
+     * @see ping
+     * @see pingTimeout
+     * @see isPinged
+     **/
     void pingTimeout();
+    /**
+     * Emitted when the server received a pong for this ShellSurfaceInterface.
+     **/
     void pongReceived();
     void fullscreenChanged(bool);
     void toplevelChanged(bool);
     void maximizedChanged(bool);
+    /**
+     * @since 5.5
+     **/
+    void popupChanged(bool);
+    /**
+     * @since 5.5
+     **/
+    void transientChanged(bool);
+    /**
+     * @since 5.5
+     **/
+    void transientOffsetChanged(const QPoint&);
+    /**
+     * @since 5.5
+     **/
+    void transientForChanged();
 
 private:
     friend class ShellInterface;

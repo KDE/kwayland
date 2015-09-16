@@ -158,6 +158,7 @@ install(FILES
   seat_interface.h
   shadow_interface.h
   shell_interface.h
+  slide_interface.h
   subcompositor_interface.h
   surface_interface.h
   touch_interface.h

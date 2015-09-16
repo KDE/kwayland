@@ -76,6 +76,8 @@ namespace KWayland
 {
 namespace Client
 {
+
+namespace {
 struct SuppertedInterfaceData {
     quint32 maxVersion;
     QByteArray name;
@@ -92,7 +94,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::compositorRemoved
     }},
     {Registry::Interface::DataDeviceManager, {
-        1,
+        2,
         QByteArrayLiteral("wl_data_device_manager"),
         &wl_data_device_manager_interface,
         &Registry::dataDeviceManagerAnnounced,
@@ -226,6 +228,7 @@ static quint32 maxVersion(const Registry::Interface &interface)
         return it.value().maxVersion;
     }
     return 0;
+}
 }
 
 class Registry::Private
@@ -379,6 +382,7 @@ void Registry::Private::handleGlobalSync()
     emit q->interfacesAnnounced();
 }
 
+namespace {
 static Registry::Interface nameToInterface(const char *interface)
 {
     for (auto it = s_interfaces.begin(); it != s_interfaces.end(); ++it) {
@@ -387,6 +391,7 @@ static Registry::Interface nameToInterface(const char *interface)
         }
     }
     return Registry::Interface::Unknown;
+}
 }
 
 void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uint32_t version)
@@ -547,6 +552,7 @@ CREATE2(ShmPool, Shm)
 #undef CREATE
 #undef CREATE2
 
+namespace {
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     auto it = s_interfaces.find(interface);
@@ -554,6 +560,7 @@ static const wl_interface *wlInterface(Registry::Interface interface)
         return it.value().interface;
     }
     return nullptr;
+}
 }
 
 template <typename T>

@@ -166,6 +166,7 @@ bool ShmPool::Private::resizePool(int32_t newSize)
     return true;
 }
 
+namespace {
 static Buffer::Format toBufferFormat(const QImage &image)
 {
     switch (image.format()) {
@@ -178,6 +179,7 @@ static Buffer::Format toBufferFormat(const QImage &image)
         qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
         return Buffer::Format::ARGB32;
     }
+}
 }
 
 Buffer::Ptr ShmPool::createBuffer(const QImage& image)
@@ -206,6 +208,7 @@ Buffer::Ptr ShmPool::createBuffer(const QSize &size, int32_t stride, const void 
     return QWeakPointer<Buffer>(*it);
 }
 
+namespace {
 static wl_shm_format toWaylandFormat(Buffer::Format format)
 {
     switch (format) {
@@ -215,6 +218,7 @@ static wl_shm_format toWaylandFormat(Buffer::Format format)
         return WL_SHM_FORMAT_XRGB8888;
     }
     abort();
+}
 }
 
 Buffer::Ptr ShmPool::getBuffer(const QSize &size, int32_t stride, Buffer::Format format)

@@ -32,7 +32,9 @@ namespace KWayland
 namespace Client
 {
 
+namespace {
 typedef QList<Output::Mode> Modes;
+}
 
 class Output::Private
 {

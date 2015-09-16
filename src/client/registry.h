@@ -121,14 +121,14 @@ public:
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
-        FakeInput, ///< Refers to org_kde_kwin_fake_input interface
         OutputManagement, ///< Refers to the wl_data_device_manager interface
         OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
-        Shadow, /// Refers to org_kde_kwin_shadow_manager interface
-        Blur, /// refers to org_kde_kwin_blur_manager interface
-        Contrast, /// refers to org_kde_kwin_contrast_manager interface
-        Slide, /// refers to org_kde_kwin_slide_manager
-        Dpms /// Refers to org_kde_kwin_dpms_manager interface
+        FakeInput, ///< Refers to org_kde_kwin_fake_input interface
+        Shadow, ///< Refers to org_kde_kwin_shadow_manager interface
+        Blur, ///< refers to org_kde_kwin_blur_manager interface
+        Contrast, ///< refers to org_kde_kwin_contrast_manager interface
+        Slide, ///< refers to org_kde_kwin_slide_manager
+        Dpms ///< Refers to org_kde_kwin_dpms_manager interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -237,6 +237,10 @@ public:
      **/
     QVector<AnnouncedInterface> interfaces(Interface interface) const;
 
+    /**
+     * @name Low-level bind methods for global interfaces.
+     **/
+    ///@{
     /**
      * Binds the wl_compositor with @p name and @p version.
      * If the @p name does not exist or is not for the compositor interface,
@@ -393,6 +397,15 @@ public:
      * @since 5.5
      **/
     org_kde_kwin_contrast_manager *bindContrastManager(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_slide_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the slide manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createSlideManager instead.
+     * @see createSlideManager
+     * @since 5.5
+     **/
     org_kde_kwin_slide_manager * bindSlideManager(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_dpms_manager with @p name and @p version.
@@ -404,7 +417,12 @@ public:
      * @since 5.5
      **/
     org_kde_kwin_dpms_manager *bindDpmsManager(uint32_t name, uint32_t version) const;
+    ///@}
 
+    /**
+     * @name Convenient factory methods for global objects.
+     **/
+    ///@{
     /**
      * Creates a Compositor and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -699,6 +717,7 @@ public:
      * @since 5.5
      **/
     DpmsManager *createDpmsManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    ///@}
 
     /**
      * cast operator to the low-level Wayland @c wl_registry
@@ -714,6 +733,10 @@ public:
     wl_registry *registry();
 
 Q_SIGNALS:
+    /**
+     * @name Interface announced signals.
+     **/
+    ///@{
     /**
      * Emitted whenever a wl_compositor interface gets announced.
      * @param name The name for the announced interface
@@ -833,6 +856,11 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void dpmsAnnounced(quint32 name, quint32 version);
+    ///@}
+    /**
+     * @name Interface removed signals.
+     **/
+    ///@{
     /**
      * Emitted whenever a wl_compositor interface gets removed.
      * @param name The name for the removed interface
@@ -934,6 +962,7 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void dpmsRemoved(quint32 name);
+    ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets
      * announced.

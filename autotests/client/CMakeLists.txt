@@ -76,7 +76,7 @@ set( testWaylandSeat_SRCS
     )
 add_executable(testWaylandSeat ${testWaylandSeat_SRCS})
 target_link_libraries( testWaylandSeat Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
-add_test(kwayland-testWaylandSeat testWaylandSeat)
+#add_test(kwayland-testWaylandSeat testWaylandSeat) # FIXME: re-enable, just disabled because it takes very long
 ecm_mark_as_test(testWaylandSeat)
 
 ########################################################

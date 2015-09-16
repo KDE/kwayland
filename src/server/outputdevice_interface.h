@@ -83,6 +83,7 @@ public:
         QSize size = QSize();
         int refreshRate = 60000;
         ModeFlags flags;
+        int id = -1;
     };
     virtual ~OutputDeviceInterface();
 

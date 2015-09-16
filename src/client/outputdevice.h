@@ -116,6 +116,12 @@ public:
          * The OutputDevice to which this Mode belongs.
          **/
         QPointer<OutputDevice> output;
+        /**
+         * The id of this mode, unique per OutputDevice. This id can be used to call
+         * OutputConfiguration->setMode();
+         * @see OutputConfiguration::setMode
+         **/
+        int id;
 
         bool operator==(const Mode &m) const;
     };

@@ -358,7 +358,8 @@ void OutputDeviceInterface::Private::sendMode(wl_resource *resource, const Mode 
                         flags,
                         mode.size.width(),
                         mode.size.height(),
-                        mode.refreshRate);
+                        mode.refreshRate,
+                        mode.id);
 
 }
 

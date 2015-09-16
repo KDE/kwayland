@@ -63,7 +63,7 @@ private:
     static void geometryCallback(void *data, org_kde_kwin_outputdevice *output, int32_t x, int32_t y,
                                  int32_t physicalWidth, int32_t physicalHeight, int32_t subPixel,
                                  const char *make, const char *model, int32_t transform);
-    static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+    static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
 
@@ -78,7 +78,7 @@ private:
     void setScale(int scale);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
-    void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+    void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
 
     OutputDevice *q;
     static struct org_kde_kwin_outputdevice_listener s_outputListener;
@@ -180,19 +180,20 @@ void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevi
     o->setTransform(toTransform());
 }
 
-void OutputDevice::Private::modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+void OutputDevice::Private::modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
-    o->addMode(flags, width, height, refresh);
+    o->addMode(flags, width, height, refresh, mode_id);
 }
 
-void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id)
 {
     Mode mode;
     mode.output = QPointer<OutputDevice>(q);
     mode.refreshRate = refresh;
     mode.size = QSize(width, height);
+    mode.id = mode_id;
     if (flags & WL_OUTPUT_MODE_CURRENT) {
         mode.flags |= Mode::Flag::Current;
     }

@@ -127,11 +127,15 @@
             the output size in the global compositor space. For instance,
             the output may be scaled, as described in org_kde_kwin_outputdevice.scale,
             or transformed , as described in org_kde_kwin_outputdevice.transform.
+
+            The id can be used to refer to a mode when calling
+            set_mode on a org_kde_kwin_outputonfiguration.
         </description>
         <arg name="flags" type="uint" summary="bitfield of mode flags"/>
         <arg name="width" type="int" summary="width of the mode in hardware units"/>
         <arg name="height" type="int" summary="height of the mode in hardware units"/>
         <arg name="refresh" type="int" summary="vertical refresh rate in mHz"/>
+        <arg name="mode_id" type="int" summary="Per outputdevice unique id to identify a mode"/>
     </event>
 
     <event name="done">

@@ -86,6 +86,9 @@ public:
 
     void setEnabled(OutputDevice *outputdevice, OutputDevice::Enablement enable);
 
+    /**
+     * Set the mode of this output, identified by its mode id.
+     */
     void setMode(OutputDevice *outputdevice, const QSize &size, int refreshRate = 60000);
     void setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform);
 

@@ -84,7 +84,7 @@ public:
      **/
     EventQueue *eventQueue();
 
-    void setEnabled(OutputDevice *outputdevice, qint32 enable);
+    void setEnabled(OutputDevice *outputdevice, OutputDevice::Enablement enable);
 
     void setMode(OutputDevice *outputdevice, const QSize &size, int refreshRate = 60000);
     void setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform);

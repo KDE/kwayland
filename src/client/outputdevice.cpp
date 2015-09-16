@@ -55,7 +55,7 @@ public:
     Modes::iterator currentMode = modes.end();
 
     Edid *edid = new Edid;
-    bool enabled = true;
+    OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
     int id = -1;
     bool done = false;
 
@@ -273,8 +273,12 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
 
-    if (o->enabled != enabled) {
-        o->enabled = enabled;
+    OutputDevice::Enablement _enabled = OutputDevice::Enablement::Disabled;
+    if (enabled == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) {
+        _enabled = OutputDevice::Enablement::Enabled;
+    }
+    if (o->enabled != _enabled) {
+        o->enabled = _enabled;
         emit o->q->enabledChanged(o->enabled);
         if (o->done) {
             emit o->q->changed();
@@ -431,7 +435,7 @@ OutputDevice::Edid* OutputDevice::edid() const
     return d->edid;
 }
 
-bool OutputDevice::enabled() const
+OutputDevice::Enablement OutputDevice::enabled() const
 {
     return d->enabled;
 }

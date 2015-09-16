@@ -29,6 +29,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-client-protocol.h>
 
+using namespace KWayland::Client;
+using namespace KWayland::Server;
+
 class TestWaylandOutputDevice : public QObject
 {
     Q_OBJECT
@@ -165,7 +168,7 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.scale(), 1);
     QCOMPARE(output.subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
-    QCOMPARE(output.enabled(), true);
+    QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
     QCOMPARE(output.edid()->eisaId, QString());
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
@@ -189,7 +192,7 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
 
     QCOMPARE(output.edid()->eisaId, QStringLiteral("0xDEADBEEF"));
-    QCOMPARE(output.enabled(), true);
+    QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
     QCOMPARE(output.id(), 1337);
 
 }
@@ -434,20 +437,20 @@ void TestWaylandOutputDevice::testEnabled()
     wl_display_flush(m_connection->display());
     QVERIFY(outputChanged.wait());
 
-    QCOMPARE(output.enabled(), true);
+    QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
 
     QSignalSpy changed(&output, &KWayland::Client::OutputDevice::changed);
     QSignalSpy enabledChanged(&output, &KWayland::Client::OutputDevice::enabledChanged);
     QVERIFY(enabledChanged.isValid());
 
-    m_serverOutputDevice->setEnabled(false);
+    m_serverOutputDevice->setEnabled(OutputDeviceInterface::Enablement::Disabled);
     QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output.enabled(), false);
+    QCOMPARE(output.enabled(), OutputDevice::Enablement::Disabled);
     QCOMPARE(changed.count(), enabledChanged.count());
 
-    m_serverOutputDevice->setEnabled(true);
+    m_serverOutputDevice->setEnabled(OutputDeviceInterface::Enablement::Enabled);
     QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output.enabled(), true);
+    QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
     QCOMPARE(changed.count(), enabledChanged.count());
 }
 

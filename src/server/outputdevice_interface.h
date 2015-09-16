@@ -49,7 +49,7 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(int refreshRate READ refreshRate NOTIFY refreshRateChanged)
     Q_PROPERTY(int scale READ scale WRITE setScale NOTIFY scaleChanged)
     Q_PROPERTY(Edid edid READ edid WRITE setEdid NOTIFY edidChanged)
-    Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
+    Q_PROPERTY(OutputDeviceInterface::Enablement enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
 public:
     struct Edid {
@@ -77,6 +77,10 @@ public:
         Flipped180,
         Flipped270
     };
+    enum class Enablement {
+        Disabled = 0,
+        Enabled = 1
+    };
     enum class ModeFlag {
         Current = 1,
         Preferred = 2
@@ -101,7 +105,7 @@ public:
     QList<Mode> modes() const;
 
     Edid edid() const;
-    bool enabled() const;
+    OutputDeviceInterface::Enablement enabled() const;
     int id() const;
 
     void setPhysicalSize(const QSize &size);
@@ -115,7 +119,7 @@ public:
     void setCurrentMode(const QSize &size, int refreshRate = 60000);
 
     void setEdid(Edid &edid);
-    void setEnabled(bool enabled);
+    void setEnabled(OutputDeviceInterface::Enablement enabled);
     void setId(int id);
 
     static OutputDeviceInterface *get(wl_resource *native);
@@ -149,6 +153,7 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::OutputDeviceInterface::ModeFlags)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Edid)
+Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Enablement)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Transform)
 

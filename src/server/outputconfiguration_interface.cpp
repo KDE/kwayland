@@ -87,7 +87,12 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 {
     //Private *d = cast<Private>(resource);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    o->setEnabled(enable);
+    OutputDeviceInterface::Enablement _enable = OutputDeviceInterface::Enablement::Disabled;
+    if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_DISABLED) {
+        o->setEnabled(OutputDeviceInterface::Enablement::Disabled);
+    } else if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) {
+        o->setEnabled(OutputDeviceInterface::Enablement::Enabled);
+    }
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t width, int32_t height, int32_t refresh)

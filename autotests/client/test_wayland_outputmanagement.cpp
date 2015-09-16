@@ -38,6 +38,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-client-protocol.h>
 
+using namespace KWayland::Client;
+using namespace KWayland::Server;
+
 class TestWaylandOutputManagement : public QObject
 {
     Q_OBJECT
@@ -208,7 +211,7 @@ void TestWaylandOutputManagement::testOutputDevices()
     QCOMPARE(output->scale(), 1);
     QCOMPARE(output->subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
-    QCOMPARE(output->enabled(), true);
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
     QCOMPARE(output->edid()->eisaId, QString());
 
     QSignalSpy outputChanged(output, &KWayland::Client::OutputDevice::changed);
@@ -219,7 +222,7 @@ void TestWaylandOutputManagement::testOutputDevices()
 
     QVERIFY(outputChanged.wait());
     QCOMPARE(output->globalPosition(), QPoint(0, 1920));
-    QCOMPARE(output->enabled(), true);
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
     m_clientOutputs << output;
     m_outputDevice = output;
@@ -263,20 +266,20 @@ void TestWaylandOutputManagement::testEnable()
     QVERIFY(config->isValid());
 
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->enabled(), true);
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
     QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(enabledChanged.isValid());
 
-    config->setEnabled(output, false);
+    config->setEnabled(output, OutputDevice::Enablement::Disabled);
 
     QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), false);
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Disabled);
 
-    m_serverOutputs.first()->setEnabled(true);
+    m_serverOutputs.first()->setEnabled(OutputDeviceInterface::Enablement::Enabled);
 
     QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), true);
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
 }
 

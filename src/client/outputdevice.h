@@ -95,6 +95,10 @@ public:
         Flipped180,
         Flipped270
     };
+    enum class Enablement {
+        Disabled = 0,
+        Enabled = 1
+    };
     struct Mode {
         enum class Flag {
             None = 0,
@@ -216,7 +220,7 @@ public:
     /**
      * @returns Whether this output is enabled or not.
      **/
-    bool enabled() const;
+    OutputDevice::Enablement enabled() const;
 
     /**
      * @returns A unique identifier for this outputdevice, determined by the server.
@@ -237,7 +241,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever the enabled property changes.
      **/
-    void enabledChanged(bool enabled);
+    void enabledChanged(OutputDevice::Enablement enabled);
     /**
      * Emitted whenever the id property changes.
      **/
@@ -276,6 +280,7 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Transform)
+Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Enablement)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Mode)
 Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::OutputDevice::Mode::Flags)
 

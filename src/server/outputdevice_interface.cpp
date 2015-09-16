@@ -62,7 +62,7 @@ public:
     QList<ResourceData> resources;
 
     Edid edid;
-    bool enabled = true;
+    Enablement enabled = Enablement::Enabled;
     int id = -1;
 
     static OutputDeviceInterface *get(wl_resource *native);
@@ -489,7 +489,7 @@ OutputDeviceInterface::Edid OutputDeviceInterface::edid() const
     return d->edid;
 }
 
-void OutputDeviceInterface::setEnabled(bool enabled)
+void OutputDeviceInterface::setEnabled(OutputDeviceInterface::Enablement enabled)
 {
     Q_D();
     if (d->enabled != enabled) {
@@ -499,7 +499,7 @@ void OutputDeviceInterface::setEnabled(bool enabled)
     }
 }
 
-bool OutputDeviceInterface::enabled() const
+OutputDeviceInterface::Enablement OutputDeviceInterface::enabled() const
 {
     Q_D();
     return d->enabled;
@@ -537,8 +537,12 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
 
 void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
 {
+    int _enabled = 0;
+    if (enabled == OutputDeviceInterface::Enablement::Enabled) {
+        _enabled = 1;
+    }
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
-        org_kde_kwin_outputdevice_send_enabled((*it).resource, enabled);
+        org_kde_kwin_outputdevice_send_enabled((*it).resource, _enabled);
     }
 }
 

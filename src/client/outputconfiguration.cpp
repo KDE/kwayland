@@ -112,10 +112,14 @@ bool OutputConfiguration::isValid() const
 
 // Requests
 
-void OutputConfiguration::setEnabled(OutputDevice *outputdevice, qint32 enable)
+void OutputConfiguration::setEnabled(OutputDevice *outputdevice, OutputDevice::Enablement enable)
 {
+    qint32 _enable = ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_DISABLED;
+    if (enable == OutputDevice::Enablement::Enabled) {
+        _enable = ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED;
+    }
     org_kde_kwin_outputdevice *od = outputdevice->output();
-    org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, enable);
+    org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, _enable);
 }
 
 void OutputConfiguration::setMode(OutputDevice* outputdevice, const QSize &size, int refreshRate)

@@ -187,6 +187,14 @@
         <arg name="raw" type="string" summary="raw EDID string"/>
     </event>
 
+    <enum name="enablement">
+        <description summary="transform from framebuffer to output">
+            This wraps a boolean around an int to avoid a boolean trap.
+        </description>
+        <entry name="disabled" value="0"/>
+        <entry name="enabled" value="1"/>
+    </enum>
+
     <event name="enabled">
         <description summary="advertise available modes for the output">
             The enabled event notifies whether this output is currently

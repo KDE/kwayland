@@ -341,7 +341,6 @@ void TestWaylandOutputManagement::testEnable()
     QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
-    //qDebug() << "Setting back to disabled";
     // The following is never applied, but set back to its original value
     // as to make sure changes are correctly undone.
     config->setEnabled(output, OutputDevice::Enablement::Disabled);

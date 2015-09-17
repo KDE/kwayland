@@ -84,7 +84,6 @@ OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInter
 
 OutputConfigurationInterface::~OutputConfigurationInterface()
 {
-    qDebug() << "gone...";
 }
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
@@ -92,12 +91,10 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
     auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ? OutputDeviceInterface::Enablement::Enabled : OutputDeviceInterface::Enablement::Disabled;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->enabled() != _enable) {
-        qDebug() << "Recording change enabled" << enable;
         o->pendingChanges()->enabledChanged = true;
         o->pendingChanges()->enabled = _enable;
         Q_EMIT o->pendingChangesChanged();
     } else if (o->pendingChanges()->enabledChanged) {
-        qDebug() << "Unrecording change enabled" << enable;
         o->pendingChanges()->enabledChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }
@@ -119,12 +116,10 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
     }
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->currentModeId() != mode_id) {
-        qDebug() << "Recording mode enabled" << mode_id;
         o->pendingChanges()->modeChanged = true;
         o->pendingChanges()->mode = mode_id;
         Q_EMIT o->pendingChangesChanged();
     } else if (o->pendingChanges()->modeChanged) {
-        qDebug() << "Unrecording mode enabled" << mode_id;
         o->pendingChanges()->modeChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }
@@ -156,12 +151,10 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
     auto _transform = toTransform();
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->transform() != _transform) {
-        qDebug() << "Recording transform changed";
         o->pendingChanges()->transform = _transform;
         o->pendingChanges()->transformChanged = true;
         Q_EMIT o->pendingChangesChanged();
     } else if (o->pendingChanges()->transformChanged) {
-        qDebug() << "Unrecording transform changed";
         o->pendingChanges()->transformChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }
@@ -172,12 +165,10 @@ void OutputConfigurationInterface::Private::positionCallback(wl_client *client, 
     auto _pos = QPoint(x, y);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->globalPosition() != _pos) {
-        qDebug() << "Recording position changed" << _pos;
         o->pendingChanges()->positionChanged = true;
         o->pendingChanges()->position = _pos;
         Q_EMIT o->pendingChangesChanged();
     } else if (o->pendingChanges()->positionChanged) {
-        qDebug() << "Unrecording position changed" << _pos;
         o->pendingChanges()->positionChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }
@@ -191,12 +182,10 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
     }
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->scale() != scale) {
-        qDebug() << "Recording scale change" << scale;
         o->pendingChanges()->scaleChanged = true;
         o->pendingChanges()->scale = scale;
         Q_EMIT o->pendingChangesChanged();
     } else if (o->pendingChanges()->scaleChanged) {
-        qDebug() << "Unrecording scale change" << scale;
         o->pendingChanges()->scaleChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }

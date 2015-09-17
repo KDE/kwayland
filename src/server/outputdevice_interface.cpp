@@ -581,7 +581,6 @@ void OutputDeviceInterface::applyPendingChanges()
 {
     Q_D();
     if (d->changes.enabledChanged) {
-        qDebug() << "Applying enabled " << (OutputDeviceInterface::Enablement::Disabled != d->changes.enabled);
         setEnabled(d->changes.enabled);
     }
     if (d->changes.modeChanged) {

@@ -403,22 +403,51 @@ void TestWaylandOutputManagement::testPosition()
 
 void TestWaylandOutputManagement::testScale()
 {
+    delete m_outputConfigurationInterface;
+    m_outputConfigurationInterface = nullptr;
+    createConfig();
+    auto config = m_outputConfiguration;
+    QVERIFY(config->isValid());
+
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->scale(), 1);
+    QCOMPARE(output->currentMode().id, 1);
 
-    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
-    QVERIFY(changedSpy.isValid());
+    QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
+    QSignalSpy scaledSpy(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(scaledSpy.isValid());
 
-    QVERIFY(m_outputConfiguration->isValid());
-    m_outputConfiguration->setScale(output, 2);
+    config->setScale(output, 2);
 
-    QVERIFY(changedSpy.wait(200));
+    QVERIFY(pendingChangesSpy.wait(200));
+
+    QCOMPARE(scaledSpy.count(), 0);
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Applying";
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+
+    QVERIFY(scaledSpy.wait(200));
     QCOMPARE(output->scale(), 2);
 
     m_serverOutputs.first()->setScale(1);
 
-    QVERIFY(changedSpy.wait(200));
+    QVERIFY(scaledSpy.wait(200));
     QCOMPARE(output->scale(), 1);
+
+    // The following is never applied, but set back to its original value
+    // as to make sure changes are correctly undone.
+    config->setScale(output, 1337);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Setting again to disabled";
+
+    config->setScale(output, 1);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+    m_outputConfiguration->setScale(output, 0);
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!scaledSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
 }
 
 void TestWaylandOutputManagement::testMode()

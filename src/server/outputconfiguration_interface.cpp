@@ -185,9 +185,21 @@ void OutputConfigurationInterface::Private::positionCallback(wl_client *client, 
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
 {
-    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
+    if (scale <= 0) {
+        qWarning() << "Requested to scale output device to" << scale << ", but I can't do that.";
+        return;
+    }
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    o->setScale(scale);
+    if (o->scale() != scale) {
+        qDebug() << "Recording scale change" << scale;
+        o->pendingChanges()->scaleChanged = true;
+        o->pendingChanges()->scale = scale;
+        Q_EMIT o->pendingChangesChanged();
+    } else if (o->pendingChanges()->scaleChanged) {
+        qDebug() << "Unrecording scale change" << scale;
+        o->pendingChanges()->scaleChanged = false;
+        Q_EMIT o->pendingChangesChanged();
+    }
 }
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)

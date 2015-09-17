@@ -31,12 +31,16 @@
 
 <interface name="org_kde_kwin_outputdevice" version="1">
     <description summary="compositor output region">
-        An output describes part of the compositor geometry.  The
-        compositor works in the 'compositor coordinate system' and an
-        output corresponds to rectangular area in that space that is
-        actually visible.  This typically corresponds to a monitor that
-        displays part of the compositor space.  This object is published
-        as global during start up, or when a monitor is hotplugged.
+        An outputdevice describes a physical monitor connected to the system.
+        outputdevice is similar to wl_output, but focuses on screen
+        management. The screen configuration client uses outputdevices to
+        enlist connected devices, even those that may currently not be used
+        by the compositor as wl_output. It sends configuration changes to the
+        compositor through the outputconfiguration interface, which applies the
+        settings to the hardware and signals changes the outputdevices
+        accordingly.
+        This object is published as global during start up, or when a monitor
+        is hotplugged.
     </description>
 
     <enum name="subpixel">
@@ -187,8 +191,10 @@
     </event>
 
     <enum name="enablement">
-        <description summary="transform from framebuffer to output">
-            This wraps a boolean around an int to avoid a boolean trap.
+        <description summary="device is used to display content by the compositor">
+            Describes whether a device is enabled, i.e. device is used to
+            display content by the compositor. This wraps a boolean around
+            an int to avoid a boolean trap.
         </description>
         <entry name="disabled" value="0"/>
         <entry name="enabled" value="1"/>
@@ -197,8 +203,7 @@
     <event name="enabled">
         <description summary="advertise available modes for the output">
             The enabled event notifies whether this output is currently
-            enabled and used for the wayland server.
-
+            enabled and used for displaying content the wayland server.
             The event is sent when binding to the output object, and when
             an output is enabled or disabled.
         </description>
@@ -208,6 +213,7 @@
     <event name="uuid">
         <description summary="A unique id for this outputdevice">
             The uuid can be used to identify the output. It's controlled by the server entirely.
+            The compositor should make sure the uuid is persistant across restarts.
             An empty uuid is considered invalid.
         </description>
         <arg name="uuid" type="string" summary="Output devices ID"/>

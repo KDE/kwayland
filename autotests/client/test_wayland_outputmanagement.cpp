@@ -120,11 +120,32 @@ void TestWaylandOutputManagement::initTestCase()
     comp->create();
 
     auto outputDeviceInterface = m_display->createOutputDevice(this);
-    outputDeviceInterface->addMode(QSize(800, 600), OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred));
-    outputDeviceInterface->addMode(QSize(1024, 768));
-    outputDeviceInterface->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
-    outputDeviceInterface->addMode(QSize(1920, 1080), OutputDeviceInterface::ModeFlags(), 100000);
-    outputDeviceInterface->setCurrentMode(QSize(1024, 768));
+
+    OutputDeviceInterface::Mode m0;
+    m0.id = 0;
+    m0.size = QSize(800, 600);
+    m0.flags = OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred);
+    outputDeviceInterface->addMode(m0);
+
+    OutputDeviceInterface::Mode m1;
+    m1.id = 1;
+    m1.size = QSize(1024, 768);
+    outputDeviceInterface->addMode(m1);
+
+    OutputDeviceInterface::Mode m2;
+    m2.id = 2;
+    m2.size = QSize(1280, 1024);
+    m2.refreshRate = 90000;
+    outputDeviceInterface->addMode(m2);
+
+    OutputDeviceInterface::Mode m3;
+    m3.id = 3;
+    m3.size = QSize(1920, 1080);
+    m3.flags = OutputDeviceInterface::ModeFlags();
+    m3.refreshRate = 100000;
+    outputDeviceInterface->addMode(m3);
+
+    outputDeviceInterface->setCurrentMode(1);
     outputDeviceInterface->setGlobalPosition(QPoint(0, 1920));
     outputDeviceInterface->create();
     m_serverOutputs << outputDeviceInterface;
@@ -362,28 +383,30 @@ void TestWaylandOutputManagement::testMode()
     QVERIFY(m_outputConfiguration->isValid());
 
     KWayland::Client::OutputDevice::Mode m1;
+    m1.id = 3;
     m1.size = QSize(1920, 1080);
     m1.refreshRate = 100000;
 
     KWayland::Client::OutputDevice::Mode m2;
+    m2.id = 0;
     m2.size = QSize(800, 600);
     m2.refreshRate = 60000;
 
 
-    m_outputConfiguration->setMode(output, m1.size, m1.refreshRate);
+    m_outputConfiguration->setMode(output, m1.id);
 
     QVERIFY(changedSpy.wait(200));
 
     QCOMPARE(output->currentMode().size, m1.size);
     QCOMPARE(output->refreshRate(), m1.refreshRate);
 
-    m_outputConfiguration->setMode(output, m2.size, m2.refreshRate);
+    m_outputConfiguration->setMode(output, m2.id);
 
     QVERIFY(changedSpy.wait(200));
     QCOMPARE(output->currentMode().size, m2.size);
     QCOMPARE(output->refreshRate(), m2.refreshRate);
 
-    m_outputConfiguration->setMode(output, QSize());
+    m_outputConfiguration->setMode(output, -1);
     QVERIFY(!changedSpy.wait(200));
 }
 

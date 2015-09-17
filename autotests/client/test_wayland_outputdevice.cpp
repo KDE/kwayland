@@ -88,10 +88,26 @@ void TestWaylandOutputDevice::init()
 
     m_serverOutputDevice = m_display->createOutputDevice(this);
     m_serverOutputDevice->setId(1337);
-    m_serverOutputDevice->addMode(QSize(800, 600), OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred));
-    m_serverOutputDevice->addMode(QSize(1024, 768));
-    m_serverOutputDevice->addMode(QSize(1280, 1024), OutputDeviceInterface::ModeFlags(), 90000);
-    m_serverOutputDevice->setCurrentMode(QSize(1024, 768));
+
+
+    OutputDeviceInterface::Mode m0;
+    m0.id = 0;
+    m0.size = QSize(800, 600);
+    m0.flags = OutputDeviceInterface::ModeFlags(OutputDeviceInterface::ModeFlag::Preferred);
+    m_serverOutputDevice->addMode(m0);
+
+    OutputDeviceInterface::Mode m1;
+    m1.id = 1;
+    m1.size = QSize(1024, 768);
+    m_serverOutputDevice->addMode(m1);
+
+    OutputDeviceInterface::Mode m2;
+    m2.id = 2;
+    m2.size = QSize(1280, 1024);
+    m2.refreshRate = 90000;
+    m_serverOutputDevice->addMode(m2);
+
+    m_serverOutputDevice->setCurrentMode(1);
 
     m_edid = "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==";
     m_serverOutputDevice->setEdid(m_edid);
@@ -214,19 +230,25 @@ void TestWaylandOutputDevice::testModeChanges()
     wl_display_flush(m_connection->display());
     QVERIFY(outputChanged.wait());
     QCOMPARE(modeAddedSpy.count(), 3);
+
     QCOMPARE(modeAddedSpy.at(0).first().value<OutputDevice::Mode>().size, QSize(800, 600));
     QCOMPARE(modeAddedSpy.at(0).first().value<OutputDevice::Mode>().refreshRate, 60000);
     QCOMPARE(modeAddedSpy.at(0).first().value<OutputDevice::Mode>().flags, OutputDevice::Mode::Flags(OutputDevice::Mode::Flag::Preferred));
     QCOMPARE(modeAddedSpy.at(0).first().value<OutputDevice::Mode>().output, QPointer<OutputDevice>(&output));
+    QVERIFY(modeAddedSpy.at(0).first().value<OutputDevice::Mode>().id > -1);
+
     QCOMPARE(modeAddedSpy.at(1).first().value<OutputDevice::Mode>().size, QSize(1280, 1024));
     QCOMPARE(modeAddedSpy.at(1).first().value<OutputDevice::Mode>().refreshRate, 90000);
     QCOMPARE(modeAddedSpy.at(1).first().value<OutputDevice::Mode>().flags, OutputDevice::Mode::Flags(OutputDevice::Mode::Flag::None));
     QCOMPARE(modeAddedSpy.at(1).first().value<OutputDevice::Mode>().output, QPointer<OutputDevice>(&output));
+    QVERIFY(modeAddedSpy.at(1).first().value<OutputDevice::Mode>().id > -1);
+
     QCOMPARE(modeAddedSpy.at(2).first().value<OutputDevice::Mode>().size, QSize(1024, 768));
     QCOMPARE(modeAddedSpy.at(2).first().value<OutputDevice::Mode>().refreshRate, 60000);
     QCOMPARE(modeAddedSpy.at(2).first().value<OutputDevice::Mode>().flags, OutputDevice::Mode::Flags(OutputDevice::Mode::Flag::Current));
     QCOMPARE(modeAddedSpy.at(2).first().value<OutputDevice::Mode>().output, QPointer<OutputDevice>(&output));
     const QList<OutputDevice::Mode> &modes = output.modes();
+    QVERIFY(modeAddedSpy.at(2).first().value<OutputDevice::Mode>().id > -1);
     QCOMPARE(modes.size(), 3);
     QCOMPARE(modes.at(0), modeAddedSpy.at(0).first().value<OutputDevice::Mode>());
     QCOMPARE(modes.at(1), modeAddedSpy.at(1).first().value<OutputDevice::Mode>());
@@ -238,7 +260,7 @@ void TestWaylandOutputDevice::testModeChanges()
     outputChanged.clear();
     QSignalSpy modeChangedSpy(&output, &KWayland::Client::OutputDevice::modeChanged);
     QVERIFY(modeChangedSpy.isValid());
-    m_serverOutputDevice->setCurrentMode(QSize(800, 600));
+    m_serverOutputDevice->setCurrentMode(0);
     QVERIFY(modeChangedSpy.wait());
     if (modeChangedSpy.size() == 1) {
         QVERIFY(modeChangedSpy.wait());
@@ -268,7 +290,7 @@ void TestWaylandOutputDevice::testModeChanges()
     // change once more
     outputChanged.clear();
     modeChangedSpy.clear();
-    m_serverOutputDevice->setCurrentMode(QSize(1280, 1024), 90000);
+    m_serverOutputDevice->setCurrentMode(2);
     QVERIFY(modeChangedSpy.wait());
     if (modeChangedSpy.size() == 1) {
         QVERIFY(modeChangedSpy.wait());

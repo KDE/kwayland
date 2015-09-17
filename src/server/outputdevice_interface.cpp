@@ -59,6 +59,7 @@ public:
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
     QList<Mode> modes;
+    Changes changes;
     QList<ResourceData> resources;
 
     QString edid;
@@ -559,7 +560,47 @@ void OutputDeviceInterface::Private::sendId()
     }
 }
 
+OutputDeviceInterface::Changes* OutputDeviceInterface::pendingChanges()
+{
+    Q_D();
+    return &(d->changes);
+}
 
+void OutputDeviceInterface::applyPendingChanges()
+{
+    Q_D();
+    if (d->changes.enabledChanged) {
+        qDebug() << "Applying enabled " << (OutputDeviceInterface::Enablement::Disabled != d->changes.enabled);
+        setEnabled(d->changes.enabled);
+    }
+    if (d->changes.modeChanged) {
+        setCurrentMode(d->changes.mode);
+    }
+    if (d->changes.transformChanged) {
+        setTransform(d->changes.transform);
+    }
+    if (d->changes.positionChanged) {
+        setGlobalPosition(d->changes.position);
+    }
+    if (d->changes.scaleChanged) {
+        setScale(d->changes.scale);
+    }
+    d->changes.enabledChanged = false;
+    d->changes.modeChanged = false;
+    d->changes.transformChanged = false;
+    d->changes.positionChanged = false;
+    d->changes.scaleChanged = false;
+}
+
+bool OutputDeviceInterface::hasPendingChanges() const
+{
+    Q_D();
+    return d->changes.enabledChanged ||
+           d->changes.modeChanged ||
+           d->changes.transformChanged ||
+           d->changes.positionChanged ||
+           d->changes.scaleChanged;
+}
 
 }
 }

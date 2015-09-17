@@ -40,6 +40,9 @@ class OutputConfigurationInterface::Private : public Resource::Private
 public:
     Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource);
     ~Private();
+    static Private *cast(wl_resource *r) {
+        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    }
 
     void sendApplied();
     void sendFailed();
@@ -81,18 +84,51 @@ OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInter
 
 OutputConfigurationInterface::~OutputConfigurationInterface()
 {
+    qDebug() << "gone...";
 }
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
-    //Private *d = cast<Private>(resource);
+    //auto d = cast(resource);
+    //auto q = reinterpret_cast<OutputConfigurationInterface*>(wl_resource_get_user_data(resource));
+    auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ? OutputDeviceInterface::Enablement::Enabled : OutputDeviceInterface::Enablement::Disabled;
+    //qDebug() << "enable callback config" << q;
+
+    //auto s = cast<OutputConfigurationInterface::Private>(resource);
+    //Q_ASSERT(client == *s->client);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    OutputDeviceInterface::Enablement _enable = OutputDeviceInterface::Enablement::Disabled;
-    if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_DISABLED) {
-        o->setEnabled(OutputDeviceInterface::Enablement::Disabled);
-    } else if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) {
-        o->setEnabled(OutputDeviceInterface::Enablement::Enabled);
+    if (o->enabled() != _enable) {
+        qDebug() << "Recording change enabled" << enable;
+        o->pendingChanges()->enabledChanged = true;
+        o->pendingChanges()->enabled = _enable;
+        Q_EMIT o->pendingChangesChanged();
+    } else if (o->pendingChanges()->enabledChanged) {
+        qDebug() << "Unrecording change enabled" << enable;
+        o->pendingChanges()->enabledChanged = false;
+        Q_EMIT o->pendingChangesChanged();
     }
+    return;
+    /*
+    OutputDeviceInterface::Enablement _enable = OutputDeviceInterface::Enablement::Disabled;
+    if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_DISABLED &&
+        o->enabled() != OutputDeviceInterface::Enablement::Disabled) {
+
+        qDebug() << "Recording change disabled";
+        o->pendingChanges()->enabledChanged = true;
+        o->pendingChanges()->enabled = OutputDeviceInterface::Enablement::Disabled;
+        Q_EMIT o->pendingChangesChanged();
+        //Q_EMIT q->newChanges();
+        //         Q_EMIT d->q->changed();
+    } else if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED &&
+               o->enabled() != OutputDeviceInterface::Enablement::Disabled) {
+        qDebug() << "Recording change enabled";
+        o->pendingChanges()->enabledChanged = true;
+        o->pendingChanges()->enabled = OutputDeviceInterface::Enablement::Enabled;
+        Q_EMIT o->pendingChangesChanged();
+        //Q_EMIT q->newChanges();
+        //Q_EMIT d->q->changed();
+    }
+    */
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)

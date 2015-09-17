@@ -85,6 +85,25 @@ public:
         ModeFlags flags;
         int id = -1;
     };
+    /**
+     * This struct caches changes to the OutputDevice set by OutputConfigurationInterface.
+     */
+    struct Changes {
+        bool enabledChanged = false;
+        Enablement enabled = Enablement::Disabled;
+
+        bool modeChanged = false;
+        int mode = -1;
+
+        bool transformChanged = false;
+        Transform transform = Transform::Normal;
+
+        bool positionChanged = false;
+        QPoint position;
+
+        bool scaleChanged = false;
+        int scale;
+    };
     virtual ~OutputDeviceInterface();
 
     QSize physicalSize() const;
@@ -116,6 +135,10 @@ public:
     void setEnabled(OutputDeviceInterface::Enablement enabled);
     void setId(int id);
 
+    OutputDeviceInterface::Changes* pendingChanges();
+    bool hasPendingChanges() const;
+    void applyPendingChanges();
+
     static OutputDeviceInterface *get(wl_resource *native);
 
 Q_SIGNALS:
@@ -135,6 +158,7 @@ Q_SIGNALS:
     void enabledChanged();
     void idChanged();
 
+    void pendingChangesChanged();
 private:
     friend class Display;
     explicit OutputDeviceInterface(Display *display, QObject *parent = nullptr);

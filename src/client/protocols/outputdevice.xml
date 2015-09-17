@@ -205,12 +205,12 @@
         <arg name="enabled" type="int" summary="output is enabled in the wayland server"/>
     </event>
 
-    <event name="id">
-        <description summary="A unique ID for this outputdevice">
-            The ID can be used to identify the output. It's controlled by the server entirely.
-            An ID of -1 is considered invalid.
+    <event name="uuid">
+        <description summary="A unique id for this outputdevice">
+            The uuid can be used to identify the output. It's controlled by the server entirely.
+            An empty uuid is considered invalid.
         </description>
-        <arg name="id" type="int" summary="Output devices ID"/>
+        <arg name="uuid" type="string" summary="Output devices ID"/>
     </event>
 
 

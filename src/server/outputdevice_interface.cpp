@@ -47,7 +47,7 @@ public:
     void updateGeometry();
     void updateScale();
 
-    void sendId();
+    void sendUuid();
     void sendEdid();
     void sendEnabled();
 
@@ -64,7 +64,7 @@ public:
 
     QString edid;
     Enablement enabled = Enablement::Enabled;
-    int id = -1;
+    QString uuid;
 
     static OutputDeviceInterface *get(wl_resource *native);
 
@@ -339,7 +339,7 @@ void OutputDeviceInterface::Private::bind(wl_client *client, uint32_t version, u
         sendMode(resource, *currentModeIt);
     }
 
-    sendId();
+    sendUuid();
     sendEdid();
     sendEnabled();
 
@@ -528,20 +528,20 @@ OutputDeviceInterface::Enablement OutputDeviceInterface::enabled() const
     return d->enabled;
 }
 
-void OutputDeviceInterface::setId(int id)
+void OutputDeviceInterface::setUuid(const QString &uuid)
 {
     Q_D();
-    if (d->id != id) {
-        d->id = id;
-        d->sendId();
-        emit idChanged();
+    if (d->uuid != uuid) {
+        d->uuid = uuid;
+        d->sendUuid();
+        emit uuidChanged();
     }
 }
 
-int OutputDeviceInterface::id() const
+QString OutputDeviceInterface::uuid() const
 {
     Q_D();
-    return d->id;
+    return d->uuid;
 }
 
 void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
@@ -564,10 +564,10 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
     }
 }
 
-void OutputDeviceInterface::Private::sendId()
+void OutputDeviceInterface::Private::sendUuid()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
-        org_kde_kwin_outputdevice_send_id((*it).resource, id);
+        org_kde_kwin_outputdevice_send_uuid((*it).resource, qPrintable(uuid));
     }
 }
 

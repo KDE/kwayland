@@ -56,7 +56,7 @@ public:
 
     QString edid;
     OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
-    int id = -1;
+    QString uuid;
     bool done = false;
 
 private:
@@ -69,7 +69,7 @@ private:
 
     static void edidCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw);
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
-    static void idCallback(void *data, org_kde_kwin_outputdevice *output, int32_t id);
+    static void uuidCallback(void *data, org_kde_kwin_outputdevice *output, const char *uuid);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -123,7 +123,7 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     scaleCallback,
     edidCallback,
     enabledCallback,
-    idCallback
+    uuidCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -276,12 +276,12 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
     }
 }
 
-void OutputDevice::Private::idCallback(void* data, org_kde_kwin_outputdevice* output, int32_t id)
+void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* output, const char *uuid)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
-    if (o->id != id) {
-        o->id = id;
-        emit o->q->idChanged(o->id);
+    if (o->uuid != uuid) {
+        o->uuid = uuid;
+        emit o->q->uuidChanged(o->uuid);
         if (o->done) {
             emit o->q->changed();
         }
@@ -430,9 +430,9 @@ OutputDevice::Enablement OutputDevice::enabled() const
     return d->enabled;
 }
 
-int OutputDevice::id() const
+QString OutputDevice::uuid() const
 {
-    return d->id;
+    return d->uuid;
 }
 
 

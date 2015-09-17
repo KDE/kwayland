@@ -224,7 +224,7 @@ public:
     /**
      * @returns A unique identifier for this outputdevice, determined by the server.
      **/
-    int id() const;
+    QString uuid() const;
 
 
 
@@ -244,7 +244,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever the id property changes.
      **/
-    void idChanged(bool id);
+    void uuidChanged(const QString &uuid);
     /**
      * Emitted whenever a new Mode is added.
      * This normally only happens during the initial promoting of modes.

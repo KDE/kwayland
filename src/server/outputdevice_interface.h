@@ -50,7 +50,7 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(int scale READ scale WRITE setScale NOTIFY scaleChanged)
     Q_PROPERTY(QString edid READ edid WRITE setEdid NOTIFY edidChanged)
     Q_PROPERTY(OutputDeviceInterface::Enablement enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
+    Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
 public:
     enum class SubPixel {
         Unknown,
@@ -120,7 +120,7 @@ public:
 
     QString edid() const;
     OutputDeviceInterface::Enablement enabled() const;
-    int id() const;
+    QString uuid() const;
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -134,7 +134,7 @@ public:
 
     void setEdid(const QString &edid);
     void setEnabled(OutputDeviceInterface::Enablement enabled);
-    void setId(int id);
+    void setUuid(const QString &uuid);
 
     OutputDeviceInterface::Changes* pendingChanges();
     bool hasPendingChanges() const;
@@ -157,7 +157,7 @@ Q_SIGNALS:
 
     void edidChanged();
     void enabledChanged();
-    void idChanged();
+    void uuidChanged();
 
     void pendingChangesChanged();
 private:

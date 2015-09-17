@@ -87,7 +87,7 @@ void TestWaylandOutputDevice::init()
     QVERIFY(m_display->isRunning());
 
     m_serverOutputDevice = m_display->createOutputDevice(this);
-    m_serverOutputDevice->setId(1337);
+    m_serverOutputDevice->setUuid("1337");
 
 
     OutputDeviceInterface::Mode m0;
@@ -169,7 +169,7 @@ void TestWaylandOutputDevice::testRegistry()
 
     KWayland::Client::OutputDevice output;
     QVERIFY(!output.isValid());
-    QCOMPARE(output.id(), -1);
+    QCOMPARE(output.uuid(), QString());
     QCOMPARE(output.geometry(), QRect());
     QCOMPARE(output.globalPosition(), QPoint());
     QCOMPARE(output.manufacturer(), QString());
@@ -205,7 +205,7 @@ void TestWaylandOutputDevice::testRegistry()
 
     QCOMPARE(output.edid(), m_edid);
     QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
-    QCOMPARE(output.id(), 1337);
+    QCOMPARE(output.uuid(), QStringLiteral("1337"));
 
 }
 
@@ -511,18 +511,18 @@ void TestWaylandOutputDevice::testId()
     wl_display_flush(m_connection->display());
     QVERIFY(outputChanged.wait());
 
-    QCOMPARE(output.id(), 1337);
+    QCOMPARE(output.uuid(), QStringLiteral("1337"));
 
-    QSignalSpy idChanged(&output, &KWayland::Client::OutputDevice::idChanged);
+    QSignalSpy idChanged(&output, &KWayland::Client::OutputDevice::uuidChanged);
     QVERIFY(idChanged.isValid());
 
-    m_serverOutputDevice->setId(42);
+    m_serverOutputDevice->setUuid("42");
     QVERIFY(idChanged.wait(200));
-    QCOMPARE(output.id(), 42);
+    QCOMPARE(output.uuid(), QStringLiteral("42"));
 
-    m_serverOutputDevice->setId(4711);
+    m_serverOutputDevice->setUuid("4711");
     QVERIFY(idChanged.wait(200));
-    QCOMPARE(output.id(), 4711);
+    QCOMPARE(output.uuid(), QStringLiteral("4711"));
 }
 
 void TestWaylandOutputDevice::testDone()

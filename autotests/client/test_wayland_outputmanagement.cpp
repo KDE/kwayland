@@ -57,9 +57,6 @@ private Q_SLOTS:
     void testApplied();
     void testFailed();
 
-    void testChanges();
-
-private:
     void testEnable();
     void testPosition();
     void testScale();
@@ -285,29 +282,6 @@ void TestWaylandOutputManagement::createConfig()
     QVERIFY(m_outputConfigurationInterface != nullptr);
 }
 
-void TestWaylandOutputManagement::testEnable()
-{
-    auto config = m_outputConfiguration;
-    QVERIFY(config->isValid());
-
-    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
-
-    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
-    QVERIFY(enabledChanged.isValid());
-
-    config->setEnabled(output, OutputDevice::Enablement::Disabled);
-
-    QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Disabled);
-
-    m_serverOutputs.first()->setEnabled(OutputDeviceInterface::Enablement::Enabled);
-
-    QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
-
-}
-
 void TestWaylandOutputManagement::testApplied()
 {
     QVERIFY(m_outputConfiguration->isValid());
@@ -333,6 +307,53 @@ void TestWaylandOutputManagement::testFailed()
 
     QVERIFY(failedSpy.wait(1000));
 }
+
+void TestWaylandOutputManagement::testEnable()
+{
+    delete m_outputConfigurationInterface;
+    m_outputConfigurationInterface = nullptr;
+    createConfig();
+    auto config = m_outputConfiguration;
+    QVERIFY(config->isValid());
+
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
+
+    QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
+    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(enabledChanged.isValid());
+
+    config->setEnabled(output, OutputDevice::Enablement::Disabled);
+
+    QVERIFY(pendingChangesSpy.wait(200));
+
+    QCOMPARE(enabledChanged.count(), 0);
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Applying";
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Disabled);
+
+    m_serverOutputs.first()->setEnabled(OutputDeviceInterface::Enablement::Enabled);
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
+
+    //qDebug() << "Setting back to disabled";
+    // The following is never applied, but set back to its original value
+    // as to make sure changes are correctly undone.
+    config->setEnabled(output, OutputDevice::Enablement::Disabled);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Setting again to disabled";
+
+    config->setEnabled(output, OutputDevice::Enablement::Enabled);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+}
+
 
 void TestWaylandOutputManagement::testPosition()
 {
@@ -432,53 +453,6 @@ void TestWaylandOutputManagement::testTransform()
 
     QVERIFY(changedSpy.wait(200));
     QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
-}
-
-void TestWaylandOutputManagement::testChanges()
-{
-    delete m_outputConfigurationInterface;
-    m_outputConfigurationInterface = nullptr;
-    createConfig();
-    auto config = m_outputConfiguration;
-    QVERIFY(config->isValid());
-
-    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
-
-    qDebug() << "spy config" << m_outputConfigurationInterface;
-    QSignalSpy configSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
-    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
-    QVERIFY(enabledChanged.isValid());
-
-    config->setEnabled(output, OutputDevice::Enablement::Disabled);
-
-    qDebug() << "IF: " << m_outputConfigurationInterface;
-    QVERIFY(configSpy.wait(200));
-
-    QCOMPARE(enabledChanged.count(), 0);
-    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
-    qDebug() << "Applying";
-    m_serverOutputs.first()->applyPendingChanges();
-    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
-
-    QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Disabled);
-
-    m_serverOutputs.first()->setEnabled(OutputDeviceInterface::Enablement::Enabled);
-
-    QVERIFY(enabledChanged.wait(200));
-    QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
-
-    qDebug() << "Setting back to disabled";
-    config->setEnabled(output, OutputDevice::Enablement::Disabled);
-    QVERIFY(configSpy.wait(200));
-    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
-    qDebug() << "Setting again to disabled";
-
-    config->setEnabled(output, OutputDevice::Enablement::Enabled);
-    QVERIFY(configSpy.wait(200));
-    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
-
 }
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)

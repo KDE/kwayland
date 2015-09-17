@@ -89,13 +89,7 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
-    //auto d = cast(resource);
-    //auto q = reinterpret_cast<OutputConfigurationInterface*>(wl_resource_get_user_data(resource));
     auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ? OutputDeviceInterface::Enablement::Enabled : OutputDeviceInterface::Enablement::Disabled;
-    //qDebug() << "enable callback config" << q;
-
-    //auto s = cast<OutputConfigurationInterface::Private>(resource);
-    //Q_ASSERT(client == *s->client);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->enabled() != _enable) {
         qDebug() << "Recording change enabled" << enable;
@@ -107,7 +101,6 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
         o->pendingChanges()->enabledChanged = false;
         Q_EMIT o->pendingChangesChanged();
     }
-    return;
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
@@ -156,9 +149,18 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
-    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
+    auto _pos = QPoint(x, y);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    o->setGlobalPosition(QPoint(x, y));
+    if (o->globalPosition() != _pos) {
+        qDebug() << "Recording position changed" << _pos;
+        o->pendingChanges()->positionChanged = true;
+        o->pendingChanges()->position = _pos;
+        Q_EMIT o->pendingChangesChanged();
+    } else if (o->pendingChanges()->positionChanged) {
+        qDebug() << "Unrecording position changed" << _pos;
+        o->pendingChanges()->positionChanged = false;
+        Q_EMIT o->pendingChangesChanged();
+    }
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)

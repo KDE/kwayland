@@ -357,24 +357,48 @@ void TestWaylandOutputManagement::testEnable()
 
 void TestWaylandOutputManagement::testPosition()
 {
+    delete m_outputConfigurationInterface;
+    m_outputConfigurationInterface = nullptr;
+    createConfig();
+    auto config = m_outputConfiguration;
+    QVERIFY(config->isValid());
 
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
-    QVERIFY(changedSpy.isValid());
-
-    QPoint pos = QPoint(500, 600);
-    QVERIFY(m_outputConfiguration->isValid());
-    m_outputConfiguration->setPosition(output, pos);
-
-    QVERIFY(changedSpy.wait(200));
+    QPoint pos = QPoint(0, 1920);
+    QPoint pos2 = QPoint(500, 600);
     QCOMPARE(output->globalPosition(), pos);
 
-    m_serverOutputs.first()->setScale(1);
+    QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
+    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(enabledChanged.isValid());
 
-    pos = QPoint(0, 1920);
-    m_outputConfiguration->setPosition(output, pos);
-    QVERIFY(changedSpy.wait(200));
+    config->setPosition(output, QPoint(500, 600));
+
+    QVERIFY(pendingChangesSpy.wait(200));
+    // No changed signal should be fired, yet
+    QCOMPARE(enabledChanged.count(), 0);
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+
+    QVERIFY(enabledChanged.wait(200));
+    QCOMPARE(output->globalPosition(), QPoint(500, 600));
+
+    m_serverOutputs.first()->setGlobalPosition(pos);
+
+    QVERIFY(enabledChanged.wait(200));
     QCOMPARE(output->globalPosition(), pos);
+
+    // The following is never applied, but set back to its original value
+    // as to make sure changes are correctly undone.
+    config->setPosition(output, pos2);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+
+    config->setPosition(output, pos);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
 }
 
 void TestWaylandOutputManagement::testScale()

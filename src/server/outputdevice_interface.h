@@ -116,6 +116,7 @@ public:
     SubPixel subPixel() const;
     Transform transform() const;
     QList<Mode> modes() const;
+    int currentModeId() const;
 
     QString edid() const;
     OutputDeviceInterface::Enablement enabled() const;

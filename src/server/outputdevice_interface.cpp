@@ -482,6 +482,17 @@ QList< OutputDeviceInterface::Mode > OutputDeviceInterface::modes() const
     return d->modes;
 }
 
+int OutputDeviceInterface::currentModeId() const
+{
+    Q_D();
+    foreach (const Mode &m, d->modes) {
+        if (m.flags.testFlag(OutputDeviceInterface::ModeFlag::Current)) {
+            return m.id;
+        }
+    }
+    return -1;
+}
+
 OutputDeviceInterface::Private *OutputDeviceInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());

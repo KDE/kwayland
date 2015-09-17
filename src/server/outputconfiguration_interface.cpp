@@ -105,7 +105,6 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
-    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     bool modeValid = false;
     OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
 
@@ -114,14 +113,25 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
             modeValid = true;
         }
     }
-    if (modeValid) {
-        output->setCurrentMode(mode_id);
+    if (!modeValid) {
+        qWarning() << "Set invalid mode id:" << mode_id;
+        return;
+    }
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    if (o->currentModeId() != mode_id) {
+        qDebug() << "Recording mode enabled" << mode_id;
+        o->pendingChanges()->modeChanged = true;
+        o->pendingChanges()->mode = mode_id;
+        Q_EMIT o->pendingChangesChanged();
+    } else if (o->pendingChanges()->modeChanged) {
+        qDebug() << "Unrecording mode enabled" << mode_id;
+        o->pendingChanges()->modeChanged = false;
+        Q_EMIT o->pendingChangesChanged();
     }
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
 {
-    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     auto toTransform = [transform]() {
         switch (transform) {
             case WL_OUTPUT_TRANSFORM_90:
@@ -143,8 +153,18 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
                 return OutputDeviceInterface::Transform::Normal;
         }
     };
+    auto _transform = toTransform();
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    o->setTransform(toTransform());
+    if (o->transform() != _transform) {
+        qDebug() << "Recording transform changed";
+        o->pendingChanges()->transform = _transform;
+        o->pendingChanges()->transformChanged = true;
+        Q_EMIT o->pendingChangesChanged();
+    } else if (o->pendingChanges()->transformChanged) {
+        qDebug() << "Unrecording transform changed";
+        o->pendingChanges()->transformChanged = false;
+        Q_EMIT o->pendingChangesChanged();
+    }
 }
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)

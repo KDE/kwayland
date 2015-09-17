@@ -423,6 +423,48 @@ void TestWaylandOutputManagement::testScale()
 
 void TestWaylandOutputManagement::testMode()
 {
+    delete m_outputConfigurationInterface;
+    m_outputConfigurationInterface = nullptr;
+    createConfig();
+    auto config = m_outputConfiguration;
+    QVERIFY(config->isValid());
+
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+    QCOMPARE(output->currentMode().id, 1);
+
+    QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
+    QSignalSpy modeChanged(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(modeChanged.isValid());
+
+    config->setMode(output, 0);
+
+    QVERIFY(pendingChangesSpy.wait(200));
+
+    QCOMPARE(modeChanged.count(), 0);
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Applying";
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+
+    QVERIFY(modeChanged.wait(200));
+    QCOMPARE(output->currentMode().id, 0);
+
+    m_serverOutputs.first()->setCurrentMode(1);
+
+    QVERIFY(modeChanged.wait(200));
+    QCOMPARE(output->currentMode().id, 1);
+
+    // The following is never applied, but set back to its original value
+    // as to make sure changes are correctly undone.
+    config->setMode(output, 0);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Setting again to disabled";
+
+    config->setMode(output, 1);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
+    /*
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
     int cnt = output->modes().count();
 
@@ -457,26 +499,56 @@ void TestWaylandOutputManagement::testMode()
 
     m_outputConfiguration->setMode(output, -1);
     QVERIFY(!changedSpy.wait(200));
+    */
 }
 
 void TestWaylandOutputManagement::testTransform()
 {
+    delete m_outputConfigurationInterface;
+    m_outputConfigurationInterface = nullptr;
+    createConfig();
+    auto config = m_outputConfiguration;
+    QVERIFY(config->isValid());
+
+    auto t1 = OutputDevice::Transform::Normal;
+    auto ts1 = OutputDeviceInterface::Transform::Normal;
+    auto t2 = OutputDevice::Transform::Rotated90;
+
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+    QCOMPARE(output->transform(), t1);
 
-    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::changed);
-    QVERIFY(changedSpy.isValid());
+    QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
+    QSignalSpy transformChanged(output, &KWayland::Client::OutputDevice::changed);
+    QVERIFY(transformChanged.isValid());
 
-    QVERIFY(m_outputConfiguration->isValid());
-    m_outputConfiguration->setTransform(output, KWayland::Client::OutputDevice::Transform::Rotated270);
+    config->setTransform(output, t2);
 
-    QVERIFY(changedSpy.wait(200));
-    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Rotated270);
+    QVERIFY(pendingChangesSpy.wait(200));
 
-    m_outputConfiguration->setTransform(output, KWayland::Client::OutputDevice::Transform::Normal);
+    QCOMPARE(transformChanged.count(), 0);
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Applying";
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
 
-    QVERIFY(changedSpy.wait(200));
-    QCOMPARE(output->transform(), KWayland::Client::OutputDevice::Transform::Normal);
+    QVERIFY(transformChanged.wait(200));
+    QCOMPARE(output->transform(), t2);
+
+    m_serverOutputs.first()->setTransform(ts1);
+
+    QVERIFY(transformChanged.wait(200));
+    QCOMPARE(output->transform(), t1);
+
+    // The following is never applied, but set back to its original value
+    // as to make sure changes are correctly undone.
+    config->setTransform(output, t2);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(m_serverOutputs.first()->hasPendingChanges());
+    //qDebug() << "Setting again to disabled";
+
+    config->setTransform(output, t1);
+    QVERIFY(pendingChangesSpy.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
 }
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)

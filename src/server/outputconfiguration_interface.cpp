@@ -108,31 +108,11 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
         Q_EMIT o->pendingChangesChanged();
     }
     return;
-    /*
-    OutputDeviceInterface::Enablement _enable = OutputDeviceInterface::Enablement::Disabled;
-    if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_DISABLED &&
-        o->enabled() != OutputDeviceInterface::Enablement::Disabled) {
-
-        qDebug() << "Recording change disabled";
-        o->pendingChanges()->enabledChanged = true;
-        o->pendingChanges()->enabled = OutputDeviceInterface::Enablement::Disabled;
-        Q_EMIT o->pendingChangesChanged();
-        //Q_EMIT q->newChanges();
-        //         Q_EMIT d->q->changed();
-    } else if (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED &&
-               o->enabled() != OutputDeviceInterface::Enablement::Disabled) {
-        qDebug() << "Recording change enabled";
-        o->pendingChanges()->enabledChanged = true;
-        o->pendingChanges()->enabled = OutputDeviceInterface::Enablement::Enabled;
-        Q_EMIT o->pendingChangesChanged();
-        //Q_EMIT q->newChanges();
-        //Q_EMIT d->q->changed();
-    }
-    */
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
+    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     bool modeValid = false;
     OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
 
@@ -148,6 +128,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
 {
+    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     auto toTransform = [transform]() {
         switch (transform) {
             case WL_OUTPUT_TRANSFORM_90:
@@ -175,18 +156,21 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
+    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     o->setGlobalPosition(QPoint(x, y));
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
 {
+    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     o->setScale(scale);
 }
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)
 {
+    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
     // TODO: implement
 }
 

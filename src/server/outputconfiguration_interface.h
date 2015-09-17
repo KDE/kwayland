@@ -55,10 +55,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /**
-     * Fired whenever the client asks to change an output device.
-     */
-    void newChanges();
-    /**
      * Fired after the compositor has successfully applied the configuration.
      */
     void applied();

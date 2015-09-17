@@ -595,11 +595,7 @@ void OutputDeviceInterface::applyPendingChanges()
     if (d->changes.scaleChanged) {
         setScale(d->changes.scale);
     }
-    d->changes.enabledChanged = false;
-    d->changes.modeChanged = false;
-    d->changes.transformChanged = false;
-    d->changes.positionChanged = false;
-    d->changes.scaleChanged = false;
+    clearPendingChanges();
 }
 
 bool OutputDeviceInterface::hasPendingChanges() const
@@ -610,6 +606,17 @@ bool OutputDeviceInterface::hasPendingChanges() const
            d->changes.transformChanged ||
            d->changes.positionChanged ||
            d->changes.scaleChanged;
+}
+
+void OutputDeviceInterface::clearPendingChanges()
+{
+    Q_D();
+    d->changes.enabledChanged = false;
+    d->changes.modeChanged = false;
+    d->changes.transformChanged = false;
+    d->changes.positionChanged = false;
+    d->changes.scaleChanged = false;
+    Q_EMIT pendingChangesChanged();
 }
 
 }

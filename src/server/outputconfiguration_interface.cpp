@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputconfiguration_interface.h"
 #include "outputdevice_interface.h"
 #include "resource_p.h"
+#include "display.h"
 
 #include <wayland-server.h>
 #include "wayland-output-management-server-protocol.h"
@@ -40,14 +41,12 @@ class OutputConfigurationInterface::Private : public Resource::Private
 public:
     Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource);
     ~Private();
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
-    }
 
     void sendApplied();
     void sendFailed();
 
     static const quint32 s_version = 1;
+    OutputManagementInterface *outputManagement;
 
 private:
     static void enableCallback(wl_client *client, wl_resource *resource,
@@ -80,6 +79,8 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
 
 OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface* parent, wl_resource* parentResource): Resource(new Private(this, parent, parentResource))
 {
+    Q_D();
+    d->outputManagement = parent;
 }
 
 OutputConfigurationInterface::~OutputConfigurationInterface()
@@ -88,7 +89,9 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
-    auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ? OutputDeviceInterface::Enablement::Enabled : OutputDeviceInterface::Enablement::Disabled;
+    auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ?
+                                    OutputDeviceInterface::Enablement::Enabled :
+                                    OutputDeviceInterface::Enablement::Disabled;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->enabled() != _enable) {
         o->pendingChanges()->enabledChanged = true;
@@ -163,6 +166,7 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
     auto _pos = QPoint(x, y);
+    qDebug() << "new position:" << _pos;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->globalPosition() != _pos) {
         o->pendingChanges()->positionChanged = true;
@@ -193,8 +197,12 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)
 {
-    qWarning() << "Port to atomic config with OutputDeviceInterface::Changes.";
-    // TODO: implement
+    qDebug() << "Asked to apply";
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
+    auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
+    Q_ASSERT(q);
+    Q_EMIT q->applyRequested();
 }
 
 OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource)
@@ -217,10 +225,15 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
 
 void OutputConfigurationInterface::setApplied()
 {
+    qDebug() << "set applied";
     Q_D();
-    /* ... */
+    Q_ASSERT(d->outputManagement);
+    auto outputs = d->outputManagement->display()->outputDevices();
+    Q_FOREACH (auto o, outputs) {
+        qDebug() << "output: " << o->uuid() << o->model();
+        o->applyPendingChanges();
+    }
     d->sendApplied();
-    emit applied();
 }
 
 void OutputConfigurationInterface::Private::sendApplied()
@@ -233,10 +246,14 @@ void OutputConfigurationInterface::Private::sendApplied()
 void OutputConfigurationInterface::setFailed()
 {
     Q_D();
-    /* ... */
-
+    qDebug() << "set FAILED, resetting outputs";
+    Q_ASSERT(d->outputManagement);
+    auto outputs = d->outputManagement->display()->outputDevices();
+    Q_FOREACH (auto o, outputs) {
+        qDebug() << "output: " << o->uuid() << o->model();
+        o->clearPendingChanges();
+    }
     d->sendFailed();
-    emit failed();
 }
 
 void OutputConfigurationInterface::Private::sendFailed()

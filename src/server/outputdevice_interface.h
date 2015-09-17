@@ -139,8 +139,10 @@ public:
     OutputDeviceInterface::Changes* pendingChanges();
     bool hasPendingChanges() const;
     void applyPendingChanges();
+    void clearPendingChanges();
 
     static OutputDeviceInterface *get(wl_resource *native);
+    static QList<OutputDeviceInterface *>list();
 
 Q_SIGNALS:
     void physicalSizeChanged(const QSize&);

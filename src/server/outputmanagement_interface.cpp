@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputmanagement_interface.h"
 #include "outputconfiguration_interface.h"
+#include "display.h"
 #include "global_p.h"
 #include "display.h"
 
@@ -114,7 +115,6 @@ void OutputManagementInterface::Private::unbind(wl_resource *resource)
     Q_UNUSED(resource)
     // TODO: implement?
 }
-
 
 }
 }

@@ -42,26 +42,19 @@ public:
 
 public Q_SLOTS:
     /**
-    * The configuration has been applied by the compositor. This method is to
-    * be called by the compositor after changes have successfully been applied.
-    */
+     * Called by the compositor once the changes have successfully been applied.
+     * OutputDevices are updated here, then the applied signal is sent to the
+     * client.
+     */
     void setApplied();
     /**
-     * The compositor failed to apply the suggested configuration.
-     * This method is to be called by the compositor after failing to apply the
-     * changes.
+     * Called by the compositor when the changes as a whole are rejected or
+     * failed to apply.
      */
     void setFailed();
 
 Q_SIGNALS:
-    /**
-     * Fired after the compositor has successfully applied the configuration.
-     */
-    void applied();
-    /**
-     * Fired after the compositor has failed to apply the configuration.
-     */
-    void failed();
+    void applyRequested();
 
 private:
     explicit OutputConfigurationInterface(OutputManagementInterface *parent, wl_resource *parentResource);

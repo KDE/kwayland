@@ -165,26 +165,27 @@ int OutputDeviceInterface::refreshRate() const
     return (*it).refreshRate;
 }
 
-void OutputDeviceInterface::addMode(const QSize &size, OutputDeviceInterface::ModeFlags flags, int refreshRate)
+void OutputDeviceInterface::addMode(Mode &mode)
 {
     Q_ASSERT(!isValid());
     Q_D();
+
 
     auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(),
         [](const Mode &mode) {
             return mode.flags.testFlag(ModeFlag::Current);
         }
     );
-    if (currentModeIt == d->modes.end() && !flags.testFlag(ModeFlag::Current)) {
+    if (currentModeIt == d->modes.end() && !mode.flags.testFlag(ModeFlag::Current)) {
         // no mode with current flag - enforce
-        flags |= ModeFlag::Current;
+        mode.flags |= ModeFlag::Current;
     }
-    if (currentModeIt != d->modes.end() && flags.testFlag(ModeFlag::Current)) {
+    if (currentModeIt != d->modes.end() && mode.flags.testFlag(ModeFlag::Current)) {
         // another mode has the current flag - remove
         (*currentModeIt).flags &= ~uint(ModeFlag::Current);
     }
 
-    if (flags.testFlag(ModeFlag::Preferred)) {
+    if (mode.flags.testFlag(ModeFlag::Preferred)) {
         // remove from existing Preferred mode
         auto preferredIt = std::find_if(d->modes.begin(), d->modes.end(),
             [](const Mode &mode) {
@@ -197,36 +198,45 @@ void OutputDeviceInterface::addMode(const QSize &size, OutputDeviceInterface::Mo
     }
 
     auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [size,refreshRate](const Mode &mode) {
-            return mode.size == size && mode.refreshRate == refreshRate;
+        [mode](const Mode &mode_it) {
+            return mode.size == mode_it.size &&
+                   mode.refreshRate == mode_it.refreshRate &&
+                   mode.id == mode_it.id;
         }
     );
-    auto emitChanges = [this,flags,size,refreshRate] {
+    auto emitChanges = [this,mode] {
         emit modesChanged();
-        if (flags.testFlag(ModeFlag::Current)) {
-            emit refreshRateChanged(refreshRate);
-            emit pixelSizeChanged(size);
+        if (mode.flags.testFlag(ModeFlag::Current)) {
+            emit refreshRateChanged(mode.refreshRate);
+            emit pixelSizeChanged(mode.size);
             emit currentModeChanged();
         }
     };
     if (existingModeIt != d->modes.end()) {
-        if ((*existingModeIt).flags == flags) {
+        if ((*existingModeIt).flags == mode.flags) {
             // nothing to do
             return;
         }
-        (*existingModeIt).flags = flags;
+        (*existingModeIt).flags = mode.flags;
         emitChanges();
         return;
+    } else {
+        auto idIt = std::find_if(d->modes.begin(), d->modes.end(),
+                                        [mode](const Mode &mode_it) {
+                                            return mode.id == mode_it.id;
+                                        }
+        );
+        if (idIt != d->modes.end()) {
+            qWarning() << "Duplicate Mode id" << mode.id << ": not adding mode" << mode.size << mode.refreshRate;
+            return;
+        }
+
     }
-    Mode mode;
-    mode.size = size;
-    mode.refreshRate = refreshRate;
-    mode.flags = flags;
     d->modes << mode;
     emitChanges();
 }
 
-void OutputDeviceInterface::setCurrentMode(const QSize &size, int refreshRate)
+void OutputDeviceInterface::setCurrentMode(const int modeId)
 {
     Q_D();
     auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(),
@@ -240,8 +250,8 @@ void OutputDeviceInterface::setCurrentMode(const QSize &size, int refreshRate)
     }
 
     auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [size,refreshRate](const Mode &mode) {
-            return mode.size == size && mode.refreshRate == refreshRate;
+        [modeId](const Mode &mode) {
+            return mode.id == modeId;
         }
     );
 

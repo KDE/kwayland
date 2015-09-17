@@ -50,7 +50,7 @@ private:
     static void enableCallback(wl_client *client, wl_resource *resource,
                                wl_resource * outputdevice, int32_t enable);
     static void modeCallback(wl_client *client, wl_resource *resource,
-                             wl_resource * outputdevice, int32_t width, int32_t height, int32_t refresh);
+                             wl_resource * outputdevice, int32_t mode_id);
     static void transformCallback(wl_client *client, wl_resource *resource,
                                   wl_resource * outputdevice, int32_t transform);
     static void positionCallback(wl_client *client, wl_resource *resource,
@@ -95,18 +95,18 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
     }
 }
 
-void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t width, int32_t height, int32_t refresh)
+void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
     bool modeValid = false;
     OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
 
     foreach (auto m, output->modes()) {
-        if (m.size == QSize(width, height) && m.refreshRate == refresh) {
+        if (m.id == mode_id) {
             modeValid = true;
         }
     }
     if (modeValid) {
-        output->setCurrentMode(QSize(width, height), refresh);
+        output->setCurrentMode(mode_id);
     }
 }
 

@@ -109,8 +109,8 @@ public:
     void setScale(int scale);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
-    void addMode(const QSize &size, ModeFlags flags = ModeFlags(), int refreshRate = 60000);
-    void setCurrentMode(const QSize &size, int refreshRate = 60000);
+    void addMode(Mode &mode);
+    void setCurrentMode(const int modeId);
 
     void setEdid(const QString &edid);
     void setEnabled(OutputDeviceInterface::Enablement enabled);

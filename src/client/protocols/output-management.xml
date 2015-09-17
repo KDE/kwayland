@@ -81,24 +81,17 @@
 
 <interface name="org_kde_kwin_outputconfiguration" version="1">
     <description summary="list connected, but disabled outputs">
-
-        OutputConfiguration (wl_resource)
-        --------------------------
-        requests:
-        * enable(output, bool)
-        * mode(output, mode_id)
-        * transformation(output, flag)
-        * position(output, x, y)
-        * apply
-
-        events:
-        * applied
-        * failed
-
-
-        - Per outputdevice, set the properties like mode, enabled, transformation and position
-        - hit apply after everything has been set to ask the compositor to apply these changes
-        - catch applied / failed signals, handle them client-side
+        outputconfiguration is a client-specific resource that can be used to ask
+        the compositor to apply changes to the outputdevices, the monitors connected
+        to the system.
+        The client receives a list of outputdevices from the registry. When it wants
+        to apply new settings, it creates a configuration object from the
+        outputmanagement global, writes changes through this object's enable, scale,
+        transform and mode calls. It then asks the compositor to apply these settings
+        in an atomic fashion, for example through Linux's DRM interface.
+        The compositor signals back whether the new settings have applied successfully
+        or failed to apply. outputdevices are updated after the hardware changes have
+        been applied and before the server side fires applied.
     </description>
 
     <request name="enable">
@@ -114,7 +107,7 @@
             Sets the mode for a given output by its mode size (width and height) and refresh rate.
         </description>
         <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
-        <arg name="mode_id" type="int" summary="Aspired mode's ID"/>
+        <arg name="mode_id" type="int" summary="aspired mode's id"/>
     </request>
 
     <request name="transform">
@@ -127,7 +120,11 @@
 
     <request name="position">
         <description summary="Position output relative to global">
-            Sets the position for this output device in the global space.
+            Sets the position for this output device in the global space. position
+            describes the top-left border of the output in the global space. The
+            left-most output's top-left border is 0, 0.
+            There may be no gaps between outputs, the outputs have to be positioned
+            stacked horizontally, vertically, or both.
         </description>
         <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this position applies to"/>
         <arg name="x" type="int" summary="position on the x-axis"/>
@@ -139,7 +136,7 @@
             Sets the scaling factor for this outputdevice.
         </description>
         <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
-        <arg name="scale" type="int" summary="Scaling factor"/>
+        <arg name="scale" type="int" summary="scaling factor"/>
     </request>
 
     <request name="apply">
@@ -150,13 +147,13 @@
 
 
     <event name="applied">
-        <description summary="The configuration changes have been applied">
+        <description summary="configuration changes have been applied">
             Fired after the compositor has applied the changes successfully.
         </description>
     </event>
 
     <event name="failed">
-        <description summary="The configuration changes have been applied">
+        <description summary="configuration changes failed to apply">
             Fired if the compositor rejects or failed to apply the changes.
         </description>
     </event>

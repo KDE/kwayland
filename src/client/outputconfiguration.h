@@ -36,6 +36,15 @@ namespace Client
 
 class EventQueue;
 
+/** @class OutputConfiguration
+ *
+ *
+ * \verbatim
+
+
+   \endverbatim
+
+ */
 class KWAYLANDCLIENT_EXPORT OutputConfiguration : public QObject
 {
 Q_OBJECT

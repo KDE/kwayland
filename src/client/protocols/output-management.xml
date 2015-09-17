@@ -114,9 +114,7 @@
             Sets the mode for a given output by its mode size (width and height) and refresh rate.
         </description>
         <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
-        <arg name="width" type="int" summary="resolution width of the mode"/>
-        <arg name="height" type="int" summary="resolution height of the mode"/>
-        <arg name="refresh" type="int" summary="refresh rate of the mode"/>
+        <arg name="mode_id" type="int" summary="Aspired mode's ID"/>
     </request>
 
     <request name="transform">

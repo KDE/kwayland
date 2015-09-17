@@ -122,11 +122,11 @@ void OutputConfiguration::setEnabled(OutputDevice *outputdevice, OutputDevice::E
     org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, _enable);
 }
 
-void OutputConfiguration::setMode(OutputDevice* outputdevice, const QSize &size, int refreshRate)
+void OutputConfiguration::setMode(OutputDevice* outputdevice, const int modeId)
 {
     org_kde_kwin_outputdevice *od = outputdevice->output();
     org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od,
-                                          size.width(), size.height(), refreshRate);
+                                          modeId);
 }
 
 void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform)

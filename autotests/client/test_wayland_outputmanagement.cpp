@@ -464,42 +464,10 @@ void TestWaylandOutputManagement::testMode()
     config->setMode(output, 1);
     QVERIFY(pendingChangesSpy.wait(200));
     QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
-    /*
-    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
-    int cnt = output->modes().count();
-
-    QSignalSpy changedSpy(output, &KWayland::Client::OutputDevice::modeChanged);
-    QVERIFY(changedSpy.isValid());
-
-    QVERIFY(m_outputConfiguration->isValid());
-
-    KWayland::Client::OutputDevice::Mode m1;
-    m1.id = 3;
-    m1.size = QSize(1920, 1080);
-    m1.refreshRate = 100000;
-
-    KWayland::Client::OutputDevice::Mode m2;
-    m2.id = 0;
-    m2.size = QSize(800, 600);
-    m2.refreshRate = 60000;
-
-
-    m_outputConfiguration->setMode(output, m1.id);
-
-    QVERIFY(changedSpy.wait(200));
-
-    QCOMPARE(output->currentMode().size, m1.size);
-    QCOMPARE(output->refreshRate(), m1.refreshRate);
-
-    m_outputConfiguration->setMode(output, m2.id);
-
-    QVERIFY(changedSpy.wait(200));
-    QCOMPARE(output->currentMode().size, m2.size);
-    QCOMPARE(output->refreshRate(), m2.refreshRate);
-
     m_outputConfiguration->setMode(output, -1);
-    QVERIFY(!changedSpy.wait(200));
-    */
+    m_serverOutputs.first()->applyPendingChanges();
+    QVERIFY(!modeChanged.wait(200));
+    QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
 }
 
 void TestWaylandOutputManagement::testTransform()

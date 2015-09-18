@@ -217,6 +217,13 @@ public:
      **/
     void setup(org_kde_plasma_surface *surface);
 
+    /**
+     * @returns the PlasmaShellSurface * associated with surface,
+     * if any, nullptr if not found.
+     * @since 5.6
+     */
+    static PlasmaShellSurface *get(Surface *surf);
+
     bool isValid() const;
     operator org_kde_plasma_surface*();
     operator org_kde_plasma_surface*() const;
@@ -228,6 +235,7 @@ public:
         OnScreenDisplay
     };
     void setRole(Role role);
+    Role role() const;
     void setPosition(const QPoint &point);
 
     enum class PanelBehavior {

@@ -38,16 +38,56 @@ class EventQueue;
 
 /** @class OutputConfiguration
  *
+ * OutputConfiguration provides access to changing OutputDevices. The interface is async
+ * and atomic. An OutputConfiguration is created through OutputManagement::createConfiguration().
+ *
+ * The overall mechanism is to get a new OutputConfiguration from the OutputManagement global and
+ * apply changes through the OutputConfiguration::set* calls. When all changes are set, the client
+ * calls apply, which asks the server to look at the changes and apply them. The server will then
+ * signal back whether the changes have been applied successfully (@c applied()) or were rejected
+ * or failed to apply (@c failed()).
+ *
+ * The current settings for outputdevices can be gotten from @c Registry::outputDevices(), these
+ * are used in the set* calls to identify the output the setting applies to.
+ *
+ * @c apply() should only be called after changes to all output devices have been made, not after
+ * each change. This allows to test the new configuration as a whole, and is a lot faster since
+ * hardware changes can be tested in their new combination, they done in parallel.and rolled back
+ * as a whole.
  *
  * \verbatim
+    // We're just picking the first of our outputdevices
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
 
+    // Create a new configuration object
+    auto config = m_outputManagement.createConfiguration();
 
+    // handle applied and failed signals
+    connect(config, &OutputConfiguration::applied, []() {
+        qDebug() << "Configuration applied!";
+    });
+    connect(config, &OutputConfiguration::failed, []() {
+        qDebug() << "Configuration failed!";
+    });
+
+    // Change settings
+    config->setMode(output, m_clientOutputs.first()->modes().last().id);
+    config->setTransform(output, OutputDevice::Transform::Normal);
+    config->setPosition(output, QPoint(0, 1920));
+    config->setScale(output, 2);
+
+    // Now ask the compositor to apply the changes
+    config->apply();
    \endverbatim
 
+ * @see OutputDevice
+ * @see OutputManagement
+ * @see OutputManagement::createConfiguration()
+ * @since 5.5
  */
 class KWAYLANDCLIENT_EXPORT OutputConfiguration : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     virtual ~OutputConfiguration();
 
@@ -55,6 +95,7 @@ public:
     * Setup this OutputConfiguration to manage the @p outputconfiguration.
     * When using OutputManagement::createOutputConfiguration there is no need to call this
     * method.
+    * @param outputconfiguration the outputconfiguration object to set up.
     **/
     void setup(org_kde_kwin_outputconfiguration *outputconfiguration);
     /**
@@ -93,31 +134,91 @@ public:
      **/
     EventQueue *eventQueue();
 
+    /**
+     * Enable or disable an output. Enabled means it's used by the
+     * compositor for rendering, Disabled means, that no wl_output
+     * is connected to this, and the device is sitting there unused
+     * by this compositor.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param outputdevice the OutputDevice this change applies to.
+     * @param enable new Enablement state of this output device.
+     */
     void setEnabled(OutputDevice *outputdevice, OutputDevice::Enablement enable);
 
     /**
      * Set the mode of this output, identified by its mode id.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param outputdevice the OutputDevice this change applies to.
+     * @param modeId the id of the mode.
      */
     void setMode(OutputDevice *outputdevice, const int modeId);
+    /**
+     * Set transformation for this output, for example rotated or flipped.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param outputdevice the OutputDevice this change applies to.
+     * @param scale the scaling factor for this output device.
+     */
     void setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform);
 
     /**
      * Position this output in the global space, relative to other outputs.
+     * QPoint(0, 0) for top-left. The position is the top-left corner of this output.
+     * There may not be gaps between outputs, they have to be positioned adjacend to
+     * each other.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param outputdevice the OutputDevice this change applies to.
+     * @param pos the OutputDevice global position relative to other outputs,
+     *
      */
     void setPosition(OutputDevice *outputdevice, const QPoint &pos);
 
     /**
      * Scale rendering of this output.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param scale the scaling factor for this output device.
+     * @param outputdevice the OutputDevice this change applies to.
      */
     void setScale(OutputDevice *outputdevice, qint32 scale);
 
+    /**
+     * Ask the compositor to apply the changes.
+     * This results in the compositor looking at all outputdevices and if they have
+     * pending changes from the set* calls, these changes will be tested with the
+     * hardware and applied if possible. The compositor will react to these changes
+     * with the applied() or failed() signals. Note that mode setting may take a
+     * while, so the interval between calling apply() and receiving the applied()
+     * signal may be considerable, depending on the hardware.
+     *
+     * @see applied()
+     * @see failed()
+     */
     void apply();
 
     operator org_kde_kwin_outputconfiguration*();
     operator org_kde_kwin_outputconfiguration*() const;
 
 Q_SIGNALS:
+    /**
+     * The server has applied all settings successfully. Pending changes in the
+     * OutputDevices have been cleared, changed signals from the OutputDevice have
+     * been emitted.
+     */
     void applied();
+    /**
+     * The server has failed to apply the settings or rejected them. Pending changes
+     * in the * OutputDevices have been cleared. No changes have been applied to the
+     * OutputDevices.
+     */
     void failed();
 
 private:

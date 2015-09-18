@@ -89,6 +89,8 @@ OutputConfigurationInterface::~OutputConfigurationInterface()
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
     auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ?
                                     OutputDeviceInterface::Enablement::Enabled :
                                     OutputDeviceInterface::Enablement::Disabled;
@@ -105,6 +107,8 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
     bool modeValid = false;
     OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
 
@@ -130,6 +134,8 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
 {
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
     auto toTransform = [transform]() {
         switch (transform) {
             case WL_OUTPUT_TRANSFORM_90:
@@ -165,8 +171,9 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
     auto _pos = QPoint(x, y);
-    qDebug() << "new position:" << _pos;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     if (o->globalPosition() != _pos) {
         o->pendingChanges()->positionChanged = true;
@@ -180,6 +187,8 @@ void OutputConfigurationInterface::Private::positionCallback(wl_client *client, 
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
 {
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
     if (scale <= 0) {
         qWarning() << "Requested to scale output device to" << scale << ", but I can't do that.";
         return;
@@ -197,7 +206,7 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)
 {
-    qDebug() << "Asked to apply";
+    Q_UNUSED(client);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
     auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
@@ -225,12 +234,10 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
 
 void OutputConfigurationInterface::setApplied()
 {
-    qDebug() << "set applied";
     Q_D();
     Q_ASSERT(d->outputManagement);
     auto outputs = d->outputManagement->display()->outputDevices();
     Q_FOREACH (auto o, outputs) {
-        qDebug() << "output: " << o->uuid() << o->model();
         o->applyPendingChanges();
     }
     d->sendApplied();
@@ -246,11 +253,9 @@ void OutputConfigurationInterface::Private::sendApplied()
 void OutputConfigurationInterface::setFailed()
 {
     Q_D();
-    qDebug() << "set FAILED, resetting outputs";
     Q_ASSERT(d->outputManagement);
     auto outputs = d->outputManagement->display()->outputDevices();
     Q_FOREACH (auto o, outputs) {
-        qDebug() << "output: " << o->uuid() << o->model();
         o->clearPendingChanges();
     }
     d->sendFailed();

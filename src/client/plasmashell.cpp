@@ -47,6 +47,7 @@ public:
     WaylandPointer<org_kde_plasma_surface, org_kde_plasma_surface_destroy> surface;
     QSize size;
     QPointer<Surface> parentSurface;
+    PlasmaShellSurface::Role role;
 
     static PlasmaShellSurface *get(Surface *surface);
 
@@ -145,7 +146,8 @@ PlasmaShell::operator org_kde_plasma_shell*() const
 }
 
 PlasmaShellSurface::Private::Private(PlasmaShellSurface *q)
-    : q(q)
+    : role(PlasmaShellSurface::Role::Normal),
+      q(q)
 {
     s_surfaces << this;
 }
@@ -201,6 +203,15 @@ void PlasmaShellSurface::setup(org_kde_plasma_surface *surface)
     d->setup(surface);
 }
 
+PlasmaShellSurface *PlasmaShellSurface::get(Surface *surface)
+{
+    if (auto s = PlasmaShellSurface::Private::get(surface)) {
+        return s;
+    }
+
+    return nullptr;
+}
+
 bool PlasmaShellSurface::isValid() const
 {
     return d->surface.isValid();
@@ -244,6 +255,12 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
         break;
     }
     org_kde_plasma_surface_set_role(d->surface, wlRole);
+    d->role = role;
+}
+
+PlasmaShellSurface::Role PlasmaShellSurface::role() const
+{
+    return d->role;
 }
 
 void PlasmaShellSurface::setPanelBehavior(PlasmaShellSurface::PanelBehavior behavior)

@@ -219,6 +219,7 @@ public:
     bool isMaximizeable() const;
     bool isMinimizeable() const;
     bool isFullscreenable() const;
+    bool skipTaskbar() const;
     QIcon icon() const;
 
     void requestActivate();
@@ -248,6 +249,7 @@ Q_SIGNALS:
     void minimizeableChanged();
     void maximizeableChanged();
     void fullscreenableChanged();
+    void skipTaskbarChanged();
     void iconChanged();
     void unmapped();
 

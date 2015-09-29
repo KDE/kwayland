@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_shell" version="1">
+  <interface name="org_kde_plasma_shell" version="2">
     <description summary="create shell windows and helpers">
       This interface is used by KF5 powered Wayland shells to communicate with
       the compositor and can only be bound one time.
@@ -324,6 +324,14 @@
         the default.
       </description>
       <arg name="flag" type="uint" summary="panel_behavior enum value"/>
+    </request>
+
+    <!-- Skip taskbar-->
+    <request name="set_skip_taskbar" since="2">
+      <description summary="make the window skip the taskbar">
+        Setting this bit to the window, will make it say it prefers to not be listed in the taskbar. Taskbar implementations may or may not follow this hint.
+      </description>
+      <arg name="skip" type="uint" summary="Boolean value that sets wther to skip the taskbar"/>
     </request>
 
     <!-- Screen edge -->

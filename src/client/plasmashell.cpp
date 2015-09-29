@@ -287,5 +287,10 @@ void PlasmaShellSurface::setPanelBehavior(PlasmaShellSurface::PanelBehavior beha
     org_kde_plasma_surface_set_panel_behavior(d->surface, wlRole);
 }
 
+void PlasmaShellSurface::setSkipTaskbar(bool skip)
+{
+    org_kde_plasma_surface_set_skip_taskbar(d->surface, skip);
+}
+
 }
 }

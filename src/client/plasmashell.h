@@ -246,6 +246,14 @@ public:
     };
     void setPanelBehavior(PanelBehavior behavior);
 
+    /**
+     * Setting this bit to the window, will make it say it prefers
+     * to not be listed in the taskbar. Taskbar implementations
+     * may or may not follow this hint.
+     * @since 5.5
+     */
+    void setSkipTaskbar(bool skip);
+
 private:
     friend class PlasmaShell;
     class Private;

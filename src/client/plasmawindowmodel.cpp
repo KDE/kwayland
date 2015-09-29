@@ -217,6 +217,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isOnAllDesktops();
     } else if (role == IsDemandingAttention) {
         return window->isDemandingAttention();
+    } else if (role == SkipTaskbar) {
+        return window->skipTaskbar();
     }
 
     return QVariant();

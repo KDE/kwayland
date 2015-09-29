@@ -72,7 +72,8 @@ public:
         IsKeepBelow,
         VirtualDesktop,
         IsOnAllDesktops,
-        IsDemandingAttention
+        IsDemandingAttention,
+        SkipTaskbar
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);

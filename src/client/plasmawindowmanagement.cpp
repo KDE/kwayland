@@ -262,6 +262,7 @@ public:
     bool minimizeable = false;
     bool maximizeable = false;
     bool fullscreenable = false;
+    bool skipTaskbar = false;
     QIcon icon;
 
 private:
@@ -283,6 +284,7 @@ private:
     void setMinimizeable(bool set);
     void setMaximizeable(bool set);
     void setFullscreenable(bool set);
+    void setSkipTaskbar(bool skip);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -361,6 +363,7 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setFullscreenable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE);
     p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
+    p->setSkipTaskbar(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
 }
 
 void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name)
@@ -478,6 +481,15 @@ void PlasmaWindow::Private::setMinimizeable(bool set)
     }
     minimizeable = set;
     emit q->minimizeableChanged();
+}
+
+void PlasmaWindow::Private::setSkipTaskbar(bool skip)
+{
+    if (skipTaskbar == skip) {
+        return;
+    }
+    skipTaskbar = skip;
+    emit q->skipTaskbarChanged();
 }
 
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
@@ -598,6 +610,12 @@ bool PlasmaWindow::isMinimizeable() const
 {
     return d->minimizeable;
 }
+
+bool PlasmaWindow::skipTaskbar() const
+{
+    return d->skipTaskbar;
+}
+
 
 QIcon PlasmaWindow::icon() const
 {

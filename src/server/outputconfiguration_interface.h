@@ -68,6 +68,6 @@ private:
 }
 }
 
-//Q_DECLARE_METATYPE(KWayland::Server::OutputConfigurationInterface)
+Q_DECLARE_METATYPE(KWayland::Server::OutputConfigurationInterface*)
 
 #endif

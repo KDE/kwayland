@@ -30,7 +30,6 @@ namespace KWayland
 namespace Server
 {
 
-class Display;
 class OutputConfigurationInterface;
 
 class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global

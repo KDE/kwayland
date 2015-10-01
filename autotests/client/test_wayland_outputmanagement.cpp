@@ -326,7 +326,7 @@ void TestWaylandOutputManagement::testEnable()
     QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
     QSignalSpy pendingChangesSpy(m_serverOutputs.first(), &KWayland::Server::OutputDeviceInterface::pendingChangesChanged);
-    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::changed);
+    QSignalSpy enabledChanged(output, &KWayland::Client::OutputDevice::enabledChanged);
     QVERIFY(enabledChanged.isValid());
 
     config->setEnabled(output, OutputDevice::Enablement::Disabled);

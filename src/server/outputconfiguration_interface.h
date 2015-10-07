@@ -39,6 +39,9 @@ class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {
     Q_OBJECT
 public:
+    /**
+     * This struct caches changes to the OutputDevice set by OutputConfigurationInterface.
+     */
     struct Changes {
         bool enabledChanged = false;
         OutputDeviceInterface::Enablement enabled = OutputDeviceInterface::Enablement::Disabled;

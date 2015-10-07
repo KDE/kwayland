@@ -248,9 +248,7 @@ void OutputConfigurationInterface::setApplied()
     Q_D();
     Q_ASSERT(d->outputManagement);
     auto outputs = d->outputManagement->display()->outputDevices();
-    Q_FOREACH (auto o, outputs) {
-        o->applyPendingChanges();
-    }
+    // ...
     d->sendApplied();
 }
 
@@ -266,9 +264,7 @@ void OutputConfigurationInterface::setFailed()
     Q_D();
     Q_ASSERT(d->outputManagement);
     auto outputs = d->outputManagement->display()->outputDevices();
-    Q_FOREACH (auto o, outputs) {
-        o->clearPendingChanges();
-    }
+    // ...
     d->sendFailed();
 }
 
@@ -310,6 +306,9 @@ void OutputConfigurationInterface::Private::applyPendingChanges(OutputDeviceInte
 
 bool OutputConfigurationInterface::Private::hasPendingChanges(OutputDeviceInterface *outputdevice) const
 {
+    if (!changes.keys().contains(outputdevice)) {
+        return false;
+    }
     auto c = changes[outputdevice];
     return c->enabledChanged ||
     c->modeChanged ||

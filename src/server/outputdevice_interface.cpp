@@ -580,9 +580,9 @@ OutputDeviceInterface::Changes* OutputDeviceInterface::pendingChanges()
 void OutputDeviceInterface::applyPendingChanges()
 {
     Q_D();
-    if (d->changes.enabledChanged) {
-        setEnabled(d->changes.enabled);
-    }
+//     if (d->changes.enabledChanged) {
+//         setEnabled(d->changes.enabled);
+//     }
     if (d->changes.modeChanged) {
         setCurrentMode(d->changes.mode);
     }

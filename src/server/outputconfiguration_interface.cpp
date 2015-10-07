@@ -221,6 +221,9 @@ void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_
     auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
     Q_ASSERT(q);
     Q_EMIT q->applyRequested();
+    Q_FOREACH (auto o, s->changes.keys()) {
+        s->applyPendingChanges(o);
+    }
 }
 
 OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource)

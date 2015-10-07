@@ -44,9 +44,16 @@ public:
 
     void sendApplied();
     void sendFailed();
+    void applyPendingChanges(OutputDeviceInterface *outputdevice);
+    void clearPendingChanges();
+
+    bool hasPendingChanges(OutputDeviceInterface *outputdevice) const;
+    Changes* pendingChanges(OutputDeviceInterface *outputdevice);
+
+    OutputManagementInterface *outputManagement;
+    QHash<OutputDeviceInterface*, Changes*> changes;
 
     static const quint32 s_version = 1;
-    OutputManagementInterface *outputManagement;
 
 private:
     static void enableCallback(wl_client *client, wl_resource *resource,
@@ -85,23 +92,25 @@ OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInter
 
 OutputConfigurationInterface::~OutputConfigurationInterface()
 {
+    Q_D();
+    d->clearPendingChanges();
 }
 
 void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t enable)
 {
     Q_UNUSED(client);
-    Q_UNUSED(resource);
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
     auto _enable = (enable == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) ?
                                     OutputDeviceInterface::Enablement::Enabled :
                                     OutputDeviceInterface::Enablement::Disabled;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    auto pendingChanges = s->pendingChanges(o);
     if (o->enabled() != _enable) {
-        o->pendingChanges()->enabledChanged = true;
-        o->pendingChanges()->enabled = _enable;
-        Q_EMIT o->pendingChangesChanged();
-    } else if (o->pendingChanges()->enabledChanged) {
-        o->pendingChanges()->enabledChanged = false;
-        Q_EMIT o->pendingChangesChanged();
+        pendingChanges->enabledChanged = true;
+        pendingChanges->enabled = _enable;
+    } else if (pendingChanges->enabledChanged) {
+        pendingChanges->enabledChanged = false;
     }
 }
 
@@ -266,6 +275,51 @@ void OutputConfigurationInterface::Private::sendFailed()
     foreach (auto r, s_allResources) {
         org_kde_kwin_outputconfiguration_send_failed(r->resource);
     }
+}
+
+OutputConfigurationInterface::Changes* OutputConfigurationInterface::Private::pendingChanges(OutputDeviceInterface *outputdevice)
+{
+    if (!changes.keys().contains(outputdevice)) {
+        changes[outputdevice] = new Changes;
+    }
+    return changes[outputdevice];
+}
+
+void OutputConfigurationInterface::Private::applyPendingChanges(OutputDeviceInterface *outputdevice)
+{
+    auto c = changes[outputdevice];
+    if (c->enabledChanged) {
+        outputdevice->setEnabled(c->enabled);
+    }
+    if (c->modeChanged) {
+        outputdevice->setCurrentMode(c->mode);
+    }
+    if (c->transformChanged) {
+        outputdevice->setTransform(c->transform);
+    }
+    if (c->positionChanged) {
+        outputdevice->setGlobalPosition(c->position);
+    }
+    if (c->scaleChanged) {
+        outputdevice->setScale(c->scale);
+    }
+    clearPendingChanges();
+}
+
+bool OutputConfigurationInterface::Private::hasPendingChanges(OutputDeviceInterface *outputdevice) const
+{
+    auto c = changes[outputdevice];
+    return c->enabledChanged ||
+    c->modeChanged ||
+    c->transformChanged ||
+    c->positionChanged ||
+    c->scaleChanged;
+}
+
+void OutputConfigurationInterface::Private::clearPendingChanges()
+{
+    qDeleteAll(changes.begin(), changes.end());
+    changes.clear();
 }
 
 

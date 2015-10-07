@@ -23,6 +23,7 @@
 #include "global.h"
 #include "resource.h"
 #include "outputmanagement_interface.h"
+#include "outputdevice_interface.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
@@ -38,6 +39,23 @@ class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {
     Q_OBJECT
 public:
+    struct Changes {
+        bool enabledChanged = false;
+        OutputDeviceInterface::Enablement enabled = OutputDeviceInterface::Enablement::Disabled;
+
+        bool modeChanged = false;
+        int mode = -1;
+
+        bool transformChanged = false;
+        OutputDeviceInterface::Transform transform = OutputDeviceInterface::Transform::Normal;
+
+        bool positionChanged = false;
+        QPoint position;
+
+        bool scaleChanged = false;
+        int scale;
+    };
+
     virtual ~OutputConfigurationInterface();
 
 public Q_SLOTS:

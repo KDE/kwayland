@@ -117,11 +117,10 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
     Q_UNUSED(client);
-    Q_UNUSED(resource);
     bool modeValid = false;
-    OutputDeviceInterface *output = OutputDeviceInterface::get(outputdevice);
+    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
 
-    foreach (auto m, output->modes()) {
+    foreach (auto m, o->modes()) {
         if (m.id == mode_id) {
             modeValid = true;
         }
@@ -130,21 +129,20 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
         qWarning() << "Set invalid mode id:" << mode_id;
         return;
     }
-    OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
+    auto pendingChanges = s->pendingChanges(o);
     if (o->currentModeId() != mode_id) {
-        o->pendingChanges()->modeChanged = true;
-        o->pendingChanges()->mode = mode_id;
-        Q_EMIT o->pendingChangesChanged();
-    } else if (o->pendingChanges()->modeChanged) {
-        o->pendingChanges()->modeChanged = false;
-        Q_EMIT o->pendingChangesChanged();
+        pendingChanges->modeChanged = true;
+        pendingChanges->mode = mode_id;
+    } else if (pendingChanges->modeChanged) {
+        pendingChanges->modeChanged = false;
     }
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
 {
     Q_UNUSED(client);
-    Q_UNUSED(resource);
     auto toTransform = [transform]() {
         switch (transform) {
             case WL_OUTPUT_TRANSFORM_90:
@@ -168,48 +166,49 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
     };
     auto _transform = toTransform();
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
+    auto pendingChanges = s->pendingChanges(o);
     if (o->transform() != _transform) {
-        o->pendingChanges()->transform = _transform;
-        o->pendingChanges()->transformChanged = true;
-        Q_EMIT o->pendingChangesChanged();
-    } else if (o->pendingChanges()->transformChanged) {
-        o->pendingChanges()->transformChanged = false;
-        Q_EMIT o->pendingChangesChanged();
+        pendingChanges->transform = _transform;
+        pendingChanges->transformChanged = true;
+    } else if (pendingChanges->transformChanged) {
+        pendingChanges->transformChanged = false;
     }
 }
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
 {
     Q_UNUSED(client);
-    Q_UNUSED(resource);
     auto _pos = QPoint(x, y);
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
+    auto pendingChanges = s->pendingChanges(o);
     if (o->globalPosition() != _pos) {
-        o->pendingChanges()->positionChanged = true;
-        o->pendingChanges()->position = _pos;
-        Q_EMIT o->pendingChangesChanged();
-    } else if (o->pendingChanges()->positionChanged) {
-        o->pendingChanges()->positionChanged = false;
-        Q_EMIT o->pendingChangesChanged();
+        pendingChanges->positionChanged = true;
+        pendingChanges->position = _pos;
+    } else if (pendingChanges->positionChanged) {
+        pendingChanges->positionChanged = false;
     }
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
 {
     Q_UNUSED(client);
-    Q_UNUSED(resource);
     if (scale <= 0) {
         qWarning() << "Requested to scale output device to" << scale << ", but I can't do that.";
         return;
     }
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
+    auto s = cast<Private>(resource);
+    Q_ASSERT(s);
+    auto pendingChanges = s->pendingChanges(o);
     if (o->scale() != scale) {
-        o->pendingChanges()->scaleChanged = true;
-        o->pendingChanges()->scale = scale;
-        Q_EMIT o->pendingChangesChanged();
-    } else if (o->pendingChanges()->scaleChanged) {
-        o->pendingChanges()->scaleChanged = false;
-        Q_EMIT o->pendingChangesChanged();
+        pendingChanges->scaleChanged = true;
+        pendingChanges->scale = scale;
+    } else if (pendingChanges->scaleChanged) {
+        pendingChanges->scaleChanged = false;
     }
 }
 

@@ -583,18 +583,18 @@ void OutputDeviceInterface::applyPendingChanges()
 //     if (d->changes.enabledChanged) {
 //         setEnabled(d->changes.enabled);
 //     }
-    if (d->changes.modeChanged) {
-        setCurrentMode(d->changes.mode);
-    }
-    if (d->changes.transformChanged) {
-        setTransform(d->changes.transform);
-    }
-    if (d->changes.positionChanged) {
-        setGlobalPosition(d->changes.position);
-    }
-    if (d->changes.scaleChanged) {
-        setScale(d->changes.scale);
-    }
+//     if (d->changes.modeChanged) {
+//         setCurrentMode(d->changes.mode);
+//     }
+//     if (d->changes.transformChanged) {
+//         setTransform(d->changes.transform);
+//     }
+//     if (d->changes.positionChanged) {
+//         setGlobalPosition(d->changes.position);
+//     }
+//     if (d->changes.scaleChanged) {
+//         setScale(d->changes.scale);
+//     }
     clearPendingChanges();
 }
 

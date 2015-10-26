@@ -228,7 +228,7 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
 
 KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
 {
-    foreach (auto m, modes()) {
+    for (const auto &m: modes()) {
         if (m.flags.testFlag(KWayland::Client::OutputDevice::Mode::Flag::Current)) {
             return m;
         }

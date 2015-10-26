@@ -484,7 +484,7 @@ QList< OutputDeviceInterface::Mode > OutputDeviceInterface::modes() const
 int OutputDeviceInterface::currentModeId() const
 {
     Q_D();
-    foreach (const Mode &m, d->modes) {
+    for (const Mode &m: d->modes) {
         if (m.flags.testFlag(OutputDeviceInterface::ModeFlag::Current)) {
             return m.id;
         }

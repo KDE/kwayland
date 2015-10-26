@@ -120,7 +120,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
     bool modeValid = false;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
 
-    foreach (auto m, o->modes()) {
+    for (const auto &m: o->modes()) {
         if (m.id == mode_id) {
             modeValid = true;
             break;
@@ -221,7 +221,7 @@ void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_
     auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
     Q_ASSERT(q);
     Q_EMIT q->applyRequested();
-    Q_FOREACH (auto o, s->changes.keys()) {
+    for (auto o: s->changes.keys()) {
         s->applyPendingChanges(o);
     }
 }
@@ -255,7 +255,7 @@ void OutputConfigurationInterface::setApplied()
 
 void OutputConfigurationInterface::Private::sendApplied()
 {
-    foreach (auto r, s_allResources) {
+    for (const auto &r: s_allResources) {
         org_kde_kwin_outputconfiguration_send_applied(r->resource);
     }
 }
@@ -271,7 +271,7 @@ void OutputConfigurationInterface::setFailed()
 
 void OutputConfigurationInterface::Private::sendFailed()
 {
-    foreach (auto r, s_allResources) {
+    for (const auto &r: s_allResources) {
         org_kde_kwin_outputconfiguration_send_failed(r->resource);
     }
 }

@@ -123,6 +123,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
     foreach (auto m, o->modes()) {
         if (m.id == mode_id) {
             modeValid = true;
+            break;
         }
     }
     if (!modeValid) {

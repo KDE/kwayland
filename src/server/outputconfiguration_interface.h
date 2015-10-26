@@ -20,7 +20,6 @@
 #ifndef KWAYLAND_SERVER_OUTPUTCONFIGURATION_H
 #define KWAYLAND_SERVER_OUTPUTCONFIGURATION_H
 
-#include "global.h"
 #include "resource.h"
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
@@ -31,9 +30,6 @@ namespace KWayland
 {
 namespace Server
 {
-
-class Display;
-
 
 class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {

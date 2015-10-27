@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell.h"
 #include "event_queue.h"
 #include "output.h"
+#include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
 // Wayland
@@ -247,6 +248,14 @@ void ShellSurface::setTransient(Surface *parent, const QPoint &offset, Transient
         wlFlags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
     }
     wl_shell_surface_set_transient(d->surface, *parent, offset.x(), offset.y(), wlFlags);
+}
+
+void ShellSurface::requestMove(Seat *seat, quint32 serial)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(seat);
+
+    wl_shell_surface_move(d->surface, *seat, serial);
 }
 
 QSize ShellSurface::size() const

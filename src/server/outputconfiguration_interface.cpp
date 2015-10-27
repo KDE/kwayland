@@ -117,9 +117,9 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
 {
     Q_UNUSED(client);
-    bool modeValid = false;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
 
+    bool modeValid = false;
     for (const auto &m: o->modes()) {
         if (m.id == mode_id) {
             modeValid = true;

@@ -65,7 +65,7 @@ private Q_SLOTS:
 
 private:
     void testEnable();
-
+    void applyPendingChanges();
 
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputConfigurationInterface *m_outputConfigurationInterface;
@@ -195,6 +195,30 @@ void TestWaylandOutputManagement::cleanupTestCase()
     m_outputConfiguration = nullptr;
     delete m_display;
     m_display = nullptr;
+}
+
+void TestWaylandOutputManagement::applyPendingChanges()
+{
+    auto changes = m_outputConfigurationInterface->changes();
+    for (auto outputdevice: changes.keys()) {
+        auto c = changes[outputdevice];
+        if (c->enabledChanged) {
+            outputdevice->setEnabled(c->enabled);
+        }
+        if (c->modeChanged) {
+            outputdevice->setCurrentMode(c->mode);
+        }
+        if (c->transformChanged) {
+            outputdevice->setTransform(c->transform);
+        }
+        if (c->positionChanged) {
+            outputdevice->setGlobalPosition(c->position);
+        }
+        if (c->scaleChanged) {
+            outputdevice->setScale(c->scale);
+        }
+
+    }
 }
 
 void TestWaylandOutputManagement::testCreate()
@@ -359,6 +383,7 @@ void TestWaylandOutputManagement::testMultipleSettings()
     QSignalSpy serverApplySpy(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested);
     QVERIFY(serverApplySpy.isValid());
     connect(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested, [=](KWayland::Server::OutputConfigurationInterface *configurationInterface) {
+        applyPendingChanges();
         m_outputConfigurationInterface = configurationInterface;
     });
 
@@ -430,15 +455,11 @@ void TestWaylandOutputManagement::testConfigFailed()
     QVERIFY(!configAppliedSpy.wait(200));
     QCOMPARE(configFailedSpy.count(), 1);
     QCOMPARE(configAppliedSpy.count(), 0);
-    //QCOMPARE(outputChangedSpy.count(), 0); // FIXME
+//     QCOMPARE(outputChangedSpy.count(), 0); // FIXME
 }
 
 void TestWaylandOutputManagement::testExampleConfig()
 {
-    //auto config = m_outputManagement.createConfiguration();
-
-//     delete m_outputConfigurationInterface;
-//     m_outputConfigurationInterface = nullptr;
     createConfig();
 
     auto config = m_outputConfiguration;

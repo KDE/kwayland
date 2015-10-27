@@ -221,9 +221,9 @@ void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_
     auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
     Q_ASSERT(q);
     Q_EMIT q->applyRequested();
-    for (auto o: s->changes.keys()) {
-        s->applyPendingChanges(o);
-    }
+//     for (auto o: s->changes.keys()) {
+//         s->applyPendingChanges(o);
+//     }
 }
 
 OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource)
@@ -242,6 +242,12 @@ OutputConfigurationInterface::Private::~Private()
 OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
+}
+
+QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> OutputConfigurationInterface::changes()
+{
+    Q_D();
+    return d->changes;
 }
 
 void OutputConfigurationInterface::setApplied()
@@ -282,27 +288,6 @@ OutputConfigurationInterface::Changes* OutputConfigurationInterface::Private::pe
         changes[outputdevice] = new Changes;
     }
     return changes[outputdevice];
-}
-
-void OutputConfigurationInterface::Private::applyPendingChanges(OutputDeviceInterface *outputdevice)
-{
-    auto c = changes[outputdevice];
-    if (c->enabledChanged) {
-        outputdevice->setEnabled(c->enabled);
-    }
-    if (c->modeChanged) {
-        outputdevice->setCurrentMode(c->mode);
-    }
-    if (c->transformChanged) {
-        outputdevice->setTransform(c->transform);
-    }
-    if (c->positionChanged) {
-        outputdevice->setGlobalPosition(c->position);
-    }
-    if (c->scaleChanged) {
-        outputdevice->setScale(c->scale);
-    }
-    clearPendingChanges();
 }
 
 bool OutputConfigurationInterface::Private::hasPendingChanges(OutputDeviceInterface *outputdevice) const

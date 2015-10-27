@@ -35,6 +35,7 @@ class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {
     Q_OBJECT
 public:
+    virtual ~OutputConfigurationInterface();
     /**
      * This struct caches changes to the OutputDevice set by OutputConfigurationInterface.
      */
@@ -55,7 +56,10 @@ public:
         int scale;
     };
 
-    virtual ~OutputConfigurationInterface();
+    /**
+     * Accessor for the changes made to OutputDevices.
+     */
+    QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> changes();
 
 public Q_SLOTS:
     /**
@@ -71,6 +75,12 @@ public Q_SLOTS:
     void setFailed();
 
 Q_SIGNALS:
+    /**
+     * This signal is used to notify the OutputManagementInterface that the config
+     * should be applied. This signal is only used to trigger the OutputManagementInterface's
+     * configurationChangeRequested signal. Users of this API should use OutputManagementInterface::configurationChangeRequested instead.
+     * @see OutputManagementInterface::configurationChangeRequested
+     */
     void applyRequested();
 
 private:

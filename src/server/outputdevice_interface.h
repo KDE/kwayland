@@ -137,7 +137,6 @@ Q_SIGNALS:
     void enabledChanged();
     void uuidChanged();
 
-    void pendingChangesChanged();
 private:
     friend class Display;
     explicit OutputDeviceInterface(Display *display, QObject *parent = nullptr);

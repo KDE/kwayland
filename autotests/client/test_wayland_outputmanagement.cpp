@@ -53,12 +53,11 @@ private Q_SLOTS:
     void testCreate();
     void testOutputDevices();
     void createConfig();
-    void testApplied();
-    void testFailed();
 
-private Q_SLOTS:
     void testMultipleSettings();
     void testConfigFailed();
+    void testApplied();
+    void testFailed();
 
     void testExampleConfig();
 
@@ -188,6 +187,12 @@ void TestWaylandOutputManagement::cleanupTestCase()
     delete m_connection;
     m_connection = nullptr;
 
+    if (m_outputManagementInterface) {
+        delete m_outputConfigurationInterface;
+        m_outputConfigurationInterface = nullptr;
+    }
+    delete m_outputConfiguration;
+    m_outputConfiguration = nullptr;
     delete m_display;
     m_display = nullptr;
 }
@@ -219,7 +224,6 @@ void TestWaylandOutputManagement::testOutputDevices()
     //QVERIFY(m_omSpy->wait());
     QCOMPARE(m_omSpy->count(), 1);
     QCOMPARE(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputDevice).count(), m_serverOutputs.count());
-
 
     auto output = new KWayland::Client::OutputDevice();
     QVERIFY(!output->isValid());
@@ -254,11 +258,13 @@ void TestWaylandOutputManagement::testOutputDevices()
 
 void TestWaylandOutputManagement::testRemoval()
 {
-    QSignalSpy outputManagementRemovedSpy(&m_registry,&KWayland::Client::Registry::outputManagementRemoved);
+    //testCreate();
+    QSignalSpy outputManagementRemovedSpy(&m_registry, &KWayland::Client::Registry::outputManagementRemoved);
     QVERIFY(outputManagementRemovedSpy.isValid());
 
     delete m_outputManagementInterface;
-    QVERIFY(outputManagementRemovedSpy.wait());
+    m_outputManagementInterface = nullptr;
+    QVERIFY(outputManagementRemovedSpy.wait(200));
     QCOMPARE(outputManagementRemovedSpy.first().first(), m_announcedSpy->first().first());
     QVERIFY(!m_registry.hasInterface(KWayland::Client::Registry::Interface::OutputManagement));
     QVERIFY(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputManagement).isEmpty());
@@ -266,21 +272,13 @@ void TestWaylandOutputManagement::testRemoval()
 
 void TestWaylandOutputManagement::createConfig()
 {
-    m_configSpy = new QSignalSpy(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated);
-    connect(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationCreated,
+    connect(m_outputManagementInterface, &KWayland::Server::OutputManagementInterface::configurationChangeRequested,
             [this] (KWayland::Server::OutputConfigurationInterface *config) {
-                //qDebug() << "set output config" << config;
                 m_outputConfigurationInterface = config;
             });
-    QVERIFY(m_configSpy->isValid());
 
     m_outputConfiguration = m_outputManagement.createConfiguration();
     QVERIFY(m_outputConfiguration->isValid());
-    QVERIFY(m_outputConfigurationInterface == nullptr);
-
-    // make sure the server side emits the signal that a config has been created
-    QVERIFY(m_configSpy->wait(200));
-    QVERIFY(m_outputConfigurationInterface != nullptr);
 }
 
 void TestWaylandOutputManagement::testApplied()
@@ -288,12 +286,13 @@ void TestWaylandOutputManagement::testApplied()
     QVERIFY(m_outputConfiguration->isValid());
     QSignalSpy appliedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::applied);
 
+    connect(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested,
+            [=](KWayland::Server::OutputConfigurationInterface *configurationInterface) {
+                configurationInterface->setApplied();
+        });
     m_outputConfiguration->apply();
-    // At this point, we fake the compositor and just
-    // tell the server to emit the applied signal
-    m_outputConfigurationInterface->setApplied();
-
     QVERIFY(appliedSpy.wait(200));
+    QCOMPARE(appliedSpy.count(), 1);
 }
 
 void TestWaylandOutputManagement::testFailed()
@@ -301,12 +300,14 @@ void TestWaylandOutputManagement::testFailed()
     QVERIFY(m_outputConfiguration->isValid());
     QSignalSpy failedSpy(m_outputConfiguration, &KWayland::Client::OutputConfiguration::failed);
 
+    connect(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested,
+            [=](KWayland::Server::OutputConfigurationInterface *configurationInterface) {
+                configurationInterface->setFailed();
+        });
     m_outputConfiguration->apply();
-    // At this point, we fake the compositor and just
-    // tell the server to emit the applied signal
-    m_outputConfigurationInterface->setFailed();
-
     QVERIFY(failedSpy.wait(200));
+    QCOMPARE(failedSpy.count(), 1);
+
 }
 
 void TestWaylandOutputManagement::testEnable()
@@ -348,16 +349,18 @@ void TestWaylandOutputManagement::testEnable()
 
 void TestWaylandOutputManagement::testMultipleSettings()
 {
-    delete m_outputConfigurationInterface;
-    m_outputConfigurationInterface = nullptr;
     createConfig();
     auto config = m_outputConfiguration;
     QVERIFY(config->isValid());
 
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
     QSignalSpy outputChangedSpy(output, &KWayland::Client::OutputDevice::changed);
-    QSignalSpy serverApplySpy(m_outputConfigurationInterface, &OutputConfigurationInterface::applyRequested);
+
+    QSignalSpy serverApplySpy(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested);
     QVERIFY(serverApplySpy.isValid());
+    connect(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested, [=](KWayland::Server::OutputConfigurationInterface *configurationInterface) {
+        m_outputConfigurationInterface = configurationInterface;
+    });
 
     config->setMode(output, m_modes.first().id);
     config->setTransform(output, OutputDevice::Transform::Rotated90);
@@ -434,8 +437,8 @@ void TestWaylandOutputManagement::testExampleConfig()
 {
     //auto config = m_outputManagement.createConfiguration();
 
-    delete m_outputConfigurationInterface;
-    m_outputConfigurationInterface = nullptr;
+//     delete m_outputConfigurationInterface;
+//     m_outputConfigurationInterface = nullptr;
     createConfig();
 
     auto config = m_outputConfiguration;

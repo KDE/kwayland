@@ -31,7 +31,19 @@ namespace Server
 {
 
 class OutputConfigurationInterface;
-
+/**
+ * @class OutputManagementInterface
+ *
+ * This class is used to change the configuration of the Wayland server's outputs.
+ * The client requests an OutputConfiguration, changes its OutputDevices and then
+ * calls OutputConfiguration::apply, which makes this class emit a signal, carrying
+ * the new configuration.
+ * The server is then expected to make the requested changes by applying the settings
+ * of the OutputDevices to the Outputs.
+ *
+ * @see OutputConfiguration
+ * @see OutputConfigurationInterface
+ */
 class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
 {
     Q_OBJECT
@@ -40,14 +52,18 @@ public:
 
 Q_SIGNALS:
     /**
-     * Emitted after the client has requested an OutputConfiguration though
-     * OutputManagement::createConfiguration.
+     * Emitted after the client has requested an OutputConfiguration to be applied.
+     * through OutputConfiguration::apply. The compositor can use this object to get
+     * notified when the new configuration is set up, and it should be applied to the
+     * Wayland server's OutputInterfaces.
      * @param config The OutputConfigurationInterface corresponding to the client
-     * that was created. The compositor can use this object to get notified by the
-     * client that the configuration should be applied, and to signal back that it
-     * is successfully applied() or failed().
+     * that was applied.
+     * @see OutputConfiguration::apply
+     * @see OutputConfigurationInterface
+     * @see OutputDeviceInterface
+     * @see OutputInterface
      */
-    void configurationCreated(KWayland::Server::OutputConfigurationInterface *config);
+    void configurationChangeRequested(KWayland::Server::OutputConfigurationInterface *configurationInterface);
 
 private:
     explicit OutputManagementInterface(Display *display, QObject *parent = nullptr);

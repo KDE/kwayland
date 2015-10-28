@@ -241,7 +241,7 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
     return reinterpret_cast<Private*>(d.data());
 }
 
-QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> OutputConfigurationInterface::changes()
+QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> OutputConfigurationInterface::changes() const
 {
     Q_D();
     return d->changes;

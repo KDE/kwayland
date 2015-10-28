@@ -59,7 +59,7 @@ public:
     /**
      * Accessor for the changes made to OutputDevices.
      */
-    QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> changes();
+    QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> changes() const;
 
 public Q_SLOTS:
     /**

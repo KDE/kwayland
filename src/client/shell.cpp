@@ -258,6 +258,37 @@ void ShellSurface::requestMove(Seat *seat, quint32 serial)
     wl_shell_surface_move(d->surface, *seat, serial);
 }
 
+void ShellSurface::requestResize(Seat *seat, quint32 serial, Qt::Edges edges)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(seat);
+
+    uint wlEdge = WL_SHELL_SURFACE_RESIZE_NONE;
+    if (edges.testFlag(Qt::TopEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::TopEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::TopEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP_RIGHT;
+        } else if ((edges & ~Qt::TopEdge) == Qt::Edges()) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP;
+        }
+    } else if (edges.testFlag(Qt::BottomEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::BottomEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::BottomEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM_RIGHT;
+        } else if ((edges & ~Qt::BottomEdge) == Qt::Edges()) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM;
+        }
+    } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::Edges())) {
+        wlEdge = WL_SHELL_SURFACE_RESIZE_RIGHT;
+    } else if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::Edges())) {
+        wlEdge = WL_SHELL_SURFACE_RESIZE_LEFT;
+    }
+
+    wl_shell_surface_resize(d->surface, *seat, serial, wlEdge);
+}
+
 QSize ShellSurface::size() const
 {
     return d->size;

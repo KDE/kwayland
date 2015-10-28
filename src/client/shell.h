@@ -257,6 +257,16 @@ public:
      **/
     void requestMove(Seat *seat, quint32 serial);
 
+    /**
+     * Requests a resize on the given @p seat after the pointer button press with the given @p serial.
+     *
+     * @param seat The seat on which to resize the window
+     * @param serial The serial of the pointer button press which should trigger the resize
+     * @param edges A hint for the compositor to set e.g. an appropriate cursor image
+     * @since 5.5
+     **/
+    void requestResize(Seat *seat, quint32 serial, Qt::Edges edges);
+
     operator wl_shell_surface*();
     operator wl_shell_surface*() const;
 

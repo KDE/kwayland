@@ -105,6 +105,16 @@ public:
      **/
     Q_INVOKABLE void requestVirtualDesktop(int row, quint32 desktop);
 
+    /**
+     * Requests the window at this model row index have its minimized state toggled.
+     */
+    Q_INVOKABLE void requestToggleMinimized(int row);
+
+    /**
+     * Requests the window at this model row index have its maximized state toggled.
+     */
+    Q_INVOKABLE void requestToggleMaximized(int row);
+
 private:
     class Private;
     QScopedPointer<Private> d;

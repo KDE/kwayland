@@ -255,5 +255,19 @@ Q_INVOKABLE void PlasmaWindowModel::requestVirtualDesktop(int row, quint32 deskt
     }
 }
 
+Q_INVOKABLE void PlasmaWindowModel::requestToggleMinimized(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleMinimized();
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestToggleMaximized(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleMaximized();
+    }
+}
+
 }
 }

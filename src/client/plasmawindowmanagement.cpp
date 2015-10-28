@@ -639,6 +639,32 @@ void PlasmaWindow::requestVirtualDesktop(quint32 desktop)
     org_kde_plasma_window_set_virtual_desktop(d->window, desktop);
 }
 
+void PlasmaWindow::requestToggleMinimized()
+{
+    if (d->minimized) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
+    }
+}
+
+void PlasmaWindow::requestToggleMaximized()
+{
+    if (d->maximized) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED);
+    }
+}
+
 quint32 PlasmaWindow::internalId() const
 {
     return d->internalId;

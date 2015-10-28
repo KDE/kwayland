@@ -225,6 +225,15 @@ public:
     void requestActivate();
     void requestClose();
     void requestVirtualDesktop(quint32 desktop);
+    /**
+     * Requests the window at this model row index have its minimized state toggled.
+     */
+    void requestToggleMinimized();
+
+    /**
+     * Requests the window at this model row index have its maximized state toggled.
+     */
+    void requestToggleMaximized();
 
     /**
      * An internal window identifier.

@@ -45,7 +45,6 @@ class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
 {
     Q_OBJECT
 public:
-    explicit ChangeSet(QObject *parent = nullptr);
     virtual ~ChangeSet();
 
     bool enabledChanged() const;
@@ -62,6 +61,7 @@ public:
 
 protected:
     friend class OutputConfiguration;
+    explicit ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
     void setEnabled(OutputDeviceInterface::Enablement enablement);
     void setMode(int modeId);
     void setTransform(OutputDeviceInterface::Transform);

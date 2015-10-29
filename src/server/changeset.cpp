@@ -28,26 +28,28 @@ namespace Server
 class ChangeSet::Private
 {
 public:
-    Private(ChangeSet *parent);
+    Private(OutputDeviceInterface *outputdevice, ChangeSet *parent);
     ~Private();
 
     ChangeSet *q;
-    bool enabledChanged = false;
-    bool modeChanged = false;
-    bool transformChanged = false;
-    bool positionChanged = false;
-    bool scaleChanged = false;
+    OutputDeviceInterface *o;
 
-    OutputDeviceInterface::Enablement enabled = OutputDeviceInterface::Enablement::Enabled;
-    int modeId = -1;
-    OutputDeviceInterface::Transform transform = OutputDeviceInterface::Transform::Normal;
+    OutputDeviceInterface::Enablement enabled;
+    int modeId;
+    OutputDeviceInterface::Transform transform;
     QPoint position;
-    int scale = 1;
+    int scale;
 };
 
 
-ChangeSet::Private::Private(ChangeSet *parent)
+ChangeSet::Private::Private(OutputDeviceInterface *outputdevice, ChangeSet *parent)
     : q(parent)
+    , o(outputdevice)
+    , enabled(o->enabled())
+    , modeId(o->currentModeId())
+    , transform(o->transform())
+    , position(o->globalPosition())
+    , scale(o->scale())
 {
 }
 
@@ -55,9 +57,9 @@ ChangeSet::Private::~Private()
 {
 }
 
-ChangeSet::ChangeSet(QObject *parent)
+ChangeSet::ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new Private(outputdevice, this))
 {
 }
 
@@ -73,7 +75,7 @@ ChangeSet::Private *ChangeSet::d_func() const
 bool ChangeSet::enabledChanged() const
 {
     Q_D();
-    return d->enabledChanged;
+    return d->enabled == d->o->enabled();
 }
 
 OutputDeviceInterface::Enablement ChangeSet::enabled() const
@@ -85,7 +87,7 @@ OutputDeviceInterface::Enablement ChangeSet::enabled() const
 bool ChangeSet::modeChanged() const
 {
     Q_D();
-    return d->modeChanged;
+    return d->modeId != d->o->currentModeId();
 }
 
 int ChangeSet::mode() const
@@ -97,7 +99,7 @@ int ChangeSet::mode() const
 bool ChangeSet::transformChanged() const
 {
     Q_D();
-    return d->transformChanged;
+    return d->transform != d->o->transform();
 }
 
 OutputDeviceInterface::Transform ChangeSet::transform() const
@@ -109,7 +111,7 @@ OutputDeviceInterface::Transform ChangeSet::transform() const
 bool ChangeSet::positionChanged() const
 {
     Q_D();
-    return d->positionChanged;
+    return d->position != d->o->globalPosition();
 }
 
 QPoint ChangeSet::position() const
@@ -121,7 +123,7 @@ QPoint ChangeSet::position() const
 bool ChangeSet::scaleChanged() const
 {
     Q_D();
-    return d->scaleChanged;
+    return d->scale != d->o->scale();
 }
 
 int ChangeSet::scale() const

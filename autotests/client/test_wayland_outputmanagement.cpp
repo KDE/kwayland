@@ -349,21 +349,8 @@ void TestWaylandOutputManagement::testEnable()
     QVERIFY(!enabledChanged.wait(200));
 
     QCOMPARE(enabledChanged.count(), 0);
-    //QVERIFY(config->hasPendingChanges(m_serverOutputs.first()));
-    //qDebug() << "Applying";
-//     m_serverOutputs.first()->applyPendingChanges();
-//     QVERIFY(!m_serverOutputs.first()->hasPendingChanges());
-//
-//     QVERIFY(enabledChanged.wait(200));
-//     QCOMPARE(output->enabled(), OutputDevice::Enablement::Disabled);
-//
-//     m_serverOutputs.first()->setEnabled(OutputDeviceInterface::Enablement::Enabled);
-//
-//     QVERIFY(enabledChanged.wait(200));
-//     QCOMPARE(output->enabled(), OutputDevice::Enablement::Enabled);
 
-    // The following is never applied, but set back to its original value
-    // as to make sure changes are correctly undone.
+    // Reset
     config->setEnabled(output, OutputDevice::Enablement::Disabled);
     config->apply();
 }

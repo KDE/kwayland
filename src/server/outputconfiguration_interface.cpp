@@ -220,9 +220,6 @@ QHash<OutputDeviceInterface*, ChangeSet*> OutputConfigurationInterface::changes(
 void OutputConfigurationInterface::setApplied()
 {
     Q_D();
-    Q_ASSERT(d->outputManagement);
-    auto outputs = d->outputManagement->display()->outputDevices();
-    // ...
     d->sendApplied();
 }
 
@@ -236,9 +233,6 @@ void OutputConfigurationInterface::Private::sendApplied()
 void OutputConfigurationInterface::setFailed()
 {
     Q_D();
-    Q_ASSERT(d->outputManagement);
-    auto outputs = d->outputManagement->display()->outputDevices();
-    // ...
     d->sendFailed();
 }
 

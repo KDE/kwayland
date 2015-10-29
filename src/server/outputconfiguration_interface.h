@@ -23,6 +23,7 @@
 #include "resource.h"
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
+#include "changeset.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
@@ -30,36 +31,23 @@ namespace KWayland
 {
 namespace Server
 {
-
+/** @class OutputConfigurationInterface
+ *
+ * Holds a new configuration for the outputs.
+ *
+ * @see OutputManagementInterface
+ * @since 5.5
+ */
 class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {
     Q_OBJECT
 public:
     virtual ~OutputConfigurationInterface();
-    /**
-     * This struct caches changes to the OutputDevice set by OutputConfigurationInterface.
-     */
-    struct Changes {
-        bool enabledChanged = false;
-        OutputDeviceInterface::Enablement enabled = OutputDeviceInterface::Enablement::Disabled;
-
-        bool modeChanged = false;
-        int mode = -1;
-
-        bool transformChanged = false;
-        OutputDeviceInterface::Transform transform = OutputDeviceInterface::Transform::Normal;
-
-        bool positionChanged = false;
-        QPoint position;
-
-        bool scaleChanged = false;
-        int scale;
-    };
 
     /**
      * Accessor for the changes made to OutputDevices.
      */
-    QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> changes() const;
+    QHash<OutputDeviceInterface*, ChangeSet*> changes() const;
 
 public Q_SLOTS:
     /**

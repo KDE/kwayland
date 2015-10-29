@@ -48,10 +48,10 @@ public:
     void clearPendingChanges();
 
     bool hasPendingChanges(OutputDeviceInterface *outputdevice) const;
-    Changes* pendingChanges(OutputDeviceInterface *outputdevice);
+    ChangeSet* pendingChanges(OutputDeviceInterface *outputdevice);
 
     OutputManagementInterface *outputManagement;
-    QHash<OutputDeviceInterface*, Changes*> changes;
+    QHash<OutputDeviceInterface*, ChangeSet*> changes;
 
     static const quint32 s_version = 1;
 
@@ -105,13 +105,7 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
                                     OutputDeviceInterface::Enablement::Enabled :
                                     OutputDeviceInterface::Enablement::Disabled;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    auto pendingChanges = s->pendingChanges(o);
-    if (o->enabled() != _enable) {
-        pendingChanges->enabledChanged = true;
-        pendingChanges->enabled = _enable;
-    } else if (pendingChanges->enabledChanged) {
-        pendingChanges->enabledChanged = false;
-    }
+    s->pendingChanges(o)->setEnabled(_enable);
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
@@ -132,13 +126,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
     }
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    auto pendingChanges = s->pendingChanges(o);
-    if (o->currentModeId() != mode_id) {
-        pendingChanges->modeChanged = true;
-        pendingChanges->mode = mode_id;
-    } else if (pendingChanges->modeChanged) {
-        pendingChanges->modeChanged = false;
-    }
+    s->pendingChanges(o)->setMode(mode_id);
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
@@ -169,13 +157,7 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    auto pendingChanges = s->pendingChanges(o);
-    if (o->transform() != _transform) {
-        pendingChanges->transform = _transform;
-        pendingChanges->transformChanged = true;
-    } else if (pendingChanges->transformChanged) {
-        pendingChanges->transformChanged = false;
-    }
+    s->pendingChanges(o)->setTransform(_transform);
 }
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)
@@ -185,13 +167,7 @@ void OutputConfigurationInterface::Private::positionCallback(wl_client *client, 
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    auto pendingChanges = s->pendingChanges(o);
-    if (o->globalPosition() != _pos) {
-        pendingChanges->positionChanged = true;
-        pendingChanges->position = _pos;
-    } else if (pendingChanges->positionChanged) {
-        pendingChanges->positionChanged = false;
-    }
+    s->pendingChanges(o)->setPosition(_pos);
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
@@ -204,13 +180,7 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    auto pendingChanges = s->pendingChanges(o);
-    if (o->scale() != scale) {
-        pendingChanges->scaleChanged = true;
-        pendingChanges->scale = scale;
-    } else if (pendingChanges->scaleChanged) {
-        pendingChanges->scaleChanged = false;
-    }
+    s->pendingChanges(o)->setScale(scale);
 }
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)
@@ -241,7 +211,7 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
     return reinterpret_cast<Private*>(d.data());
 }
 
-QHash<OutputDeviceInterface*, OutputConfigurationInterface::Changes*> OutputConfigurationInterface::changes() const
+QHash<OutputDeviceInterface*, ChangeSet*> OutputConfigurationInterface::changes() const
 {
     Q_D();
     return d->changes;
@@ -279,10 +249,10 @@ void OutputConfigurationInterface::Private::sendFailed()
     }
 }
 
-OutputConfigurationInterface::Changes* OutputConfigurationInterface::Private::pendingChanges(OutputDeviceInterface *outputdevice)
+ChangeSet* OutputConfigurationInterface::Private::pendingChanges(OutputDeviceInterface *outputdevice)
 {
     if (!changes.keys().contains(outputdevice)) {
-        changes[outputdevice] = new Changes;
+        changes[outputdevice] = new ChangeSet(outputdevice, q);
     }
     return changes[outputdevice];
 }
@@ -293,11 +263,11 @@ bool OutputConfigurationInterface::Private::hasPendingChanges(OutputDeviceInterf
         return false;
     }
     auto c = changes[outputdevice];
-    return c->enabledChanged ||
-    c->modeChanged ||
-    c->transformChanged ||
-    c->positionChanged ||
-    c->scaleChanged;
+    return c->enabledChanged() ||
+    c->modeChanged() ||
+    c->transformChanged() ||
+    c->positionChanged() ||
+    c->scaleChanged();
 }
 
 void OutputConfigurationInterface::Private::clearPendingChanges()

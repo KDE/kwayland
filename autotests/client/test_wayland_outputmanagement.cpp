@@ -454,7 +454,7 @@ void TestWaylandOutputManagement::testConfigFailed()
     QVERIFY(!configAppliedSpy.wait(200));
     QCOMPARE(configFailedSpy.count(), 1);
     QCOMPARE(configAppliedSpy.count(), 0);
-//     QCOMPARE(outputChangedSpy.count(), 0); // FIXME
+//    QCOMPARE(outputChangedSpy.count(), 0); // FIXME
 }
 
 void TestWaylandOutputManagement::testExampleConfig()
@@ -481,7 +481,6 @@ void TestWaylandOutputManagement::testExampleConfig()
     m_outputConfigurationInterface->setApplied();
     QVERIFY(configAppliedSpy.isValid());
     QVERIFY(configAppliedSpy.wait(200));
-    QVERIFY(!configAppliedSpy.wait(200));
 }
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)

@@ -53,9 +53,7 @@ ChangeSet::Private::Private(OutputDeviceInterface *outputdevice, ChangeSet *pare
 {
 }
 
-ChangeSet::Private::~Private()
-{
-}
+ChangeSet::Private::~Private() = default;
 
 ChangeSet::ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent)
     : QObject(parent)
@@ -63,9 +61,7 @@ ChangeSet::ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent)
 {
 }
 
-ChangeSet::~ChangeSet()
-{
-}
+ChangeSet::~ChangeSet() = default;
 
 ChangeSet::Private *ChangeSet::d_func() const
 {

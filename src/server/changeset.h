@@ -40,6 +40,8 @@ namespace Server
  *
  * @see OutputConfiguration
  *
+ * @since 5.5
+ *
  **/
 class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
 {
@@ -47,20 +49,30 @@ class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
 public:
     virtual ~ChangeSet();
 
+    /** Whether the enabled() property of the outputdevice changed. */
     bool enabledChanged() const;
+    /** Whether the currentModeId() property of the outputdevice changed. */
     bool modeChanged() const;
+    /** Whether the transform() property of the outputdevice changed. */
     bool transformChanged() const;
+    /** Whether the globalPosition() property of the outputdevice changed. */
     bool positionChanged() const;
+    /** Whether the scale() property of the outputdevice changed. */
     bool scaleChanged() const;
 
+    /** The new value for enabled. */
     OutputDeviceInterface::Enablement enabled() const;
+    /** The new mode id.*/
     int mode() const;
+    /** The new value for transform. */
     OutputDeviceInterface::Transform transform() const;
+    /** The new value for globalPosition. */
     QPoint position() const;
+    /** The new value for scale. */
     int scale() const;
 
 protected:
-    friend class OutputConfiguration;
+    friend class OutputConfigurationInterface;
     explicit ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
     void setEnabled(OutputDeviceInterface::Enablement enablement);
     void setMode(int modeId);

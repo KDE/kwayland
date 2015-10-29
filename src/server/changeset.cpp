@@ -75,13 +75,18 @@ ChangeSet::Private *ChangeSet::d_func() const
 bool ChangeSet::enabledChanged() const
 {
     Q_D();
-    return d->enabled == d->o->enabled();
+    return d->enabled != d->o->enabled();
 }
 
 OutputDeviceInterface::Enablement ChangeSet::enabled() const
 {
     Q_D();
     return d->enabled;
+}
+
+void ChangeSet::setEnabled(OutputDeviceInterface::Enablement enablement)
+{
+    d->enabled = enablement;
 }
 
 bool ChangeSet::modeChanged() const
@@ -96,6 +101,11 @@ int ChangeSet::mode() const
     return d->modeId;
 }
 
+void ChangeSet::setMode(int modeId)
+{
+    d->modeId = modeId;
+}
+
 bool ChangeSet::transformChanged() const
 {
     Q_D();
@@ -106,6 +116,11 @@ OutputDeviceInterface::Transform ChangeSet::transform() const
 {
     Q_D();
     return d->transform;
+}
+
+void ChangeSet::setTransform(OutputDeviceInterface::Transform t)
+{
+    d->transform = t;
 }
 
 bool ChangeSet::positionChanged() const
@@ -120,6 +135,11 @@ QPoint ChangeSet::position() const
     return d->position;
 }
 
+void ChangeSet::setPosition(QPoint pos)
+{
+    d->position = pos;
+}
+
 bool ChangeSet::scaleChanged() const
 {
     Q_D();
@@ -130,6 +150,11 @@ int ChangeSet::scale() const
 {
     Q_D();
     return d->scale;
+}
+
+void ChangeSet::setScale(int scale)
+{
+    d->scale = scale;
 }
 
 

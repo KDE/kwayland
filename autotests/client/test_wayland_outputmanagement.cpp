@@ -202,22 +202,21 @@ void TestWaylandOutputManagement::applyPendingChanges()
     auto changes = m_outputConfigurationInterface->changes();
     for (auto outputdevice: changes.keys()) {
         auto c = changes[outputdevice];
-        if (c->enabledChanged) {
-            outputdevice->setEnabled(c->enabled);
+        if (c->enabledChanged()) {
+            outputdevice->setEnabled(c->enabled());
         }
-        if (c->modeChanged) {
-            outputdevice->setCurrentMode(c->mode);
+        if (c->modeChanged()) {
+            outputdevice->setCurrentMode(c->mode());
         }
-        if (c->transformChanged) {
-            outputdevice->setTransform(c->transform);
+        if (c->transformChanged()) {
+            outputdevice->setTransform(c->transform());
         }
-        if (c->positionChanged) {
-            outputdevice->setGlobalPosition(c->position);
+        if (c->positionChanged()) {
+            outputdevice->setGlobalPosition(c->position());
         }
-        if (c->scaleChanged) {
-            outputdevice->setScale(c->scale);
+        if (c->scaleChanged()) {
+            outputdevice->setScale(c->scale());
         }
-
     }
 }
 

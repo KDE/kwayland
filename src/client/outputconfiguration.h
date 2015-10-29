@@ -232,5 +232,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration*);
+
 
 #endif

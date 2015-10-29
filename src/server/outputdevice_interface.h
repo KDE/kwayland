@@ -38,6 +38,14 @@ namespace Server
 
 class Display;
 
+/** @class OutputDeviceInterface
+ *
+ * Represents an output device, the difference to Output is that this output can be disabled,
+ * so not currently used to display content.
+ *
+ * @see OutputManagementInterface
+ * @since 5.5
+ */
 class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
 {
     Q_OBJECT

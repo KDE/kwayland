@@ -665,6 +665,16 @@ void PlasmaWindow::requestToggleMaximized()
     }
 }
 
+void PlasmaWindow::setMinimizedGeometry(Surface *panel, const QRect &geom)
+{
+    org_kde_plasma_window_set_minimized_geometry(d->window, *panel, geom.x(), geom.y(), geom.width(), geom.height());
+}
+
+void PlasmaWindow::unsetMinimizedGeometry(Surface *panel)
+{
+    org_kde_plasma_window_unset_minimized_geometry(d->window, *panel);
+}
+
 quint32 PlasmaWindow::internalId() const
 {
     return d->internalId;

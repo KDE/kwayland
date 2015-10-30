@@ -36,6 +36,7 @@ namespace Client
 class EventQueue;
 class PlasmaWindow;
 class PlasmaWindowModel;
+class Surface;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
@@ -234,6 +235,19 @@ public:
      * Requests the window at this model row index have its maximized state toggled.
      */
     void requestToggleMaximized();
+
+    /**
+     * Sets the geometry of the taskbar entry for this window
+     * relative to a panel in particular
+     * @since 5.5
+     */
+    void setMinimizedGeometry(Surface *panel, const QRect &geom);
+
+    /**
+     * Remove the task geometry information for a particular panel
+     * @since 5.5
+     */
+    void unsetMinimizedGeometry(Surface *panel);
 
     /**
      * An internal window identifier.

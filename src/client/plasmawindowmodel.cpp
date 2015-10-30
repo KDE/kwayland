@@ -269,5 +269,12 @@ Q_INVOKABLE void PlasmaWindowModel::requestToggleMaximized(int row)
     }
 }
 
+Q_INVOKABLE void PlasmaWindowModel::setMinimizedGeometry(int row, Surface *panel, const QRect &geom)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->setMinimizedGeometry(panel, geom);
+    }
+}
+
 }
 }

@@ -30,6 +30,7 @@ namespace Client
 {
 
 class PlasmaWindowManagement;
+class Surface;
 
 /**
  * @short Exposes the window list and window state as a Qt item model.
@@ -114,6 +115,14 @@ public:
      * Requests the window at this model row index have its maximized state toggled.
      */
     Q_INVOKABLE void requestToggleMaximized(int row);
+
+    /**
+     * Sets the geometry of the taskbar entry for the window at the model row
+     * relative to a panel in particular. QRectF, intended for use from QML
+     * @since 5.5
+     */
+    Q_INVOKABLE void setMinimizedGeometry(int row, Surface *panel, const QRect &geom);
+
 
 private:
     class Private;

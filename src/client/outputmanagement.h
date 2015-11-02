@@ -58,6 +58,7 @@ class OutputConfiguration;
 * pointer as it provides matching cast operators.
 *
 * @see Registry
+* @since 5.5
 **/
 class KWAYLANDCLIENT_EXPORT OutputManagement : public QObject
 {

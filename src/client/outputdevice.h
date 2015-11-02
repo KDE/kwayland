@@ -65,6 +65,7 @@ class EventQueue;
  * the OutputDevice indicates that all relevant information is available.
  *
  * @see Registry
+ * @since 5.5
  **/
 class KWAYLANDCLIENT_EXPORT OutputDevice : public QObject
 {

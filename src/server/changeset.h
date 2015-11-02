@@ -39,9 +39,7 @@ namespace Server
  * side. The changes are per-configuration.
  *
  * @see OutputConfiguration
- *
  * @since 5.5
- *
  **/
 class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
 {
@@ -49,15 +47,27 @@ class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
 public:
     virtual ~ChangeSet();
 
-    /** Whether the enabled() property of the outputdevice changed. */
+    /** Whether the enabled() property of the outputdevice changed.
+     * @returns @c true if the enabled property of the outputdevice has changed.
+     */
     bool enabledChanged() const;
-    /** Whether the currentModeId() property of the outputdevice changed. */
-    bool modeChanged() const;
-    /** Whether the transform() property of the outputdevice changed. */
+    /** Whether the currentModeId() property of the outputdevice changed.
+     * @returns @c true if the enabled property of the outputdevice has changed.
+     *    bool modeChanged() const;
+     */
+     /** Whether the transform() property of the outputdevice changed. */
     bool transformChanged() const;
-    /** Whether the globalPosition() property of the outputdevice changed. */
+    /** Whether the currentModeId() property of the outputdevice changed.
+     * @returns @c true if the currentModeId() property of the outputdevice has changed.
+     */
+    bool modeChanged() const;
+    /** Whether the globalPosition() property of the outputdevice changed.
+     * @returns @c true if the globalPosition() property of the outputdevice has changed.
+     */
     bool positionChanged() const;
-    /** Whether the scale() property of the outputdevice changed. */
+    /** Whether the scale() property of the outputdevice changed.
+     * @returns @c true if the scale() property of the outputdevice has changed.
+     */
     bool scaleChanged() const;
 
     /** The new value for enabled. */

@@ -50,6 +50,13 @@ class EventQueue;
  * The current settings for outputdevices can be gotten from @c Registry::outputDevices(), these
  * are used in the set* calls to identify the output the setting applies to.
  *
+ * These KWayland classes will not apply changes to the OutputDevices, this is the compositor's
+ * task. As such, the configuration set through this interface can be seen as a hint what the
+ * compositor should set up, but whether or not the comositor does it (based on hardware or
+ * rendering policies, for example), is up to the compositor. The mode setting is passed on to
+ * the DRM subsystem through the compositor. The compositor also saves this configuration and reads
+ * it on startup, this interface is not involved in that process.
+ *
  * @c apply() should only be called after changes to all output devices have been made, not after
  * each change. This allows to test the new configuration as a whole, and is a lot faster since
  * hardware changes can be tested in their new combination, they done in parallel.and rolled back
@@ -78,6 +85,7 @@ class EventQueue;
 
     // Now ask the compositor to apply the changes
     config->apply();
+    // You may wait for the applied() or failed() signal here
    \endverbatim
 
  * @see OutputDevice

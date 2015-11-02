@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright 2015  Sebastian Kügler <sebas@kde.org>
+* Copyright 2015 Sebastian Kügler <sebas@kde.org>
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
@@ -63,10 +63,15 @@ public:
     virtual ~OutputConfigurationInterface();
 
     /**
-     * Accessor for the changes made to OutputDevices.
+     * Accessor for the changes made to OutputDevices. The data returned from this call
+     * will be deleted by the OutputConfigurationInterface when
+     * OutputManagementInterface::setApplied() or OutputManagementInterface::setFailed()
+     * is called, and on destruction of the OutputConfigurationInterface, so make sure you
+     * do not keep these pointers around.
      * @returns A QHash of ChangeSets per outputdevice.
      * @see ChangeSet
      * @see OutputDeviceInterface
+     * @see OutputManagement
      */
     QHash<OutputDeviceInterface*, ChangeSet*> changes() const;
 
@@ -74,14 +79,17 @@ public Q_SLOTS:
     /**
      * Called by the compositor once the changes have successfully been applied.
      * The compositor is responsible for updating the OutputDevices. After having
-     * done so, calling this function sends to the client.
+     * done so, calling this function sends applied() through the client.
      * @see setFailed
+     * @see OutputConfiguration::applied
      */
     void setApplied();
     /**
      * Called by the compositor when the changes as a whole are rejected or
-     * failed to apply.
+     * failed to apply. This function results in the client OutputConfiguration emitting
+     * failed().
      * @see setApplied
+     * @see OutputConfiguration::failed
      */
     void setFailed();
 

@@ -225,6 +225,7 @@ QHash<OutputDeviceInterface*, ChangeSet*> OutputConfigurationInterface::changes(
 void OutputConfigurationInterface::setApplied()
 {
     Q_D();
+    d->clearPendingChanges();
     d->sendApplied();
 }
 
@@ -238,6 +239,7 @@ void OutputConfigurationInterface::Private::sendApplied()
 void OutputConfigurationInterface::setFailed()
 {
     Q_D();
+    d->clearPendingChanges();
     d->sendFailed();
 }
 

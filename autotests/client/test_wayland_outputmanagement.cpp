@@ -419,7 +419,7 @@ void TestWaylandOutputManagement::testConfigFailed()
     QVERIFY(s_o->isValid());
     QVERIFY(output->isValid());
 
-    QSignalSpy serverApplySpy(m_outputConfigurationInterface, &OutputConfigurationInterface::applyRequested);
+    QSignalSpy serverApplySpy(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested);
     QVERIFY(serverApplySpy.isValid());
     QSignalSpy outputChangedSpy(output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChangedSpy.isValid());

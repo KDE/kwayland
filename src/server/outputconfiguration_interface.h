@@ -62,15 +62,6 @@ public Q_SLOTS:
      */
     void setFailed();
 
-Q_SIGNALS:
-    /**
-     * This signal is used to notify the OutputManagementInterface that the config
-     * should be applied. This signal is only used to trigger the OutputManagementInterface's
-     * configurationChangeRequested signal. Users of this API should use OutputManagementInterface::configurationChangeRequested instead.
-     * @see OutputManagementInterface::configurationChangeRequested
-     */
-    void applyRequested();
-
 private:
     explicit OutputConfigurationInterface(OutputManagementInterface *parent, wl_resource *parentResource);
     friend class OutputManagementInterface;

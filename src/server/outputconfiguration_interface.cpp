@@ -44,7 +44,7 @@ public:
 
     void sendApplied();
     void sendFailed();
-    void applyPendingChanges(OutputDeviceInterface *outputdevice);
+    void emitConfigurationChangeRequested() const;
     void clearPendingChanges();
 
     bool hasPendingChanges(OutputDeviceInterface *outputdevice) const;
@@ -188,10 +188,15 @@ void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_
     Q_UNUSED(client);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    auto q = reinterpret_cast<OutputConfigurationInterface *>(s->q);
-    Q_ASSERT(q);
-    Q_EMIT q->applyRequested();
+    s->emitConfigurationChangeRequested();
 }
+
+void OutputConfigurationInterface::Private::emitConfigurationChangeRequested() const
+{
+    auto configinterface = reinterpret_cast<OutputConfigurationInterface *>(q);
+    emit outputManagement->configurationChangeRequested(configinterface);
+}
+
 
 OutputConfigurationInterface::Private::Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource)
 : Resource::Private(q, c, parentResource, &org_kde_kwin_outputconfiguration_interface, &s_interface)

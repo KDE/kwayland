@@ -89,9 +89,6 @@ void OutputManagementInterface::Private::createConfiguration(wl_client* client, 
     connect(config, &QObject::destroyed, [this, resource] {
         configurationInterfaces.remove(resource);
     });
-    connect(config, &OutputConfigurationInterface::applyRequested, [this, config] {
-        emit q->configurationChangeRequested(config);
-    });
 }
 
 OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)

@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 
 #include <KWayland/Server/kwaylandserver_export.h>
+#include "seat_interface.h"
 
 #include "global.h"
 #include "resource.h"
@@ -36,6 +37,7 @@ namespace Server
 {
 
 class Display;
+class SeatInterface;
 class SurfaceInterface;
 class ShellSurfaceInterface;
 
@@ -270,6 +272,23 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void acceptsKeyboardFocusChanged();
+    /**
+     * The surface requested a window move.
+     *
+     * @param seat The SeatInterface on which the surface requested the move
+     * @param serial The serial of the implicit mouse grab which triggered the move
+     * @since 5.5
+     **/
+    void moveRequested(KWayland::Server::SeatInterface *seat, quint32 serial);
+    /**
+     * The surface requested a window resize.
+     *
+     * @param seat The SeatInterface on which the surface requested the resize
+     * @param serial The serial of the implicit mouse grab which triggered the resize
+     * @param edges A hint which edges are involved in the resize
+     * @since 5.5
+     **/
+    void resizeRequested(KWayland::Server::SeatInterface *seat, quint32 serial, Qt::Edges edges);
 
 private:
     friend class ShellInterface;

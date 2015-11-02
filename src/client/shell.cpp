@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell.h"
 #include "event_queue.h"
 #include "output.h"
+#include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
 // Wayland
@@ -247,6 +248,45 @@ void ShellSurface::setTransient(Surface *parent, const QPoint &offset, Transient
         wlFlags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
     }
     wl_shell_surface_set_transient(d->surface, *parent, offset.x(), offset.y(), wlFlags);
+}
+
+void ShellSurface::requestMove(Seat *seat, quint32 serial)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(seat);
+
+    wl_shell_surface_move(d->surface, *seat, serial);
+}
+
+void ShellSurface::requestResize(Seat *seat, quint32 serial, Qt::Edges edges)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(seat);
+
+    uint wlEdge = WL_SHELL_SURFACE_RESIZE_NONE;
+    if (edges.testFlag(Qt::TopEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::TopEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::TopEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP_RIGHT;
+        } else if ((edges & ~Qt::TopEdge) == Qt::Edges()) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_TOP;
+        }
+    } else if (edges.testFlag(Qt::BottomEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::BottomEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::BottomEdge)) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM_RIGHT;
+        } else if ((edges & ~Qt::BottomEdge) == Qt::Edges()) {
+            wlEdge = WL_SHELL_SURFACE_RESIZE_BOTTOM;
+        }
+    } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::Edges())) {
+        wlEdge = WL_SHELL_SURFACE_RESIZE_RIGHT;
+    } else if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::Edges())) {
+        wlEdge = WL_SHELL_SURFACE_RESIZE_LEFT;
+    }
+
+    wl_shell_surface_resize(d->surface, *seat, serial, wlEdge);
 }
 
 QSize ShellSurface::size() const

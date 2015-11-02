@@ -57,8 +57,9 @@ Q_SIGNALS:
      * through OutputConfiguration::apply. The compositor can use this object to get
      * notified when the new configuration is set up, and it should be applied to the
      * Wayland server's OutputInterfaces.
-     * @param config The OutputConfigurationInterface corresponding to the client
-     * that was applied.
+     *
+     * @param config The OutputConfigurationInterface corresponding to the client that
+     * called apply().
      * @see OutputConfiguration::apply
      * @see OutputConfigurationInterface
      * @see OutputDeviceInterface

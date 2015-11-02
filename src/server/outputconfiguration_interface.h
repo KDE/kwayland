@@ -35,7 +35,25 @@ namespace Server
  *
  * Holds a new configuration for the outputs.
  *
+ * The overall mechanism is to get a new OutputConfiguration from the OutputManagement global and
+ * apply changes through the OutputConfiguration::set* calls. When all changes are set, the client
+ * calls apply, which asks the server to look at the changes and apply them. The server will then
+ * signal back whether the changes have been applied successfully (@c setApplied()) or were rejected
+ * or failed to apply (@c setFailed()).
+ *
+ * Once the client has called applied, the OutputManagementInterface send the configuration object
+ * to the compositor through the OutputManagement::configurationChangeRequested(OutputConfiguration*)
+ * signal, the compositor can then decide what to do with the changes.
+ *
+ * These KWayland classes will not apply changes to the OutputDevices, this is the compositor's
+ * task. As such, the configuration set through this interface can be seen as a hint what the
+ * compositor should set up, but whether or not the compositor does it (based on hardware or
+ * rendering policies, for example), is up to the compositor. The mode setting is passed on to
+ * the DRM subsystem through the compositor. The compositor also saves this configuration and reads
+ * it on startup, this interface is not involved in that process.
+ *
  * @see OutputManagementInterface
+ * @see OutputConfiguration
  * @since 5.5
  */
 class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
@@ -46,19 +64,24 @@ public:
 
     /**
      * Accessor for the changes made to OutputDevices.
+     * @returns A QHash of ChangeSets per outputdevice.
+     * @see ChangeSet
+     * @see OutputDeviceInterface
      */
     QHash<OutputDeviceInterface*, ChangeSet*> changes() const;
 
 public Q_SLOTS:
     /**
      * Called by the compositor once the changes have successfully been applied.
-     * OutputDevices are updated here, then the applied signal is sent to the
-     * client.
+     * The compositor is responsible for updating the OutputDevices. After having
+     * done so, calling this function sends to the client.
+     * @see setFailed
      */
     void setApplied();
     /**
      * Called by the compositor when the changes as a whole are rejected or
      * failed to apply.
+     * @see setApplied
      */
     void setFailed();
 

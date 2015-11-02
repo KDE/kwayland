@@ -52,7 +52,7 @@ class EventQueue;
  *
  * These KWayland classes will not apply changes to the OutputDevices, this is the compositor's
  * task. As such, the configuration set through this interface can be seen as a hint what the
- * compositor should set up, but whether or not the comositor does it (based on hardware or
+ * compositor should set up, but whether or not the compositor does it (based on hardware or
  * rendering policies, for example), is up to the compositor. The mode setting is passed on to
  * the DRM subsystem through the compositor. The compositor also saves this configuration and reads
  * it on startup, this interface is not involved in that process.

@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputdevice_interface.h"
 #include "resource_p.h"
 #include "display.h"
+#include "outputchangeset_p.h"
 
 #include <wayland-server.h>
 #include "wayland-output-management-server-protocol.h"
@@ -157,7 +158,7 @@ void OutputConfigurationInterface::Private::transformCallback(wl_client *client,
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    s->pendingChanges(o)->setTransform(_transform);
+    s->pendingChanges(o)->d_func()->transform = _transform;
 }
 
 void OutputConfigurationInterface::Private::positionCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t x, int32_t y)

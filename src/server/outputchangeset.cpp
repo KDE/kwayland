@@ -19,28 +19,12 @@
  ****************************************************************************/
 
 #include "outputchangeset.h"
+#include "outputchangeset_p.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
-class OutputChangeSet::Private
-{
-public:
-    Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent);
-    ~Private();
-
-    OutputChangeSet *q;
-    OutputDeviceInterface *o;
-
-    OutputDeviceInterface::Enablement enabled;
-    int modeId;
-    OutputDeviceInterface::Transform transform;
-    QPoint position;
-    int scale;
-};
-
 
 OutputChangeSet::Private::Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent)
     : q(parent)

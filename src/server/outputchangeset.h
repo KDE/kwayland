@@ -41,11 +41,11 @@ namespace Server
  * @see OutputConfiguration
  * @since 5.5
  **/
-class KWAYLANDSERVER_EXPORT ChangeSet : public QObject
+class KWAYLANDSERVER_EXPORT OutputChangeSet : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~ChangeSet();
+    virtual ~OutputChangeSet();
 
     /** Whether the enabled() property of the outputdevice changed.
      * @returns @c true if the enabled property of the outputdevice has changed.
@@ -83,7 +83,7 @@ public:
 
 private:
     friend class OutputConfigurationInterface;
-    explicit ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
+    explicit OutputChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
     void setEnabled(OutputDeviceInterface::Enablement enablement);
     void setMode(int modeId);
     void setTransform(OutputDeviceInterface::Transform);

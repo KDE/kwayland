@@ -15,7 +15,7 @@ set(SERVER_LIB_SRCS
     fakeinput_interface.cpp
     keyboard_interface.cpp
     outputconfiguration_interface.cpp
-    changeset.cpp
+    outputchangeset.cpp
     outputmanagement_interface.cpp
     outputdevice_interface.cpp
     logging.cpp

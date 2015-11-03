@@ -18,20 +18,20 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 
-#include "changeset.h"
+#include "outputchangeset.h"
 
 namespace KWayland
 {
 namespace Server
 {
 
-class ChangeSet::Private
+class OutputChangeSet::Private
 {
 public:
-    Private(OutputDeviceInterface *outputdevice, ChangeSet *parent);
+    Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent);
     ~Private();
 
-    ChangeSet *q;
+    OutputChangeSet *q;
     OutputDeviceInterface *o;
 
     OutputDeviceInterface::Enablement enabled;
@@ -42,7 +42,7 @@ public:
 };
 
 
-ChangeSet::Private::Private(OutputDeviceInterface *outputdevice, ChangeSet *parent)
+OutputChangeSet::Private::Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent)
     : q(parent)
     , o(outputdevice)
     , enabled(o->enabled())
@@ -53,102 +53,102 @@ ChangeSet::Private::Private(OutputDeviceInterface *outputdevice, ChangeSet *pare
 {
 }
 
-ChangeSet::Private::~Private() = default;
+OutputChangeSet::Private::~Private() = default;
 
-ChangeSet::ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent)
+OutputChangeSet::OutputChangeSet(OutputDeviceInterface *outputdevice, QObject *parent)
     : QObject(parent)
     , d(new Private(outputdevice, this))
 {
 }
 
-ChangeSet::~ChangeSet() = default;
+OutputChangeSet::~OutputChangeSet() = default;
 
-ChangeSet::Private *ChangeSet::d_func() const
+OutputChangeSet::Private *OutputChangeSet::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }
 
-bool ChangeSet::enabledChanged() const
+bool OutputChangeSet::enabledChanged() const
 {
     Q_D();
     return d->enabled != d->o->enabled();
 }
 
-OutputDeviceInterface::Enablement ChangeSet::enabled() const
+OutputDeviceInterface::Enablement OutputChangeSet::enabled() const
 {
     Q_D();
     return d->enabled;
 }
 
-void ChangeSet::setEnabled(OutputDeviceInterface::Enablement enablement)
+void OutputChangeSet::setEnabled(OutputDeviceInterface::Enablement enablement)
 {
     d->enabled = enablement;
 }
 
-bool ChangeSet::modeChanged() const
+bool OutputChangeSet::modeChanged() const
 {
     Q_D();
     return d->modeId != d->o->currentModeId();
 }
 
-int ChangeSet::mode() const
+int OutputChangeSet::mode() const
 {
     Q_D();
     return d->modeId;
 }
 
-void ChangeSet::setMode(int modeId)
+void OutputChangeSet::setMode(int modeId)
 {
     d->modeId = modeId;
 }
 
-bool ChangeSet::transformChanged() const
+bool OutputChangeSet::transformChanged() const
 {
     Q_D();
     return d->transform != d->o->transform();
 }
 
-OutputDeviceInterface::Transform ChangeSet::transform() const
+OutputDeviceInterface::Transform OutputChangeSet::transform() const
 {
     Q_D();
     return d->transform;
 }
 
-void ChangeSet::setTransform(OutputDeviceInterface::Transform t)
+void OutputChangeSet::setTransform(OutputDeviceInterface::Transform t)
 {
     d->transform = t;
 }
 
-bool ChangeSet::positionChanged() const
+bool OutputChangeSet::positionChanged() const
 {
     Q_D();
     return d->position != d->o->globalPosition();
 }
 
-QPoint ChangeSet::position() const
+QPoint OutputChangeSet::position() const
 {
     Q_D();
     return d->position;
 }
 
-void ChangeSet::setPosition(QPoint pos)
+void OutputChangeSet::setPosition(QPoint pos)
 {
     d->position = pos;
 }
 
-bool ChangeSet::scaleChanged() const
+bool OutputChangeSet::scaleChanged() const
 {
     Q_D();
     return d->scale != d->o->scale();
 }
 
-int ChangeSet::scale() const
+int OutputChangeSet::scale() const
 {
     Q_D();
     return d->scale;
 }
 
-void ChangeSet::setScale(int scale)
+void OutputChangeSet::setScale(int scale)
 {
     d->scale = scale;
 }

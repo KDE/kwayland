@@ -48,10 +48,10 @@ public:
     void clearPendingChanges();
 
     bool hasPendingChanges(OutputDeviceInterface *outputdevice) const;
-    ChangeSet* pendingChanges(OutputDeviceInterface *outputdevice);
+    OutputChangeSet* pendingChanges(OutputDeviceInterface *outputdevice);
 
     OutputManagementInterface *outputManagement;
-    QHash<OutputDeviceInterface*, ChangeSet*> changes;
+    QHash<OutputDeviceInterface*, OutputChangeSet*> changes;
 
     static const quint32 s_version = 1;
 
@@ -216,7 +216,7 @@ OutputConfigurationInterface::Private *OutputConfigurationInterface::d_func() co
     return reinterpret_cast<Private*>(d.data());
 }
 
-QHash<OutputDeviceInterface*, ChangeSet*> OutputConfigurationInterface::changes() const
+QHash<OutputDeviceInterface*, OutputChangeSet*> OutputConfigurationInterface::changes() const
 {
     Q_D();
     return d->changes;
@@ -250,10 +250,10 @@ void OutputConfigurationInterface::Private::sendFailed()
     }
 }
 
-ChangeSet* OutputConfigurationInterface::Private::pendingChanges(OutputDeviceInterface *outputdevice)
+OutputChangeSet* OutputConfigurationInterface::Private::pendingChanges(OutputDeviceInterface *outputdevice)
 {
     if (!changes.keys().contains(outputdevice)) {
-        changes[outputdevice] = new ChangeSet(outputdevice, q);
+        changes[outputdevice] = new OutputChangeSet(outputdevice, q);
     }
     return changes[outputdevice];
 }

@@ -23,7 +23,7 @@
 #include "resource.h"
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
-#include "changeset.h"
+#include "outputchangeset.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
@@ -73,7 +73,7 @@ public:
      * @see OutputDeviceInterface
      * @see OutputManagement
      */
-    QHash<OutputDeviceInterface*, ChangeSet*> changes() const;
+    QHash<OutputDeviceInterface*, OutputChangeSet*> changes() const;
 
 public Q_SLOTS:
     /**

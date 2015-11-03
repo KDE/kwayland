@@ -81,7 +81,7 @@ public:
     /** The new value for scale. */
     int scale() const;
 
-protected:
+private:
     friend class OutputConfigurationInterface;
     explicit ChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
     void setEnabled(OutputDeviceInterface::Enablement enablement);

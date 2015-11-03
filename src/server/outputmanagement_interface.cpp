@@ -33,7 +33,6 @@ namespace KWayland
 {
 namespace Server
 {
-static const quint32 s_version = 1;
 
 class OutputManagementInterface::Private : public Global::Private
 {
@@ -53,9 +52,12 @@ private:
 
     OutputManagementInterface *q;
     static const struct org_kde_kwin_outputmanagement_interface s_interface;
+    static const quint32 s_version;
 
     QHash<wl_resource*, OutputConfigurationInterface*> configurationInterfaces;
 };
+
+const quint32 OutputManagementInterface::Private::s_version = 1;
 
 const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {
     createConfigurationCallback

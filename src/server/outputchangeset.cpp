@@ -64,11 +64,6 @@ OutputDeviceInterface::Enablement OutputChangeSet::enabled() const
     return d->enabled;
 }
 
-void OutputChangeSet::setEnabled(OutputDeviceInterface::Enablement enablement)
-{
-    d->enabled = enablement;
-}
-
 bool OutputChangeSet::modeChanged() const
 {
     Q_D();
@@ -79,11 +74,6 @@ int OutputChangeSet::mode() const
 {
     Q_D();
     return d->modeId;
-}
-
-void OutputChangeSet::setMode(int modeId)
-{
-    d->modeId = modeId;
 }
 
 bool OutputChangeSet::transformChanged() const
@@ -97,12 +87,6 @@ OutputDeviceInterface::Transform OutputChangeSet::transform() const
     Q_D();
     return d->transform;
 }
-
-void OutputChangeSet::setTransform(OutputDeviceInterface::Transform t)
-{
-    d->transform = t;
-}
-
 bool OutputChangeSet::positionChanged() const
 {
     Q_D();
@@ -113,11 +97,6 @@ QPoint OutputChangeSet::position() const
 {
     Q_D();
     return d->position;
-}
-
-void OutputChangeSet::setPosition(QPoint pos)
-{
-    d->position = pos;
 }
 
 bool OutputChangeSet::scaleChanged() const
@@ -131,12 +110,6 @@ int OutputChangeSet::scale() const
     Q_D();
     return d->scale;
 }
-
-void OutputChangeSet::setScale(int scale)
-{
-    d->scale = scale;
-}
-
 
 }
 }

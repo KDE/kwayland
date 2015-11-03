@@ -106,7 +106,7 @@ void OutputConfigurationInterface::Private::enableCallback(wl_client *client, wl
                                     OutputDeviceInterface::Enablement::Enabled :
                                     OutputDeviceInterface::Enablement::Disabled;
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
-    s->pendingChanges(o)->setEnabled(_enable);
+    s->pendingChanges(o)->d_func()->enabled = _enable;
 }
 
 void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t mode_id)
@@ -127,7 +127,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
     }
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    s->pendingChanges(o)->setMode(mode_id);
+    s->pendingChanges(o)->d_func()->modeId = mode_id;
 }
 
 void OutputConfigurationInterface::Private::transformCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t transform)
@@ -168,7 +168,7 @@ void OutputConfigurationInterface::Private::positionCallback(wl_client *client, 
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    s->pendingChanges(o)->setPosition(_pos);
+    s->pendingChanges(o)->d_func()->position = _pos;
 }
 
 void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_resource *resource, wl_resource * outputdevice, int32_t scale)
@@ -181,7 +181,7 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
-    s->pendingChanges(o)->setScale(scale);
+    s->pendingChanges(o)->d_func()->scale = scale;
 }
 
 void OutputConfigurationInterface::Private::applyCallback(wl_client *client, wl_resource *resource)

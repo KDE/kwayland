@@ -84,11 +84,7 @@ public:
 private:
     friend class OutputConfigurationInterface;
     explicit OutputChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
-    void setEnabled(OutputDeviceInterface::Enablement enablement);
-    void setMode(int modeId);
-    void setTransform(OutputDeviceInterface::Transform);
-    void setPosition(QPoint pos);
-    void setScale(int scale);
+
 
     class Private;
     QScopedPointer<Private> d;

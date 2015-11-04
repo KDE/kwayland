@@ -240,7 +240,7 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration*);
+Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration*)
 
 
 #endif

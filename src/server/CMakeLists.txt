@@ -1,5 +1,3 @@
-
-
 set(SERVER_LIB_SRCS
     buffer_interface.cpp
     clientconnection.cpp
@@ -146,9 +144,10 @@ install(FILES
   global.h
   idle_interface.h
   keyboard_interface.h
-  outputmanagement_interface.h
   outputdevice_interface.h
+  outputchangeset.h
   outputconfiguration_interface.h
+  outputmanagement_interface.h
   output_interface.h
   pointer_interface.h
   plasmashell_interface.h

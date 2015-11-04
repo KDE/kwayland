@@ -917,12 +917,6 @@ Q_SIGNALS:
      **/
     void outputManagementRemoved(quint32 name);
     /**
-     * Emitted whenever a org_kde_kwin_outputconfiguration interface gets removed.
-     * @param name The name for the removed interface
-     * @since 5.5
-     **/
-    void outputConfigurationRemoved(quint32 name);
-    /**
      * Emitted whenever a org_kde_kwin_outputdevice interface gets removed.
      * @param name The name for the removed interface
      * @since 5.5

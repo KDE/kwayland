@@ -27,8 +27,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
 
-struct wl_global;
-struct wl_client;
 struct wl_resource;
 
 namespace KWayland

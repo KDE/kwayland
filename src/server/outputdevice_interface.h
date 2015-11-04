@@ -56,9 +56,9 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(QSize pixelSize READ pixelSize NOTIFY pixelSizeChanged)
     Q_PROPERTY(int refreshRate READ refreshRate NOTIFY refreshRateChanged)
     Q_PROPERTY(int scale READ scale WRITE setScale NOTIFY scaleChanged)
-    Q_PROPERTY(QString edid READ edid WRITE setEdid NOTIFY edidChanged)
+    Q_PROPERTY(QByteArray edid READ edid WRITE setEdid NOTIFY edidChanged)
     Q_PROPERTY(OutputDeviceInterface::Enablement enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
+    Q_PROPERTY(QByteArray uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
 public:
     enum class SubPixel {
         Unknown,
@@ -107,9 +107,9 @@ public:
     QList<Mode> modes() const;
     int currentModeId() const;
 
-    QString edid() const;
+    QByteArray edid() const;
     OutputDeviceInterface::Enablement enabled() const;
-    QString uuid() const;
+    QByteArray uuid() const;
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -121,9 +121,9 @@ public:
     void addMode(Mode &mode);
     void setCurrentMode(const int modeId);
 
-    void setEdid(const QString &edid);
+    void setEdid(const QByteArray &edid);
     void setEnabled(OutputDeviceInterface::Enablement enabled);
-    void setUuid(const QString &uuid);
+    void setUuid(const QByteArray &uuid);
 
     static OutputDeviceInterface *get(wl_resource *native);
     static QList<OutputDeviceInterface *>list();

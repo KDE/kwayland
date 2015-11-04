@@ -54,9 +54,9 @@ public:
     Modes modes;
     Modes::iterator currentMode = modes.end();
 
-    QString edid;
+    QByteArray edid;
     OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
-    QString uuid;
+    QByteArray uuid;
     bool done = false;
 
 private:
@@ -256,7 +256,7 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
 void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
-    o->edid = QString::fromUtf8(raw);
+    o->edid = raw;
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
@@ -420,7 +420,7 @@ OutputDevice::operator org_kde_kwin_outputdevice*() const {
     return d->output;
 }
 
-QString OutputDevice::edid() const
+QByteArray OutputDevice::edid() const
 {
     return d->edid;
 }
@@ -430,7 +430,7 @@ OutputDevice::Enablement OutputDevice::enabled() const
     return d->enabled;
 }
 
-QString OutputDevice::uuid() const
+QByteArray OutputDevice::uuid() const
 {
     return d->uuid;
 }

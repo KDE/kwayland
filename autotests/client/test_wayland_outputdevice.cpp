@@ -59,7 +59,7 @@ private Q_SLOTS:
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputDeviceInterface *m_serverOutputDevice;
-    QString m_edid;
+    QByteArray m_edid;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
     QThread *m_thread;
@@ -169,7 +169,7 @@ void TestWaylandOutputDevice::testRegistry()
 
     KWayland::Client::OutputDevice output;
     QVERIFY(!output.isValid());
-    QCOMPARE(output.uuid(), QString());
+    QCOMPARE(output.uuid(), QByteArray());
     QCOMPARE(output.geometry(), QRect());
     QCOMPARE(output.globalPosition(), QPoint());
     QCOMPARE(output.manufacturer(), QString());
@@ -181,7 +181,7 @@ void TestWaylandOutputDevice::testRegistry()
     QCOMPARE(output.subPixel(), KWayland::Client::OutputDevice::SubPixel::Unknown);
     QCOMPARE(output.transform(), KWayland::Client::OutputDevice::Transform::Normal);
     QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
-    QCOMPARE(output.edid(), QString());
+    QCOMPARE(output.edid(), QByteArray());
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
 
@@ -205,7 +205,7 @@ void TestWaylandOutputDevice::testRegistry()
 
     QCOMPARE(output.edid(), m_edid);
     QCOMPARE(output.enabled(), OutputDevice::Enablement::Enabled);
-    QCOMPARE(output.uuid(), QStringLiteral("1337"));
+    QCOMPARE(output.uuid(), QByteArray("1337"));
 
 }
 
@@ -484,7 +484,7 @@ void TestWaylandOutputDevice::testEdid()
 
     KWayland::Client::OutputDevice output;
 
-    QCOMPARE(output.edid(), QString());
+    QCOMPARE(output.edid(), QByteArray());
 
     QSignalSpy outputChanged(&output, &KWayland::Client::OutputDevice::changed);
     QVERIFY(outputChanged.isValid());
@@ -511,18 +511,18 @@ void TestWaylandOutputDevice::testId()
     wl_display_flush(m_connection->display());
     QVERIFY(outputChanged.wait());
 
-    QCOMPARE(output.uuid(), QStringLiteral("1337"));
+    QCOMPARE(output.uuid(), QByteArray("1337"));
 
     QSignalSpy idChanged(&output, &KWayland::Client::OutputDevice::uuidChanged);
     QVERIFY(idChanged.isValid());
 
     m_serverOutputDevice->setUuid("42");
     QVERIFY(idChanged.wait(200));
-    QCOMPARE(output.uuid(), QStringLiteral("42"));
+    QCOMPARE(output.uuid(), QByteArray("42"));
 
     m_serverOutputDevice->setUuid("4711");
     QVERIFY(idChanged.wait(200));
-    QCOMPARE(output.uuid(), QStringLiteral("4711"));
+    QCOMPARE(output.uuid(), QByteArray("4711"));
 }
 
 void TestWaylandOutputDevice::testDone()

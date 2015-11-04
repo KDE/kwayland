@@ -62,9 +62,9 @@ public:
     QList<Mode> modes;
     QList<ResourceData> resources;
 
-    QString edid;
+    QByteArray edid;
     Enablement enabled = Enablement::Enabled;
-    QString uuid;
+    QByteArray uuid;
 
     static OutputDeviceInterface *get(wl_resource *native);
 
@@ -498,7 +498,7 @@ OutputDeviceInterface::Private *OutputDeviceInterface::d_func() const
     return reinterpret_cast<Private*>(d.data());
 }
 
-void OutputDeviceInterface::setEdid(const QString& edid)
+void OutputDeviceInterface::setEdid(const QByteArray &edid)
 {
     Q_D();
     d->edid = edid;
@@ -506,7 +506,7 @@ void OutputDeviceInterface::setEdid(const QString& edid)
     emit edidChanged();
 }
 
-QString OutputDeviceInterface::edid() const
+QByteArray OutputDeviceInterface::edid() const
 {
     Q_D();
     return d->edid;
@@ -528,7 +528,7 @@ OutputDeviceInterface::Enablement OutputDeviceInterface::enabled() const
     return d->enabled;
 }
 
-void OutputDeviceInterface::setUuid(const QString &uuid)
+void OutputDeviceInterface::setUuid(const QByteArray &uuid)
 {
     Q_D();
     if (d->uuid != uuid) {
@@ -538,7 +538,7 @@ void OutputDeviceInterface::setUuid(const QString &uuid)
     }
 }
 
-QString OutputDeviceInterface::uuid() const
+QByteArray OutputDeviceInterface::uuid() const
 {
     Q_D();
     return d->uuid;
@@ -548,7 +548,7 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEdid()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
         org_kde_kwin_outputdevice_send_edid((*it).resource,
-                                            edid.toUtf8().constData());
+                                            edid.constData());
     }
 
 }
@@ -567,7 +567,7 @@ void KWayland::Server::OutputDeviceInterface::Private::sendEnabled()
 void OutputDeviceInterface::Private::sendUuid()
 {
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
-        org_kde_kwin_outputdevice_send_uuid((*it).resource, qPrintable(uuid));
+        org_kde_kwin_outputdevice_send_uuid((*it).resource, uuid.constData());
     }
 }
 

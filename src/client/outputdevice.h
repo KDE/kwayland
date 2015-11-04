@@ -215,7 +215,7 @@ public:
     /**
      * @returns The EDID information for this output.
      **/
-    QString edid() const;
+    QByteArray edid() const;
 
     /**
      * @returns Whether this output is enabled or not.
@@ -225,7 +225,7 @@ public:
     /**
      * @returns A unique identifier for this outputdevice, determined by the server.
      **/
-    QString uuid() const;
+    QByteArray uuid() const;
 
 
 
@@ -245,7 +245,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever the id property changes.
      **/
-    void uuidChanged(const QString &uuid);
+    void uuidChanged(const QByteArray &uuid);
     /**
      * Emitted whenever a new Mode is added.
      * This normally only happens during the initial promoting of modes.

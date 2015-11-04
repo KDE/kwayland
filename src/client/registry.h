@@ -121,14 +121,14 @@ public:
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
-        OutputManagement, ///< Refers to the wl_data_device_manager interface
-        OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
         Shadow, ///< Refers to org_kde_kwin_shadow_manager interface
         Blur, ///< refers to org_kde_kwin_blur_manager interface
         Contrast, ///< refers to org_kde_kwin_contrast_manager interface
         Slide, ///< refers to org_kde_kwin_slide_manager
-        Dpms ///< Refers to org_kde_kwin_dpms_manager interface
+        Dpms, ///< Refers to org_kde_kwin_dpms_manager interface
+        OutputManagement, ///< Refers to the wl_data_device_manager interface
+        OutputDevice     ///< Refers to the org_kde_kwin_outputdevice interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();

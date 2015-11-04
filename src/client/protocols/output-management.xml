@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="outputmanagement">
+  <copyright><![CDATA[
+        Copyright © 2015 Sebastian Kügler <sebas@kde.org>
+        Copyright © 2008-2011 Kristian Høgsberg
+        Copyright © 2010-2011 Intel Corporation
+        Copyright © 2012-2013 Collabora, Ltd.
+
+        Permission to use, copy, modify, distribute, and sell this
+        software and its documentation for any purpose is hereby granted
+        without fee, provided that the above copyright notice appear in
+        all copies and that both that copyright notice and this permission
+        notice appear in supporting documentation, and that the name of
+        the copyright holders not be used in advertising or publicity
+        pertaining to distribution of the software without specific,
+        written prior permission.  The copyright holders make no
+        representations about the suitability of this software for any
+        purpose.  It is provided "as is" without express or implied
+        warranty.
+
+        THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
+        SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+        FITNESS, IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+        SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+        WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+        AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+        ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+        THIS SOFTWARE.
+        ]]></copyright>
+
+<interface name="org_kde_kwin_outputmanagement" version="1">
+    <description summary="list connected, but disabled outputs">
+    This interface allows to connected output devices for screen configuration purposes.
+
+    OutputManagement (wl_global)
+    --------------------------
+    request:
+    * createConfiguration -> OutputConfiguration (wl_resource)
+
+    OutputConfiguration (wl_resource)
+    --------------------------
+    requests:
+    * enable(output, bool)
+    * mode(output, mode_id)
+    * transformation(output, flag)
+    * position(output, x, y)
+    * apply
+
+    events:
+    * applied
+    * failed
+
+    The idea is that we register one OutputManagement as a global. When KScreen
+    wants to configure it calls createConfiguration which provides a resource
+    referencing an OutputConfiguration for one-time configuration. That way we can
+    easily group all requests and know on the server which one belong together. On
+    the OutputConfiguration it calls for each Output whether it's enabled, which
+    mode to use (by referencing the mode from the list of announced modes) and the
+    global position. Once all outputs are configured that way, it calls apply.  At
+    that point and not earlier the server emits a signal to KWin with the complete
+    wanted configuration which KWin can then try to apply. If that succeeds it
+    emits the applied signal, otherwise the failed. So even KScreen can know about
+    it.
+
+    That interface is nicely atomic (as KWin only gets the apply for everything
+    setup), it solves the 1:n mapping problem: each OutputConfiguration is only a
+    1:1 mapping, and we do not need to copy all the requests again by just
+    referencing a mode id.
+
+
+    </description>
+    <request name="create_configuration">
+        <description summary="change the shell surface position">
+            Request an output configuration, which can be changed and then applied.
+        </description>
+        <arg name="id" type="new_id" interface="org_kde_kwin_outputconfiguration"/>
+    </request>
+
+</interface>
+
+
+<interface name="org_kde_kwin_outputconfiguration" version="1">
+    <description summary="list connected, but disabled outputs">
+        outputconfiguration is a client-specific resource that can be used to ask
+        the compositor to apply changes to the outputdevices, the monitors connected
+        to the system.
+        The client receives a list of outputdevices from the registry. When it wants
+        to apply new settings, it creates a configuration object from the
+        outputmanagement global, writes changes through this object's enable, scale,
+        transform and mode calls. It then asks the compositor to apply these settings
+        in an atomic fashion, for example through Linux's DRM interface.
+        The compositor signals back whether the new settings have applied successfully
+        or failed to apply. outputdevices are updated after the hardware changes have
+        been applied and before the server side fires applied.
+    </description>
+
+    <request name="enable">
+        <description summary="enable or disable an output">
+            Mark the output as enabled or disabled.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice"/>
+        <arg name="enable" type="int" summary="request to enable or disable this output"/>
+    </request>
+
+    <request name="mode">
+        <description summary="Switch outputdevice to mode">
+            Sets the mode for a given output by its mode size (width and height) and refresh rate.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
+        <arg name="mode_id" type="int" summary="aspired mode's id"/>
+    </request>
+
+    <request name="transform">
+        <description summary="Transform outputdevice">
+            Sets the transformation for a given output.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this transformation change applies to"/>
+        <arg name="transform" type="int" summary="transform enum"/>
+    </request>
+
+    <request name="position">
+        <description summary="Position output relative to global">
+            Sets the position for this output device in the global space. position
+            describes the top-left border of the output in the global space. The
+            left-most output's top-left border is 0, 0.
+            There may be no gaps between outputs, the outputs have to be positioned
+            stacked horizontally, vertically, or both.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this position applies to"/>
+        <arg name="x" type="int" summary="position on the x-axis"/>
+        <arg name="y" type="int" summary="position on the y-axis"/>
+    </request>
+
+    <request name="scale">
+        <description summary="Set the scaling factor for this outputdevice">
+            Sets the scaling factor for this outputdevice.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
+        <arg name="scale" type="int" summary="scaling factor"/>
+    </request>
+
+    <request name="apply">
+        <description summary="apply the changes to the outputdevices">
+            Asks the compositor to apply changes to the outputdevices on the server side.
+        </description>
+    </request>
+
+
+    <event name="applied">
+        <description summary="configuration changes have been applied">
+            Fired after the compositor has applied the changes successfully.
+        </description>
+    </event>
+
+    <event name="failed">
+        <description summary="configuration changes failed to apply">
+            Fired if the compositor rejects or failed to apply the changes.
+        </description>
+    </event>
+
+</interface>
+
+</protocol>

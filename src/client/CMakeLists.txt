@@ -22,6 +22,9 @@ set(CLIENT_LIB_SRCS
     fullscreen_shell.cpp
     idle.cpp
     keyboard.cpp
+    outputconfiguration.cpp
+    outputmanagement.cpp
+    outputdevice.cpp
     logging.cpp
     output.cpp
     pointer.cpp
@@ -43,6 +46,16 @@ set(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/fullscreen-shell.xml
     BASENAME fullscreen-shell
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/output-management.xml
+    BASENAME output-management
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/outputdevice.xml
+    BASENAME org_kde_kwin_outputdevice
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -135,6 +148,9 @@ install(FILES
   fullscreen_shell.h
   idle.h
   keyboard.h
+  outputconfiguration.h
+  outputmanagement.h
+  outputdevice.h
   output.h
   pointer.h
   plasmashell.h

@@ -31,8 +31,6 @@ namespace KWayland
 namespace Server
 {
 
-static const quint32 s_version = 1;
-
 class OutputDeviceInterface::Private : public Global::Private
 {
 public:
@@ -76,9 +74,12 @@ private:
     void sendGeometry(wl_resource *resource);
     void sendScale(const ResourceData &data);
 
+    static const quint32 s_version;
     OutputDeviceInterface *q;
     static QVector<Private*> s_privates;
 };
+
+const quint32 OutputDeviceInterface::Private::s_version = 1;
 
 QVector<OutputDeviceInterface::Private*> OutputDeviceInterface::Private::s_privates;
 

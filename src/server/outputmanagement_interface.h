@@ -21,7 +21,6 @@
 #define KWAYLAND_SERVER_OUTPUTMANAGEMENT_H
 
 #include "global.h"
-#include "resource.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
 

@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-server.h>
 #include "wayland-output-management-server-protocol.h"
 
-#include <QDebug>
+#include <QHash>
 
 namespace KWayland
 {

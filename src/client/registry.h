@@ -800,6 +800,7 @@ Q_SIGNALS:
      * Emitted whenever a org_kde_kwin_outputdevice interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
+     * @since 5.5
      **/
     void outputDeviceAnnounced(quint32 name, quint32 version);
     /**

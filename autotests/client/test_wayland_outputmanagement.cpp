@@ -242,9 +242,6 @@ void TestWaylandOutputManagement::testCreate()
 
 void TestWaylandOutputManagement::testOutputDevices()
 {
-
-    //m_display->createOutputDevice()->create();
-    //QVERIFY(m_omSpy->wait());
     QCOMPARE(m_omSpy->count(), 1);
     QCOMPARE(m_registry.interfaces(KWayland::Client::Registry::Interface::OutputDevice).count(), m_serverOutputs.count());
 
@@ -282,7 +279,6 @@ void TestWaylandOutputManagement::testOutputDevices()
 
 void TestWaylandOutputManagement::testRemoval()
 {
-    //testCreate();
     QSignalSpy outputManagementRemovedSpy(&m_registry, &KWayland::Client::Registry::outputManagementRemoved);
     QVERIFY(outputManagementRemovedSpy.isValid());
 
@@ -454,14 +450,6 @@ void TestWaylandOutputManagement::testExampleConfig()
     config->setMode(output, m_clientOutputs.first()->modes().last().id);
     config->setTransform(output, OutputDevice::Transform::Normal);
     config->setPosition(output, QPoint(-1, -1));
-
-    connect(config, &OutputConfiguration::applied, []() {
-        qDebug() << "Configuration applied!";
-    });
-    connect(config, &OutputConfiguration::failed, []() {
-        qDebug() << "Configuration failed!";
-    });
-
     config->apply();
 
     QSignalSpy configAppliedSpy(config, &OutputConfiguration::applied);

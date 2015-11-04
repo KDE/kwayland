@@ -42,7 +42,7 @@ private Q_SLOTS:
     void testAddRemoveOutput();
     void testClientConnection();
     void testConnectNoSocket();
-    void testKWin();
+    void testOutputManagement();
 };
 
 void TestWaylandServerDisplay::testSocketName()
@@ -195,7 +195,7 @@ void TestWaylandServerDisplay::testConnectNoSocket()
     close(sv[1]);
 }
 
-void TestWaylandServerDisplay::testKWin()
+void TestWaylandServerDisplay::testOutputManagement()
 {
     auto display = new KWayland::Server::Display(this);
     display->setSocketName("kwayland-test-0");

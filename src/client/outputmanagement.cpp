@@ -23,7 +23,6 @@
 #include "wayland_pointer_p.h"
 #include "wayland-output-management-client-protocol.h"
 
-#include <QDebug>
 
 namespace KWayland
 {

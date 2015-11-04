@@ -17,16 +17,17 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
+#include "logging_p.h"
 #include "outputdevice.h"
 #include "wayland_pointer_p.h"
 // Qt
+#include <QDebug>
 #include <QPoint>
 #include <QRect>
 #include <QSize>
 // wayland
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 #include <wayland-client-protocol.h>
-#include <QDebug>
 
 namespace KWayland
 {
@@ -233,7 +234,7 @@ KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
             return m;
         }
     }
-    qWarning() << "current mode not found";
+    qCWarning(KWAYLAND_CLIENT) << "current mode not found";
     return Mode();
 }
 

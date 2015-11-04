@@ -278,7 +278,12 @@ public:
      **/
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
     /**
-     * FIXME: docs.
+     * Binds the org_kde_kwin_outputmanagement with @p name and @p version.
+     * If the @p name does not exist or is not for the outputmanagement interface,
+     * @c null will be returned.
+     *
+     * Prefer using createOutputManagement instead.
+     * @see createOutputManagement
      **/
     org_kde_kwin_outputmanagement *bindOutputManagement(uint32_t name, uint32_t version) const;
     /**

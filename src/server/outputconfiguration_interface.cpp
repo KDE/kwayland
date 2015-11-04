@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputconfiguration_interface.h"
 #include "outputdevice_interface.h"
+#include "logging_p.h"
 #include "resource_p.h"
 #include "display.h"
 #include "outputchangeset_p.h"
@@ -122,7 +123,7 @@ void OutputConfigurationInterface::Private::modeCallback(wl_client *client, wl_r
         }
     }
     if (!modeValid) {
-        qWarning() << "Set invalid mode id:" << mode_id;
+        qCWarning(KWAYLAND_SERVER) << "Set invalid mode id:" << mode_id;
         return;
     }
     auto s = cast<Private>(resource);
@@ -175,7 +176,7 @@ void OutputConfigurationInterface::Private::scaleCallback(wl_client *client, wl_
 {
     Q_UNUSED(client);
     if (scale <= 0) {
-        qWarning() << "Requested to scale output device to" << scale << ", but I can't do that.";
+        qCWarning(KWAYLAND_SERVER) << "Requested to scale output device to" << scale << ", but I can't do that.";
         return;
     }
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);

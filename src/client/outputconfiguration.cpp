@@ -23,7 +23,6 @@
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
 
-#include <QDebug>
 #include "wayland-output-management-client-protocol.h"
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 

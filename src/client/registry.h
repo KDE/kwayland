@@ -311,6 +311,7 @@ public:
      *
      * Prefer using createOutput instead.
      * @see createOutput
+     * @since 5.5
      **/
     org_kde_kwin_outputdevice *bindOutputDevice(uint32_t name, uint32_t version) const;
 
@@ -531,6 +532,7 @@ public:
      * @param parent The parent for KWinOutputManagement
      *
      * @returns The created KWinOutputManagement.
+     * @since 5.5
      **/
     OutputManagement *createOutputManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
@@ -546,6 +548,7 @@ public:
      * @param parent The parent for OutputDevice
      *
      * @returns The created Output.
+     * @since 5.5
      **/
     OutputDevice *createOutputDevice(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
@@ -561,6 +564,7 @@ public:
      * @param parent The parent for FullscreenShell
      *
      * @returns The created FullscreenShell.
+     * @since 5.5
      **/
     FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
@@ -906,11 +910,22 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void dataDeviceManagerRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_outputmanagement interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
     void outputManagementRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_outputconfiguration interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.5
+     **/
     void outputConfigurationRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_kwin_outputdevice interface gets removed.
      * @param name The name for the removed interface
+     * @since 5.5
      **/
     void outputDeviceRemoved(quint32 name);
     /**

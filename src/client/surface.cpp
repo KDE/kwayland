@@ -87,6 +87,7 @@ Surface *Surface::fromWindow(QWindow *window)
     if (!native) {
         return nullptr;
     }
+    window->create();
     wl_surface *s = reinterpret_cast<wl_surface*>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
     if (!s) {
         return nullptr;

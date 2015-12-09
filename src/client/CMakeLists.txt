@@ -34,6 +34,7 @@ set(CLIENT_LIB_SRCS
     region.cpp
     registry.cpp
     seat.cpp
+    server_decoration.cpp
     shadow.cpp
     shell.cpp
     shm_pool.cpp
@@ -101,6 +102,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/dpms.xml
     BASENAME dpms
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/server-decoration.xml
+    BASENAME server-decoration
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -159,6 +164,7 @@ install(FILES
   region.h
   registry.h
   seat.h
+  server_decoration.h
   shadow.h
   shell.h
   shm_pool.h

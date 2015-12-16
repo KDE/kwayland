@@ -257,7 +257,7 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
 void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
-    o->edid = raw;
+    o->edid = QByteArray::fromBase64(raw);
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)

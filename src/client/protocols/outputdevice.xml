@@ -177,17 +177,15 @@
     </event>
 
     <event name="edid">
-        <description summary="advertise available modes for the output">
-            The mode event encapsulates the EDID data for the output.
+        <description summary="advertise EDID data for the output">
+            The edid event encapsulates the EDID data for the outputdevice.
 
             The event is sent when binding to the output object. The EDID
             data may be empty, in which case this event is fired, anyway.
             If the EDID information is empty, you can fall back to the name
-            et al. properties.
-
-            The data argument can be used to decode custom EDID extensions.
+            et al. properties of the outputdevice.
         </description>
-        <arg name="raw" type="string" summary="raw EDID string"/>
+        <arg name="raw" type="string" summary="base64-encoded EDID string"/>
     </event>
 
     <enum name="enablement">

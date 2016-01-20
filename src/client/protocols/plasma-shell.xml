@@ -130,7 +130,7 @@
     -->
   </interface>
 
-  <interface name="org_kde_plasma_surface" version="1">
+  <interface name="org_kde_plasma_surface" version="2">
     <description summary="metadata interface">
       An interface that may be implemented by a wl_surface, for
       implementations that provide the shell user interface.

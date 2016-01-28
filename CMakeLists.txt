@@ -39,7 +39,7 @@ find_package(EGL)
 set_package_properties(EGL PROPERTIES TYPE REQUIRED)
 
 include(KDEInstallDirs)
-include(KDEFrameworkCompilerSettings)
+include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 
 # adjusting CMAKE_C_FLAGS to get wayland protocols to compile

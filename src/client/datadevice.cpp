@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "datasource.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
+// Qt
+#include <QPointer>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -38,10 +40,17 @@ public:
 
     WaylandPointer<wl_data_device, wl_data_device_release> device;
     QScopedPointer<DataOffer> selectionOffer;
+    struct Drag {
+        DataOffer *offer = nullptr;
+        QPointer<Surface> surface;
+    };
+    Drag drag;
 
 private:
     void dataOffer(wl_data_offer *id);
     void selection(wl_data_offer *id);
+    void dragEnter(quint32 serial, const QPointer<Surface> &surface, const QPointF &relativeToSurface, wl_data_offer *dataOffer);
+    void dragLeft();
     static void dataOfferCallback(void *data, wl_data_device *dataDevice, wl_data_offer *id);
     static void enterCallback(void *data, wl_data_device *dataDevice, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer *id);
     static void leaveCallback(void *data, wl_data_device *dataDevice);
@@ -80,34 +89,48 @@ void DataDevice::Private::dataOffer(wl_data_offer *id)
 
 void DataDevice::Private::enterCallback(void *data, wl_data_device *dataDevice, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer *id)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(dataDevice)
-    Q_UNUSED(serial)
-    Q_UNUSED(surface)
-    Q_UNUSED(x)
-    Q_UNUSED(y)
-    Q_UNUSED(id)
+    auto d = reinterpret_cast<Private*>(data);
+    Q_ASSERT(d->device == dataDevice);
+    d->dragEnter(serial, QPointer<Surface>(Surface::get(surface)), QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), id);
+}
+
+void DataDevice::Private::dragEnter(quint32 serial, const QPointer<Surface> &surface, const QPointF &relativeToSurface, wl_data_offer *dataOffer)
+{
+    drag.surface = surface;
+    Q_ASSERT(*lastOffer == dataOffer);
+    drag.offer = lastOffer;
+    lastOffer = nullptr;
+    emit q->dragEntered(serial, relativeToSurface);
 }
 
 void DataDevice::Private::leaveCallback(void *data, wl_data_device *dataDevice)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(dataDevice)
+    auto d = reinterpret_cast<Private*>(data);
+    Q_ASSERT(d->device == dataDevice);
+    d->dragLeft();
+}
+
+void DataDevice::Private::dragLeft()
+{
+    if (drag.offer) {
+        delete drag.offer;
+    }
+    drag = Drag();
+    emit q->dragLeft();
 }
 
 void DataDevice::Private::motionCallback(void *data, wl_data_device *dataDevice, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(dataDevice)
-    Q_UNUSED(time)
-    Q_UNUSED(x)
-    Q_UNUSED(y)
+    auto d = reinterpret_cast<Private*>(data);
+    Q_ASSERT(d->device == dataDevice);
+    emit d->q->dragMotion(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), time);
 }
 
 void DataDevice::Private::dropCallback(void *data, wl_data_device *dataDevice)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(dataDevice)
+    auto d = reinterpret_cast<Private*>(data);
+    Q_ASSERT(d->device == dataDevice);
+    emit d->q->dropped();
 }
 
 void DataDevice::Private::selectionCallback(void *data, wl_data_device *dataDevice, wl_data_offer *id)
@@ -211,6 +234,16 @@ void DataDevice::clearSelection(quint32 serial)
 DataOffer *DataDevice::offeredSelection() const
 {
     return d->selectionOffer.data();
+}
+
+QPointer<Surface> DataDevice::dragSurface() const
+{
+    return d->drag.surface;
+}
+
+DataOffer *DataDevice::dragOffer() const
+{
+    return d->drag.offer;
 }
 
 DataDevice::operator wl_data_device*()

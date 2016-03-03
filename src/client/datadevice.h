@@ -92,12 +92,62 @@ public:
 
     DataOffer *offeredSelection() const;
 
+    /**
+     * @returns the currently focused surface during drag'n'drop on this DataDevice.
+     * @since 5.7
+     **/
+    QPointer<Surface> dragSurface() const;
+    /**
+     * @returns the DataOffer during a drag'n'drop operation.
+     * @since 5.7
+     **/
+    DataOffer *dragOffer() const;
+
     operator wl_data_device*();
     operator wl_data_device*() const;
 
 Q_SIGNALS:
     void selectionOffered(KWayland::Client::DataOffer*);
     void selectionCleared();
+    /**
+     * Notification that a drag'n'drop operation entered a Surface on this DataDevice.
+     *
+     * @param serial The serial for this enter
+     * @param relativeToSurface Coordinates relative to the upper-left corner of the Surface.
+     * @see dragSurface
+     * @see dragOffer
+     * @see dragLeft
+     * @see dragMotion
+     * @since 5.7
+     **/
+    void dragEntered(quint32 serial, const QPointF &relativeToSurface);
+    /**
+     * Notification that the drag'n'drop operation left the Surface on this DataDevice.
+     *
+     * The leave notification is sent before the enter notification for the new focus.
+     * @see dragEnter
+     * @since 5.7
+     **/
+    void dragLeft();
+    /**
+     * Notification of drag motion events on the current drag surface.
+     *
+     * @param relativeToSurface  Coordinates relative to the upper-left corner of the entered Surface.
+     * @param time timestamp with millisecond granularity
+     * @see dragEntered
+     * @since 5.7
+     **/
+    void dragMotion(const QPointF &relativeToSurface, quint32 time);
+    /**
+     * Emitted when the implicit grab is removed and the drag'n'drop operation ended on this
+     * DataDevice.
+     *
+     * The client can now start a data transfer on the DataOffer.
+     * @see dragEntered
+     * @see dragOffer
+     * @since 5.7
+     **/
+    void dropped();
 
 private:
     class Private;

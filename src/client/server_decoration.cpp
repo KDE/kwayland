@@ -24,7 +24,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland_pointer_p.h"
 
 #include <wayland-server-decoration-client-protocol.h>
-class ServerSideDe;
+
+#include <QVector>
 
 namespace KWayland
 {
@@ -36,9 +37,78 @@ class ServerSideDecorationManager::Private
 public:
     Private() = default;
 
+    void setup(org_kde_kwin_server_decoration_manager *serversidedecorationmanager);
+
     WaylandPointer<org_kde_kwin_server_decoration_manager, org_kde_kwin_server_decoration_manager_destroy> serversidedecorationmanager;
     EventQueue *queue = nullptr;
+    ServerSideDecoration::Mode defaultMode = ServerSideDecoration::Mode::None;
+    QVector<ServerSideDecoration*> decorations;
+
+private:
+    static void defaultModeCallback(void *data, org_kde_kwin_server_decoration_manager *manager, uint32_t mode);
+    static const struct org_kde_kwin_server_decoration_manager_listener s_listener;
 };
+
+class ServerSideDecoration::Private
+{
+public:
+    Private(ServerSideDecoration *q);
+
+    void setup(org_kde_kwin_server_decoration *serversidedecoration);
+
+    WaylandPointer<org_kde_kwin_server_decoration, org_kde_kwin_server_decoration_release> serversidedecoration;
+    Mode mode = Mode::None;
+    Mode defaultMode = Mode::None;
+
+private:
+    static void modeCallback(void *data, org_kde_kwin_server_decoration *org_kde_kwin_server_decoration, uint32_t mode);
+    static const struct org_kde_kwin_server_decoration_listener s_listener;
+
+    ServerSideDecoration *q;
+};
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+const org_kde_kwin_server_decoration_manager_listener ServerSideDecorationManager::Private::s_listener = {
+    defaultModeCallback
+};
+#endif
+
+void ServerSideDecorationManager::Private::defaultModeCallback(void *data, org_kde_kwin_server_decoration_manager *manager, uint32_t mode)
+{
+    auto p = reinterpret_cast<ServerSideDecorationManager::Private*>(data);
+    Q_ASSERT(p->serversidedecorationmanager == manager);
+
+    ServerSideDecoration::Mode m;
+    switch (mode) {
+    case ORG_KDE_KWIN_SERVER_DECORATION_MODE_NONE:
+        m = ServerSideDecoration::Mode::None;
+        break;
+    case ORG_KDE_KWIN_SERVER_DECORATION_MODE_CLIENT:
+        m = ServerSideDecoration::Mode::Client;
+        break;
+    case ORG_KDE_KWIN_SERVER_DECORATION_MODE_SERVER:
+        m = ServerSideDecoration::Mode::Server;
+        break;
+    default:
+        // invalid mode cannot set
+        qCWarning(KWAYLAND_CLIENT) << "Invalid decoration mode pushed by Server:" << mode;
+        return;
+    }
+    p->defaultMode = m;
+    // update the default mode on all decorations
+    for (auto it = p->decorations.constBegin(); it != p->decorations.constEnd(); ++it) {
+        (*it)->d->defaultMode = m;
+        // TODO: do we need a signal?
+    }
+}
+
+void ServerSideDecorationManager::Private::setup(org_kde_kwin_server_decoration_manager *manager)
+{
+    Q_ASSERT(manager);
+    Q_ASSERT(!serversidedecorationmanager);
+    serversidedecorationmanager.setup(manager);
+    org_kde_kwin_server_decoration_manager_add_listener(serversidedecorationmanager, &s_listener, this);
+}
 
 ServerSideDecorationManager::ServerSideDecorationManager(QObject *parent)
     : QObject(parent)
@@ -53,9 +123,7 @@ ServerSideDecorationManager::~ServerSideDecorationManager()
 
 void ServerSideDecorationManager::setup(org_kde_kwin_server_decoration_manager *serversidedecorationmanager)
 {
-    Q_ASSERT(serversidedecorationmanager);
-    Q_ASSERT(!d->serversidedecorationmanager);
-    d->serversidedecorationmanager.setup(serversidedecorationmanager);
+    d->setup(serversidedecorationmanager);
 }
 
 void ServerSideDecorationManager::release()
@@ -104,26 +172,11 @@ ServerSideDecoration *ServerSideDecorationManager::create(wl_surface *surface, Q
     if (d->queue) {
         d->queue->addProxy(w);
     }
+    deco->d->defaultMode = d->defaultMode;
+    deco->d->mode = d->defaultMode;
     deco->setup(w);
     return deco;
 }
-
-class ServerSideDecoration::Private
-{
-public:
-    Private(ServerSideDecoration *q);
-
-    void setup(org_kde_kwin_server_decoration *serversidedecoration);
-
-    WaylandPointer<org_kde_kwin_server_decoration, org_kde_kwin_server_decoration_release> serversidedecoration;
-    Mode mode = Mode::None;
-
-private:
-    static void modeCallback(void *data, org_kde_kwin_server_decoration *org_kde_kwin_server_decoration, uint32_t mode);
-    static const struct org_kde_kwin_server_decoration_listener s_listener;
-
-    ServerSideDecoration *q;
-};
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const org_kde_kwin_server_decoration_listener ServerSideDecoration::Private::s_listener = {
@@ -230,6 +283,11 @@ void ServerSideDecoration::requestMode(Mode mode)
 ServerSideDecoration::Mode ServerSideDecoration::mode() const
 {
     return d->mode;
+}
+
+ServerSideDecoration::Mode ServerSideDecoration::defaultMode() const
+{
+    return d->defaultMode;
 }
 
 }

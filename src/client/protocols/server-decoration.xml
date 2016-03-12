@@ -40,6 +40,23 @@
         <arg name="id" type="new_id" interface="org_kde_kwin_server_decoration"/>
         <arg name="surface" type="object" interface="wl_surface"/>
       </request>
+      <enum name="mode">
+            <description summary="Possible values to use in request_mode and the event mode."/>
+            <entry name="None" value="0" summary="Undecorated: The surface is not decorated at all, neither server nor client-side. An example is a popup surface which should not be decorated."/>
+            <entry name="Client" value="1" summary="Client-side decoration: The decoration is part of the surface and the client."/>
+            <entry name="Server" value="2" summary="Server-side decoration: The server embeds the surface into a decoration frame."/>
+      </enum>
+      <event name="default_mode">
+          <description summary="The default mode used on the server">
+              This event is emitted directly after binding the interface. It contains
+              the default mode for the decoration. When a new server decoration object
+              is created this new object will be in the default mode until the first
+              request_mode is requested.
+
+              The server may change the default mode at any time.
+          </description>
+          <arg name="mode" type="uint" summary="The default decoration mode applied to newly created server decorations."/>
+      </event>
   </interface>
   <interface name="org_kde_kwin_server_decoration" version="1">
       <request name="release" type="destructor">

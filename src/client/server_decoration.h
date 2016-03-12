@@ -222,6 +222,13 @@ public:
      **/
     Mode mode() const;
 
+    /**
+     * @returns The default decoration mode the server uses
+     *
+     * @see mode
+     **/
+    Mode defaultMode() const;
+
     operator org_kde_kwin_server_decoration*();
     operator org_kde_kwin_server_decoration*() const;
 

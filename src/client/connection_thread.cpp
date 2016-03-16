@@ -240,6 +240,17 @@ void ConnectionThread::roundtrip()
     if (!d->display) {
         return;
     }
+    if (d->foreign) {
+        // try to perform roundtrip through the QPA plugin if it's supported
+        if (QPlatformNativeInterface *native = qApp->platformNativeInterface()) {
+            // in case the platform provides a dedicated roundtrip function use that install of wl_display_roundtrip
+            QFunctionPointer roundtripFunction = native->platformFunction(QByteArrayLiteral("roundtrip"));
+            if (roundtripFunction) {
+                roundtripFunction();
+                return;
+            }
+        }
+    }
     wl_display_roundtrip(d->display);
 }
 

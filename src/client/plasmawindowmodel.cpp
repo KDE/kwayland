@@ -127,6 +127,10 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::demandsAttentionChanged,
         [window, this] { dataChanged(window, IsDemandingAttention); }
     );
+
+    QObject::connect(window, &PlasmaWindow::skipTaskbarChanged,
+        [window, this] { dataChanged(window, SkipTaskbar); }
+    );
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)

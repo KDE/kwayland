@@ -45,6 +45,7 @@ public:
     bool frameCallbackInstalled = false;
     QSize size;
     bool foreign = false;
+    qint32 scale = 1;
 
     static QList<Surface*> s_surfaces;
 private:
@@ -279,6 +280,17 @@ quint32 Surface::id() const
 {
     wl_surface *s = *this;
     return wl_proxy_get_id(reinterpret_cast<wl_proxy*>(s));
+}
+
+qint32 Surface::scale() const
+{
+    return d->scale;
+}
+
+void Surface::setScale(qint32 scale)
+{
+    d->scale = scale;
+    wl_surface_set_buffer_scale(d->surface, scale);
 }
 
 }

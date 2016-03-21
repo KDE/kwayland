@@ -203,6 +203,31 @@ public:
     void setSize(const QSize &size);
     QSize size() const;
 
+    /**
+     * The purpose of this method is to allow to supply higher resolution buffer data for use
+     * on high resolution outputs. It's intended that the same buffer scale as the scale of the
+     * output that the surface is displayed on is used.
+     * This means the compositor can avoid scaling when rendering the surface on that output.
+     *
+     * Note that if @p scale is larger than 1 you have to attach a buffer that is larger
+     * (by a factor of scale in each dimension) than the desired surface size.
+     *
+     * The default scale factor is 1.
+     *
+     * The state is only applied with the next commit.
+     *
+     * @see scale
+     * @see commit
+     * @since 5.7
+     **/
+    void setScale(qint32 scale);
+    /**
+     * @returns The current scale factor, if not explicitly set it's @c 1.
+     * @see setScale
+     * @since 5.7
+     **/
+    qint32 scale() const;
+
     operator wl_surface*();
     operator wl_surface*() const;
 

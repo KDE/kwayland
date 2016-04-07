@@ -1,0 +1,15 @@
+maintainer: graesslin
+description: Qt-style API to interact with the wayland-client and wayland-server API
+tier: 1
+type: integration
+platforms:
+    - name: Linux
+portingAid: false
+deprecated: false
+release: false
+libraries:
+ - qmake: KWaylandClient
+   cmake: "KF5::WaylandClient"
+ - qmake: KWaylandServer
+   cmake: "KF5::WaylandServer"
+cmakename: KF5Wayland

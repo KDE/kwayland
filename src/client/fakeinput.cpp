@@ -168,7 +168,7 @@ void FakeInput::requestPointerAxis(Qt::Orientation axis, qreal delta)
         Q_UNREACHABLE();
         break;
     }
-    org_kde_kwin_fake_input_button(d->manager, a, wl_fixed_from_double(delta));
+    org_kde_kwin_fake_input_axis(d->manager, a, wl_fixed_from_double(delta));
 }
 
 FakeInput::operator org_kde_kwin_fake_input*() const

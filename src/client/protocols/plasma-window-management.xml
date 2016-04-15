@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_window_management" version="2">
+  <interface name="org_kde_plasma_window_management" version="3">
     <description summary="application windows management">
       This interface manages application windows.
       It provides requests to show and hide the desktop and emits
@@ -41,6 +41,8 @@
       <entry name="maximizable" value="1 &lt;&lt; 10"/>
       <entry name="fullscreenable" value="1 &lt;&lt; 11"/>
       <entry name="skiptaskbar" value="1 &lt;&lt; 12" since="2"/>
+      <entry name="shadable" value="1 &lt;&lt; 13" since="3"/>
+      <entry name="shaded" value="1 &lt;&lt; 14" since="3"/>
     </enum>
 
     <enum name="show_desktop">

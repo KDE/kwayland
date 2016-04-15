@@ -263,6 +263,8 @@ public:
     bool maximizeable = false;
     bool fullscreenable = false;
     bool skipTaskbar = false;
+    bool shadable = false;
+    bool shaded = false;
     QIcon icon;
 
 private:
@@ -285,6 +287,8 @@ private:
     void setMaximizeable(bool set);
     void setFullscreenable(bool set);
     void setSkipTaskbar(bool skip);
+    void setShadable(bool set);
+    void setShaded(bool set);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -364,6 +368,8 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
     p->setSkipTaskbar(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
+    p->setShadable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADABLE);
+    p->setShaded(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
 }
 
 void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name)
@@ -490,6 +496,24 @@ void PlasmaWindow::Private::setSkipTaskbar(bool skip)
     }
     skipTaskbar = skip;
     emit q->skipTaskbarChanged();
+}
+
+void PlasmaWindow::Private::setShadable(bool set)
+{
+    if (shadable == set) {
+        return;
+    }
+    shadable = set;
+    emit q->shadableChanged();
+}
+
+void PlasmaWindow::Private::setShaded(bool set)
+{
+    if (shaded == set) {
+        return;
+    }
+    shaded = set;
+    emit q->shadedChanged();
 }
 
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
@@ -622,6 +646,16 @@ QIcon PlasmaWindow::icon() const
     return d->icon;
 }
 
+bool PlasmaWindow::isShadable() const
+{
+    return d->shadable;
+}
+
+bool PlasmaWindow::isShaded() const
+{
+    return d->shaded;
+}
+
 void PlasmaWindow::requestActivate()
 {
     org_kde_plasma_window_set_state(d->window,
@@ -673,6 +707,19 @@ void PlasmaWindow::setMinimizedGeometry(Surface *panel, const QRect &geom)
 void PlasmaWindow::unsetMinimizedGeometry(Surface *panel)
 {
     org_kde_plasma_window_unset_minimized_geometry(d->window, *panel);
+}
+
+void PlasmaWindow::requestToggleShaded()
+{
+    if (d->shaded) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
+    }
 }
 
 quint32 PlasmaWindow::internalId() const

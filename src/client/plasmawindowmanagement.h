@@ -222,6 +222,14 @@ public:
     bool isFullscreenable() const;
     bool skipTaskbar() const;
     QIcon icon() const;
+    /**
+     * @since 5.7
+     */
+    bool isShadable() const;
+    /**
+     * @since 5.7
+     */
+    bool isShaded() const;
 
     void requestActivate();
     void requestClose();
@@ -250,6 +258,12 @@ public:
     void unsetMinimizedGeometry(Surface *panel);
 
     /**
+     * Requests the window at this model row index have its maximized state toggled.
+     * @since 5.7
+     */
+    void requestToggleShaded();
+
+    /**
      * An internal window identifier.
      * This is not a global window identifier.
      * This identifier does not correspond to QWindow::winId in any way.
@@ -274,6 +288,8 @@ Q_SIGNALS:
     void fullscreenableChanged();
     void skipTaskbarChanged();
     void iconChanged();
+    void shadableChanged();
+    void shadedChanged();
     void unmapped();
 
 private:

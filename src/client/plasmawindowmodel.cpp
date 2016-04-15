@@ -131,6 +131,14 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::skipTaskbarChanged,
         [window, this] { dataChanged(window, SkipTaskbar); }
     );
+
+    QObject::connect(window, &PlasmaWindow::shadableChanged,
+        [window, this] { dataChanged(window, IsShadable); }
+    );
+
+    QObject::connect(window, &PlasmaWindow::shadedChanged,
+        [window, this] { dataChanged(window, IsShaded); }
+    );
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
@@ -223,6 +231,10 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isDemandingAttention();
     } else if (role == SkipTaskbar) {
         return window->skipTaskbar();
+    } else if (role == IsShadable) {
+        return window->isShadable();
+    } else if (role == IsShaded) {
+        return window->isShaded();
     }
 
     return QVariant();
@@ -277,6 +289,13 @@ Q_INVOKABLE void PlasmaWindowModel::setMinimizedGeometry(int row, Surface *panel
 {
     if (row >= 0 && row < d->windows.count()) {
         d->windows.at(row)->setMinimizedGeometry(panel, geom);
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestToggleShaded(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleShaded();
     }
 }
 

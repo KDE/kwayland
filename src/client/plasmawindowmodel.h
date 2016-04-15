@@ -74,7 +74,9 @@ public:
         VirtualDesktop,
         IsOnAllDesktops,
         IsDemandingAttention,
-        SkipTaskbar
+        SkipTaskbar,
+        IsShadable,
+        IsShaded
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);
@@ -123,6 +125,11 @@ public:
      */
     Q_INVOKABLE void setMinimizedGeometry(int row, Surface *panel, const QRect &geom);
 
+    /**
+     * Requests the window at this model row index have its shaded state toggled.
+     * @since 5.7
+     */
+    Q_INVOKABLE void requestToggleShaded(int row);
 
 private:
     class Private;

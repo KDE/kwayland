@@ -75,7 +75,13 @@ public:
         IsOnAllDesktops,
         IsDemandingAttention,
         SkipTaskbar,
+        /**
+        * @since 5.7
+        */
         IsShadable,
+        /**
+        * @since 5.7
+        */
         IsShaded
     };
 

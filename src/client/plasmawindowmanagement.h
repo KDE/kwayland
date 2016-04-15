@@ -288,7 +288,13 @@ Q_SIGNALS:
     void fullscreenableChanged();
     void skipTaskbarChanged();
     void iconChanged();
+    /**
+     * @since 5.7
+     */
     void shadableChanged();
+    /**
+     * @since 5.7
+     */
     void shadedChanged();
     void unmapped();
 

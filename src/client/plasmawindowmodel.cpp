@@ -69,75 +69,75 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     );
 
     QObject::connect(window, &PlasmaWindow::titleChanged,
-        [window, this] { dataChanged(window, Qt::DisplayRole); }
+        [window, this] { this->dataChanged(window, Qt::DisplayRole); }
     );
 
     QObject::connect(window, &PlasmaWindow::iconChanged,
-        [window, this] { dataChanged(window, Qt::DecorationRole); }
+        [window, this] { this->dataChanged(window, Qt::DecorationRole); }
     );
 
     QObject::connect(window, &PlasmaWindow::appIdChanged,
-        [window, this] { dataChanged(window, PlasmaWindowModel::AppId); }
+        [window, this] { this->dataChanged(window, PlasmaWindowModel::AppId); }
     );
 
     QObject::connect(window, &PlasmaWindow::activeChanged,
-        [window, this] { dataChanged(window, IsActive); }
+        [window, this] { this->dataChanged(window, IsActive); }
     );
 
     QObject::connect(window, &PlasmaWindow::fullscreenableChanged,
-        [window, this] { dataChanged(window, IsFullscreenable); }
+        [window, this] { this->dataChanged(window, IsFullscreenable); }
     );
 
     QObject::connect(window, &PlasmaWindow::fullscreenChanged,
-        [window, this] { dataChanged(window, IsFullscreen); }
+        [window, this] { this->dataChanged(window, IsFullscreen); }
     );
 
     QObject::connect(window, &PlasmaWindow::maximizeableChanged,
-        [window, this] { dataChanged(window, IsMaximizable); }
+        [window, this] { this->dataChanged(window, IsMaximizable); }
     );
 
     QObject::connect(window, &PlasmaWindow::maximizedChanged,
-        [window, this] { dataChanged(window, IsMaximized); }
+        [window, this] { this->dataChanged(window, IsMaximized); }
     );
 
     QObject::connect(window, &PlasmaWindow::minimizeableChanged,
-        [window, this] { dataChanged(window, IsMinimizable); }
+        [window, this] { this->dataChanged(window, IsMinimizable); }
     );
 
     QObject::connect(window, &PlasmaWindow::minimizedChanged,
-        [window, this] { dataChanged(window, IsMinimized); }
+        [window, this] { this->dataChanged(window, IsMinimized); }
     );
 
     QObject::connect(window, &PlasmaWindow::keepAboveChanged,
-        [window, this] { dataChanged(window, IsKeepAbove); }
+        [window, this] { this->dataChanged(window, IsKeepAbove); }
     );
 
     QObject::connect(window, &PlasmaWindow::keepBelowChanged,
-        [window, this] { dataChanged(window, IsKeepBelow); }
+        [window, this] { this->dataChanged(window, IsKeepBelow); }
     );
 
     QObject::connect(window, &PlasmaWindow::virtualDesktopChanged,
-        [window, this] { dataChanged(window, VirtualDesktop); }
+        [window, this] { this->dataChanged(window, VirtualDesktop); }
     );
 
     QObject::connect(window, &PlasmaWindow::onAllDesktopsChanged,
-        [window, this] { dataChanged(window, IsOnAllDesktops); }
+        [window, this] { this->dataChanged(window, IsOnAllDesktops); }
     );
 
     QObject::connect(window, &PlasmaWindow::demandsAttentionChanged,
-        [window, this] { dataChanged(window, IsDemandingAttention); }
+        [window, this] { this->dataChanged(window, IsDemandingAttention); }
     );
 
     QObject::connect(window, &PlasmaWindow::skipTaskbarChanged,
-        [window, this] { dataChanged(window, SkipTaskbar); }
+        [window, this] { this->dataChanged(window, SkipTaskbar); }
     );
 
     QObject::connect(window, &PlasmaWindow::shadableChanged,
-        [window, this] { dataChanged(window, IsShadable); }
+        [window, this] { this->dataChanged(window, IsShadable); }
     );
 
     QObject::connect(window, &PlasmaWindow::shadedChanged,
-        [window, this] { dataChanged(window, IsShaded); }
+        [window, this] { this->dataChanged(window, IsShaded); }
     );
 }
 

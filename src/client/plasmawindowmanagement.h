@@ -258,7 +258,7 @@ public:
     void unsetMinimizedGeometry(Surface *panel);
 
     /**
-     * Requests the window at this model row index have its maximized state toggled.
+     * Requests the window at this model row index have its shaded state toggled.
      * @since 5.7
      */
     void requestToggleShaded();

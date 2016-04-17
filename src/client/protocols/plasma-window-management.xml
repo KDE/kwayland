@@ -43,6 +43,8 @@
       <entry name="skiptaskbar" value="1 &lt;&lt; 12" since="2"/>
       <entry name="shadeable" value="1 &lt;&lt; 13" since="3"/>
       <entry name="shaded" value="1 &lt;&lt; 14" since="3"/>
+      <entry name="movable" value="1 &lt;&lt; 15" since="3"/>
+      <entry name="resizable" value="1 &lt;&lt; 16" since="3"/>
     </enum>
 
     <enum name="show_desktop">
@@ -140,6 +142,18 @@
     <request name="close">
       <description summary="close window">
         Close this window.
+      </description>
+    </request>
+
+    <request name="request_move" since="3">
+      <description summary="request move">
+        Request an interactive move for this window.
+      </description>
+    </request>
+
+    <request name="request_resize" since="3">
+      <description summary="request resize">
+        Request an interactive resize for this window.
       </description>
     </request>
 

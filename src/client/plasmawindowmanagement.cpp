@@ -265,6 +265,8 @@ public:
     bool skipTaskbar = false;
     bool shadeable = false;
     bool shaded = false;
+    bool movable = false;
+    bool resizable = false;
     QIcon icon;
 
 private:
@@ -289,6 +291,8 @@ private:
     void setSkipTaskbar(bool skip);
     void setShadeable(bool set);
     void setShaded(bool set);
+    void setMovable(bool set);
+    void setResizable(bool set);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -370,6 +374,8 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setSkipTaskbar(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
     p->setShadeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE);
     p->setShaded(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
+    p->setMovable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE);
+    p->setResizable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_RESIZABLE);
 }
 
 void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name)
@@ -516,6 +522,24 @@ void PlasmaWindow::Private::setShaded(bool set)
     emit q->shadedChanged();
 }
 
+void PlasmaWindow::Private::setMovable(bool set)
+{
+    if (movable == set) {
+        return;
+    }
+    movable = set;
+    emit q->movableChanged();
+}
+
+void PlasmaWindow::Private::setResizable(bool set)
+{
+    if (resizable == set) {
+        return;
+    }
+    resizable = set;
+    emit q->resizableChanged();
+}
+
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
     : internalId(internalId)
     , q(q)
@@ -656,6 +680,16 @@ bool PlasmaWindow::isShaded() const
     return d->shaded;
 }
 
+bool PlasmaWindow::isResizable() const
+{
+    return d->resizable;
+}
+
+bool PlasmaWindow::isMovable() const
+{
+    return d->movable;
+}
+
 void PlasmaWindow::requestActivate()
 {
     org_kde_plasma_window_set_state(d->window,
@@ -666,6 +700,16 @@ void PlasmaWindow::requestActivate()
 void PlasmaWindow::requestClose()
 {
     org_kde_plasma_window_close(d->window);
+}
+
+void PlasmaWindow::requestMove()
+{
+    org_kde_plasma_window_request_move(d->window);
+}
+
+void PlasmaWindow::requestResize()
+{
+    org_kde_plasma_window_request_resize(d->window);
 }
 
 void PlasmaWindow::requestVirtualDesktop(quint32 desktop)

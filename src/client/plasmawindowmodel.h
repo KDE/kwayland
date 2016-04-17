@@ -82,7 +82,15 @@ public:
         /**
         * @since 5.7
         */
-        IsShaded
+        IsShaded,
+        /**
+        * @since 5.7
+        */
+        IsMovable,
+        /**
+        * @since 5.7
+        */
+        IsResizable
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);
@@ -108,6 +116,18 @@ public:
      * Request the window at this model row index be closed.
      **/
     Q_INVOKABLE void requestClose(int row);
+
+    /**
+     * Request an interactive move for the window at this model row index.
+     * @since 5.7
+     **/
+    Q_INVOKABLE void requestMove(int row);
+
+    /**
+     * Request an interactive resize for the window at this model row index.
+     * @since 5.7
+     **/
+    Q_INVOKABLE void requestResize(int row);
 
     /**
      * Request the window at this model row index be moved to this virtual desktop.

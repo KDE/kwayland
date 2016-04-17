@@ -230,9 +230,25 @@ public:
      * @since 5.7
      */
     bool isShaded() const;
+    /**
+     * @since 5.7
+     */
+    bool isMovable() const;
+    /**
+     * @since 5.7
+     */
+    bool isResizable() const;
 
     void requestActivate();
     void requestClose();
+    /**
+     * @since 5.7
+     */
+    void requestMove();
+    /**
+     * @since 5.7
+     */
+    void requestResize();
     void requestVirtualDesktop(quint32 desktop);
     /**
      * Requests the window at this model row index have its minimized state toggled.
@@ -296,6 +312,14 @@ Q_SIGNALS:
      * @since 5.7
      */
     void shadedChanged();
+    /**
+     * @since 5.7
+     */
+    void movableChanged();
+    /**
+     * @since 5.7
+     */
+    void resizableChanged();
     void unmapped();
 
 private:

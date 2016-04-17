@@ -139,6 +139,14 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::shadedChanged,
         [window, this] { this->dataChanged(window, IsShaded); }
     );
+
+    QObject::connect(window, &PlasmaWindow::movableChanged,
+        [window, this] { this->dataChanged(window, IsMovable); }
+    );
+
+    QObject::connect(window, &PlasmaWindow::resizableChanged,
+        [window, this] { this->dataChanged(window, IsResizable); }
+    );
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
@@ -235,6 +243,10 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isShadeable();
     } else if (role == IsShaded) {
         return window->isShaded();
+    } else if (role == IsMovable) {
+        return window->isMovable();
+    } else if (role == IsResizable) {
+        return window->isResizable();
     }
 
     return QVariant();
@@ -261,6 +273,20 @@ Q_INVOKABLE void PlasmaWindowModel::requestClose(int row)
 {
     if (row >= 0 && row < d->windows.count()) {
         d->windows.at(row)->requestClose();
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestMove(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestMove();
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestResize(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestResize();
     }
 }
 

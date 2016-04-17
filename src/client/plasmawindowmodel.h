@@ -94,7 +94,11 @@ public:
         /**
         * @since 5.7
         */
-        IsVirtualDesktopChangeable
+        IsVirtualDesktopChangeable,
+        /**
+        * @since 5.7
+        */
+        IsCloseable
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);

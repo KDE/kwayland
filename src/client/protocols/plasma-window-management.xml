@@ -45,6 +45,7 @@
       <entry name="shaded" value="1 &lt;&lt; 14" since="3"/>
       <entry name="movable" value="1 &lt;&lt; 15" since="3"/>
       <entry name="resizable" value="1 &lt;&lt; 16" since="3"/>
+      <entry name="virtual_desktop_changeable" value="1 &lt;&lt; 17" since="3"/>
     </enum>
 
     <enum name="show_desktop">

@@ -90,7 +90,11 @@ public:
         /**
         * @since 5.7
         */
-        IsResizable
+        IsResizable,
+        /**
+        * @since 5.7
+        */
+        IsVirtualDesktopChangeable
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);

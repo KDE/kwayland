@@ -267,6 +267,7 @@ public:
     bool shaded = false;
     bool movable = false;
     bool resizable = false;
+    bool virtualDesktopChangeable = false;
     QIcon icon;
 
 private:
@@ -293,6 +294,7 @@ private:
     void setShaded(bool set);
     void setMovable(bool set);
     void setResizable(bool set);
+    void setVirtualDesktopChangeable(bool set);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -376,6 +378,7 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setShaded(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
     p->setMovable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE);
     p->setResizable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_RESIZABLE);
+    p->setVirtualDesktopChangeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_VIRTUAL_DESKTOP_CHANGEABLE);
 }
 
 void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name)
@@ -540,6 +543,15 @@ void PlasmaWindow::Private::setResizable(bool set)
     emit q->resizableChanged();
 }
 
+void PlasmaWindow::Private::setVirtualDesktopChangeable(bool set)
+{
+    if (virtualDesktopChangeable == set) {
+        return;
+    }
+    virtualDesktopChangeable = set;
+    emit q->virtualDesktopChangeableChanged();
+}
+
 PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
     : internalId(internalId)
     , q(q)
@@ -688,6 +700,11 @@ bool PlasmaWindow::isResizable() const
 bool PlasmaWindow::isMovable() const
 {
     return d->movable;
+}
+
+bool PlasmaWindow::isVirtualDesktopChangeable() const
+{
+    return d->virtualDesktopChangeable;
 }
 
 void PlasmaWindow::requestActivate()

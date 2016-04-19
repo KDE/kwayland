@@ -238,6 +238,10 @@ public:
      * @since 5.7
      */
     bool isResizable() const;
+    /**
+     * @since 5.7
+     */
+    bool isVirtualDesktopChangeable() const;
 
     void requestActivate();
     void requestClose();
@@ -320,6 +324,10 @@ Q_SIGNALS:
      * @since 5.7
      */
     void resizableChanged();
+    /**
+     * @since 5.7
+     */
+    void virtualDesktopChangeableChanged();
     void unmapped();
 
 private:

@@ -147,6 +147,10 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::resizableChanged,
         [window, this] { this->dataChanged(window, IsResizable); }
     );
+
+    QObject::connect(window, &PlasmaWindow::virtualDesktopChangeableChanged,
+        [window, this] { this->dataChanged(window, IsVirtualDesktopChangeable); }
+    );
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
@@ -247,6 +251,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isMovable();
     } else if (role == IsResizable) {
         return window->isResizable();
+    } else if (role == IsVirtualDesktopChangeable) {
+        return window->isVirtualDesktopChangeable();
     }
 
     return QVariant();

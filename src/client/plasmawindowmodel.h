@@ -78,7 +78,7 @@ public:
         /**
         * @since 5.7
         */
-        IsShadable,
+        IsShadeable,
         /**
         * @since 5.7
         */

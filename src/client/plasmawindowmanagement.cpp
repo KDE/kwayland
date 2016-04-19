@@ -263,7 +263,7 @@ public:
     bool maximizeable = false;
     bool fullscreenable = false;
     bool skipTaskbar = false;
-    bool shadable = false;
+    bool shadeable = false;
     bool shaded = false;
     QIcon icon;
 
@@ -287,7 +287,7 @@ private:
     void setMaximizeable(bool set);
     void setFullscreenable(bool set);
     void setSkipTaskbar(bool skip);
-    void setShadable(bool set);
+    void setShadeable(bool set);
     void setShaded(bool set);
 
     static Private *cast(void *data) {
@@ -368,7 +368,7 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
     p->setSkipTaskbar(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
-    p->setShadable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADABLE);
+    p->setShadeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE);
     p->setShaded(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
 }
 
@@ -498,13 +498,13 @@ void PlasmaWindow::Private::setSkipTaskbar(bool skip)
     emit q->skipTaskbarChanged();
 }
 
-void PlasmaWindow::Private::setShadable(bool set)
+void PlasmaWindow::Private::setShadeable(bool set)
 {
-    if (shadable == set) {
+    if (shadeable == set) {
         return;
     }
-    shadable = set;
-    emit q->shadableChanged();
+    shadeable = set;
+    emit q->shadeableChanged();
 }
 
 void PlasmaWindow::Private::setShaded(bool set)
@@ -646,9 +646,9 @@ QIcon PlasmaWindow::icon() const
     return d->icon;
 }
 
-bool PlasmaWindow::isShadable() const
+bool PlasmaWindow::isShadeable() const
 {
-    return d->shadable;
+    return d->shadeable;
 }
 
 bool PlasmaWindow::isShaded() const

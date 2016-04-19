@@ -225,7 +225,7 @@ public:
     /**
      * @since 5.7
      */
-    bool isShadable() const;
+    bool isShadeable() const;
     /**
      * @since 5.7
      */
@@ -291,7 +291,7 @@ Q_SIGNALS:
     /**
      * @since 5.7
      */
-    void shadableChanged();
+    void shadeableChanged();
     /**
      * @since 5.7
      */

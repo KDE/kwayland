@@ -132,8 +132,8 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
         [window, this] { this->dataChanged(window, SkipTaskbar); }
     );
 
-    QObject::connect(window, &PlasmaWindow::shadableChanged,
-        [window, this] { this->dataChanged(window, IsShadable); }
+    QObject::connect(window, &PlasmaWindow::shadeableChanged,
+        [window, this] { this->dataChanged(window, IsShadeable); }
     );
 
     QObject::connect(window, &PlasmaWindow::shadedChanged,
@@ -231,8 +231,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isDemandingAttention();
     } else if (role == SkipTaskbar) {
         return window->skipTaskbar();
-    } else if (role == IsShadable) {
-        return window->isShadable();
+    } else if (role == IsShadeable) {
+        return window->isShadeable();
     } else if (role == IsShaded) {
         return window->isShaded();
     }

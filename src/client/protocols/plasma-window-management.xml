@@ -83,7 +83,7 @@
     </event>
   </interface>
 
-  <interface name="org_kde_plasma_window" version="1">
+  <interface name="org_kde_plasma_window" version="3">
     <description summary="interface to control application windows">
       Manages and control an application window.
 

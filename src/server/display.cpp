@@ -39,6 +39,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "slide_interface.h"
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
+#include "xdg_shell_v5_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -332,6 +333,13 @@ ServerSideDecorationManagerInterface *Display::createServerSideDecorationManager
     auto d = new ServerSideDecorationManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
     return d;
+}
+
+XdgShellV5Interface *Display::createXdgShellUnstableVersion5(QObject *parent)
+{
+    auto x = new XdgShellV5Interface(this, parent);
+    connect(this, &Display::aboutToTerminate, x, [x] { delete x; });
+    return x;
 }
 
 void Display::createShm()

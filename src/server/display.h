@@ -69,6 +69,7 @@ class ServerSideDecorationManagerInterface;
 class SlideManagerInterface;
 class ShellInterface;
 class SubCompositorInterface;
+class XdgShellV5Interface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -170,6 +171,15 @@ public:
      * @since 5.6
      **/
     ServerSideDecorationManagerInterface *createServerSideDecorationManager(QObject *parent = nullptr);
+
+    /**
+     * Creates the unstable XdgShell interface as specified in Version 5.
+     *
+     * Note: this interface is unstable!
+     *
+     * @since 5.7
+     **/
+    XdgShellV5Interface *createXdgShellUnstableVersion5(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

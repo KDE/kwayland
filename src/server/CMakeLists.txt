@@ -34,6 +34,7 @@ set(SERVER_LIB_SRCS
     surface_interface.cpp
     subcompositor_interface.cpp
     touch_interface.cpp
+    xdg_shell_v5_interface.cpp
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -98,6 +99,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/server-decoration.xml
     BASENAME server_decoration
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v5.xml
+    BASENAME xdg-shell-v5
 )
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
@@ -169,6 +175,7 @@ install(FILES
   subcompositor_interface.h
   surface_interface.h
   touch_interface.h
+  xdg_shell_v5_interface.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Server COMPONENT Devel
 )
 

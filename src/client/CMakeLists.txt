@@ -45,6 +45,8 @@ set(CLIENT_LIB_SRCS
     textinput.cpp
     textinput_v0.cpp
     textinput_v2.cpp
+    xdgshell.cpp
+    xdgshell_v5.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -117,6 +119,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/text-input-unstable-v2.xml
     BASENAME text-input-v2
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v5.xml
+    BASENAME xdg-shell-v5
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -185,6 +191,7 @@ install(FILES
   surface.h
   touch.h
   textinput.h
+  xdgshell.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )
 

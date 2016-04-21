@@ -49,6 +49,7 @@ struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
+struct xdg_shell;
 
 namespace KWayland
 {
@@ -80,6 +81,7 @@ class SubCompositor;
 class TextInputManager;
 class TextInputManagerUnstableV0;
 class TextInputManagerUnstableV2;
+class XdgShell;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -138,7 +140,8 @@ public:
         OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
-        TextInputManagerUnstableV2 ///< Refers to zwp_text_input_manager_v2, @since 5.23
+        TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2, @since 5.23
+        XdgShellUnstableV5 ///< Refers to xdg_shell (unstable version 5), @since 5.25
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -463,6 +466,16 @@ public:
      * @since 5.23
      **/
     zwp_text_input_manager_v2 *bindTextInputManagerUnstableV2(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the xdg_shell (unstable version 5) with @p name and @p version.
+     * If the @p name does not exist or is not for the xdg shell interface in unstable version 5,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgShell instead.
+     * @see createXdgShell
+     * @since 5.25
+     **/
+    xdg_shell *bindXdgShellUnstableV5(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -801,6 +814,24 @@ public:
      * @since 5.23
      **/
     TextInputManager *createTextInputManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates an XdgShell and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li xdg_shell (Unstable version 5)
+     *
+     * If @p name is for one of the supported interfaces the corresponding shell will be created,
+     * otherwise @c null will be returned.
+     *
+     * @param name The name of the interface to bind
+     * @param version The version of the interface to use
+     * @param parent The parent for the XdgShell
+     *
+     * @returns The created XdgShell
+     * @since 5.25
+     **/
+    XdgShell *createXdgShell(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**
@@ -962,6 +993,13 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void textInputManagerUnstableV2Announced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a xdg_shell (unstable version 5) interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.25
+     **/
+    void xdgShellUnstableV5Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1091,6 +1129,12 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void textInputManagerUnstableV2Removed(quint32 name);
+    /**
+     * Emitted whenever an xdg_shell (unstable version 5) interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.25
+     **/
+    void xdgShellUnstableV5Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

@@ -161,6 +161,28 @@ void XdgShellV5Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
+XdgSurfaceV5Interface *XdgShellV5Interface::get(wl_resource *resource)
+{
+    if (!resource) {
+        return nullptr;
+    }
+    Q_D();
+    auto it = std::find_if(d->surfaces.constBegin(), d->surfaces.constEnd(),
+                           [resource] (XdgSurfaceV5Interface *surface) {
+                               return surface->resource() == resource;
+                            }
+                          );
+    if (it != d->surfaces.constEnd()) {
+        return *it;
+    }
+    return nullptr;
+}
+
+XdgShellV5Interface::Private *XdgShellV5Interface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
+
 class XdgSurfaceV5Interface::Private : public Resource::Private, public GenericShellSurface<XdgSurfaceV5Interface>
 {
 public:
@@ -172,6 +194,7 @@ public:
     }
 
     QVector<quint32> configureSerials;
+    QPointer<XdgSurfaceV5Interface> parent;
 
 private:
     static void setParentCallback(wl_client *client, wl_resource *resource, wl_resource * parent);
@@ -248,10 +271,13 @@ const struct xdg_surface_interface XdgSurfaceV5Interface::Private::s_interface =
 
 void XdgSurfaceV5Interface::Private::setParentCallback(wl_client *client, wl_resource *resource, wl_resource *parent)
 {
-    // TODO: implement
-    Q_UNUSED(client)
-    Q_UNUSED(resource)
-    Q_UNUSED(parent)
+    auto s = cast<Private>(resource);
+    Q_ASSERT(client == *s->client);
+    auto parentSurface = static_cast<XdgShellV5Interface*>(s->q->global())->get(parent);
+    if (s->parent.data() != parentSurface) {
+        s->parent = QPointer<XdgSurfaceV5Interface>(parentSurface);
+        emit s->q_func()->transientForChanged();
+    }
 }
 
 void XdgSurfaceV5Interface::Private::showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y)
@@ -460,6 +486,18 @@ bool XdgSurfaceV5Interface::isConfigurePending() const
 {
     Q_D();
     return !d->configureSerials.isEmpty();
+}
+
+bool XdgSurfaceV5Interface::isTransient() const
+{
+    Q_D();
+    return !d->parent.isNull();
+}
+
+QPointer<XdgSurfaceV5Interface> XdgSurfaceV5Interface::transientFor() const
+{
+    Q_D();
+    return d->parent;
 }
 
 XdgSurfaceV5Interface::Private *XdgSurfaceV5Interface::d_func() const

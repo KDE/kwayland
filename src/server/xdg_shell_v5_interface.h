@@ -46,6 +46,11 @@ class KWAYLANDSERVER_EXPORT XdgShellV5Interface : public Global
 public:
     virtual ~XdgShellV5Interface();
 
+    /**
+     * @returns The XdgSurfaceV5Interface for the @p native resource.
+     **/
+    XdgSurfaceV5Interface *get(wl_resource *native);
+
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgSurfaceV5Interface *surface);
 
@@ -53,6 +58,7 @@ private:
     explicit XdgShellV5Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
+    Private *d_func() const;
 };
 
 class KWAYLANDSERVER_EXPORT XdgSurfaceV5Interface : public Resource
@@ -119,6 +125,17 @@ public:
     QByteArray windowClass() const;
 
     /**
+     * @returns Whether this Surface is a transient for another Surface, that is it has a parent.
+     * @see transientFor
+     **/
+    bool isTransient() const;
+    /**
+     * @returns the parent surface if the surface is a transient for another surface
+     * @see isTransient
+     **/
+    QPointer<XdgSurfaceV5Interface> transientFor() const;
+
+    /**
      * Request the client to close the window.
      **/
     void close();
@@ -170,6 +187,12 @@ Q_SIGNALS:
      * @see configure
      **/
     void configureAcknowledged(quint32 serial);
+    /**
+     * Emitted whenever the parent surface changes.
+     * @see isTransient
+     * @see transientFor
+     **/
+    void transientForChanged();
 
 private:
     explicit XdgSurfaceV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);

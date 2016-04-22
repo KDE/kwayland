@@ -36,6 +36,7 @@ class Display;
 class OutputInterface;
 class SeatInterface;
 class SurfaceInterface;
+class XdgPopupV5Interface;
 class XdgSurfaceV5Interface;
 template <typename T>
 class GenericShellSurface;
@@ -49,10 +50,20 @@ public:
     /**
      * @returns The XdgSurfaceV5Interface for the @p native resource.
      **/
-    XdgSurfaceV5Interface *get(wl_resource *native);
+    XdgSurfaceV5Interface *getSurface(wl_resource *native);
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgSurfaceV5Interface *surface);
+    /**
+     * Emitted whenever a new popup got created.
+     *
+     * A popup only gets created in respons to an action on the @p seat.
+     *
+     * @param surface The popup xdg shell surface which got created
+     * @param seat The seat on which an action triggered the popup
+     * @param serial The serial of the action on the seat
+     **/
+    void popupCreated(KWayland::Server::XdgPopupV5Interface *surface, KWayland::Server::SeatInterface *seat, quint32 serial);
 
 private:
     explicit XdgShellV5Interface(Display *display, QObject *parent = nullptr);
@@ -209,18 +220,44 @@ class KWAYLANDSERVER_EXPORT XdgPopupV5Interface : public Resource
 public:
     virtual ~XdgPopupV5Interface();
 
+    /**
+     * @return The SurfaceInterface this XdgPopupV5Interface got created for.
+     **/
+    SurfaceInterface *surface() const;
+
+    /**
+     * @returns the parent surface.
+     * @see transientOffset
+     **/
+    QPointer<SurfaceInterface> transientFor() const;
+    /**
+     * The offset of the Surface in the coordinate system of the SurfaceInterface this surface is a transient for.
+     *
+     * @returns offset in parent coordinate system.
+     * @see transientFor
+     **/
+    QPoint transientOffset() const;
+
+    /**
+     * Dismiss this popup. This indicates to the client that it should destroy this popup.
+     * The Compositor can invoke this method when e.g. the user clicked outside the popup
+     * to dismiss it.
+     **/
+    void popupDone();
+
 private:
-    explicit XdgPopupV5Interface(XdgShellV5Interface *parent, wl_resource *parentResource);
+    explicit XdgPopupV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
     friend class XdgShellV5Interface;
+    friend class GenericShellSurface<XdgPopupV5Interface>;
 
     class Private;
     Private *d_func() const;
 };
 
-
 }
 }
 
 Q_DECLARE_METATYPE(KWayland::Server::XdgSurfaceV5Interface *)
+Q_DECLARE_METATYPE(KWayland::Server::XdgPopupV5Interface *)
 
 #endif

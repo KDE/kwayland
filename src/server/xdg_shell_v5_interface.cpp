@@ -42,6 +42,7 @@ public:
 
 private:
     void createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource);
+    void createPopup(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, SurfaceInterface *parent, SeatInterface *seat, quint32 serial, const QPoint &pos, wl_resource *parentResource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
@@ -60,6 +61,24 @@ private:
     static const quint32 s_version;
 };
 
+class XdgPopupV5Interface::Private : public Resource::Private, public GenericShellSurface<XdgPopupV5Interface>
+{
+public:
+    Private(XdgPopupV5Interface *q, XdgShellV5Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
+    ~Private();
+
+    XdgPopupV5Interface *q_func() {
+        return reinterpret_cast<XdgPopupV5Interface *>(q);
+    }
+
+    QPointer<SurfaceInterface> parent;
+    QPoint transientOffset;
+
+private:
+
+    static const struct xdg_popup_interface s_interface;
+};
+
 const quint32 XdgShellV5Interface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -75,8 +94,8 @@ const struct xdg_shell_interface XdgShellV5Interface::Private::s_interface = {
 void XdgShellV5Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
-    Q_UNUSED(resource)
-    // TODO: implement
+    // TODO: send protocol error if there are still surfaces mapped
+    wl_resource_destroy(resource);
 }
 
 void XdgShellV5Interface::Private::useUnstableVersionCallback(wl_client *client, wl_resource *resource, int32_t version)
@@ -117,16 +136,18 @@ void XdgShellV5Interface::Private::createSurface(wl_client *client, uint32_t ver
 
 void XdgShellV5Interface::Private::getXdgPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface, wl_resource * parent, wl_resource * seat, uint32_t serial, int32_t x, int32_t y)
 {
-    Q_UNUSED(client)
-    Q_UNUSED(resource)
-    Q_UNUSED(id)
-    Q_UNUSED(surface)
-    Q_UNUSED(parent)
-    Q_UNUSED(seat)
-    Q_UNUSED(serial)
-    Q_UNUSED(x)
-    Q_UNUSED(y)
-    // TODO: implement
+    auto s = cast(resource);
+    s->createPopup(client, wl_resource_get_version(resource), id, SurfaceInterface::get(surface), SurfaceInterface::get(parent), SeatInterface::get(seat), serial, QPoint(x, y), resource);
+}
+
+void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, SurfaceInterface *parent, SeatInterface *seat, quint32 serial, const QPoint &pos, wl_resource *parentResource)
+{
+    XdgPopupV5Interface *popupSurface = new XdgPopupV5Interface(q, surface, parentResource);
+    auto d = popupSurface->d_func();
+    d->parent = QPointer<SurfaceInterface>(parent);
+    d->transientOffset = pos;
+    d->create(display->getConnection(client), version, id);
+    emit q->popupCreated(popupSurface, seat, serial);
 }
 
 void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
@@ -161,7 +182,7 @@ void XdgShellV5Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
-XdgSurfaceV5Interface *XdgShellV5Interface::get(wl_resource *resource)
+XdgSurfaceV5Interface *XdgShellV5Interface::getSurface(wl_resource *resource)
 {
     if (!resource) {
         return nullptr;
@@ -273,7 +294,7 @@ void XdgSurfaceV5Interface::Private::setParentCallback(wl_client *client, wl_res
 {
     auto s = cast<Private>(resource);
     Q_ASSERT(client == *s->client);
-    auto parentSurface = static_cast<XdgShellV5Interface*>(s->q->global())->get(parent);
+    auto parentSurface = static_cast<XdgShellV5Interface*>(s->q->global())->getSurface(parent);
     if (s->parent.data() != parentSurface) {
         s->parent = QPointer<XdgSurfaceV5Interface>(parentSurface);
         emit s->q_func()->transientForChanged();
@@ -367,21 +388,6 @@ XdgSurfaceV5Interface::Private::~Private()
         resource = nullptr;
     }
 }
-class XdgPopupV5Interface::Private : public Resource::Private
-{
-public:
-    Private(XdgPopupV5Interface *q, XdgShellV5Interface *c, wl_resource *parentResource);
-    ~Private();
-
-private:
-    static void destroyCallback(wl_client *client, wl_resource *resource);
-
-    XdgPopupV5Interface *q_func() {
-        return reinterpret_cast<XdgPopupV5Interface *>(q);
-    }
-
-    static const struct xdg_popup_interface s_interface;
-};
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct xdg_popup_interface XdgPopupV5Interface::Private::s_interface = {
@@ -389,16 +395,9 @@ const struct xdg_popup_interface XdgPopupV5Interface::Private::s_interface = {
 };
 #endif
 
-void XdgPopupV5Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
-{
-    Q_UNUSED(client);
-    Private *p = cast<Private>(resource);
-    wl_resource_destroy(resource);
-    p->q->deleteLater();
-}
-
-XdgPopupV5Interface::Private::Private(XdgPopupV5Interface *q, XdgShellV5Interface *c, wl_resource *parentResource)
+XdgPopupV5Interface::Private::Private(XdgPopupV5Interface *q, XdgShellV5Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &xdg_popup_interface, &s_interface)
+    , GenericShellSurface<XdgPopupV5Interface>(q, surface)
 {
 }
 
@@ -505,7 +504,46 @@ XdgSurfaceV5Interface::Private *XdgSurfaceV5Interface::d_func() const
     return reinterpret_cast<XdgSurfaceV5Interface::Private*>(d.data());
 }
 
+XdgPopupV5Interface::XdgPopupV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource)
+    : Resource(new Private(this, parent, surface, parentResource), surface)
+{
+}
+
 XdgPopupV5Interface::~XdgPopupV5Interface() = default;
+
+SurfaceInterface *XdgPopupV5Interface::surface() const
+{
+    Q_D();
+    return d->surface;
+}
+
+QPointer<SurfaceInterface> XdgPopupV5Interface::transientFor() const
+{
+    Q_D();
+    return d->parent;
+}
+
+QPoint XdgPopupV5Interface::transientOffset() const
+{
+    Q_D();
+    return d->transientOffset;
+}
+
+void XdgPopupV5Interface::popupDone()
+{
+    Q_D();
+    if (!d->resource) {
+        return;
+    }
+    // TODO: dismiss all child popups
+    xdg_popup_send_popup_done(d->resource);
+    d->client->flush();
+}
+
+XdgPopupV5Interface::Private *XdgPopupV5Interface::d_func() const
+{
+    return reinterpret_cast<XdgPopupV5Interface::Private*>(d.data());
+}
 
 }
 }

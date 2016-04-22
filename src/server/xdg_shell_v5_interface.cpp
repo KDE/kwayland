@@ -171,6 +171,8 @@ public:
         return reinterpret_cast<XdgSurfaceV5Interface *>(q);
     }
 
+    QVector<quint32> configureSerials;
+
 private:
     static void setParentCallback(wl_client *client, wl_resource *resource, wl_resource * parent);
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource * seat, uint32_t serial, int32_t x, int32_t y);
@@ -261,10 +263,19 @@ void XdgSurfaceV5Interface::Private::showWindowMenuCallback(wl_client *client, w
 
 void XdgSurfaceV5Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
-    Q_UNUSED(client)
-    Q_UNUSED(resource)
-    Q_UNUSED(serial)
-    // TODO: implement
+    auto s = cast<Private>(resource);
+    Q_ASSERT(client == *s->client);
+    if (!s->configureSerials.contains(serial)) {
+        // TODO: send error?
+        return;
+    }
+    while (!s->configureSerials.isEmpty()) {
+        quint32 i = s->configureSerials.takeFirst();
+        emit s->q_func()->configureAcknowledged(i);
+        if (i == serial) {
+            break;
+        }
+    }
 }
 
 void XdgSurfaceV5Interface::Private::setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -410,6 +421,45 @@ void XdgSurfaceV5Interface::close()
     Q_D();
     xdg_surface_send_close(d->resource);
     d->client->flush();
+}
+
+quint32 XdgSurfaceV5Interface::configure(States states, const QSize &size)
+{
+    Q_D();
+    if (!d->resource) {
+        return 0;
+    }
+    const quint32 serial = d->global->display()->nextSerial();
+    wl_array state;
+    wl_array_init(&state);
+    if (states.testFlag(State::Maximized)) {
+        uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+        *s = XDG_SURFACE_STATE_MAXIMIZED;
+    }
+    if (states.testFlag(State::Fullscreen)) {
+        uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+        *s = XDG_SURFACE_STATE_FULLSCREEN;
+    }
+    if (states.testFlag(State::Resizing)) {
+        uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+        *s = XDG_SURFACE_STATE_RESIZING;
+    }
+    if (states.testFlag(State::Activated)) {
+        uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+        *s = XDG_SURFACE_STATE_ACTIVATED;
+    }
+    d->configureSerials << serial;
+    xdg_surface_send_configure(d->resource, size.width(), size.height(), &state, serial);
+    d->client->flush();
+    wl_array_release(&state);
+
+    return serial;
+}
+
+bool XdgSurfaceV5Interface::isConfigurePending() const
+{
+    Q_D();
+    return !d->configureSerials.isEmpty();
 }
 
 XdgSurfaceV5Interface::Private *XdgSurfaceV5Interface::d_func() const

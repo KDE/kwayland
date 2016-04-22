@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
+#include <QSize>
+
 namespace KWayland
 {
 namespace Server
@@ -58,6 +60,51 @@ class KWAYLANDSERVER_EXPORT XdgSurfaceV5Interface : public Resource
     Q_OBJECT
 public:
     virtual ~XdgSurfaceV5Interface();
+
+    /**
+     * States the Surface can be in
+     **/
+    enum class State {
+        /**
+         * The Surface is maximized.
+         **/
+        Maximized  = 1 << 0,
+        /**
+         * The Surface is fullscreen.
+         **/
+        Fullscreen = 1 << 1,
+        /**
+         * The Surface is currently being resized by the Compositor.
+         **/
+        Resizing   = 1 << 2,
+        /**
+         * The Surface is considered active. Does not imply keyboard focus.
+         **/
+        Activated  = 1 << 3
+    };
+    Q_DECLARE_FLAGS(States, State)
+
+    /**
+     * Sends a configure event to the Surface.
+     * This tells the Surface the current @p states it is in and the @p size it should have.
+     * If @p size has with and height at @c 0, the Surface can choose the size.
+     *
+     * The Surface acknowledges the configure event with @link{configureAcknowledged}.
+     *
+     * @param states The states the surface is in
+     * @param size The requested size
+     * @returns The serial of the configure event
+     * @see configureAcknowledged
+     * @see isConfigurePending
+     **/
+    quint32 configure(States states, const QSize &size = QSize(0, 0));
+
+    /**
+     * @returns @c true if there is a not yet acknowledged configure event.
+     * @see configure
+     * @see configureAcknowledged
+     **/
+    bool isConfigurePending() const;
 
     /**
      * @return The SurfaceInterface this XdgSurfaceV5Interface got created for.
@@ -118,6 +165,11 @@ Q_SIGNALS:
      * The surface requested to be minimized.
      **/
     void minimizeRequested();
+    /**
+     * A configure event with @p serial got acknowledged.
+     * @see configure
+     **/
+    void configureAcknowledged(quint32 serial);
 
 private:
     explicit XdgSurfaceV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);

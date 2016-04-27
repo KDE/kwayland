@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8.12)
-set(PROJECT_VERSION "5.6.90")
-set(PROJECT_VERSION_MAJOR 5)
 
 project(KWAYLAND)
 
 # ECM setup
-find_package(ECM 1.4.0 REQUIRED NO_MODULE)
+include(FeatureSummary)
+find_package(ECM 5.21.0  NO_MODULE)
+set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://projects.kde.org/projects/kdesupport/extra-cmake-modules")
+feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
 include(FeatureSummary)
@@ -17,7 +18,7 @@ include(CMakeFindFrameworks)
 
 include(ECMPoQmTools)
 
-set(KF5_VERSION ${PROJECT_VERSION})
+set(KF5_VERSION "5.21.0") # handled by release scripts
 
 ecm_setup_version(${KF5_VERSION} VARIABLE_PREFIX KWAYLAND
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h"

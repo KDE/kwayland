@@ -38,3 +38,20 @@ add_executable(testQtSurfaceExtension ${testQtSurfaceExtension_SRCS})
 target_link_libraries( testQtSurfaceExtension Qt5::Test Qt5::Gui KF5::WaylandServer)
 add_test(kwayland-testQtSurfaceExtension testQtSurfaceExtension)
 ecm_mark_as_test(testQtSurfaceExtension)
+
+########################################################
+# Test XdgShellV5
+########################################################
+set( testXdgShellV5_SRCS
+     xdg_shell_v5.cpp
+     test_xdg_shell_v5.cpp
+     )
+
+ecm_add_wayland_client_protocol(testXdgShellV5_SRCS
+    PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v5.xml
+    BASENAME xdg-shell-v5
+)
+add_executable(testXdgShellV5 ${testXdgShellV5_SRCS})
+target_link_libraries( testXdgShellV5 Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
+add_test(kwayland-testXdgShellV5 testXdgShellV5)
+ecm_mark_as_test(testXdgShellV5)

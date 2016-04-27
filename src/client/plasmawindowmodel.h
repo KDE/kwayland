@@ -76,27 +76,27 @@ public:
         IsDemandingAttention,
         SkipTaskbar,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsShadeable,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsShaded,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsMovable,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsResizable,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsVirtualDesktopChangeable,
         /**
-        * @since 5.7
+        * @since 5.22
         */
         IsCloseable
     };
@@ -127,13 +127,13 @@ public:
 
     /**
      * Request an interactive move for the window at this model row index.
-     * @since 5.7
+     * @since 5.22
      **/
     Q_INVOKABLE void requestMove(int row);
 
     /**
      * Request an interactive resize for the window at this model row index.
-     * @since 5.7
+     * @since 5.22
      **/
     Q_INVOKABLE void requestResize(int row);
 
@@ -161,7 +161,7 @@ public:
 
     /**
      * Requests the window at this model row index have its shaded state toggled.
-     * @since 5.7
+     * @since 5.22
      */
     Q_INVOKABLE void requestToggleShaded(int row);
 

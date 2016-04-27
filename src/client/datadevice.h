@@ -94,12 +94,12 @@ public:
 
     /**
      * @returns the currently focused surface during drag'n'drop on this DataDevice.
-     * @since 5.7
+     * @since 5.22
      **/
     QPointer<Surface> dragSurface() const;
     /**
      * @returns the DataOffer during a drag'n'drop operation.
-     * @since 5.7
+     * @since 5.22
      **/
     DataOffer *dragOffer() const;
 
@@ -118,7 +118,7 @@ Q_SIGNALS:
      * @see dragOffer
      * @see dragLeft
      * @see dragMotion
-     * @since 5.7
+     * @since 5.22
      **/
     void dragEntered(quint32 serial, const QPointF &relativeToSurface);
     /**
@@ -126,7 +126,7 @@ Q_SIGNALS:
      *
      * The leave notification is sent before the enter notification for the new focus.
      * @see dragEnter
-     * @since 5.7
+     * @since 5.22
      **/
     void dragLeft();
     /**
@@ -135,7 +135,7 @@ Q_SIGNALS:
      * @param relativeToSurface  Coordinates relative to the upper-left corner of the entered Surface.
      * @param time timestamp with millisecond granularity
      * @see dragEntered
-     * @since 5.7
+     * @since 5.22
      **/
     void dragMotion(const QPointF &relativeToSurface, quint32 time);
     /**
@@ -145,7 +145,7 @@ Q_SIGNALS:
      * The client can now start a data transfer on the DataOffer.
      * @see dragEntered
      * @see dragOffer
-     * @since 5.7
+     * @since 5.22
      **/
     void dropped();
 

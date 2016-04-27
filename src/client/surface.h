@@ -218,13 +218,13 @@ public:
      *
      * @see scale
      * @see commit
-     * @since 5.7
+     * @since 5.22
      **/
     void setScale(qint32 scale);
     /**
      * @returns The current scale factor, if not explicitly set it's @c 1.
      * @see setScale
-     * @since 5.7
+     * @since 5.22
      **/
     qint32 scale() const;
 

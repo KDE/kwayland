@@ -223,34 +223,34 @@ public:
     bool skipTaskbar() const;
     QIcon icon() const;
     /**
-     * @since 5.7
+     * @since 5.22
      */
     bool isShadeable() const;
     /**
-     * @since 5.7
+     * @since 5.22
      */
     bool isShaded() const;
     /**
-     * @since 5.7
+     * @since 5.22
      */
     bool isMovable() const;
     /**
-     * @since 5.7
+     * @since 5.22
      */
     bool isResizable() const;
     /**
-     * @since 5.7
+     * @since 5.22
      */
     bool isVirtualDesktopChangeable() const;
 
     void requestActivate();
     void requestClose();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void requestMove();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void requestResize();
     void requestVirtualDesktop(quint32 desktop);
@@ -279,7 +279,7 @@ public:
 
     /**
      * Requests the window at this model row index have its shaded state toggled.
-     * @since 5.7
+     * @since 5.22
      */
     void requestToggleShaded();
 
@@ -309,23 +309,23 @@ Q_SIGNALS:
     void skipTaskbarChanged();
     void iconChanged();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void shadeableChanged();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void shadedChanged();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void movableChanged();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void resizableChanged();
     /**
-     * @since 5.7
+     * @since 5.22
      */
     void virtualDesktopChangeableChanged();
     void unmapped();

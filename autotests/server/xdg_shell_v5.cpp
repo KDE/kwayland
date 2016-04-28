@@ -107,9 +107,16 @@ XdgSurfaceV5 *XdgShellV5::getXdgSurface(Surface *surface, QObject *parent)
     return s;
 }
 
-XdgPopupV5 *XdgShellV5::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, qint32 x, qint32 y, QObject *parent)
+XdgPopupV5 *XdgShellV5::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
 {
-    return nullptr;
+    Q_ASSERT(isValid());
+    XdgPopupV5 *s = new XdgPopupV5(parent);
+    auto w = xdg_shell_get_xdg_popup(d->xdgshellv5, *surface, *parentSurface, *seat, serial, parentPos.x(), parentPos.y());
+    if (d->queue) {
+        d->queue->addProxy(w);
+    }
+    s->setup(w);
+    return s;
 }
 
 void XdgShellV5::pong(quint32 serial)
@@ -312,15 +319,39 @@ void XdgSurfaceV5::setMinimized()
 class XdgPopupV5::Private
 {
 public:
-    Private() = default;
+    Private(XdgPopupV5 *q);
 
     WaylandPointer<xdg_popup, xdg_popup_destroy> xdgpopupv5;
     EventQueue *queue = nullptr;
+
+    void setup(xdg_popup *p);
+
+private:
+    XdgPopupV5 *q;
+
+    static void popupDoneCallback(void *data, xdg_popup *xdg_popup);
+    static const struct xdg_popup_listener s_listener;
 };
+
+const struct xdg_popup_listener XdgPopupV5::Private::s_listener = {
+    popupDoneCallback
+};
+
+XdgPopupV5::Private::Private(XdgPopupV5 *q)
+    : q(q)
+{
+}
+
+void XdgPopupV5::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
+{
+    auto s = reinterpret_cast<XdgPopupV5::Private*>(data);
+    Q_ASSERT(s->xdgpopupv5 == xdg_popup);
+    emit s->q->popupDone();
+}
 
 XdgPopupV5::XdgPopupV5(QObject *parent)
     : QObject(parent)
-    , d(new Private)
+    , d(new Private(this))
 {
 }
 
@@ -329,11 +360,17 @@ XdgPopupV5::~XdgPopupV5()
     release();
 }
 
+void XdgPopupV5::Private::setup(xdg_popup *p)
+{
+    Q_ASSERT(p);
+    Q_ASSERT(!xdgpopupv5);
+    xdgpopupv5.setup(p);
+    xdg_popup_add_listener(xdgpopupv5, &s_listener, this);
+}
+
 void XdgPopupV5::setup(xdg_popup *xdgpopupv5)
 {
-    Q_ASSERT(xdgpopupv5);
-    Q_ASSERT(!d->xdgpopupv5);
-    d->xdgpopupv5.setup(xdgpopupv5);
+    d->setup(xdgpopupv5);
 }
 
 void XdgPopupV5::release()

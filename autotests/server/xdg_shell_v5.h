@@ -123,7 +123,7 @@ public:
 
     XdgSurfaceV5 *getXdgSurface(Surface *surface, QObject *parent = nullptr);
 
-    XdgPopupV5 *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, qint32 x, qint32 y, QObject *parent = nullptr);
+    XdgPopupV5 *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
     void pong(quint32 serial);
 
@@ -304,6 +304,9 @@ public:
 
     operator xdg_popup*();
     operator xdg_popup*() const;
+
+Q_SIGNALS:
+    void popupDone();
 
 private:
     friend class XdgShellV5;

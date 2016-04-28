@@ -120,15 +120,65 @@ void XdgShellV5::pong(quint32 serial)
 class XdgSurfaceV5::Private
 {
 public:
-    Private() = default;
+    Private(XdgSurfaceV5 *q);
 
     WaylandPointer<xdg_surface, xdg_surface_destroy> xdgsurfacev5;
     EventQueue *queue = nullptr;
+
+    void setup(xdg_surface *surface);
+private:
+    XdgSurfaceV5 *q;
+    static void configureCallback(void *data, xdg_surface *xdg_surface, int32_t width, int32_t height, wl_array *states, uint32_t serial);
+    static void closeCallback(void *data, xdg_surface *xdg_surface);
+    static const struct xdg_surface_listener s_listener;
 };
+
+const struct xdg_surface_listener XdgSurfaceV5::Private::s_listener = {
+    configureCallback,
+    closeCallback
+};
+
+void XdgSurfaceV5::Private::configureCallback(void *data, xdg_surface *xdg_surface, int32_t width, int32_t height, wl_array *wlStates, uint32_t serial)
+{
+    auto s = reinterpret_cast<XdgSurfaceV5::Private*>(data);
+    Q_ASSERT(s->xdgsurfacev5 == xdg_surface);
+    uint32_t *state = reinterpret_cast<uint32_t*>(wlStates->data);
+    size_t numStates = wlStates->size / sizeof(uint32_t);
+    States states;
+    for (size_t i = 0; i < numStates; i++) {
+        switch (state[i]) {
+        case XDG_SURFACE_STATE_MAXIMIZED:
+            states = states | XdgSurfaceV5::State::Maximized;
+            break;
+        case XDG_SURFACE_STATE_FULLSCREEN:
+            states = states | XdgSurfaceV5::State::Fullscreen;
+            break;
+        case XDG_SURFACE_STATE_RESIZING:
+            states = states | XdgSurfaceV5::State::Resizing;
+            break;
+        case XDG_SURFACE_STATE_ACTIVATED:
+            states = states | XdgSurfaceV5::State::Activated;
+            break;
+        }
+    }
+    emit s->q->configureRequested(QSize(width, height), states, serial);
+}
+
+void XdgSurfaceV5::Private::closeCallback(void *data, xdg_surface *xdg_surface)
+{
+    auto s = reinterpret_cast<XdgSurfaceV5::Private*>(data);
+    Q_ASSERT(s->xdgsurfacev5 == xdg_surface);
+    emit s->q->closeRequested();
+}
+
+XdgSurfaceV5::Private::Private(XdgSurfaceV5 *q)
+    : q(q)
+{
+}
 
 XdgSurfaceV5::XdgSurfaceV5(QObject *parent)
     : QObject(parent)
-    , d(new Private)
+    , d(new Private(this))
 {
 }
 
@@ -137,11 +187,17 @@ XdgSurfaceV5::~XdgSurfaceV5()
     release();
 }
 
+void XdgSurfaceV5::Private::setup(xdg_surface *surface)
+{
+    Q_ASSERT(surface);
+    Q_ASSERT(!xdgsurfacev5);
+    xdgsurfacev5.setup(surface);
+    xdg_surface_add_listener(xdgsurfacev5, &s_listener, this);
+}
+
 void XdgSurfaceV5::setup(xdg_surface *xdgsurfacev5)
 {
-    Q_ASSERT(xdgsurfacev5);
-    Q_ASSERT(!d->xdgsurfacev5);
-    d->xdgsurfacev5.setup(xdgsurfacev5);
+    d->setup(xdgsurfacev5);
 }
 
 void XdgSurfaceV5::release()
@@ -213,6 +269,7 @@ void XdgSurfaceV5::resize(Seat *seat, quint32 serial, quint32 edges)
 
 void XdgSurfaceV5::ackConfigure(quint32 serial)
 {
+    xdg_surface_ack_configure(d->xdgsurfacev5, serial);
 }
 
 void XdgSurfaceV5::setWindowGeometry(qint32 x, qint32 y, qint32 width, qint32 height)

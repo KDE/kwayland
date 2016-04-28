@@ -62,6 +62,10 @@ private Q_SLOTS:
     void testResize_data();
     void testResize();
     void testTransient();
+    void testClose();
+    void testConfigureStates_data();
+    void testConfigureStates();
+    void testConfigureMultipleAcks();
 
 private:
     Display *m_display = nullptr;
@@ -460,6 +464,126 @@ void XdgShellV5Test::testTransient()
     QVERIFY(!serverXdgSurface2->isTransient());
     QVERIFY(serverXdgSurface2->transientFor().isNull());
     QVERIFY(!serverXdgSurface->isTransient());
+}
+
+void XdgShellV5Test::testClose()
+{
+    // this test verifies that a close request is sent to the client
+    SURFACE
+
+    QSignalSpy closeSpy(xdgSurface.data(), &XdgSurfaceV5::closeRequested);
+    QVERIFY(closeSpy.isValid());
+
+    serverXdgSurface->close();
+    QVERIFY(closeSpy.wait());
+    QCOMPARE(closeSpy.count(), 1);
+
+    QSignalSpy destroyedSpy(serverXdgSurface, &XdgSurfaceV5Interface::destroyed);
+    QVERIFY(destroyedSpy.isValid());
+    xdgSurface.reset();
+    QVERIFY(destroyedSpy.wait());
+}
+
+void XdgShellV5Test::testConfigureStates_data()
+{
+    QTest::addColumn<XdgSurfaceV5Interface::States>("serverStates");
+    QTest::addColumn<XdgSurfaceV5::States>("clientStates");
+
+    const auto sa = XdgSurfaceV5Interface::States(XdgSurfaceV5Interface::State::Activated);
+    const auto sm = XdgSurfaceV5Interface::States(XdgSurfaceV5Interface::State::Maximized);
+    const auto sf = XdgSurfaceV5Interface::States(XdgSurfaceV5Interface::State::Fullscreen);
+    const auto sr = XdgSurfaceV5Interface::States(XdgSurfaceV5Interface::State::Resizing);
+
+    const auto ca = XdgSurfaceV5::States(XdgSurfaceV5::State::Activated);
+    const auto cm = XdgSurfaceV5::States(XdgSurfaceV5::State::Maximized);
+    const auto cf = XdgSurfaceV5::States(XdgSurfaceV5::State::Fullscreen);
+    const auto cr = XdgSurfaceV5::States(XdgSurfaceV5::State::Resizing);
+
+    QTest::newRow("none")       << XdgSurfaceV5Interface::States()   << XdgSurfaceV5::States();
+    QTest::newRow("Active")     << sa << ca;
+    QTest::newRow("Maximize")   << sm << cm;
+    QTest::newRow("Fullscreen") << sf << cf;
+    QTest::newRow("Resizing")   << sr << cr;
+
+    QTest::newRow("Active/Maximize")       << (sa | sm) << (ca | cm);
+    QTest::newRow("Active/Fullscreen")     << (sa | sf) << (ca | cf);
+    QTest::newRow("Active/Resizing")       << (sa | sr) << (ca | cr);
+    QTest::newRow("Maximize/Fullscreen")   << (sm | sf) << (cm | cf);
+    QTest::newRow("Maximize/Resizing")     << (sm | sr) << (cm | cr);
+    QTest::newRow("Fullscreen/Resizing")   << (sf | sr) << (cf | cr);
+
+    QTest::newRow("Active/Maximize/Fullscreen")   << (sa | sm | sf) << (ca | cm | cf);
+    QTest::newRow("Active/Maximize/Resizing")     << (sa | sm | sr) << (ca | cm | cr);
+    QTest::newRow("Maximize/Fullscreen|Resizing") << (sm | sf | sr) << (cm | cf | cr);
+
+    QTest::newRow("Active/Maximize/Fullscreen/Resizing")   << (sa | sm | sf | sr) << (ca | cm | cf | cr);
+}
+
+void XdgShellV5Test::testConfigureStates()
+{
+    qRegisterMetaType<XdgSurfaceV5::States>();
+    // this test verifies that configure states works
+    SURFACE
+
+    QSignalSpy configureSpy(xdgSurface.data(), &XdgSurfaceV5::configureRequested);
+    QVERIFY(configureSpy.isValid());
+
+    QFETCH(XdgSurfaceV5Interface::States, serverStates);
+    serverXdgSurface->configure(serverStates);
+    QVERIFY(configureSpy.wait());
+    QCOMPARE(configureSpy.count(), 1);
+    QCOMPARE(configureSpy.first().at(0).toSize(), QSize(0, 0));
+    QTEST(configureSpy.first().at(1).value<XdgSurfaceV5::States>(), "clientStates");
+    QCOMPARE(configureSpy.first().at(2).value<quint32>(), m_display->serial());
+
+    QSignalSpy ackSpy(serverXdgSurface, &XdgSurfaceV5Interface::configureAcknowledged);
+    QVERIFY(ackSpy.isValid());
+
+    xdgSurface->ackConfigure(configureSpy.first().at(2).value<quint32>());
+    QVERIFY(ackSpy.wait());
+    QCOMPARE(ackSpy.count(), 1);
+    QCOMPARE(ackSpy.first().first().value<quint32>(), configureSpy.first().at(2).value<quint32>());
+}
+
+void XdgShellV5Test::testConfigureMultipleAcks()
+{
+    qRegisterMetaType<XdgSurfaceV5::States>();
+    // this test verifies that with multiple configure requests the last acknowledged one acknowledges all
+    SURFACE
+
+    QSignalSpy configureSpy(xdgSurface.data(), &XdgSurfaceV5::configureRequested);
+    QVERIFY(configureSpy.isValid());
+    QSignalSpy ackSpy(serverXdgSurface, &XdgSurfaceV5Interface::configureAcknowledged);
+    QVERIFY(ackSpy.isValid());
+
+    serverXdgSurface->configure(XdgSurfaceV5Interface::States(), QSize(10, 20));
+    const quint32 serial1 = m_display->serial();
+    serverXdgSurface->configure(XdgSurfaceV5Interface::States(), QSize(20, 30));
+    const quint32 serial2 = m_display->serial();
+    QVERIFY(serial1 != serial2);
+    serverXdgSurface->configure(XdgSurfaceV5Interface::States(), QSize(30, 40));
+    const quint32 serial3 = m_display->serial();
+    QVERIFY(serial1 != serial3);
+    QVERIFY(serial2 != serial3);
+
+    QVERIFY(configureSpy.wait());
+    QCOMPARE(configureSpy.count(), 3);
+    QCOMPARE(configureSpy.at(0).at(0).toSize(), QSize(10, 20));
+    QCOMPARE(configureSpy.at(0).at(1).value<XdgSurfaceV5::States>(), XdgSurfaceV5::States());
+    QCOMPARE(configureSpy.at(0).at(2).value<quint32>(), serial1);
+    QCOMPARE(configureSpy.at(1).at(0).toSize(), QSize(20, 30));
+    QCOMPARE(configureSpy.at(1).at(1).value<XdgSurfaceV5::States>(), XdgSurfaceV5::States());
+    QCOMPARE(configureSpy.at(1).at(2).value<quint32>(), serial2);
+    QCOMPARE(configureSpy.at(2).at(0).toSize(), QSize(30, 40));
+    QCOMPARE(configureSpy.at(2).at(1).value<XdgSurfaceV5::States>(), XdgSurfaceV5::States());
+    QCOMPARE(configureSpy.at(2).at(2).value<quint32>(), serial3);
+
+    xdgSurface->ackConfigure(serial3);
+    QVERIFY(ackSpy.wait());
+    QCOMPARE(ackSpy.count(), 3);
+    QCOMPARE(ackSpy.at(0).first().value<quint32>(), serial1);
+    QCOMPARE(ackSpy.at(1).first().value<quint32>(), serial2);
+    QCOMPARE(ackSpy.at(2).first().value<quint32>(), serial3);
 }
 
 QTEST_GUILESS_MAIN(XdgShellV5Test)

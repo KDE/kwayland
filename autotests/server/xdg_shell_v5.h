@@ -149,6 +149,28 @@ class KWAYLANDCLIENT_EXPORT XdgSurfaceV5 : public QObject
     Q_OBJECT
 public:
     virtual ~XdgSurfaceV5();
+    /**
+     * States the Surface can be in
+     **/
+    enum class State {
+        /**
+         * The Surface is maximized.
+         **/
+        Maximized  = 1 << 0,
+        /**
+         * The Surface is fullscreen.
+         **/
+        Fullscreen = 1 << 1,
+        /**
+         * The Surface is currently being resized by the Compositor.
+         **/
+        Resizing   = 1 << 2,
+        /**
+         * The Surface is considered active. Does not imply keyboard focus.
+         **/
+        Activated  = 1 << 3
+    };
+    Q_DECLARE_FLAGS(States, State)
 
     /**
      * Setup this XdgSurfaceV5 to manage the @p xdgsurfacev5.
@@ -221,6 +243,10 @@ public:
     operator xdg_surface*();
     operator xdg_surface*() const;
 
+Q_SIGNALS:
+    void closeRequested();
+    void configureRequested(const QSize &size, KWayland::Client::XdgSurfaceV5::States states, quint32 serial);
+
 private:
     friend class XdgShellV5;
     explicit XdgSurfaceV5(QObject *parent = nullptr);
@@ -289,5 +315,8 @@ private:
 
 }
 }
+
+Q_DECLARE_METATYPE(KWayland::Client::XdgSurfaceV5::State)
+Q_DECLARE_METATYPE(KWayland::Client::XdgSurfaceV5::States)
 
 #endif

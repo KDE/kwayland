@@ -259,5 +259,7 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Server::XdgSurfaceV5Interface *)
 Q_DECLARE_METATYPE(KWayland::Server::XdgPopupV5Interface *)
+Q_DECLARE_METATYPE(KWayland::Server::XdgSurfaceV5Interface::State)
+Q_DECLARE_METATYPE(KWayland::Server::XdgSurfaceV5Interface::States)
 
 #endif

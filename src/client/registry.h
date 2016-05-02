@@ -34,6 +34,8 @@ struct wl_seat;
 struct wl_shell;
 struct wl_shm;
 struct wl_subcompositor;
+struct wl_text_input_manager;
+struct zwp_text_input_manager_v2;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputdevice;
@@ -75,6 +77,9 @@ class Shell;
 class ShmPool;
 class ServerSideDecorationManager;
 class SubCompositor;
+class TextInputManager;
+class TextInputManagerUnstableV0;
+class TextInputManagerUnstableV2;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -132,6 +137,8 @@ public:
         OutputManagement, ///< Refers to the wl_data_device_manager interface
         OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
+        TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
+        TextInputManagerUnstableV2 ///< Refers to zwp_text_input_manager_v2, @since 5.23
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -436,6 +443,26 @@ public:
      * @since 5.6
      **/
     org_kde_kwin_server_decoration_manager *bindServerSideDecorationManager(uint32_t name, uint32_t version) const;
+    /*
+     * Binds the wl_text_input_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the text input interface in unstable version 0,
+     * @c null will be returned.
+     *
+     * Prefer using createTextInputManager instead.
+     * @see createTextInputManager
+     * @since 5.23
+     **/
+    wl_text_input_manager *bindTextInputManagerUnstableV0(uint32_t name, uint32_t version) const;
+    /*
+     * Binds the zwp_text_input_manager_v2 with @p name and @p version.
+     * If the @p name does not exist or is not for the text input interface in unstable version 2,
+     * @c null will be returned.
+     *
+     * Prefer using createTextInputManager instead.
+     * @see createTextInputManager
+     * @since 5.23
+     **/
+    zwp_text_input_manager_v2 *bindTextInputManagerUnstableV2(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -755,6 +782,25 @@ public:
      * @since 5.6
      **/
     ServerSideDecorationManager *createServerSideDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a TextInputManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li wl_text_input_manager
+     * @li zwp_text_input_manager_v2
+     *
+     * If @p name is for one of the supported interfaces the corresponding manager will be created,
+     * otherwise @c null will be returned.
+     *
+     * @param name The name of the interface to bind
+     * @param version The version of the interface to use
+     * @param parent The parent for the TextInputManager
+     *
+     * @returns The created TextInputManager
+     * @since 5.23
+     **/
+    TextInputManager *createTextInputManager(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**
@@ -902,6 +948,20 @@ Q_SIGNALS:
      * @since 5.6
      **/
     void serverSideDecorationManagerAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a wl_text_input_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.23
+     **/
+    void textInputManagerUnstableV0Announced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a zwp_text_input_manager_v2 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.23
+     **/
+    void textInputManagerUnstableV2Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1019,6 +1079,18 @@ Q_SIGNALS:
      * @since 5.6
      **/
     void serverSideDecorationManagerRemoved(quint32 name);
+    /**
+     * Emitted whenever a wl_text_input_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.23
+     **/
+    void textInputManagerUnstableV0Removed(quint32 name);
+    /**
+     * Emitted whenever a zwp_text_input_manager_v2 interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.23
+     **/
+    void textInputManagerUnstableV2Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

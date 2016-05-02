@@ -42,6 +42,9 @@ set(CLIENT_LIB_SRCS
     subsurface.cpp
     surface.cpp
     touch.cpp
+    textinput.cpp
+    textinput_v0.cpp
+    textinput_v2.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -105,6 +108,14 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/server-decoration.xml
     BASENAME server-decoration
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/text-input.xml
+    BASENAME text-input-v0
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/text-input-unstable-v2.xml
+    BASENAME text-input-v2
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
@@ -173,6 +184,7 @@ install(FILES
   subsurface.h
   surface.h
   touch.h
+  textinput.h
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )
 

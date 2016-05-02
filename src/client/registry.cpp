@@ -42,6 +42,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell.h"
 #include "shm_pool.h"
 #include "subcompositor.h"
+#include "textinput_p.h"
 #include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>
@@ -60,6 +61,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-slide-client-protocol.h>
 #include <wayland-dpms-client-protocol.h>
 #include <wayland-server-decoration-client-protocol.h>
+#include <wayland-text-input-v0-client-protocol.h>
+#include <wayland-text-input-v2-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -227,6 +230,20 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_server_decoration_manager_interface,
         &Registry::serverSideDecorationManagerAnnounced,
         &Registry::serverSideDecorationManagerRemoved
+    }},
+    {Registry::Interface::TextInputManagerUnstableV0, {
+        1,
+        QByteArrayLiteral("wl_text_input_manager"),
+        &wl_text_input_manager_interface,
+        &Registry::textInputManagerUnstableV0Announced,
+        &Registry::textInputManagerUnstableV0Removed
+    }},
+    {Registry::Interface::TextInputManagerUnstableV2, {
+        1,
+        QByteArrayLiteral("zwp_text_input_manager_v2"),
+        &zwp_text_input_manager_v2_interface,
+        &Registry::textInputManagerUnstableV2Announced,
+        &Registry::textInputManagerUnstableV2Removed
     }}
 };
 
@@ -248,6 +265,7 @@ public:
     bool hasInterface(Interface interface) const;
     AnnouncedInterface interface(Interface interface) const;
     QVector<AnnouncedInterface> interfaces(Interface interface) const;
+    Interface interfaceForName(quint32 name) const;
     template <typename T>
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
     template <class T, typename WL>
@@ -468,6 +486,18 @@ Registry::AnnouncedInterface Registry::Private::interface(Interface interface) c
     return AnnouncedInterface{0, 0};
 }
 
+Registry::Interface Registry::Private::interfaceForName(quint32 name) const
+{
+    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(),
+        [name] (const InterfaceData &data) {
+            return data.name == name;
+        });
+    if (it == m_interfaces.constEnd()) {
+        return Interface::Unknown;
+    }
+    return (*it).interface;
+}
+
 bool Registry::hasInterface(Registry::Interface interface) const
 {
     return d->hasInterface(interface);
@@ -506,6 +536,8 @@ BIND(FakeInput, org_kde_kwin_fake_input)
 BIND(OutputManagement, org_kde_kwin_outputmanagement)
 BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
+BIND(TextInputManagerUnstableV0, wl_text_input_manager)
+BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -562,6 +594,18 @@ CREATE2(ShmPool, Shm)
 
 #undef CREATE
 #undef CREATE2
+
+TextInputManager *Registry::createTextInputManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch (d->interfaceForName(name)) {
+    case Interface::TextInputManagerUnstableV0:
+        return d->create<TextInputManagerUnstableV0>(name, version, parent, &Registry::bindTextInputManagerUnstableV0);
+    case Interface::TextInputManagerUnstableV2:
+        return d->create<TextInputManagerUnstableV2>(name, version, parent, &Registry::bindTextInputManagerUnstableV2);
+    default:
+        return nullptr;
+    }
+}
 
 namespace {
 static const wl_interface *wlInterface(Registry::Interface interface)

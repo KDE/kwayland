@@ -91,6 +91,7 @@ bool OutputManagement::isValid() const
 
 OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
 {
+    Q_UNUSED(parent);
     OutputConfiguration *config = new OutputConfiguration(this);
     auto w = org_kde_kwin_outputmanagement_create_configuration(d->outputmanagement);
 
@@ -105,4 +106,3 @@ OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
 
 }
 }
-

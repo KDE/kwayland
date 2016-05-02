@@ -256,12 +256,14 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
 
 void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
 {
+    Q_UNUSED(output);
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     o->edid = QByteArray::fromBase64(raw);
 }
 
 void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
 {
+    Q_UNUSED(output);
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
 
     OutputDevice::Enablement _enabled = OutputDevice::Enablement::Disabled;
@@ -279,6 +281,7 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
 
 void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* output, const char *uuid)
 {
+    Q_UNUSED(output);
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     if (o->uuid != uuid) {
         o->uuid = uuid;

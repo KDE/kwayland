@@ -342,7 +342,7 @@ void PlasmaWindow::Private::virtualDesktopChangedCallback(void *data, org_kde_pl
 {
     Q_UNUSED(window)
     Private *p = cast(data);
-    if (p->desktop == number) {
+    if (p->desktop == static_cast<quint32>(number)) {
         return;
     }
     p->desktop = number;

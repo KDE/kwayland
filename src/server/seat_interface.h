@@ -41,6 +41,7 @@ namespace Server
 class DataDeviceInterface;
 class Display;
 class SurfaceInterface;
+class TextInputInterface;
 
 /**
  * @brief Represents a Seat on the Wayland Display.
@@ -416,6 +417,16 @@ public:
     void setFocusedKeyboardSurface(SurfaceInterface *surface);
     SurfaceInterface *focusedKeyboardSurface() const;
     KeyboardInterface *focusedKeyboard() const;
+    /**
+     * The focused text input.
+     *
+     * The TextInputInterface is always for the same Surface as focusedKeyboardSurface.
+     * TextInput is bound to keyboard focus.
+     *
+     * @see textInputUnstableV0Changed
+     * @since 5.22
+     **/
+    TextInputInterface *textInput() const;
     ///@}
 
     /**
@@ -473,10 +484,17 @@ Q_SIGNALS:
      * @see dragSurface
      **/
     void dragSurfaceChanged();
+    /**
+     * Emitted whenever the text input changed.
+     * @since 5.22
+     **/
+    void textInputChanged();
 
 private:
     friend class Display;
     friend class DataDeviceManagerInterface;
+    friend class TextInputManagerUnstableV0Interface;
+    friend class TextInputManagerUnstableV2Interface;
     explicit SeatInterface(Display *display, QObject *parent);
 
     class Private;

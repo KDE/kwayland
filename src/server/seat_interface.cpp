@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "pointer_interface.h"
 #include "pointer_interface_p.h"
 #include "surface_interface.h"
+#include "text_interface_p.h"
 // Wayland
 #ifndef WL_SEAT_NAME_SINCE_VERSION
 #define WL_SEAT_NAME_SINCE_VERSION 2
@@ -204,6 +205,20 @@ DataDeviceInterface *SeatInterface::Private::dataDeviceForSurface(SurfaceInterfa
     return interfaceForSurface(surface, dataDevices);
 }
 
+TextInputInterface *SeatInterface::Private::textInputForSurface(SurfaceInterface *surface) const
+{
+    if (!surface) {
+        return nullptr;
+    }
+
+    for (auto it = textInputs.begin(); it != textInputs.end(); ++it) {
+        if ((*it)->surface().data() == surface) {
+            return (*it);
+        }
+    }
+    return nullptr;
+}
+
 void SeatInterface::Private::registerDataDevice(DataDeviceInterface *dataDevice)
 {
     Q_ASSERT(dataDevice->seat() == q);
@@ -269,6 +284,25 @@ void SeatInterface::Private::registerDataDevice(DataDeviceInterface *dataDevice)
     }
 }
 
+
+void SeatInterface::Private::registerTextInput(TextInputInterface *textInput)
+{
+    // text input version 0 might call this multiple times
+    if (textInputs.contains(textInput)) {
+        return;
+    }
+    textInputs << textInput;
+    QObject::connect(textInput, &QObject::destroyed, q,
+        [this, textInput] {
+            textInputs.removeAt(textInputs.indexOf(textInput));
+            if (keys.focus.textInput == textInput) {
+                keys.focus.textInput = nullptr;
+                emit q->textInputChanged();
+            }
+        }
+    );
+}
+
 void SeatInterface::Private::endDrag(quint32 serial)
 {
     auto target = drag.target;
@@ -298,6 +332,21 @@ void SeatInterface::Private::updateSelection(DataDeviceInterface *dataDevice, bo
             }
         }
     }
+}
+
+bool SeatInterface::Private::updateActiveTextInput()
+{
+    auto ti = textInputForSurface(keys.focus.surface);
+    if (ti == keys.focus.textInput) {
+        return false;
+    }
+    if (keys.focus.textInput) {
+        keys.focus.textInput->d_func()->sendLeave(keys.focus.serial);
+    }
+    keys.focus.textInput = ti;
+    keys.focus.textInput->d_func()->sendEnter(keys.focus.surface, keys.focus.serial);
+    emit q->textInputChanged();
+    return true;
 }
 
 void SeatInterface::setHasKeyboard(bool has)
@@ -803,6 +852,11 @@ void SeatInterface::setFocusedKeyboardSurface(SurfaceInterface *surface)
     if (d->keys.focus.surface) {
         disconnect(d->keys.focus.destroyConnection);
     }
+    bool emitTextInputChanged = false;
+    if (d->keys.focus.textInput) {
+        d->keys.focus.textInput->d_func()->sendLeave(serial);
+        emitTextInputChanged = true;
+    }
     d->keys.focus = Private::Keyboard::Focus();
     d->keys.focus.surface = surface;
     KeyboardInterface *k = d->keyboardForSurface(surface);
@@ -814,7 +868,15 @@ void SeatInterface::setFocusedKeyboardSurface(SurfaceInterface *surface)
         d->keys.focus.destroyConnection = connect(surface, &QObject::destroyed, this,
             [this] {
                 Q_D();
+                bool emitTextInputChanged = false;
+                if (d->keys.focus.textInput) {
+                    d->keys.focus.textInput->d_func()->sendLeave(d->keys.focus.serial);
+                    emitTextInputChanged = true;
+                }
                 d->keys.focus = Private::Keyboard::Focus();
+                if (emitTextInputChanged) {
+                    emit textInputChanged();
+                }
             }
         );
         d->keys.focus.serial = serial;
@@ -827,9 +889,17 @@ void SeatInterface::setFocusedKeyboardSurface(SurfaceInterface *surface)
         }
     }
     if (!k) {
+        if (emitTextInputChanged) {
+            emit textInputChanged();
+        }
         return;
     }
     k->setFocusedSurface(surface, serial);
+    if (!d->updateActiveTextInput()) {
+        if (emitTextInputChanged) {
+            emit textInputChanged();
+        }
+    }
 }
 
 void SeatInterface::setKeymap(int fd, quint32 size)
@@ -1150,6 +1220,12 @@ DataDeviceInterface *SeatInterface::dragSource() const
 {
     Q_D();
     return d->drag.source;
+}
+
+TextInputInterface *SeatInterface::textInput() const
+{
+    Q_D();
+    return d->keys.focus.textInput;
 }
 
 }

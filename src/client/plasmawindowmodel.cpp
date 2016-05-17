@@ -57,16 +57,17 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     windows.append(window);
     q->endInsertRows();
 
-    QObject::connect(window, &PlasmaWindow::unmapped,
-        [window, this] {
-            const int row = windows.indexOf(window);
-            if (row != -1) {
-                q->beginRemoveRows(QModelIndex(), row, row);
-                windows.removeAt(row);
-                q->endRemoveRows();
-            }
+    auto removeWindow = [window, this] {
+        const int row = windows.indexOf(window);
+        if (row != -1) {
+            q->beginRemoveRows(QModelIndex(), row, row);
+            windows.removeAt(row);
+            q->endRemoveRows();
         }
-    );
+    };
+
+    QObject::connect(window, &PlasmaWindow::unmapped, q, removeWindow);
+    QObject::connect(window, &QObject::destroyed, q, removeWindow);
 
     QObject::connect(window, &PlasmaWindow::titleChanged,
         [window, this] { this->dataChanged(window, Qt::DisplayRole); }

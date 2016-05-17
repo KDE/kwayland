@@ -125,6 +125,18 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
     QObject::connect(window, &QObject::destroyed, q,
         [this, window] {
             windows.removeAll(window);
+            if (activeWindow == window) {
+                activeWindow = nullptr;
+                emit q->activeWindowChanged();
+            }
+        }
+    );
+    QObject::connect(window, &PlasmaWindow::unmapped, q,
+        [this, window] {
+            if (activeWindow == window) {
+                activeWindow = nullptr;
+                emit q->activeWindowChanged();
+            }
         }
     );
     QObject::connect(window, &PlasmaWindow::activeChanged, q,

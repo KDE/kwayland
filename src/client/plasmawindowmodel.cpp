@@ -171,7 +171,6 @@ PlasmaWindowModel::PlasmaWindowModel(PlasmaWindowManagement *parent)
     connect(parent, &PlasmaWindowManagement::interfaceAboutToBeReleased,
         [this] {
             beginResetModel();
-            qDeleteAll(d->windows);
             d->windows.clear();
             endResetModel();
         }

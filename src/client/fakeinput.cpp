@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "seat.h"
 #include "wayland_pointer_p.h"
-
+#include <QPointF>
 #include <QSizeF>
 
 #include <linux/input.h>
@@ -169,6 +169,36 @@ void FakeInput::requestPointerAxis(Qt::Orientation axis, qreal delta)
         break;
     }
     org_kde_kwin_fake_input_axis(d->manager, a, wl_fixed_from_double(delta));
+}
+
+void FakeInput::requestTouchDown(quint32 id, const QPointF &pos)
+{
+    Q_ASSERT(d->manager.isValid());
+    org_kde_kwin_fake_input_touch_down(d->manager, id, wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
+}
+
+void FakeInput::requestTouchMotion(quint32 id, const QPointF &pos)
+{
+    Q_ASSERT(d->manager.isValid());
+    org_kde_kwin_fake_input_touch_motion(d->manager, id, wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
+}
+
+void FakeInput::requestTouchUp(quint32 id)
+{
+    Q_ASSERT(d->manager.isValid());
+    org_kde_kwin_fake_input_touch_up(d->manager, id);
+}
+
+void FakeInput::requestTouchCancel()
+{
+    Q_ASSERT(d->manager.isValid());
+    org_kde_kwin_fake_input_touch_cancel(d->manager);
+}
+
+void FakeInput::requestTouchFrame()
+{
+    Q_ASSERT(d->manager.isValid());
+    org_kde_kwin_fake_input_touch_frame(d->manager);
 }
 
 FakeInput::operator org_kde_kwin_fake_input*() const

@@ -123,6 +123,26 @@ public:
     void requestPointerButtonClick(Qt::MouseButton button);
     void requestPointerButtonClick(quint32 linuxButton);
     void requestPointerAxis(Qt::Orientation axis, qreal delta);
+    /**
+     * @since 5.23
+     **/
+    void requestTouchDown(quint32 id, const QPointF &pos);
+    /**
+     * @since 5.23
+     **/
+    void requestTouchMotion(quint32 id, const QPointF &pos);
+    /**
+     * @since 5.23
+     **/
+    void requestTouchUp(quint32 id);
+    /**
+     * @since 5.23
+     **/
+    void requestTouchCancel();
+    /**
+     * @since 5.23
+     **/
+    void requestTouchFrame();
 
     operator org_kde_kwin_fake_input*();
     operator org_kde_kwin_fake_input*() const;

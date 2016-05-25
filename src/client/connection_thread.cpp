@@ -53,6 +53,7 @@ public:
     QScopedPointer<QFileSystemWatcher> socketWatcher;
     bool serverDied = false;
     bool foreign = false;
+    QMetaObject::Connection eventDispatcherConnection;
 private:
     ConnectionThread *q;
 };
@@ -159,7 +160,7 @@ ConnectionThread::ConnectionThread(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
-    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, this,
+    d->eventDispatcherConnection = connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, this,
         [this] {
             if (d->display) {
                 wl_display_flush(d->display);
@@ -168,7 +169,10 @@ ConnectionThread::ConnectionThread(QObject *parent)
         Qt::DirectConnection);
 }
 
-ConnectionThread::~ConnectionThread() = default;
+ConnectionThread::~ConnectionThread()
+{
+    disconnect(d->eventDispatcherConnection);
+}
 
 ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
 {

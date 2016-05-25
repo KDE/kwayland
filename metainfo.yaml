@@ -13,3 +13,7 @@ libraries:
  - qmake: KWaylandServer
    cmake: "KF5::WaylandServer"
 cmakename: KF5Wayland
+
+public_lib: true
+group: Frameworks
+subgroup: Tier 1

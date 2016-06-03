@@ -54,6 +54,7 @@ public:
     bool serverDied = false;
     bool foreign = false;
     QMetaObject::Connection eventDispatcherConnection;
+    int error = 0;
 private:
     ConnectionThread *q;
 };
@@ -109,7 +110,17 @@ void ConnectionThread::Private::setupSocketNotifier()
             if (!display) {
                 return;
             }
-            wl_display_dispatch(display);
+            if (wl_display_dispatch(display) == -1) {
+                error = wl_display_get_error(display);
+                if (error != 0) {
+                    if (display) {
+                        free(display);
+                        display = nullptr;
+                    }
+                    emit q->errorOccurred();
+                    return;
+                }
+            }
             emit q->eventsRead();
         }
     );
@@ -147,6 +158,7 @@ void ConnectionThread::Private::setupSocketFileWatcher()
                         qCDebug(KWAYLAND_CLIENT) << "Socket reappeared";
                         socketWatcher.reset();
                         serverDied = false;
+                        error = 0;
                         q->initConnection();
                     }
                 }
@@ -256,6 +268,16 @@ void ConnectionThread::roundtrip()
         }
     }
     wl_display_roundtrip(d->display);
+}
+
+bool ConnectionThread::hasError() const
+{
+    return d->error != 0;
+}
+
+int ConnectionThread::errorCode() const
+{
+    return d->error;
 }
 
 }

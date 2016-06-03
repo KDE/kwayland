@@ -133,6 +133,12 @@ public:
      * There is no need to initConnection and the connected or failed signals won't be emitted.
      * When the created ConnectionThread gets destroyed the managed wl_display won't be disconnected
      * as that's managed by Qt.
+     *
+     * The returned ConnectionThread is not able to detect (protocol) error. The signal
+     * @link{errorOccurred} won't be emitted, @link{hasError} will return @c false, even if the
+     * actual connection held by QtWayland is on error. The behavior of QtWayland is to exit the
+     * application on error.
+     *
      * @since 5.4
      **/
     static ConnectionThread *fromApplication(QObject *parent = nullptr);
@@ -176,6 +182,22 @@ public:
      **/
     void roundtrip();
 
+    /**
+     * @returns whether the Wayland connection experienced an error
+     * @see errorCode
+     * @see errorOccurred
+     * @since 5.23
+     **/
+    bool hasError() const;
+
+    /**
+     * @returns the error code of the last occurred error or @c 0 if the connection doesn't have an error
+     * @see hasError
+     * @see errorOccurred
+     * @since 5.23
+     **/
+    int errorCode() const;
+
 public Q_SLOTS:
     /**
      * Initializes the connection in an asynchronous way.
@@ -213,6 +235,16 @@ Q_SIGNALS:
      * If the socket reappears, it is tried to reconnect.
      **/
     void connectionDied();
+    /**
+     * The Wayland connection experienced a fatal error.
+     * The ConnectionThread is no longer valid, no requests may be sent.
+     * This has the same effects as @link{connectionDied}.
+     *
+     * @see hasError
+     * @see errorCode
+     * @since 5.23
+     **/
+    void errorOccurred();
 
 private Q_SLOTS:
     /**

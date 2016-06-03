@@ -286,4 +286,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE(KWayland::Client::ShellSurface::TransientFlag)
+Q_DECLARE_METATYPE(KWayland::Client::ShellSurface::TransientFlags)
+
 #endif

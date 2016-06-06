@@ -211,5 +211,13 @@
         and its surface is unmapped.
       </description>
     </event>
+
+    <event name="initial_state" since="4">
+        <description summary="All initial known state is submitted">
+            This event will be sent immediately after all initial state been sent to the client.
+            If the Plasma window is already unmapped, the unmapped event will be sent before the
+            initial_state event.
+        </description>
+    </event>
   </interface>
 </protocol>

@@ -55,6 +55,73 @@ private:
     PlasmaWindowManagement *q;
 };
 
+class PlasmaWindow::Private
+{
+public:
+    Private(org_kde_plasma_window *window, quint32 internalId, PlasmaWindow *q);
+    WaylandPointer<org_kde_plasma_window, org_kde_plasma_window_destroy> window;
+    quint32 internalId;
+    QString title;
+    QString appId;
+    quint32 desktop = 0;
+    bool active = false;
+    bool minimized = false;
+    bool maximized = false;
+    bool fullscreen = false;
+    bool keepAbove = false;
+    bool keepBelow = false;
+    bool onAllDesktops = false;
+    bool demandsAttention = false;
+    bool closeable = false;
+    bool minimizeable = false;
+    bool maximizeable = false;
+    bool fullscreenable = false;
+    bool skipTaskbar = false;
+    bool shadeable = false;
+    bool shaded = false;
+    bool movable = false;
+    bool resizable = false;
+    bool virtualDesktopChangeable = false;
+    QIcon icon;
+    PlasmaWindowManagement *wm = nullptr;
+    bool unmapped = false;
+
+private:
+    static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
+    static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
+    static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
+    static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
+    static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
+    static void unmappedCallback(void *data, org_kde_plasma_window *window);
+    static void initialStateCallback(void *data, org_kde_plasma_window *window);
+    void setActive(bool set);
+    void setMinimized(bool set);
+    void setMaximized(bool set);
+    void setFullscreen(bool set);
+    void setKeepAbove(bool set);
+    void setKeepBelow(bool set);
+    void setOnAllDesktops(bool set);
+    void setDemandsAttention(bool set);
+    void setCloseable(bool set);
+    void setMinimizeable(bool set);
+    void setMaximizeable(bool set);
+    void setFullscreenable(bool set);
+    void setSkipTaskbar(bool skip);
+    void setShadeable(bool set);
+    void setShaded(bool set);
+    void setMovable(bool set);
+    void setResizable(bool set);
+    void setVirtualDesktopChangeable(bool set);
+
+    static Private *cast(void *data) {
+        return reinterpret_cast<Private*>(data);
+    }
+
+    PlasmaWindow *q;
+
+    static struct org_kde_plasma_window_listener s_listener;
+};
+
 PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
     : q(q)
 {
@@ -121,6 +188,7 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
         queue->addProxy(id);
     }
     PlasmaWindow *window = new PlasmaWindow(q, id, internalId);
+    window->d->wm = q;
     windows << window;
     QObject::connect(window, &QObject::destroyed, q,
         [this, window] {
@@ -155,7 +223,9 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
             }
         }
     );
-    emit q->windowCreated(window);
+    if (org_kde_plasma_window_get_version(id) < 4) {
+        emit q->windowCreated(window);
+    }
 }
 
 PlasmaWindowManagement::PlasmaWindowManagement(QObject *parent)
@@ -252,79 +322,24 @@ PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
     return new PlasmaWindowModel(this);
 }
 
-
-class PlasmaWindow::Private
-{
-public:
-    Private(org_kde_plasma_window *window, quint32 internalId, PlasmaWindow *q);
-    WaylandPointer<org_kde_plasma_window, org_kde_plasma_window_destroy> window;
-    quint32 internalId;
-    QString title;
-    QString appId;
-    quint32 desktop = 0;
-    bool active = false;
-    bool minimized = false;
-    bool maximized = false;
-    bool fullscreen = false;
-    bool keepAbove = false;
-    bool keepBelow = false;
-    bool onAllDesktops = false;
-    bool demandsAttention = false;
-    bool closeable = false;
-    bool minimizeable = false;
-    bool maximizeable = false;
-    bool fullscreenable = false;
-    bool skipTaskbar = false;
-    bool shadeable = false;
-    bool shaded = false;
-    bool movable = false;
-    bool resizable = false;
-    bool virtualDesktopChangeable = false;
-    QIcon icon;
-
-private:
-    static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
-    static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
-    static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
-    static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
-    static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
-    static void unmappedCallback(void *data, org_kde_plasma_window *window);
-    void setActive(bool set);
-    void setMinimized(bool set);
-    void setMaximized(bool set);
-    void setFullscreen(bool set);
-    void setKeepAbove(bool set);
-    void setKeepBelow(bool set);
-    void setOnAllDesktops(bool set);
-    void setDemandsAttention(bool set);
-    void setCloseable(bool set);
-    void setMinimizeable(bool set);
-    void setMaximizeable(bool set);
-    void setFullscreenable(bool set);
-    void setSkipTaskbar(bool skip);
-    void setShadeable(bool set);
-    void setShaded(bool set);
-    void setMovable(bool set);
-    void setResizable(bool set);
-    void setVirtualDesktopChangeable(bool set);
-
-    static Private *cast(void *data) {
-        return reinterpret_cast<Private*>(data);
-    }
-
-    PlasmaWindow *q;
-
-    static struct org_kde_plasma_window_listener s_listener;
-};
-
 org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     titleChangedCallback,
     appIdChangedCallback,
     stateChangedCallback,
     virtualDesktopChangedCallback,
     themedIconNameChangedCallback,
-    unmappedCallback
+    unmappedCallback,
+    initialStateCallback
 };
+
+void PlasmaWindow::Private::initialStateCallback(void *data, org_kde_plasma_window *window)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    if (!p->unmapped) {
+        emit p->wm->windowCreated(p->q);
+    }
+}
 
 void PlasmaWindow::Private::titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title)
 {
@@ -365,6 +380,7 @@ void PlasmaWindow::Private::unmappedCallback(void *data, org_kde_plasma_window *
 {
     auto p = cast(data);
     Q_UNUSED(window);
+    p->unmapped = true;
     emit p->q->unmapped();
     p->q->deleteLater();
 }
@@ -397,8 +413,13 @@ void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_pl
 {
     auto p = cast(data);
     Q_UNUSED(window);
-    QIcon icon = QIcon::fromTheme(QString::fromUtf8(name));
-    p->icon = icon;
+    const QString themedName = QString::fromUtf8(name);
+    if (!themedName.isEmpty()) {
+        QIcon icon = QIcon::fromTheme(themedName);
+        p->icon = icon;
+    } else {
+        p->icon = QIcon();
+    }
     emit p->q->iconChanged();
 }
 

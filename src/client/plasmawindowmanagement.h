@@ -439,6 +439,18 @@ public:
      **/
     quint32 internalId() const;
 
+    /**
+     * The parent window of this PlasmaWindow.
+     *
+     * If there is a parent window, this window is a transient window for the
+     * parent window. If this method returns a null PlasmaWindow it means this
+     * window is a top level window and is not a transient window.
+     *
+     * @see parentWindowChanged
+     * @since 5.24
+     **/
+    QPointer<PlasmaWindow> parentWindow() const;
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -561,6 +573,12 @@ Q_SIGNALS:
      * signal to perform cleanup.
      **/
     void unmapped();
+    /**
+     * This signal is emitted whenever the parent window changes.
+     * @see parentWindow
+     * @since 5.24
+     **/
+    void parentWindowChanged();
 
 private:
     friend class PlasmaWindowManagement;

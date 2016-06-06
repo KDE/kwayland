@@ -85,6 +85,8 @@ public:
     QIcon icon;
     PlasmaWindowManagement *wm = nullptr;
     bool unmapped = false;
+    QPointer<PlasmaWindow> parentWindow;
+    QMetaObject::Connection parentWindowUnmappedConnection;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -94,6 +96,7 @@ private:
     static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
     static void unmappedCallback(void *data, org_kde_plasma_window *window);
     static void initialStateCallback(void *data, org_kde_plasma_window *window);
+    static void parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -112,6 +115,7 @@ private:
     void setMovable(bool set);
     void setResizable(bool set);
     void setVirtualDesktopChangeable(bool set);
+    void setParentWindow(PlasmaWindow *parentWindow);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -326,8 +330,42 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     virtualDesktopChangedCallback,
     themedIconNameChangedCallback,
     unmappedCallback,
-    initialStateCallback
+    initialStateCallback,
+    parentWindowCallback
 };
+
+void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    const auto windows = p->wm->windows();
+    auto it = std::find_if(windows.begin(), windows.end(),
+        [parent] (const PlasmaWindow *w) {
+            return *w == parent;
+        }
+    );
+    p->setParentWindow(it != windows.end() ? *it : nullptr);
+}
+
+void PlasmaWindow::Private::setParentWindow(PlasmaWindow *parent)
+{
+    const auto old = parentWindow;
+    QObject::disconnect(parentWindowUnmappedConnection);
+    if (parent && !parent->d->unmapped) {
+        parentWindow = QPointer<PlasmaWindow>(parent);
+        parentWindowUnmappedConnection = QObject::connect(parent, &PlasmaWindow::unmapped, q,
+            [this] {
+                setParentWindow(nullptr);
+            }
+        );
+    } else {
+        parentWindow = QPointer<PlasmaWindow>();
+        parentWindowUnmappedConnection = QMetaObject::Connection();
+    }
+    if (parentWindow.data() != old.data()) {
+        emit q->parentWindowChanged();
+    }
+}
 
 void PlasmaWindow::Private::initialStateCallback(void *data, org_kde_plasma_window *window)
 {
@@ -816,6 +854,11 @@ void PlasmaWindow::requestToggleShaded()
 quint32 PlasmaWindow::internalId() const
 {
     return d->internalId;
+}
+
+QPointer<PlasmaWindow> PlasmaWindow::parentWindow() const
+{
+    return d->parentWindow;
 }
 
 }

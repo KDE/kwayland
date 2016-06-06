@@ -223,9 +223,6 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
             }
         }
     );
-    if (org_kde_plasma_window_get_version(id) < 4) {
-        emit q->windowCreated(window);
-    }
 }
 
 PlasmaWindowManagement::PlasmaWindowManagement(QObject *parent)

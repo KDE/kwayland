@@ -183,7 +183,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::outputDeviceRemoved
     }},
     {Registry::Interface::Shadow, {
-        1,
+        2,
         QByteArrayLiteral("org_kde_kwin_shadow_manager"),
         &org_kde_kwin_shadow_manager_interface,
         &Registry::shadowAnnounced,

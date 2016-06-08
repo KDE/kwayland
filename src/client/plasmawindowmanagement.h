@@ -41,6 +41,11 @@ class Surface;
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
  *
+ * PlasmaWindowManagement is a privileged interface. A Wayland compositor is allowed to ignore
+ * any requests. The PlasmaWindowManagement allows to get information about the overall windowing
+ * system. It allows to see which windows are currently available and thus is the base to implement
+ * e.g. a task manager.
+ *
  * This class provides a convenient wrapper for the org_kde_plasma_window_management interface.
  * It's main purpose is to create a PlasmaWindowManagementSurface.
  *
@@ -122,13 +127,48 @@ public:
     operator org_kde_plasma_window_management*();
     operator org_kde_plasma_window_management*() const;
 
+    /**
+     * Whether the system is currently showing the desktop.
+     * This means that the system focuses on the desktop and hides other windows.
+     * @see setShowingDesktop
+     * @see showDesktop
+     * @see hideDesktop
+     * @see showingDesktopChanged
+     **/
     bool isShowingDesktop() const;
+    /**
+     * Requests to change the showing desktop state to @p show.
+     * @see isShowingDesktop
+     * @see showDesktop
+     * @see hideDesktop
+     **/
     void setShowingDesktop(bool show);
+    /**
+     * Same as calling setShowingDesktop with @c true.
+     * @see setShowingDesktop
+     **/
     void showDesktop();
+    /**
+     * Same as calling setShowingDesktop with @c false.
+     * @see setShowingDesktop
+     **/
     void hideDesktop();
 
+    /**
+     * @returns All windows currently known to the PlasmaWindowManagement
+     * @see windowCreated
+     **/
     QList<PlasmaWindow*> windows() const;
+    /**
+     * @returns The currently active PlasmaWindow, the PlasmaWindow which
+     * returns @c true in @link{PlasmaWindow::isActive} or @c nullptr in case
+     * there is no active window.
+     **/
     PlasmaWindow *activeWindow() const;
+    /**
+     * Factory method to create a PlasmaWindowModel.
+     * @returns a new created PlasmaWindowModel
+     **/
     PlasmaWindowModel *createWindowModel();
 
 Q_SIGNALS:
@@ -140,9 +180,21 @@ Q_SIGNALS:
      * This signal is emitted right before the data is destroyed.
      **/
     void interfaceAboutToBeDestroyed();
+    /**
+     * The showing desktop state changed.
+     * @see isShowingDesktop
+     **/
     void showingDesktopChanged(bool);
 
+    /**
+     * A new @p window got created.
+     * @see windows
+     **/
     void windowCreated(KWayland::Client::PlasmaWindow *window);
+    /**
+     * The active window changed.
+     * @see activeWindow
+     **/
     void activeWindowChanged();
 
     /**
@@ -162,6 +214,12 @@ private:
 
 /**
  * @short Wrapper for the org_kde_plasma_window interface.
+ *
+ * A PlasmaWindow gets created by the PlasmaWindowManagement and announced through
+ * the @link{PlasmaWindowManagement::windowCreated} signal. The PlasmaWindow encapsulates
+ * state about a window managed by the Wayland server and allows to request state changes.
+ *
+ * The PlasmaWindow will be automatically deleted when the PlasmaWindow gets unmapped.
  *
  * This class is a convenient wrapper for the org_kde_plasma_window interface.
  * The PlasmaWindow gets created by PlasmaWindowManagement.
@@ -205,54 +263,145 @@ public:
     operator org_kde_plasma_window*();
     operator org_kde_plasma_window*() const;
 
+    /**
+     * @returns the window title.
+     * @see titleChanged
+     **/
     QString title() const;
+    /**
+     * @returns the application id which should reflect the name of a desktop file.
+     * @see appIdChanged
+     **/
     QString appId() const;
+    /**
+     * @returns the id of the virtual desktop this PlasmaWindow is on
+     * @see virtualDesktopChanged
+     **/
     quint32 virtualDesktop() const;
+    /**
+     * @returns Whether the window is currently the active Window.
+     * @see activeChanged
+     **/
     bool isActive() const;
+    /**
+     * @returns Whether the window is fullscreen
+     * @see fullscreenChanged
+     **/
     bool isFullscreen() const;
+    /**
+     * @returns Whether the window is kept above other windows.
+     * @see keepAboveChanged
+     **/
     bool isKeepAbove() const;
+    /**
+     * @returns Whether the window is kept below other window
+     * @see keepBelowChanged
+     **/
     bool isKeepBelow() const;
+    /**
+     * @returns Whether the window is currently minimized
+     * @see minimizedChanged
+     **/
     bool isMinimized() const;
+    /**
+     * @returns Whether the window is maximized.
+     * @see maximizedChanged
+     **/
     bool isMaximized() const;
+    /**
+     * @returns Whether the window is shown on all desktops.
+     * @see virtualDesktop
+     * @see onAllDesktopsChanged
+     **/
     bool isOnAllDesktops() const;
+    /**
+     * @returns Whether the window is demanding attention.
+     * @see demandsAttentionChanged
+     **/
     bool isDemandingAttention() const;
+    /**
+     * @returns Whether the window can be closed.
+     * @see closeableChanged
+     **/
     bool isCloseable() const;
+    /**
+     * @returns Whether the window can be maximized.
+     * @see maximizeableChanged
+     **/
     bool isMaximizeable() const;
+    /**
+     * @returns Whether the window can be minimized.
+     * @see minimizeableChanged
+     **/
     bool isMinimizeable() const;
+    /**
+     * @returns Whether the window can be set to fullscreen.
+     * @see fullscreenableChanged
+     **/
     bool isFullscreenable() const;
+    /**
+     * @returns Whether the window should be ignored by a task bar.
+     * @see skipTaskbarChanged
+     **/
     bool skipTaskbar() const;
+    /**
+     * @returns The icon of the window.
+     * @see iconChanged
+     **/
     QIcon icon() const;
     /**
+     * @returns Whether the window can be set to the shaded state.
+     * @see isShaded
+     * @see shadeableChanged
      * @since 5.22
      */
     bool isShadeable() const;
     /**
+     * @returns Whether the window is shaded, that is reduced to the window decoration
+     * @see shadedChanged
      * @since 5.22
      */
     bool isShaded() const;
     /**
+     * @returns Whether the window can be moved.
+     * @see movableChanged
      * @since 5.22
      */
     bool isMovable() const;
     /**
+     * @returns Whether the window can be resized.
+     * @see resizableChanged
      * @since 5.22
      */
     bool isResizable() const;
     /**
+     * @returns Whether the virtual desktop can be changed.
+     * @see virtualDesktopChangeableChanged
      * @since 5.22
      */
     bool isVirtualDesktopChangeable() const;
 
+    /**
+     * Requests to activate the window.
+     **/
     void requestActivate();
+    /**
+     * Requests to close the window.
+     **/
     void requestClose();
     /**
+     * Requests to start an interactive window move operation.
      * @since 5.22
      */
     void requestMove();
     /**
+     * Requests to start an interactive resize operation.
      * @since 5.22
      */
     void requestResize();
+    /**
+     * Requests to send the window to virtual @p desktop.
+     **/
     void requestVirtualDesktop(quint32 desktop);
     /**
      * Requests the window at this model row index have its minimized state toggled.
@@ -291,43 +440,126 @@ public:
     quint32 internalId() const;
 
 Q_SIGNALS:
+    /**
+     * The window title changed.
+     * @see title
+     **/
     void titleChanged();
+    /**
+     * The application id changed.
+     * @see appId
+     **/
     void appIdChanged();
+    /**
+     * The virtual desktop changed.
+     * @see virtualDesktop
+     **/
     void virtualDesktopChanged();
+    /**
+     * The window became active or inactive.
+     * @see isActive
+     **/
     void activeChanged();
+    /**
+     * The fullscreen state changed.
+     * @see isFullscreen
+     **/
     void fullscreenChanged();
+    /**
+     * The keep above state changed.
+     * @see isKeepAbove
+     **/
     void keepAboveChanged();
+    /**
+     * The keep below state changed.
+     * @see isKeepBelow
+     **/
     void keepBelowChanged();
+    /**
+     * The minimized state changed.
+     * @see isMinimized
+     **/
     void minimizedChanged();
+    /**
+     * The maximized state changed.
+     * @see isMaximized
+     **/
     void maximizedChanged();
+    /**
+     * The on all desktops state changed.
+     * @see isOnAllDesktops
+     **/
     void onAllDesktopsChanged();
+    /**
+     * The demands attention state changed.
+     * @see isDemandingAttention
+     **/
     void demandsAttentionChanged();
+    /**
+     * The closeable state changed.
+     * @see isCloseable
+     **/
     void closeableChanged();
+    /**
+     * The minimizeable state changed.
+     * @see isMinimizeable
+     **/
     void minimizeableChanged();
+    /**
+     * The maximizeable state changed.
+     * @see isMaximizeable
+     **/
     void maximizeableChanged();
+    /**
+     * The fullscreenable state changed.
+     * @see isFullscreenable
+     **/
     void fullscreenableChanged();
+    /**
+     * The skip taskbar state changed.
+     * @see skipTaskbar
+     **/
     void skipTaskbarChanged();
+    /**
+     * The window icon changed.
+     * @see icon
+     **/
     void iconChanged();
     /**
+     * The shadeable state changed.
+     * @see isShadeable
      * @since 5.22
      */
     void shadeableChanged();
     /**
+     * The shaded state changed.
+     * @see isShaded
      * @since 5.22
      */
     void shadedChanged();
     /**
+     * The movable state changed.
+     * @see isMovable
      * @since 5.22
      */
     void movableChanged();
     /**
+     * The resizable state changed.
+     * @see isResizable
      * @since 5.22
      */
     void resizableChanged();
     /**
+     * The virtual desktop changeable state changed.
+     * @see virtualDesktopChangeable
      * @since 5.22
      */
     void virtualDesktopChangeableChanged();
+    /**
+     * The window got unmapped and is no longer available to the Wayland server.
+     * This instance will be automatically deleted and one should connect to this
+     * signal to perform cleanup.
+     **/
     void unmapped();
 
 private:

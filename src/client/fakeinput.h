@@ -38,6 +38,9 @@ class Seat;
 /**
  * @short Wrapper for the org_kde_kwin_fake_input interface.
  *
+ * FakeInput allows to fake input events into the Wayland server. This is a privileged
+ * Wayland interface and the Wayland server is allowed to ignore all events.
+ *
  * This class provides a convenient wrapper for the org_kde_kwin_fake_input interface.
  *
  * To use this class one needs to interact with the Registry. There are two
@@ -114,32 +117,91 @@ public:
      **/
     EventQueue *eventQueue();
 
+    /**
+     * Authenticate with the Wayland server in order to request sending fake input events.
+     * The Wayland server might ignore all requests without a prior authentication.
+     *
+     * The Wayland server might use the provided @p applicationName and @p reason to ask
+     * the user whether this request should get authenticated.
+     *
+     * There is no way for the client to figure out whether the authentication was granted
+     * or denied. The client should assume that it wasn't granted.
+     *
+     * @param applicationName A human readable description of the application
+     * @param reason A human readable explanation why this application wants to send fake requests
+     **/
     void authenticate(const QString &applicationName, const QString &reason);
+    /**
+     * Request a relative pointer motion of @p delta pixels.
+     **/
     void requestPointerMove(const QSizeF &delta);
+    /**
+     * Convenience overload.
+     * @see requestPointerButtonPress(quint32)
+     **/
     void requestPointerButtonPress(Qt::MouseButton button);
+    /**
+     * Request a pointer button press.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     **/
     void requestPointerButtonPress(quint32 linuxButton);
+    /**
+     * Convenience overload.
+     * @see requestPointerButtonRelease(quint32)
+     **/
     void requestPointerButtonRelease(Qt::MouseButton button);
+    /**
+     * Request a pointer button release.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     **/
     void requestPointerButtonRelease(quint32 linuxButton);
+    /**
+     * Convenience overload.
+     * @see requestPointerButtonClick(quint32)
+     **/
     void requestPointerButtonClick(Qt::MouseButton button);
+    /**
+     * Requests a pointer button click, that is a press directly followed by a release.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     **/
     void requestPointerButtonClick(quint32 linuxButton);
+    /**
+     * Request a scroll of the pointer @p axis with @p delta.
+     **/
     void requestPointerAxis(Qt::Orientation axis, qreal delta);
     /**
+     * Request a touch down at @p pos in global coordinates.
+     *
+     * If this is the first touch down it starts a touch sequence.
+     * @param id The id to identify the touch point
+     * @param pos The global position of the touch point
+     * @see requestTouchMotion
+     * @see requestTouchUp
      * @since 5.23
      **/
     void requestTouchDown(quint32 id, const QPointF &pos);
     /**
+     * Request a move of the touch point identified by @p id to new global @p pos.
+     * @param id The id to identify the touch point
+     * @param pos The global position of the touch point
+     * @see requestTouchDown
      * @since 5.23
      **/
     void requestTouchMotion(quint32 id, const QPointF &pos);
     /**
+     * Requests a touch up of the touch point identified by @p id.
+     * @param id The id to identify the touch point
      * @since 5.23
      **/
     void requestTouchUp(quint32 id);
     /**
+     * Requests to cancel the current touch event sequence.
      * @since 5.23
      **/
     void requestTouchCancel();
     /**
+     * Requests a touch frame. This allows to manipulate multiple touch points in one
+     * event and notify that the set of touch events for the current frame are finished.
      * @since 5.23
      **/
     void requestTouchFrame();

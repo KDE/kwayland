@@ -39,6 +39,11 @@ class Seat;
 /**
  * @short Wrapper for the org_kde_kwin_idle interface.
  *
+ * With the help of Idle it is possible to get notified when a Seat is not being
+ * used. E.g. a chat application which wants to set the user automatically to away
+ * if the user did not interact with the Seat for 5 minutes can create an IdleTimeout
+ * to get notified when the Seat has been idle for the given amount of time.
+ *
  * This class provides a convenient wrapper for the org_kde_kwin_idle interface.
  *
  * To use this class one needs to interact with the Registry. There are two
@@ -115,6 +120,18 @@ public:
      **/
     EventQueue *eventQueue();
 
+    /**
+     * Creates a new IdleTimeout for the @p seat. If the @p seat has been idle,
+     * that is none of the connected input devices got used for @p msec, the
+     * IdleTimeout will emit the @link{IdleTimeout::idle} signal.
+     *
+     * It is not guaranteed that the signal will be emitted exactly at the given
+     * timeout. A Wayland server might for example have a minimum timeout which is
+     * larger than @p msec.
+     *
+     * @param msec The duration in milli seconds after which an idle timeout should fire
+     * @param seat The Seat on which the user acitivity should be monitored.
+     **/
     IdleTimeout *getTimeout(quint32 msecs, Seat *seat, QObject *parent = nullptr);
 
     operator org_kde_kwin_idle*();
@@ -148,6 +165,10 @@ class KWAYLANDCLIENT_EXPORT IdleTimeout : public QObject
 {
     Q_OBJECT
 public:
+    /**
+     * To create an IdleTimeout prefer using @link{Idle::getTimeout} which sets up the
+     * IdleTimeout to be fully functional.
+     **/
     explicit IdleTimeout(QObject *parent = nullptr);
     virtual ~IdleTimeout();
 
@@ -188,10 +209,25 @@ public:
     operator org_kde_kwin_idle_timeout*();
     operator org_kde_kwin_idle_timeout*() const;
 
+    /**
+     * Simulates user activity. If the IdleTimeout is in idle state this will trigger the
+     * @link{resumeFromIdle} signal. The current idle duration is reset, so the @link{idle}
+     * will only be emitted after a complete idle duration as requested for this IdleTimeout.
+     */
     void simulateUserActivity();
 
 Q_SIGNALS:
+    /**
+     * Emitted when this IdleTimeout triggered. This means the system has been idle for
+     * the duration specified when creating the IdleTimeout.
+     * @see Idle::getTimeout.
+     * @see resumeFromIdle
+     **/
     void idle();
+    /**
+     * Emitted when the system shows activity again after the idle state was reached.
+     * @see idle
+     **/
     void resumeFromIdle();
 
 private:

@@ -176,6 +176,13 @@ private:
  *
  * To create an instance use PlasmaShell::createSurface.
  *
+ * A PlasmaShellSurface is a privileged Surface which can add further hints to the
+ * Wayland server about it's position and the usage role. The Wayland server is allowed
+ * to ignore all requests.
+ *
+ * Even if a PlasmaShellSurface is created for a Surface a normal ShellSurface (or similar)
+ * needs to be created to have the Surface mapped as a window by the Wayland server.
+ *
  * @see PlasmaShell
  * @see Surface
  **/
@@ -224,26 +231,52 @@ public:
      */
     static PlasmaShellSurface *get(Surface *surf);
 
+    /**
+     * @returns @c true if managing a org_kde_plasma_surface.
+     **/
     bool isValid() const;
     operator org_kde_plasma_surface*();
     operator org_kde_plasma_surface*() const;
 
+    /**
+     * Describes possible roles this PlasmaShellSurface can have.
+     * The role can be used by the Wayland server to e.g. change the stacking order accordingly.
+     **/
     enum class Role {
-        Normal,
-        Desktop,
-        Panel,
-        OnScreenDisplay
+        Normal, ///< A normal Surface
+        Desktop, ///< The Surface represents a desktop, normally stacked below all other surfaces
+        Panel, ///< The Surface represents a panel (dock), normally stacked above normal surfaces
+        OnScreenDisplay ///< The Surface represents an on screen display, like a volume changed notification
     };
+    /**
+     * Changes the requested Role to @p role.
+     * @see role
+     **/
     void setRole(Role role);
+    /**
+     * @returns The requested Role, default value is @c Role::Normal.
+     * @see setRole
+     **/
     Role role() const;
+    /**
+     * Requests to position this PlasmaShellSurface at @p point in global coordinates.
+     **/
     void setPosition(const QPoint &point);
 
+    /**
+     * Describes how a PlasmaShellSurface with role @c Role::Panel should behave.
+     * @see Role
+     **/
     enum class PanelBehavior {
         AlwaysVisible,
         AutoHide,
         WindowsCanCover,
         WindowsGoBelow
     };
+    /**
+     * Sets the PanelBehavior for a PlasmaShellSurface with Role @c Role::Panel
+     * @see setRole
+     **/
     void setPanelBehavior(PanelBehavior behavior);
 
     /**

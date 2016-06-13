@@ -297,5 +297,6 @@ private:
 }
 
 Q_DECLARE_METATYPE(KWayland::Client::PlasmaShellSurface::Role)
+Q_DECLARE_METATYPE(KWayland::Client::PlasmaShellSurface::PanelBehavior)
 
 #endif

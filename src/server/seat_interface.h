@@ -490,6 +490,12 @@ public:
     TextInputInterface *focusedTextInput() const;
     ///@}
 
+    /**
+     * @returns The current selection.
+     * @since 5.24
+     **/
+    DataDeviceInterface *selection() const;
+
     static SeatInterface *get(wl_resource *native);
 
 Q_SIGNALS:

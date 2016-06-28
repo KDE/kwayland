@@ -37,7 +37,7 @@ class Touch::Private
 public:
     Private(Touch *q);
     void setup(wl_touch *t);
-    WaylandPointer<wl_touch, wl_touch_destroy> touch;
+    WaylandPointer<wl_touch, wl_touch_release> touch;
     bool active = false;
     QVector<TouchPoint*> sequence;
     TouchPoint *getActivePoint(qint32 id) const;

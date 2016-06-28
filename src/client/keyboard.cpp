@@ -34,7 +34,7 @@ public:
     Private(Keyboard *q);
     void setup(wl_keyboard *k);
 
-    WaylandPointer<wl_keyboard, wl_keyboard_destroy> keyboard;
+    WaylandPointer<wl_keyboard, wl_keyboard_release> keyboard;
     Surface *enteredSurface = nullptr;
 
     struct {

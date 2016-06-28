@@ -36,7 +36,7 @@ public:
     Private(Pointer *q);
     void setup(wl_pointer *p);
 
-    WaylandPointer<wl_pointer, wl_pointer_destroy> pointer;
+    WaylandPointer<wl_pointer, wl_pointer_release> pointer;
     Surface *enteredSurface = nullptr;
     quint32 enteredSerial = 0;
 private:

@@ -189,6 +189,7 @@
       <entry name="panel" value="2"/>
       <entry name="onscreendisplay" value="3"/>
       <entry name="notification" value="4"/>
+      <entry name="tooltip" value="5"/>
 <!--
       <entry name="splash" value="1"/>
       <entry name="dashboard" value="3"/>

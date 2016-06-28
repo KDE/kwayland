@@ -247,7 +247,8 @@ public:
         Desktop, ///< The Surface represents a desktop, normally stacked below all other surfaces
         Panel, ///< The Surface represents a panel (dock), normally stacked above normal surfaces
         OnScreenDisplay, ///< The Surface represents an on screen display, like a volume changed notification
-        Notification ///< The Surface represents a notification @since 5.24
+        Notification, ///< The Surface represents a notification @since 5.24
+        ToolTip ///< The Surface represents a tooltip @since 5.24
     };
     /**
      * Changes the requested Role to @p role.

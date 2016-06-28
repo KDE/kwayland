@@ -253,6 +253,9 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
     case Role::Notification:
         wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_NOTIFICATION;
         break;
+    case Role::ToolTip:
+        wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_TOOLTIP;
+        break;
     default:
         Q_UNREACHABLE();
         break;

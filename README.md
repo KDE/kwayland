@@ -2,7 +2,7 @@
 
 KWayland is a Qt-style API to interact with the wayland-client and wayland-server API.
 
-## Overview
+## Introduction
 
 KWayland provides two libraries:
 

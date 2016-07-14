@@ -446,7 +446,7 @@ public:
      * @since 5.6
      **/
     org_kde_kwin_server_decoration_manager *bindServerSideDecorationManager(uint32_t name, uint32_t version) const;
-    /*
+    /**
      * Binds the wl_text_input_manager with @p name and @p version.
      * If the @p name does not exist or is not for the text input interface in unstable version 0,
      * @c null will be returned.
@@ -456,7 +456,7 @@ public:
      * @since 5.23
      **/
     wl_text_input_manager *bindTextInputManagerUnstableV0(uint32_t name, uint32_t version) const;
-    /*
+    /**
      * Binds the zwp_text_input_manager_v2 with @p name and @p version.
      * If the @p name does not exist or is not for the text input interface in unstable version 2,
      * @c null will be returned.

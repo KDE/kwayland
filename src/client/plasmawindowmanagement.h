@@ -451,6 +451,13 @@ public:
      **/
     QPointer<PlasmaWindow> parentWindow() const;
 
+    /**
+     * @returns The window geometry in absolute coordinates.
+     * @see geometryChanged
+     * @since 5.25
+     **/
+    QRect geometry() const;
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -579,6 +586,12 @@ Q_SIGNALS:
      * @since 5.24
      **/
     void parentWindowChanged();
+    /**
+     * This signal is emitted whenever the window geometry changes.
+     * @see geometry
+     * @since 5.25
+     **/
+    void geometryChanged();
 
 private:
     friend class PlasmaWindowManagement;

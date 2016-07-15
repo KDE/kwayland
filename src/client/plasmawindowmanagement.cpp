@@ -87,6 +87,7 @@ public:
     bool unmapped = false;
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
+    QRect geometry;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -97,6 +98,7 @@ private:
     static void unmappedCallback(void *data, org_kde_plasma_window *window);
     static void initialStateCallback(void *data, org_kde_plasma_window *window);
     static void parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent);
+    static void windowGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -331,7 +333,8 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     themedIconNameChangedCallback,
     unmappedCallback,
     initialStateCallback,
-    parentWindowCallback
+    parentWindowCallback,
+    windowGeometryCallback
 };
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
@@ -345,6 +348,18 @@ void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_wind
         }
     );
     p->setParentWindow(it != windows.end() ? *it : nullptr);
+}
+
+void PlasmaWindow::Private::windowGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    QRect geo(x, y, width, height);
+    if (geo == p->geometry) {
+        return;
+    }
+    p->geometry = geo;
+    emit p->q->geometryChanged();
 }
 
 void PlasmaWindow::Private::setParentWindow(PlasmaWindow *parent)
@@ -859,6 +874,11 @@ quint32 PlasmaWindow::internalId() const
 QPointer<PlasmaWindow> PlasmaWindow::parentWindow() const
 {
     return d->parentWindow;
+}
+
+QRect PlasmaWindow::geometry() const
+{
+    return d->geometry;
 }
 
 }

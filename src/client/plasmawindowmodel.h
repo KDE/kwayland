@@ -98,7 +98,11 @@ public:
         /**
         * @since 5.22
         */
-        IsCloseable
+        IsCloseable,
+        /**
+        * @since 5.25
+        */
+        Geometry
     };
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);

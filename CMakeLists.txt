@@ -42,6 +42,11 @@ set_package_properties(EGL PROPERTIES TYPE REQUIRED)
 include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
+include(CheckIncludeFile)
+
+check_include_file("linux/input.h" HAVE_LINUX_INPUT_H)
+configure_file(config-kwayland.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kwayland.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # adjusting CMAKE_C_FLAGS to get wayland protocols to compile
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")

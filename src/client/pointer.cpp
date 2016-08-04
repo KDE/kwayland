@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland_pointer_p.h"
 // Qt
 #include <QPointF>
+#include <QPointer>
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -37,7 +38,7 @@ public:
     void setup(wl_pointer *p);
 
     WaylandPointer<wl_pointer, wl_pointer_release> pointer;
-    Surface *enteredSurface = nullptr;
+    QPointer<Surface> enteredSurface;
     quint32 enteredSerial = 0;
 private:
     void enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface);
@@ -111,7 +112,7 @@ void Pointer::Private::enterCallback(void *data, wl_pointer *pointer, uint32_t s
 
 void Pointer::Private::enter(uint32_t serial, wl_surface *surface, const QPointF &relativeToSurface)
 {
-    enteredSurface = Surface::get(surface);
+    enteredSurface = QPointer<Surface>(Surface::get(surface));
     enteredSerial = serial;
     emit q->entered(serial, relativeToSurface);
 }
@@ -120,13 +121,13 @@ void Pointer::Private::leaveCallback(void *data, wl_pointer *pointer, uint32_t s
 {
     auto p = reinterpret_cast<Pointer::Private*>(data);
     Q_ASSERT(p->pointer == pointer);
-    Q_ASSERT(*(p->enteredSurface) == surface);
+    Q_UNUSED(surface)
     p->leave(serial);
 }
 
 void Pointer::Private::leave(uint32_t serial)
 {
-    enteredSurface = nullptr;
+    enteredSurface.clear();
     emit q->left(serial);
 }
 
@@ -182,12 +183,12 @@ void Pointer::hideCursor()
 
 Surface *Pointer::enteredSurface()
 {
-    return d->enteredSurface;
+    return d->enteredSurface.data();
 }
 
 Surface *Pointer::enteredSurface() const
 {
-    return d->enteredSurface;
+    return d->enteredSurface.data();
 }
 
 bool Pointer::isValid() const

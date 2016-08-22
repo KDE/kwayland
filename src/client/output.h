@@ -198,6 +198,12 @@ public:
      **/
     EventQueue *eventQueue() const;
 
+    /**
+     * @returns The Output for the @p native wl_output. @c null if there is no Output for it.
+     * @since 5.27
+     **/
+    static Output *get(wl_output *native);
+
 Q_SIGNALS:
     /**
      * Emitted whenever at least one of the data changed.

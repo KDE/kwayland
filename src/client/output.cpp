@@ -40,6 +40,7 @@ class Output::Private
 {
 public:
     Private(Output *q);
+    ~Private();
     void setup(wl_output *o);
 
     WaylandPointer<wl_output, wl_output_destroy> output;
@@ -53,6 +54,8 @@ public:
     Transform transform = Transform::Normal;
     Modes modes;
     Modes::iterator currentMode = modes.end();
+
+    static Output *get(wl_output *o);
 
 private:
     static void geometryCallback(void *data, wl_output *output, int32_t x, int32_t y,
@@ -72,11 +75,35 @@ private:
 
     Output *q;
     static struct wl_output_listener s_outputListener;
+
+    static QVector<Private*> s_allOutputs;
 };
+
+QVector<Output::Private*> Output::Private::s_allOutputs;
 
 Output::Private::Private(Output *q)
     : q(q)
 {
+    s_allOutputs << this;
+}
+
+Output::Private::~Private()
+{
+    s_allOutputs.removeOne(this);
+}
+
+Output *Output::Private::get(wl_output *o)
+{
+    auto it = std::find_if(s_allOutputs.constBegin(), s_allOutputs.constEnd(),
+        [o] (Private *p) {
+            const wl_output *reference = p->output;
+            return reference == o;
+        }
+    );
+    if (it != s_allOutputs.constEnd()) {
+        return (*it)->q;
+    }
+    return nullptr;
 }
 
 void Output::Private::setup(wl_output *o)
@@ -356,6 +383,11 @@ Output::operator wl_output*() {
 
 Output::operator wl_output*() const {
     return d->output;
+}
+
+Output *Output::get(wl_output *o)
+{
+    return Private::get(o);
 }
 
 }

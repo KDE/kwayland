@@ -39,6 +39,7 @@ namespace KWayland
 namespace Client
 {
 
+class Output;
 class Region;
 
 /**
@@ -238,6 +239,14 @@ public:
     quint32 id() const;
 
     /**
+     * @returns All Outputs the Surface is on, may be none.
+     * @see outputEntered
+     * @see outputLeft
+     * @since 5.27
+     **/
+    QVector<Output *> outputs() const;
+
+    /**
      * All Surfaces which are currently created.
      * TODO: KF6 return QList<Surface*> instead of const-ref
      **/
@@ -257,6 +266,28 @@ Q_SIGNALS:
      **/
     void frameRendered();
     void sizeChanged(const QSize&);
+
+    /**
+     * Emitted whenever a change in the Surface (e.g. creation, movement, resize) results in
+     * a part of the Surface being within the scanout region of the Output @p o.
+     *
+     * @param o The Output the Surface intersects with
+     * @see outputLeft
+     * @see outputs
+     * @since 5.27
+     **/
+    void outputEntered(KWayland::Client::Output *o);
+
+    /**
+     * Emitted whenever a change in the Surface (e.g. creation, movement, resize, unmapping)
+     * results in the Surface no longer being within the scanout region of the Output @p o.
+     *
+     * @param o The Output the Surface no longer intersects with
+     * @see outputEntered
+     * @see outputs
+     * @since 5.27
+     **/
+    void outputLeft(KWayland::Client::Output *o);
 
 private:
     class Private;

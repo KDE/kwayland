@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "surface.h"
 #include "buffer.h"
 #include "region.h"
+#include "output.h"
 #include "wayland_pointer_p.h"
 
 #include <QGuiApplication>
@@ -46,14 +47,20 @@ public:
     QSize size;
     bool foreign = false;
     qint32 scale = 1;
+    QVector<Output *> outputs;
+
+    void setup(wl_surface *s);
 
     static QList<Surface*> s_surfaces;
 private:
     void handleFrameCallback();
     static void frameCallback(void *data, wl_callback *callback, uint32_t time);
+    static void enterCallback(void *data, wl_surface *wl_surface, wl_output *output);
+    static void leaveCallback(void *data, wl_surface *wl_surface, wl_output *output);
 
     Surface *q;
     static const wl_callback_listener s_listener;
+    static const wl_surface_listener s_surfaceListener;
 };
 
 QList<Surface*> Surface::Private::s_surfaces = QList<Surface*>();
@@ -130,9 +137,15 @@ void Surface::destroy()
 
 void Surface::setup(wl_surface *surface)
 {
-    Q_ASSERT(surface);
-    Q_ASSERT(!d->surface);
-    d->surface.setup(surface);
+    d->setup(surface);
+}
+
+void Surface::Private::setup(wl_surface *s)
+{
+    Q_ASSERT(s);
+    Q_ASSERT(!surface);
+    surface.setup(s);
+    wl_surface_add_listener(s, &s_surfaceListener, this);
 }
 
 void Surface::Private::frameCallback(void *data, wl_callback *callback, uint32_t time)
@@ -155,7 +168,36 @@ void Surface::Private::handleFrameCallback()
 const struct wl_callback_listener Surface::Private::s_listener = {
         frameCallback
 };
+
+const struct wl_surface_listener Surface::Private::s_surfaceListener = {
+        enterCallback,
+        leaveCallback
+};
 #endif
+
+void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output *output)
+{
+    Q_UNUSED(surface);
+    auto s = reinterpret_cast<Surface::Private*>(data);
+    Output *o = Output::get(output);
+    if (!o) {
+        return;
+    }
+    s->outputs << o;
+    emit s->q->outputEntered(o);
+}
+
+void Surface::Private::leaveCallback(void *data, wl_surface *surface, wl_output *output)
+{
+    Q_UNUSED(surface);
+    auto s = reinterpret_cast<Surface::Private*>(data);
+    Output *o = Output::get(output);
+    if (!o) {
+        return;
+    }
+    s->outputs.removeOne(o);
+    emit s->q->outputLeft(o);
+}
 
 void Surface::Private::setupFrameCallback()
 {
@@ -291,6 +333,11 @@ void Surface::setScale(qint32 scale)
 {
     d->scale = scale;
     wl_surface_set_buffer_scale(d->surface, scale);
+}
+
+QVector<Output *> Surface::outputs() const
+{
+    return d->outputs;
 }
 
 }

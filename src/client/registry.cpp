@@ -43,6 +43,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shm_pool.h"
 #include "subcompositor.h"
 #include "textinput_p.h"
+#include "windowmetadatamap.h"
 #include "xdgshell.h"
 #include "xdgshell_p.h"
 #include "wayland_pointer_p.h"
@@ -65,6 +66,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-server-decoration-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
+#include <wayland-windowmetadatamap-client-protocol.h>
 #include <wayland-xdg-shell-v5-client-protocol.h>
 
 /*****
@@ -548,6 +550,7 @@ BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
+BIND(WindowMetadataMap, org_kde_kwin_windowmetadatamap)
 BIND(XdgShellUnstableV5, xdg_shell)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
@@ -601,6 +604,7 @@ CREATE(ContrastManager)
 CREATE(SlideManager)
 CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
+CREATE(WindowMetadataMap)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

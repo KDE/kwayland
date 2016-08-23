@@ -49,6 +49,7 @@ struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
+struct org_kde_kwin_windowmetadatamap;
 struct xdg_shell;
 
 namespace KWayland
@@ -81,6 +82,7 @@ class SubCompositor;
 class TextInputManager;
 class TextInputManagerUnstableV0;
 class TextInputManagerUnstableV2;
+class WindowMetadataMap;
 class XdgShell;
 
 /**
@@ -141,6 +143,7 @@ public:
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
         TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2, @since 5.23
+        WindowMetadataMap, ///< Refers to org_kde_kwin_windowmetadatamap @since 5.26
         XdgShellUnstableV5 ///< Refers to xdg_shell (unstable version 5), @since 5.25
     };
     explicit Registry(QObject *parent = nullptr);
@@ -466,6 +469,14 @@ public:
      * @since 5.23
      **/
     zwp_text_input_manager_v2 *bindTextInputManagerUnstableV2(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_windowmetadatamap with @p name and @p version.
+     * If the @p name does not exist or is not for the windowmetadatamap interface,
+     * @c null will be returned.
+     *
+     * @since 5.26
+     **/
+    org_kde_kwin_windowmetadatamap *bindWindowMetadataMap(uint32_t name, uint32_t version) const;
     /**
      * Binds the xdg_shell (unstable version 5) with @p name and @p version.
      * If the @p name does not exist or is not for the xdg shell interface in unstable version 5,
@@ -814,6 +825,21 @@ public:
      * @since 5.23
      **/
     TextInputManager *createTextInputManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a WindowMetadataMap and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * If @p name is for one of the supported interfaces the corresponding shell will be created,
+     * otherwise @c null will be returned.
+     *
+     * @param name The name of the interface to bind
+     * @param version The version of the interface to use
+     * @param parent The parent for the XdgShell
+     *
+     * @returns The created WindowMetadataMap
+     * @since 5.26
+     **/
+    WindowMetadataMap *createWindowMetadataMap(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates an XdgShell and sets it up to manage the interface identified by
      * @p name and @p version.

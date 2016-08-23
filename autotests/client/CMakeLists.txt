@@ -338,6 +338,17 @@ add_test(kwayland-testSelection testSelection)
 ecm_mark_as_test(testSelection)
 
 ########################################################
+# Test WindowMetadataMap
+########################################################
+set( testwindowmetadatamap_SRCS
+      test_wayland_windowmetadatamap.cpp
+      )
+add_executable(testWindowMetadataMap ${testwindowmetadatamap_SRCS})
+target_link_libraries(testWindowMetadataMap Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
+add_test(kwayland-testWindowMetadataMap testWindowMetadataMap)
+ecm_mark_as_test(testWindowMetadataMap)
+
+########################################################
 # Test XdgShellV5
 ########################################################
 set( testXdgShellV5_SRCS

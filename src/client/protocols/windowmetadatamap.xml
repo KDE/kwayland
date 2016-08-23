@@ -27,8 +27,7 @@
 
 <interface name="org_kde_kwin_windowmetadatamap" version="1">
     <description summary="watches for connected windowmetadatamap clients">
-    This interface allows to match windowmetadatamap dbus clients to "windows".
-
+        This interface allows to match windowmetadatamap dbus clients to "windows".
     </description>
     <request name="register_client">
         <description summary="register a windowmetadatamap client">
@@ -36,6 +35,12 @@
         </description>
         <arg name="service_name" type="string"/>
         <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+
+    <request name="destroy" type="destructor">
+      <description summary="remove resource for the org_kde_plasma_window">
+        Removes the resource bound for this org_kde_plasma_window.
+      </description>
     </request>
 
 </interface>

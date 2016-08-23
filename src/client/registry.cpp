@@ -250,6 +250,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::textInputManagerUnstableV2Announced,
         &Registry::textInputManagerUnstableV2Removed
     }},
+    {Registry::Interface::WindowMetadataMap, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_windowmetadatamap"),
+        &org_kde_kwin_windowmetadatamap_interface,
+        &Registry::windowMetadataMapAnnounced,
+        &Registry::windowMetadataMapRemoved
+    }},
     {Registry::Interface::XdgShellUnstableV5, {
         1,
         QByteArrayLiteral("xdg_shell"),

@@ -1020,6 +1020,13 @@ Q_SIGNALS:
      **/
     void textInputManagerUnstableV2Announced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a org_kde_kwin_windowmetadatamap interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.25
+     **/
+    void windowMetadataMapAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a xdg_shell (unstable version 5) interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1155,6 +1162,12 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void textInputManagerUnstableV2Removed(quint32 name);
+    /**
+     * Emitted whenever an org_kde_kwin_windowmetadatamap interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.26
+     **/
+    void windowMetadataMapRemoved(quint32 name);
     /**
      * Emitted whenever an xdg_shell (unstable version 5) interface gets removed.
      * @param name The name for the removed interface

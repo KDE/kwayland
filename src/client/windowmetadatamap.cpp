@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland_pointer_p.h"
 #include "wayland-windowmetadatamap-client-protocol.h"
 
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Client
@@ -89,6 +91,9 @@ bool WindowMetadataMap::isValid() const
 
 void WindowMetadataMap::registerClient(const QString & serviceName, Surface *surface)
 {
+    qDebug() << "Registering client" << serviceName;
+    wl_surface* ss; // FIXME
+    org_kde_kwin_windowmetadatamap_register_client(d->windowmetadatamap, serviceName.toLocal8Bit(), ss);
 }
 
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol name="windowmetadata">
+<protocol name="windowmetadatamap">
   <copyright><![CDATA[
         Copyright © 2015 Sebastian Kügler <sebas@kde.org>
 
@@ -25,16 +25,17 @@
         THIS SOFTWARE.
         ]]></copyright>
 
-<interface name="org_kde_kwin_windowmetadata" version="1">
-    <description summary="watches for connected windowmetadata clients">
-    This interface allows to match windowmetadata dbus clients to "windows".
+<interface name="org_kde_kwin_windowmetadatamap" version="1">
+    <description summary="watches for connected windowmetadatamap clients">
+    This interface allows to match windowmetadatamap dbus clients to "windows".
 
     </description>
     <request name="register_client">
-        <description summary="register a windowmetadata client">
-            Register a windowmetadata client by its dbus service name.
+        <description summary="register a windowmetadatamap client">
+            Register a windowmetadata client its dbus service name to a wl_surface.
         </description>
-        <arg name="service_name" type="string" />
+        <arg name="service_name" type="string"/>
+        <arg name="surface" type="object" interface="wl_surface"/>
     </request>
 
 </interface>

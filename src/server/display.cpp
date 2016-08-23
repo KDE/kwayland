@@ -40,6 +40,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
 #include "textinput_interface_p.h"
+#include "windowmetadatamap_interface.h"
 #include "xdgshell_v5_interface_p.h"
 
 #include <QCoreApplication>
@@ -355,6 +356,13 @@ TextInputManagerInterface *Display::createTextInputManager(const TextInputInterf
     }
     connect(this, &Display::aboutToTerminate, t, [t] { delete t; });
     return t;
+}
+
+WindowMetadataMapInterface *Display::createWindowMetadataMap(QObject *parent)
+{
+    auto d = new WindowMetadataMapInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    return d;
 }
 
 XdgShellInterface *Display::createXdgShell(const XdgShellInterfaceVersion &version, QObject *parent)

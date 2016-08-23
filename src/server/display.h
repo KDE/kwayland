@@ -71,6 +71,7 @@ class ShellInterface;
 class SubCompositorInterface;
 enum class TextInputInterfaceVersion;
 class TextInputManagerInterface;
+class WindowMetadataMapInterface;
 class XdgShellV5Interface;
 enum class XdgShellInterfaceVersion;
 class XdgShellInterface;
@@ -181,6 +182,13 @@ public:
      * @since 5.23
      **/
     TextInputManagerInterface *createTextInputManager(const TextInputInterfaceVersion &version, QObject *parent = nullptr);
+
+    /**
+     * Creates the WindowMetadataMap in interface @p version.
+     *
+     * @since 5.26
+     **/
+    WindowMetadataMapInterface *createWindowMetadataMap(QObject *parent = nullptr);
 
     /**
      * Creates the XdgShell in interface @p version.

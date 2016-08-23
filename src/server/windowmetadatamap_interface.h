@@ -31,12 +31,16 @@ namespace Server
 {
 
 class Display;
+class SurfaceInterface;
 
 class KWAYLANDSERVER_EXPORT WindowMetadataMapInterface : public Global
 {
     Q_OBJECT
 public:
     virtual ~WindowMetadataMapInterface();
+
+Q_SIGNALS:
+    void clientRegistered(const QString &serviceName, SurfaceInterface *surface);
 
 private:
     explicit WindowMetadataMapInterface(Display *display, QObject *parent = nullptr);

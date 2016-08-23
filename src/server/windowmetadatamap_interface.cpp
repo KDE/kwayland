@@ -23,6 +23,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "global_p.h"
 #include "resource_p.h"
 
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Server
@@ -44,6 +46,8 @@ private:
     static void registerClientCallback(wl_client *client, wl_resource *resource, const char * service_name, wl_resource * surface);
     static void destroyCallback(wl_client *client, wl_resource *resource);
 
+    void clientRegistered(const QString &serviceName, SurfaceInterface *surface);
+
     WindowMetadataMapInterface *q;
     static const struct org_kde_kwin_windowmetadatamap_interface s_interface;
     static const quint32 s_version;
@@ -58,6 +62,11 @@ const struct org_kde_kwin_windowmetadatamap_interface WindowMetadataMapInterface
 };
 #endif
 
+WindowMetadataMapInterface::WindowMetadataMapInterface(Display *display, QObject *parent)
+: Global(new Private(this, display), parent)
+{
+}
+
 WindowMetadataMapInterface::~WindowMetadataMapInterface()
 {
 
@@ -65,7 +74,13 @@ WindowMetadataMapInterface::~WindowMetadataMapInterface()
 
 void WindowMetadataMapInterface::Private::registerClientCallback(wl_client *client, wl_resource *resource, const char * service_name, wl_resource * surface)
 {
-    // TODO: implement
+    qDebug() << "register client received!" << QString::fromLocal8Bit(service_name);
+    cast(resource)->clientRegistered(QString::fromLocal8Bit(service_name), nullptr); // FIXME.
+}
+
+void WindowMetadataMapInterface::Private::clientRegistered(const QString &serviceName, SurfaceInterface *surface)
+{
+    Q_EMIT q->clientRegistered(serviceName, nullptr); // FIXME
 }
 
 void WindowMetadataMapInterface::Private::destroyCallback(wl_client *client, wl_resource *resource)

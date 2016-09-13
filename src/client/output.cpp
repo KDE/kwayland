@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPoint>
 #include <QRect>
 #include <QSize>
+#include <QVector>
 // wayland
 #include <wayland-client-protocol.h>
 

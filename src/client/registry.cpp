@@ -37,6 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shadow.h"
 #include "blur.h"
 #include "contrast.h"
+#include "relativepointer.h"
 #include "server_decoration.h"
 #include "slide.h"
 #include "shell.h"
@@ -66,6 +67,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
 #include <wayland-xdg-shell-v5-client-protocol.h>
+#include <wayland-relativepointer-unstable-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -254,6 +256,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &xdg_shell_interface,
         &Registry::xdgShellUnstableV5Announced,
         &Registry::xdgShellUnstableV5Removed
+    }},
+    {Registry::Interface::RelativePointerManagerUnstableV1, {
+        1,
+        QByteArrayLiteral("zwp_relative_pointer_manager_v1"),
+        &zwp_relative_pointer_manager_v1_interface,
+        &Registry::relativePointerManagerUnstableV1Announced,
+        &Registry::relativePointerManagerUnstableV1Removed
     }}
 };
 
@@ -549,6 +558,7 @@ BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND(XdgShellUnstableV5, xdg_shell)
+BIND(RelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -623,6 +633,16 @@ XdgShell *Registry::createXdgShell(quint32 name, quint32 version, QObject *paren
     switch (d->interfaceForName(name)) {
     case Interface::XdgShellUnstableV5:
         return d->create<XdgShellUnstableV5>(name, version, parent, &Registry::bindXdgShellUnstableV5);
+    default:
+        return nullptr;
+    }
+}
+
+RelativePointerManager *Registry::createRelativePointerManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch (d->interfaceForName(name)) {
+    case Interface::RelativePointerManagerUnstableV1:
+        return d->create<RelativePointerManager>(name, version, parent, &Registry::bindRelativePointerManagerUnstableV1);
     default:
         return nullptr;
     }

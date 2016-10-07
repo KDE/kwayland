@@ -33,6 +33,7 @@ set(CLIENT_LIB_SRCS
     plasmawindowmodel.cpp
     region.cpp
     registry.cpp
+    relativepointer.cpp
     seat.cpp
     server_decoration.cpp
     shadow.cpp
@@ -123,6 +124,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v5.xml
     BASENAME xdg-shell-v5
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/relative-pointer-unstable-v1.xml
+    BASENAME relativepointer-unstable-v1
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -180,6 +185,7 @@ install(FILES
   plasmawindowmodel.h
   region.h
   registry.h
+  relativepointer.h
   seat.h
   server_decoration.h
   shadow.h

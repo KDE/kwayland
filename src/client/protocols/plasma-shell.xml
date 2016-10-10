@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_shell" version="3">
+  <interface name="org_kde_plasma_shell" version="4">
     <description summary="create shell windows and helpers">
       This interface is used by KF5 powered Wayland shells to communicate with
       the compositor and can only be bound one time.
@@ -130,7 +130,7 @@
     -->
   </interface>
 
-  <interface name="org_kde_plasma_surface" version="3">
+  <interface name="org_kde_plasma_surface" version="4">
     <description summary="metadata interface">
       An interface that may be implemented by a wl_surface, for
       implementations that provide the shell user interface.
@@ -335,23 +335,43 @@
       <arg name="skip" type="uint" summary="Boolean value that sets wther to skip the taskbar"/>
     </request>
 
-    <!-- Screen edge -->
-    <!-- Will replace https://community.kde.org/KWin/Screen_Edges -->
-
-<!--
-    <enum name="screen_edge">
-      <entry name="none" value="0"/>
-      <entry name="left" value="1"/>
-      <entry name="top" value="2"/>
-      <entry name="right" value="3"/>
-      <entry name="bottom" value="4"/>
+    <enum name="error" since="4">
+        <entry name="panel_not_auto_hide" value="0"
+               summary="Request panel_auto_hide performed on a surface which does not correspond to an auto-hide panel."/>
     </enum>
 
-    <request name="set_screen_edge">
-      <description summary="set screen edge activation">
-      </description>
-      <arg name="screen_edge" type="uint"/>
+    <request name="panel_auto_hide_hide" since="4">
+        <description summary="Hide the auto-hiding panel">
+            A panel surface with panel_behavior auto_hide can perform this request to hide the panel
+            on a screen edge without unmapping it. The compositor informs the client about the panel
+            being hidden with the event auto_hidden_panel_hidden.
+
+            The compositor will restore the visibility state of the
+            surface when the pointer touches the screen edge the panel borders. Once the compositor restores
+            the visibility the event auto_hidden_panel_shown will be sent. This event will also be sent
+            if the compositor is unable to hide the panel.
+
+            The client can also request to show the panel again with the request panel_auto_hide_show.
+        </description>
     </request>
--->
+
+    <request name="panel_auto_hide_show" since="4">
+        <description summary="Show the auto-hiding panel">
+            A panel surface with panel_behavior auto_hide can perform this request to show the panel
+            again which got hidden with panel_auto_hide_hide.
+        </description>
+    </request>
+
+    <event name="auto_hidden_panel_hidden" since="4">
+        <description summary="Auto-hiding panel is hidden">
+            An auto-hiding panel got hidden by the compositor.
+        </description>
+    </event>
+
+    <event name="auto_hidden_panel_shown" since="4">
+        <description summary="Auto-hiding panel is shown">
+            An auto-hiding panel got shown by the compositor.
+        </description>
+    </event>
   </interface>
 </protocol>

@@ -52,8 +52,12 @@ public:
     static PlasmaShellSurface *get(Surface *surface);
 
 private:
+    static void autoHidingPanelHiddenCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface);
+    static void autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface);
+
     PlasmaShellSurface *q;
     static QVector<Private*> s_surfaces;
+    static const org_kde_plasma_surface_listener s_listener;
 };
 
 QVector<PlasmaShellSurface::Private*> PlasmaShellSurface::Private::s_surfaces;
@@ -175,6 +179,26 @@ void PlasmaShellSurface::Private::setup(org_kde_plasma_surface *s)
     Q_ASSERT(s);
     Q_ASSERT(!surface);
     surface.setup(s);
+    org_kde_plasma_surface_add_listener(surface, &s_listener, this);
+}
+
+const org_kde_plasma_surface_listener PlasmaShellSurface::Private::s_listener = {
+    autoHidingPanelHiddenCallback,
+    autoHidingPanelShownCallback
+};
+
+void PlasmaShellSurface::Private::autoHidingPanelHiddenCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface)
+{
+    auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
+    Q_ASSERT(p->surface == org_kde_plasma_surface);
+    emit p->q->autoHidePanelHidden();
+}
+
+void PlasmaShellSurface::Private::autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface)
+{
+    auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
+    Q_ASSERT(p->surface == org_kde_plasma_surface);
+    emit p->q->autoHidePanelShown();
 }
 
 PlasmaShellSurface::PlasmaShellSurface(QObject *parent)
@@ -296,6 +320,16 @@ void PlasmaShellSurface::setPanelBehavior(PlasmaShellSurface::PanelBehavior beha
 void PlasmaShellSurface::setSkipTaskbar(bool skip)
 {
     org_kde_plasma_surface_set_skip_taskbar(d->surface, skip);
+}
+
+void PlasmaShellSurface::requestHideAutoHidingPanel()
+{
+    org_kde_plasma_surface_panel_auto_hide_hide(d->surface);
+}
+
+void PlasmaShellSurface::requestShowAutoHidingPanel()
+{
+    org_kde_plasma_surface_panel_auto_hide_show(d->surface);
 }
 
 }

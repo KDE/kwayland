@@ -289,6 +289,53 @@ public:
      */
     void setSkipTaskbar(bool skip);
 
+    /**
+     * Requests to hide a surface with Role Panel and PanelBahvior AutoHide.
+     *
+     * Once the compositor has hidden the panel the signal @link{autoHidePanelHidden} gets
+     * emitted. Once it is shown again the signal @link{autoHidePanelShown} gets emitted.
+     *
+     * To show the surface again from client side use @link{requestShowAutoHidingPanel}.
+     *
+     * @see autoHidePanelHidden
+     * @see autoHidePanelShown
+     * @see requestShowAutoHidingPanel
+     * @since 5.28
+     **/
+    void requestHideAutoHidingPanel();
+
+    /**
+     * Requests to show a surface with Role Panel and PanelBahvior AutoHide.
+     *
+     * This request allows the client to show a surface which it previously
+     * requested to be hidden with @link{requestHideAutoHidingPanel}.
+     *
+     * @see autoHidePanelHidden
+     * @see autoHidePanelShown
+     * @see requestHideAutoHidingPanel
+     * @since 5.28
+     **/
+    void requestShowAutoHidingPanel();
+
+Q_SIGNALS:
+    /**
+     * Emitted when the compositor hided an auto hiding panel.
+     * @see requestHideAutoHidingPanel
+     * @see autoHidePanelShown
+     * @see requestShowAutoHidingPanel
+     * @since 5.28
+     **/
+    void autoHidePanelHidden();
+
+    /**
+     * Emitted when the compositor showed an auto hiding panel.
+     * @see requestHideAutoHidingPanel
+     * @see autoHidePanelHidden
+     * @see requestShowAutoHidingPanel
+     * @since 5.28
+     **/
+    void autoHidePanelShown();
+
 private:
     friend class PlasmaShell;
     class Private;

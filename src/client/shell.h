@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QPoint>
 #include <QSize>
+#include <QWindow>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -266,6 +267,35 @@ public:
      * @since 5.5
      **/
     void requestResize(Seat *seat, quint32 serial, Qt::Edges edges);
+
+    /**
+     * Creates a ShellSurface for the given @p window.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr as well as for not created QWindows.
+     *
+     * The returned ShellSurface will be fully setup, but won't be released. It gets automatically
+     * destroyed together with the @p window.
+     * @since 5.28
+     **/
+    static ShellSurface *fromWindow(QWindow *window);
+
+    /**
+     * Creates a ShellSurface for the given @p winId.
+     * This is an integration feature for QtWayland. On non-wayland platforms this method returns
+     * @c nullptr as well as for not created QWindows.
+     *
+     * The returned ShellSurface will be fully setup, but won't be released. It gets automatically
+     * destroyed together with the QWindow corresponding
+     * the @p wid.
+     * @since 5.28
+     **/
+    static ShellSurface *fromQtWinId(WId wid);
+
+    /**
+     * @returns The Surface referencing the @p native wl_surface or @c null if there is no such Surface.
+     * @since 5.28
+     **/
+    static ShellSurface *get(wl_shell_surface *native);
 
     operator wl_shell_surface*();
     operator wl_shell_surface*() const;

@@ -23,6 +23,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
+// Qt
+#include <QGuiApplication>
+#include <QVector>
+#include <QWindow>
+#include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -127,6 +132,7 @@ public:
 
     WaylandPointer<wl_shell_surface, wl_shell_surface_destroy> surface;
     QSize size;
+    static QVector<ShellSurface*> s_surfaces;
 
 private:
     void ping(uint32_t serial);
@@ -137,6 +143,8 @@ private:
     ShellSurface *q;
     static const struct wl_shell_surface_listener s_listener;
 };
+
+QVector<ShellSurface*> ShellSurface::Private::s_surfaces = QVector<ShellSurface*>();
 
 ShellSurface::Private::Private(ShellSurface *q)
     : q(q)
@@ -151,14 +159,71 @@ void ShellSurface::Private::setup(wl_shell_surface *s)
     wl_shell_surface_add_listener(surface, &s_listener, this);
 }
 
+ShellSurface *ShellSurface::fromWindow(QWindow *window)
+{
+    if (!window) {
+        return nullptr;
+    }
+    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
+        return nullptr;
+    }
+    QPlatformNativeInterface *native = qApp->platformNativeInterface();
+    if (!native) {
+        return nullptr;
+    }
+    window->create();
+    wl_shell_surface *s = reinterpret_cast<wl_shell_surface*>(native->nativeResourceForWindow(QByteArrayLiteral("wl_shell_surface"), window));
+    if (!s) {
+        return nullptr;
+    }
+    if (auto surface = get(s)) {
+        return surface;
+    }
+    ShellSurface *surface = new ShellSurface(window);
+    surface->d->surface.setup(s, true);
+    return surface;
+}
+
+ShellSurface *ShellSurface::fromQtWinId(WId wid)
+{
+    QWindow *window = nullptr;
+
+    for (auto win : qApp->allWindows()) {
+        if (win->winId() == wid) {
+            window = win;
+            break;
+        }
+    }
+
+    if (!window) {
+        return nullptr;
+    }
+    return fromWindow(window);
+}
+
+ShellSurface *ShellSurface::get(wl_shell_surface *native)
+{
+    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(),
+        [native](ShellSurface *s) {
+            return s->d->surface == native;
+        }
+    );
+    if (it != Private::s_surfaces.constEnd()) {
+        return *(it);
+    }
+    return nullptr;
+}
+
 ShellSurface::ShellSurface(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
+    Private::s_surfaces << this;
 }
 
 ShellSurface::~ShellSurface()
 {
+    Private::s_surfaces.removeOne(this);
     release();
 }
 

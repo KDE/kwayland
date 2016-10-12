@@ -332,5 +332,10 @@ void PlasmaShellSurface::requestShowAutoHidingPanel()
     org_kde_plasma_surface_panel_auto_hide_show(d->surface);
 }
 
+void PlasmaShellSurface::setPanelTakesFocus(bool takesFocus)
+{
+    org_kde_plasma_surface_set_panel_takes_focus(d->surface, takesFocus);
+}
+
 }
 }

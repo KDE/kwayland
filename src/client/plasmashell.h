@@ -317,6 +317,17 @@ public:
      **/
     void requestShowAutoHidingPanel();
 
+    /**
+     * Set whether a PlasmaShellSurface with Role Panel should get focus or not.
+     *
+     * By default a Panel does not take focus. With this request the compositor
+     * can be instructed to also pass focus to a panel
+     *
+     * @param takesFocus Set to @c true if the Panel should gain focus.
+     * @since 5.28
+     **/
+    void setPanelTakesFocus(bool takesFocus);
+
 Q_SIGNALS:
     /**
      * Emitted when the compositor hided an auto hiding panel.

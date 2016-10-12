@@ -362,6 +362,17 @@
         </description>
     </request>
 
+    <request name="set_panel_takes_focus" since="4">
+      <description summary="Whether a panel takes focus">
+          By default a org_kde_plasma_surface with role panel does not take focus and cannot be
+          activated. With this request the compositor can be instructed to pass focus also to this
+          org_kde_plasma_surface.
+
+          For org_kde_plasma_surface with another role than panel the request does not have any effect.
+      </description>
+      <arg name="takes_focus" type="uint" summary="Boolean value that sets whether the panel takes focus"/>
+    </request>
+
     <event name="auto_hidden_panel_hidden" since="4">
         <description summary="Auto-hiding panel is hidden">
             An auto-hiding panel got hidden by the compositor.

@@ -143,6 +143,7 @@ target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5
 target_link_libraries(KF5WaylandClient
     PUBLIC Qt5::Gui
     PRIVATE Wayland::Client
+        Qt5::Concurrent
 )
 
 if(IS_ABSOLUTE "${KF5_INCLUDE_INSTALL_DIR}")

@@ -26,7 +26,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Wayland
 #include <wayland-plasma-window-management-client-protocol.h>
 
+#include <QtConcurrentRun>
+#include <QFutureWatcher>
 #include <QTimer>
+#include <qplatformdefs.h>
 
 namespace KWayland
 {
@@ -99,6 +102,7 @@ private:
     static void initialStateCallback(void *data, org_kde_plasma_window *window);
     static void parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent);
     static void windowGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height);
+    static void iconChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -334,7 +338,8 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     unmappedCallback,
     initialStateCallback,
     parentWindowCallback,
-    windowGeometryCallback
+    windowGeometryCallback,
+    iconChangedCallback
 };
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
@@ -471,6 +476,64 @@ void PlasmaWindow::Private::themedIconNameChangedCallback(void *data, org_kde_pl
         p->icon = QIcon();
     }
     emit p->q->iconChanged();
+}
+
+static int readData(int fd, QByteArray &data)
+{
+    // implementation based on QtWayland file qwaylanddataoffer.cpp
+    char buf[4096];
+    int retryCount = 0;
+    int n;
+    while (true) {
+        n = QT_READ(fd, buf, sizeof buf);
+        if (n == -1 && (errno == EAGAIN) && ++retryCount < 1000) {
+            usleep(1000);
+        } else {
+            break;
+        }
+    }
+    if (n > 0) {
+        data.append(buf, n);
+        n = readData(fd, data);
+    }
+    return n;
+}
+
+void PlasmaWindow::Private::iconChangedCallback(void *data, org_kde_plasma_window *window)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+    int pipeFds[2];
+    if (pipe2(pipeFds, O_CLOEXEC|O_NONBLOCK) != 0) {
+        return;
+    }
+    org_kde_plasma_window_get_icon(p->window, pipeFds[1]);
+    close(pipeFds[1]);
+    const int pipeFd = pipeFds[0];
+    auto readIcon = [pipeFd] () -> QIcon {
+        QByteArray content;
+        if (readData(pipeFd, content) != 0) {
+            close(pipeFd);
+            return QIcon::fromTheme(QStringLiteral("wayland"));
+        }
+        close(pipeFd);
+        QDataStream ds(content);
+        QIcon icon;
+        ds >> icon;
+        if (icon.isNull()) {
+            return QIcon::fromTheme(QStringLiteral("wayland"));
+        }
+        return icon;
+    };
+    QFutureWatcher<QIcon> *watcher = new QFutureWatcher<QIcon>(p->q);
+    QObject::connect(watcher, &QFutureWatcher<QIcon>::finished, p->q,
+        [p, watcher] {
+            watcher->deleteLater();
+            p->icon = watcher->result();
+            emit p->q->iconChanged();
+        }
+    );
+    watcher->setFuture(QtConcurrent::run(readIcon));
 }
 
 void PlasmaWindow::Private::setActive(bool set)

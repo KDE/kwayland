@@ -51,6 +51,7 @@ struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
 struct xdg_shell;
 struct zwp_relative_pointer_manager_v1;
+struct zwp_pointer_gestures_v1;
 
 namespace KWayland
 {
@@ -70,6 +71,7 @@ class Idle;
 class Output;
 class PlasmaShell;
 class PlasmaWindowManagement;
+class PointerGestures;
 class Seat;
 class ShadowManager;
 class BlurManager;
@@ -144,7 +146,8 @@ public:
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
         TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2, @since 5.23
         XdgShellUnstableV5, ///< Refers to xdg_shell (unstable version 5), @since 5.25
-        RelativePointerManagerUnstableV1 ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
+        RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
+        PointerGesturesUnstableV1 /// Refers to zwp_pointer_gestures_v1, @since 5.29
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -489,6 +492,16 @@ public:
      * @since 5.28
      **/
     zwp_relative_pointer_manager_v1 *bindRelativePointerManagerUnstableV1(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the zwp_pointer_gestures_v1 with @p name and @p version.
+     * If the @p name does not exist or is not for the pointer gestures interface in unstable version 1,
+     * @c null will be returned.
+     *
+     * Prefer using createPointerGestures instead.
+     * @see createPointerGestures
+     * @since 5.29
+     **/
+    zwp_pointer_gestures_v1 *bindPointerGesturesUnstableV1(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -863,6 +876,24 @@ public:
      * @since 5.28
      **/
     RelativePointerManager *createRelativePointerManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a PointerGestures and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li zwp_pointer_gestures_v1
+     *
+     * If @p name is for one of the supported interfaces the corresponding manager will be created,
+     * otherwise @c null will be returned.
+     *
+     * @param name The name of the interface to bind
+     * @param version The version of the interface to use
+     * @param parent The parent for the PointerGestures
+     *
+     * @returns The created PointerGestures
+     * @since 5.29
+     **/
+    PointerGestures *createPointerGestures(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**
@@ -1038,6 +1069,13 @@ Q_SIGNALS:
      * @since 5.28
      **/
     void relativePointerManagerUnstableV1Announced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a zwp_pointer_gestures_v1 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.29
+     **/
+    void pointerGesturesUnstableV1Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1179,6 +1217,12 @@ Q_SIGNALS:
      * @since 5.28
      **/
     void relativePointerManagerUnstableV1Removed(quint32 name);
+    /**
+     * Emitted whenever a zwp_pointer_gestures_v1 interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.29
+     **/
+    void pointerGesturesUnstableV1Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

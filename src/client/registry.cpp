@@ -33,6 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "output.h"
 #include "plasmashell.h"
 #include "plasmawindowmanagement.h"
+#include "pointergestures.h"
 #include "seat.h"
 #include "shadow.h"
 #include "blur.h"
@@ -68,6 +69,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-text-input-v2-client-protocol.h>
 #include <wayland-xdg-shell-v5-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
+#include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -263,6 +265,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zwp_relative_pointer_manager_v1_interface,
         &Registry::relativePointerManagerUnstableV1Announced,
         &Registry::relativePointerManagerUnstableV1Removed
+    }},
+    {Registry::Interface::PointerGesturesUnstableV1, {
+        1,
+        QByteArrayLiteral("zwp_pointer_gestures_v1"),
+        &zwp_pointer_gestures_v1_interface,
+        &Registry::pointerGesturesUnstableV1Announced,
+        &Registry::pointerGesturesUnstableV1Removed
     }}
 };
 
@@ -559,6 +568,7 @@ BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND(XdgShellUnstableV5, xdg_shell)
 BIND(RelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1)
+BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -643,6 +653,16 @@ RelativePointerManager *Registry::createRelativePointerManager(quint32 name, qui
     switch (d->interfaceForName(name)) {
     case Interface::RelativePointerManagerUnstableV1:
         return d->create<RelativePointerManager>(name, version, parent, &Registry::bindRelativePointerManagerUnstableV1);
+    default:
+        return nullptr;
+    }
+}
+
+PointerGestures *Registry::createPointerGestures(quint32 name, quint32 version, QObject *parent)
+{
+    switch (d->interfaceForName(name)) {
+    case Interface::PointerGesturesUnstableV1:
+        return d->create<PointerGestures>(name, version, parent, &Registry::bindPointerGesturesUnstableV1);
     default:
         return nullptr;
     }

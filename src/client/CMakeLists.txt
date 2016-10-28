@@ -146,12 +146,6 @@ target_link_libraries(KF5WaylandClient
         Qt5::Concurrent
 )
 
-if(IS_ABSOLUTE "${KF5_INCLUDE_INSTALL_DIR}")
-  target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}>" )
-else()
-  target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${KF5_INCLUDE_INSTALL_DIR}>" )
-endif()
-
 set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION_STRING}
                                                  SOVERSION ${KWAYLAND_SOVERSION}
                                                  EXPORT_NAME WaylandClient

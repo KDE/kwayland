@@ -31,6 +31,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <qplatformdefs.h>
 
+#include <errno.h>
+
 namespace KWayland
 {
 namespace Client

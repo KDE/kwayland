@@ -130,7 +130,7 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME relativepointer-unstable-v1
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWAYLAND_SOURCE_DIR}/src/client/protocols/pointer-gestures-unstable-v1.xml
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/pointer-gestures-unstable-v1.xml
     BASENAME pointer-gestures-unstable-v1
 )
 

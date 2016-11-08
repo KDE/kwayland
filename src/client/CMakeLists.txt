@@ -28,6 +28,7 @@ set(CLIENT_LIB_SRCS
     logging.cpp
     output.cpp
     pointer.cpp
+    pointerconstraints.cpp
     pointergestures.cpp
     plasmashell.cpp
     plasmawindowmanagement.cpp
@@ -132,6 +133,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/pointer-gestures-unstable-v1.xml
     BASENAME pointer-gestures-unstable-v1
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/pointer-constraints-unstable-v1.xml
+    BASENAME pointer-constraints-unstable-v1
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})

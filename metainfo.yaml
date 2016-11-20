@@ -4,6 +4,7 @@ tier: 1
 type: integration
 platforms:
     - name: Linux
+    - name: FreeBSD
 portingAid: false
 deprecated: false
 release: true

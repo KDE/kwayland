@@ -185,6 +185,7 @@ install(FILES
   outputdevice.h
   output.h
   pointer.h
+  pointerconstraints.h
   plasmashell.h
   plasmawindowmanagement.h
   plasmawindowmodel.h

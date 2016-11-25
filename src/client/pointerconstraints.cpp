@@ -253,7 +253,11 @@ void LockedPointer::setCursorPositionHint(const QPointF &surfaceLocal)
 void LockedPointer::setRegion(Region *region)
 {
     Q_ASSERT(isValid());
-    zwp_locked_pointer_v1_set_region(d->lockedpointer, *region);
+    wl_region *wr = nullptr;
+    if (region) {
+        wr = *region;
+    }
+    zwp_locked_pointer_v1_set_region(d->lockedpointer, wr);
 }
 
 class ConfinedPointer::Private
@@ -349,7 +353,11 @@ bool ConfinedPointer::isValid() const
 void ConfinedPointer::setRegion(Region *region)
 {
     Q_ASSERT(isValid());
-    zwp_confined_pointer_v1_set_region(d->confinedpointer, *region);
+    wl_region *wr = nullptr;
+    if (region) {
+        wr = *region;
+    }
+    zwp_confined_pointer_v1_set_region(d->confinedpointer, wr);
 }
 
 }

@@ -73,7 +73,7 @@ integration with existing input handlers and it also allows one to easily filter
 it is passed to the server, and is then delegated to the client. As a result, one can filter out
 things like global touch gestures or keyboard shortcuts without having to implement handlers inside
 KWayland. The SeatInterface provides a very easy to use API that forward events which can be easily
-integrated with Qt's existing input event system, there is, for example, a mapping from Qt::MouseButto
+integrated with Qt's existing input event system, there is, for example, a mapping from Qt::MouseButton
 to the Linux input code.
 
 Applications can be built on top of the KWayland Server's integrated input events with the following technologies:

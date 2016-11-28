@@ -134,7 +134,7 @@ called `fromApplication`. In addition, the API can get the Surface from a QWindo
 ### With CMake
 
 KWayland installs a CMake Config file which allows to use KWayland as imported targets. There is
-one library for Client and one for Server.
+one library for the Client and one for the Server.
 
 To find the package use for example:
 

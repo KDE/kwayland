@@ -9,7 +9,7 @@ KWayland provides two libraries:
 - KWayland::Client
 - KWayland::Server
 
-As the name suggests, KWayland implements a Client and a Server API for the Wayland protocol. 
+As the names suggest, KWayland implements a Client and a Server API for the Wayland protocol. 
 The API is Qt-style, removing the need for a Qt developerto interact with a low-level C-API, 
 were they uncomfortable with one. For example, the callback mechanism from the Wayland API is
 replaced by signals; data types are adjusted to be close to what a Qt developer would expect: 

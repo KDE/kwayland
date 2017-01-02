@@ -57,7 +57,6 @@ class Surface;
 class KWAYLANDCLIENT_EXPORT PlasmaWindowModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_ENUMS(AdditionalRoles)
 
 public:
     enum AdditionalRoles {
@@ -104,6 +103,7 @@ public:
         */
         Geometry
     };
+    Q_ENUM(AdditionalRoles)
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);
     virtual ~PlasmaWindowModel();

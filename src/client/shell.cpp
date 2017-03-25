@@ -262,9 +262,9 @@ void ShellSurface::Private::pingCallback(void *data, wl_shell_surface *shellSurf
 
 void ShellSurface::Private::popupDoneCallback(void *data, wl_shell_surface *shellSurface)
 {
-    // not needed, we don't have popups
-    Q_UNUSED(data)
-    Q_UNUSED(shellSurface)
+    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    Q_ASSERT(s->surface == shellSurface);
+    emit s->q->popupDone();
 }
 
 void ShellSurface::setup(wl_shell_surface *surface)
@@ -313,6 +313,18 @@ void ShellSurface::setTransient(Surface *parent, const QPoint &offset, Transient
         wlFlags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
     }
     wl_shell_surface_set_transient(d->surface, *parent, offset.x(), offset.y(), wlFlags);
+}
+
+void ShellSurface::setTransientPopup(Surface *parent, Seat *grabbedSeat, quint32 grabSerial, const QPoint &offset, TransientFlags flags)
+{
+    Q_ASSERT(isValid());
+    Q_ASSERT(parent);
+    Q_ASSERT(grabbedSeat);
+    uint32_t wlFlags = 0;
+    if (flags.testFlag(TransientFlag::NoFocus)) {
+        wlFlags |= WL_SHELL_SURFACE_TRANSIENT_INACTIVE;
+    }
+    wl_shell_surface_set_popup(d->surface, *grabbedSeat, grabSerial, *parent, offset.x(), offset.y(), wlFlags);
 }
 
 void ShellSurface::requestMove(Seat *seat, quint32 serial)

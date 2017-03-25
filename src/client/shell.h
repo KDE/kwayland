@@ -247,6 +247,26 @@ public:
      **/
     void setTransient(Surface *parent, const QPoint &offset = QPoint(), TransientFlags flags = TransientFlag::Default);
 
+    /**
+     * Sets this Surface as a popup transient for @p parent.
+     *
+     * A popup is a transient with an added pointer grab on the @p grabbedSeat.
+     *
+     * The popup grab can be created if the client has an implicit grab (e.g. button press)
+     * on the @p grabbedSeat. It needs to pass the @p grabSerial indicating the implicit grab
+     * to the request for setting the surface. The implicit grab is turned into a popup grab
+     * which will persist after the implicit grab ends. The popup grab ends when the ShellSurface
+     * gets destroyed or when the compositor breaks the grab through the @link{popupDone} signal.
+     *
+     * @param parent The parent Surface of this ShellSurface
+     * @param grabbedSeat The Seat on which an implicit grab exists
+     * @param grabSerial The serial of the implicit grab
+     * @param offset The offset of this Surface in the parent coordinate system
+     * @param flags The flags for the transient
+     * @since 5.33
+     **/
+    void setTransientPopup(Surface *parent, Seat *grabbedSeat, quint32 grabSerial, const QPoint &offset = QPoint(), TransientFlags flags = TransientFlag::Default);
+
     bool isValid() const;
 
     /**
@@ -307,6 +327,15 @@ Q_SIGNALS:
      **/
     void pinged();
     void sizeChanged(const QSize &);
+
+    /**
+     * The popupDone signal is sent out when a popup grab is broken, that is,
+     * when the user clicks a surface that doesn't belong to the client owning
+     * the popup surface.
+     * @see setTransientPopup
+     * @since 5.33
+     **/
+    void popupDone();
 
 private:
     class Private;

@@ -79,6 +79,7 @@ private Q_SLOTS:
     void testGeometry();
     void testTitle();
     void testAppId();
+    void testPid();
     void testVirtualDesktop();
     // TODO icon: can we ensure a theme is installed on CI?
     void testRequests();
@@ -519,6 +520,31 @@ void PlasmaWindowModelTest::testAppId()
     QCOMPARE(dataChangedSpy.last().first().toModelIndex(), index);
     QCOMPARE(dataChangedSpy.last().last().value<QVector<int>>(), QVector<int>{int(PlasmaWindowModel::AppId)});
     QCOMPARE(model->data(index, PlasmaWindowModel::AppId).toString(), QStringLiteral("org.kde.testapp"));
+}
+
+void PlasmaWindowModelTest::testPid()
+{
+    auto model = m_pw->createWindowModel();
+    QVERIFY(model);
+    QSignalSpy rowInsertedSpy(model, &PlasmaWindowModel::rowsInserted);
+    QVERIFY(rowInsertedSpy.isValid());
+    auto w = m_pwInterface->createWindow(m_pwInterface);
+    QVERIFY(w);
+    QVERIFY(rowInsertedSpy.wait());
+    m_connection->flush();
+    m_display->dispatchEvents();
+    QSignalSpy dataChangedSpy(model, &PlasmaWindowModel::dataChanged);
+    QVERIFY(dataChangedSpy.isValid());
+
+    const QModelIndex index = model->index(0);
+    QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), 0);
+
+    w->setPid(QStringLiteral("org.kde.testapp"));
+    QVERIFY(dataChangedSpy.wait());
+    QCOMPARE(dataChangedSpy.count(), 1);
+    QCOMPARE(dataChangedSpy.last().first().toModelIndex(), index);
+    QCOMPARE(dataChangedSpy.last().last().value<QVector<int>>(), QVector<int>{int(PlasmaWindowModel::Pid)});
+    QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), QStringLiteral("org.kde.testapp"));
 }
 
 void PlasmaWindowModelTest::testVirtualDesktop()

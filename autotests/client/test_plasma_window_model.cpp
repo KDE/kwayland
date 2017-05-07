@@ -539,12 +539,12 @@ void PlasmaWindowModelTest::testPid()
     const QModelIndex index = model->index(0);
     QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), 0);
 
-    w->setPid(QStringLiteral("org.kde.testapp"));
+    w->setPid(1337);
     QVERIFY(dataChangedSpy.wait());
     QCOMPARE(dataChangedSpy.count(), 1);
     QCOMPARE(dataChangedSpy.last().first().toModelIndex(), index);
     QCOMPARE(dataChangedSpy.last().last().value<QVector<int>>(), QVector<int>{int(PlasmaWindowModel::Pid)});
-    QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), QStringLiteral("org.kde.testapp"));
+    QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), 1337);
 }
 
 void PlasmaWindowModelTest::testVirtualDesktop()

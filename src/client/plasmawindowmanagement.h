@@ -385,9 +385,7 @@ public:
      * @see virtualDesktopChangeableChanged
      * @since 5.35
      */
-    int pid() const;
-
-
+    quint32 pid() const;
 
     /**
      * Requests to activate the window.

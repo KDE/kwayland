@@ -93,7 +93,7 @@ public:
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
     QRect geometry;
-    int pid = 0;
+    quint32 pid = 0;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -126,7 +126,7 @@ private:
     void setResizable(bool set);
     void setVirtualDesktopChangeable(bool set);
     void setParentWindow(PlasmaWindow *parentWindow);
-    void setPid(const int pid);
+    void setPid(const quint32 pid);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -430,7 +430,7 @@ void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window
 {
     Q_UNUSED(window)
     Private *p = cast(data);
-    if (p->pid == pid) {
+    if (p->pid == static_cast<quint32>(pid)) {
         return;
     }
     p->pid = pid;
@@ -764,7 +764,7 @@ QString PlasmaWindow::appId() const
     return d->appId;
 }
 
-int PlasmaWindow::pid() const
+quint32 PlasmaWindow::pid() const
 {
     return d->pid;
 }

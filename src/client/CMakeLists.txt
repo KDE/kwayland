@@ -50,6 +50,7 @@ set(CLIENT_LIB_SRCS
     textinput_v2.cpp
     xdgshell.cpp
     xdgshell_v5.cpp
+    xdgshell_v6.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -125,6 +126,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v5.xml
     BASENAME xdg-shell-v5
+)
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v6.xml
+    BASENAME xdg-shell-v6
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/relative-pointer-unstable-v1.xml

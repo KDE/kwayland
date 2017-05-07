@@ -35,6 +35,9 @@ public:
     virtual void setupV5(xdg_shell *xdgshellv5) {
         Q_UNUSED(xdgshellv5)
     }
+    virtual void setupV6(xdg_shell *xdgshellv6) {
+        Q_UNUSED(xdgshellv6)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -64,6 +67,30 @@ private:
     class Private;
 };
 
+class XdgShellUnstableV6 : public XdgShell
+{
+    Q_OBJECT
+public:
+    explicit XdgShellUnstableV6(QObject *parent = nullptr);
+    virtual ~XdgShellUnstableV6();
+
+private:
+    class Private;
+};
+
+class XdgShellSurfaceUnstableV6 : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgShellSurfaceUnstableV6();
+
+private:
+    explicit XdgShellSurfaceUnstableV6(QObject *parent = nullptr);
+    friend class XdgShellUnstableV6;
+    class Private;
+};
+
+
 class XdgShellSurface::Private
 {
 public:
@@ -72,6 +99,9 @@ public:
     QSize size;
 
     virtual void setupV5(xdg_surface *surface) {
+        Q_UNUSED(surface)
+    }
+    virtual void setupV6(xdg_surface *surface) {
         Q_UNUSED(surface)
     }
     virtual void release() = 0;
@@ -126,6 +156,9 @@ public:
     virtual void setupV5(xdg_popup *p) {
         Q_UNUSED(p)
     }
+    virtual void setupV6(xdg_popup *p) {
+        Q_UNUSED(p)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -152,6 +185,18 @@ private:
     friend class XdgShellUnstableV5;
     class Private;
 };
+
+class XdgShellPopupUnstableV6 : public XdgShellPopup
+{
+public:
+    virtual ~XdgShellPopupUnstableV6();
+
+private:
+    explicit XdgShellPopupUnstableV6(QObject *parent = nullptr);
+    friend class XdgShellUnstableV6;
+    class Private;
+};
+
 
 }
 }

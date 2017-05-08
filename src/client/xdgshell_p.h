@@ -35,7 +35,7 @@ public:
     virtual void setupV5(xdg_shell *xdgshellv5) {
         Q_UNUSED(xdgshellv5)
     }
-    virtual void setupV6(xdg_shell *xdgshellv6) {
+    virtual void setupV6(zxdg_shell_v6 *xdgshellv6) {
         Q_UNUSED(xdgshellv6)
     }
     virtual void release() = 0;
@@ -45,6 +45,12 @@ public:
         return nullptr;
     }
     virtual operator xdg_shell*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_shell_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_shell_v6*() const {
         return nullptr;
     }
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
@@ -101,7 +107,7 @@ public:
     virtual void setupV5(xdg_surface *surface) {
         Q_UNUSED(surface)
     }
-    virtual void setupV6(xdg_surface *surface) {
+    virtual void setupV6(zxdg_surface_v6 *surface) {
         Q_UNUSED(surface)
     }
     virtual void release() = 0;
@@ -111,6 +117,12 @@ public:
         return nullptr;
     }
     virtual operator xdg_surface*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() const {
         return nullptr;
     }
 
@@ -156,7 +168,7 @@ public:
     virtual void setupV5(xdg_popup *p) {
         Q_UNUSED(p)
     }
-    virtual void setupV6(xdg_popup *p) {
+    virtual void setupV6(zxdg_popup_v6 *p) {
         Q_UNUSED(p)
     }
     virtual void release() = 0;
@@ -166,6 +178,12 @@ public:
         return nullptr;
     }
     virtual operator xdg_popup*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_popup_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_popup_v6*() const {
         return nullptr;
     }
 

@@ -28,6 +28,11 @@ struct xdg_shell;
 struct xdg_surface;
 struct xdg_popup;
 
+struct zxdg_shell_v6;
+struct zxdg_surface_v6;
+struct zxdg_popup_v6;
+
+
 namespace KWayland
 {
 namespace Client
@@ -76,6 +81,9 @@ public:
      * method.
      **/
     void setup(xdg_shell *xdgshellv5);
+
+    void setup(zxdg_shell_v6 *xdgshellv6);
+
     /**
      * @returns @c true if managing a xdg_shell.
      **/
@@ -125,6 +133,9 @@ public:
 
     operator xdg_shell*();
     operator xdg_shell*() const;
+    operator zxdg_shell_v6*();
+    operator zxdg_shell_v6*() const;
+
 
 Q_SIGNALS:
     /**
@@ -187,6 +198,9 @@ public:
      * method.
      **/
     void setup(xdg_surface *xdgsurfacev5);
+
+    void setup(zxdg_surface_v6 *xdgsurfacev5);
+
     /**
      * @returns @c true if managing a xdg_surface.
      **/
@@ -312,6 +326,8 @@ public:
 
     operator xdg_surface*();
     operator xdg_surface*() const;
+    operator zxdg_surface_v6*();
+    operator zxdg_surface_v6*() const;
 
 Q_SIGNALS:
     /**
@@ -361,6 +377,13 @@ public:
      * method.
      **/
     void setup(xdg_popup *xdgpopupv5);
+
+    /**
+     * Setup this XdgShellPopup to manage the @p xdgpopupv6
+     * When using XdgShell::createXdgShellPopup there is no need to call this
+     * method.
+     **/
+    void setup(zxdg_popup_v6 *xdgpopup6);
     /**
      * @returns @c true if managing an xdg_popup.
      **/
@@ -399,6 +422,9 @@ public:
 
     operator xdg_popup*();
     operator xdg_popup*() const;
+    operator zxdg_popup_v6*();
+    operator zxdg_popup_v6*() const;
+
 
 Q_SIGNALS:
     /**

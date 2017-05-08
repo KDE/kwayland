@@ -50,7 +50,8 @@ enum class XdgShellInterfaceVersion
     /**
      * xdg_shell (unstable v5)
      **/
-    UnstableV5
+    UnstableV5,
+    UnstableV6
 };
 
 /**

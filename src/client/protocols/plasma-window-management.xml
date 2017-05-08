@@ -261,8 +261,8 @@
     <event name="pid_changed">
       <description summary="process id of application owning the window has changed">
         This event will be sent when the process id of the application owning the window has changed.
-
-        This event is sent when a client binds this protocol.
+        The pid will initially be 0, meaning it hasn't been set. As the compositor sets it, the client
+        gets notified.
       </description>
       <arg name="pid" type="int" summary="process id"/>
     </event>

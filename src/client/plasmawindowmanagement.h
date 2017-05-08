@@ -382,7 +382,7 @@ public:
     bool isVirtualDesktopChangeable() const;
     /**
      * @returns The process id this window belongs to.
-     * @see virtualDesktopChangeableChanged
+     * @see pidChanged
      * @since 5.35
      */
     quint32 pid() const;

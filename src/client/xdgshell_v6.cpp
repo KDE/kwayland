@@ -101,6 +101,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, Surfac
 //     }
 //     s->setup(w);
 //     return s;
+    return s;
 }
 
 XdgShellUnstableV6::XdgShellUnstableV6(QObject *parent)
@@ -262,15 +263,23 @@ public:
     WaylandPointer<zxdg_popup_v6, zxdg_popup_v6_destroy> xdgpopupv6;
 
 private:
+    static void configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height);
     static void popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup);
     static const struct zxdg_popup_v6_listener s_listener;
 };
 
 const struct zxdg_popup_v6_listener XdgShellPopupUnstableV6::Private::s_listener = {
+    configureCallback,
     popupDoneCallback
 };
 
-void XdgShellPopupUnstableV6::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
+void XdgShellPopupUnstableV6::Private::configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+    //FIXME
+}
+
+
+void XdgShellPopupUnstableV6::Private::popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup)
 {
     auto s = reinterpret_cast<XdgShellPopupUnstableV6::Private*>(data);
     Q_ASSERT(s->xdgpopupv6 == xdg_popup);
@@ -282,12 +291,12 @@ XdgShellPopupUnstableV6::Private::Private(XdgShellPopup *q)
 {
 }
 
-void XdgShellPopupUnstableV6::Private::setupV6(xdg_popup *p)
+void XdgShellPopupUnstableV6::Private::setupV6(zxdg_popup_v6 *p)
 {
     Q_ASSERT(p);
     Q_ASSERT(!xdgpopupv6);
     xdgpopupv6.setup(p);
-    xdg_popup_add_listener(xdgpopupv6, &s_listener, this);
+    zxdg_popup_v6_add_listener(xdgpopupv6, &s_listener, this);
 }
 
 void XdgShellPopupUnstableV6::Private::release()

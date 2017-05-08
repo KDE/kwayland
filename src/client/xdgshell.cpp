@@ -84,8 +84,6 @@ XdgShell::operator zxdg_shell_v6*() const {
     return *(d.data());
 }
 
-
-
 bool XdgShell::isValid() const
 {
     return d->isValid();
@@ -124,6 +122,11 @@ void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
     d->setupV5(xdgsurfacev5);
 }
 
+void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6)
+{
+    d->setupV6(xdgsurfacev6);
+}
+
 void XdgShellSurface::release()
 {
     d->release();
@@ -149,6 +152,14 @@ XdgShellSurface::operator xdg_surface*() {
 }
 
 XdgShellSurface::operator xdg_surface*() const {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() const {
     return *(d.data());
 }
 
@@ -278,6 +289,14 @@ XdgShellPopup::operator xdg_popup*() {
 }
 
 XdgShellPopup::operator xdg_popup*() const {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_popup_v6*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_popup_v6*() const {
     return *(d.data());
 }
 

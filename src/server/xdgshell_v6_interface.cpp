@@ -327,8 +327,12 @@ void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client
     Q_UNUSED(height)
 }
 
-XdgSurfaceV6Interface::Private::~Private() = default;
+XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
+    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface)
+{
+}
 
+XdgSurfaceV6Interface::Private::~Private() = default;
 
 quint32 XdgSurfaceV6Interface::Private::configure(States states, const QSize &size)
 {
@@ -403,7 +407,8 @@ XdgTopLevelV6Interface::Private::~Private() = default;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_popup_v6_interface XdgPopupV6Interface::Private::s_interface = {
-    resourceDestroyedCallback
+//     destroyCallback,
+//     grabCallback
 };
 #endif
 
@@ -422,7 +427,7 @@ void XdgPopupV6Interface::Private::popupDone()
     }
     // TODO: dismiss all child popups
     zxdg_popup_v6_send_popup_done(resource);
-    client->fparentResourcelush();
+    client->flush();
 }
 
 XdgShellV6Interface::XdgShellV6Interface(Display *display, QObject *parent)
@@ -456,7 +461,6 @@ XdgPopupV6Interface::XdgPopupV6Interface(XdgShellV6Interface *parent, SurfaceInt
     : XdgShellPopupInterface(new Private(this, parent, surface, parentResource))
 {
 }
-
 
 XdgPopupV6Interface::~XdgPopupV6Interface() = default;
 

@@ -328,7 +328,8 @@ void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client
 }
 
 XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface)
+    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface),
+    shell(c)
 {
 }
 
@@ -384,20 +385,44 @@ public:
     }
 
 private:
-//     static void destroyCallback(wl_client *client, wl_resource *resource);
-//     static void getTopLevelCallback(wl_client *client, wl_resource *resource, uint32_t id);
-//     static void getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner);
-//     static void ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial);
-//     static void setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-//     static void setMaximizedCallback(wl_client *client, wl_resource *resource);
+    //FIXME implement
+    static void destroyCallback(wl_client *client, wl_resource *resource) {}
+    static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent) {}
+    static void setTitleCallback(wl_client *client, wl_resource *resource, const char *title) {}
+    static void setAppIdCallback(wl_client *client, struct wl_resource *resource, const char *app_id) {}
+    static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y) {}
+    static void moveCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial) {}
+    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges) {}
+    static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
+    static void setMinSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
+    static void setMaximizedCallback(wl_client *client, wl_resource *resource) {}
+    static void unsetMaximizedCallback(wl_client *client, wl_resource *resource) {}
+    static void setFullscreenCallback(wl_client *client, wl_resource *resource, wl_resource *output) {}
+    static void unsetFullscreenCallback(wl_client *client, wl_resource *resource) {}
+    static void setMinimizedCallback(wl_client *client, wl_resource *resource) {}
+
     static const struct zxdg_toplevel_v6_interface s_interface;
 };
 
 const struct zxdg_toplevel_v6_interface XdgTopLevelV6Interface::Private::s_interface = {
+    destroyCallback,
+    setParentCallback,
+    setTitleCallback,
+    setAppIdCallback,
+    showWindowMenuCallback,
+    moveCallback,
+    resizeCallback,
+    setMaxSizeCallback,
+    setMinSizeCallback,
+    setMaximizedCallback,
+    unsetMaximizedCallback,
+    setFullscreenCallback,
+    unsetFullscreenCallback,
+    setMinimizedCallback
 };
 
 XdgTopLevelV6Interface::Private::Private(XdgTopLevelV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface)
+    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_toplevel_v6_interface, &s_interface)
 {
 }
 

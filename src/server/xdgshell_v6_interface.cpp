@@ -212,7 +212,6 @@ private:
     static void getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner);
     static void ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial);
     static void setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    static void setMaximizedCallback(wl_client *client, wl_resource *resource);
     static const struct zxdg_surface_v6_interface s_interface;
 };
 
@@ -326,19 +325,6 @@ void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client
     Q_UNUSED(y)
     Q_UNUSED(width)
     Q_UNUSED(height)
-}
-
-void XdgSurfaceV6Interface::Private::setMaximizedCallback(wl_client *client, wl_resource *resource)
-{
-    auto s = cast<Private>(resource);
-    Q_ASSERT(client == *s->client);
-    s->q_func()->maximizedChanged(true);
-}
-
-XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface),
-    shell(c)
-{
 }
 
 XdgSurfaceV6Interface::Private::~Private() = default;

@@ -53,6 +53,8 @@ public:
      **/
     XdgSurfaceV6Interface *getSurface(wl_resource *native);
 
+    Display *display() const;
+
 private:
     explicit XdgShellV6Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
@@ -80,8 +82,10 @@ XdgShellSurfaceInterface
 public:
     virtual ~XdgTopLevelV6Interface();
 private:
+    //not really a direct parent.//mayeb also pass XdgShurfaceV6Interface as arg
     explicit XdgTopLevelV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
     friend class XdgShellV6Interface;
+    friend class XdgSurfaceV6Interface;
 
     class Private;
 };
@@ -95,6 +99,7 @@ public:
 private:
     explicit XdgPopupV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
     friend class XdgShellV6Interface;
+    friend class XdgSurfaceV6Interface;
     friend class GenericShellSurface<XdgPopupV6Interface>;
 
     class Private;

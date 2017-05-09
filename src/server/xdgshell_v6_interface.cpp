@@ -42,8 +42,9 @@ public:
     QVector<XdgSurfaceV6Interface*> surfaces;
 
 private:
+
     void createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource);
-    void createPopup(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, SurfaceInterface *parent, SeatInterface *seat, quint32 serial, const QPoint &pos, wl_resource *parentResource);
+
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
@@ -130,6 +131,7 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
     emit q->surfaceCreated(shellSurface);
 }
 
+
 void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
     Q_UNUSED(client)
@@ -188,16 +190,23 @@ class XdgSurfaceV6Interface::Private : public XdgShellSurfaceInterface::Private
 {
 public:
     Private(XdgSurfaceV6Interface* q, XdgShellV6Interface* c, SurfaceInterface* surface, wl_resource* parentResource);
+
     ~Private();
 
-    void close() override;
+    wl_resource *parentResource;
+
+    void close() override {};
     quint32 configure(States states, const QSize &size) override;
 
     XdgSurfaceV6Interface *q_func() {
         return reinterpret_cast<XdgSurfaceV6Interface *>(q);
     }
 
+    void createTopLevel(wl_client *client, uint32_t version, uint32_t id);
+    void createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner);
 private:
+    XdgShellV6Interface *shell;
+
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void getTopLevelCallback(wl_client *client, wl_resource *resource, uint32_t id);
     static void getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner);
@@ -262,14 +271,34 @@ void XdgSurfaceV6Interface::Private::destroyCallback(wl_client *client, wl_resou
 
 void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_resource *resource, uint32_t id)
 {
-    qDebug() << "get top level - not implemented";
+    auto s = cast<XdgSurfaceV6Interface::Private>(resource);
+    s->createTopLevel(client, wl_resource_get_version(resource), id);
+}
 
+void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id)
+{
+    //FIXME check if already exists
+    XdgTopLevelV6Interface *shellSurface = new XdgTopLevelV6Interface (shell, this->surface, parentResource);
+
+    shellSurface->d->create(shell->display()->getConnection(client), version, id);
 }
 
 void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner)
 {
-    qDebug() << "get popup - not implemented";
+    auto s = cast<XdgSurfaceV6Interface::Private>(resource);
+    s->createPopup(client, wl_resource_get_version(resource), id, parent, positioner);
 }
+
+void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner)
+{
+    //FIXME positioner
+    //FIXME check if already exists
+
+    qDebug() << "creating a popup";
+    XdgPopupV6Interface *popup = new XdgPopupV6Interface(shell, this->surface, parent);
+    popup->d->create(shell->display()->getConnection(client), version, id);
+}
+
 
 void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
@@ -307,17 +336,13 @@ void XdgSurfaceV6Interface::Private::setMaximizedCallback(wl_client *client, wl_
 }
 
 XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface)
+    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_surface_v6_interface, &s_interface),
+    shell(c)
 {
 }
 
 XdgSurfaceV6Interface::Private::~Private() = default;
 
-void XdgSurfaceV6Interface::Private::close()
-{
-//     zxdg_surface_send_close(resource);
-    client->flush();
-}
 
 quint32 XdgSurfaceV6Interface::Private::configure(States states, const QSize &size)
 {
@@ -411,12 +436,17 @@ void XdgPopupV6Interface::Private::popupDone()
     }
     // TODO: dismiss all child popups
     zxdg_popup_v6_send_popup_done(resource);
-    client->flush();
+    client->fparentResourcelush();
 }
 
 XdgShellV6Interface::XdgShellV6Interface(Display *display, QObject *parent)
     : XdgShellInterface(new Private(this, display), parent)
 {
+}
+
+Display* XdgShellV6Interface::display() const
+{
+    return d->display;
 }
 
 XdgShellV6Interface::~XdgShellV6Interface() = default;

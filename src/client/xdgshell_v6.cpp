@@ -204,18 +204,44 @@ void XdgTopLevelUnstableV6::Private::setTitle(const QString & title)
 
 void XdgTopLevelUnstableV6::Private::setAppId(const QByteArray & appId)
 {
+    zxdg_toplevel_v6_set_app_id(xdgsurfacev6, appId.constData());
 }
 
 void XdgTopLevelUnstableV6::Private::showWindowMenu(Seat *seat, quint32 serial, qint32 x, qint32 y)
 {
+    zxdg_toplevel_v6_show_window_menu(xdgsurfacev6, *seat, serial, x, y);
 }
 
 void XdgTopLevelUnstableV6::Private::move(Seat *seat, quint32 serial)
 {
+    zxdg_toplevel_v6_move(xdgsurfacev6, *seat, serial);
 }
 
 void XdgTopLevelUnstableV6::Private::resize(Seat *seat, quint32 serial, Qt::Edges edges)
 {
+    uint wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_NONE;
+    if (edges.testFlag(Qt::TopEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::TopEdge)) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::TopEdge)) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_RIGHT;
+        } else if ((edges & ~Qt::TopEdge) == Qt::Edges()) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP;
+        }
+    } else if (edges.testFlag(Qt::BottomEdge)) {
+        if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::BottomEdge)) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_LEFT;
+        } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::BottomEdge)) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_RIGHT;
+        } else if ((edges & ~Qt::BottomEdge) == Qt::Edges()) {
+            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM;
+        }
+    } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::Edges())) {
+        wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_RIGHT;
+    } else if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::Edges())) {
+        wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_LEFT;
+    }
+    zxdg_toplevel_v6_resize(xdgsurfacev6, *seat, serial, wlEdge);
 }
 
 void XdgTopLevelUnstableV6::Private::ackConfigure(quint32 serial)
@@ -225,22 +251,27 @@ void XdgTopLevelUnstableV6::Private::ackConfigure(quint32 serial)
 
 void XdgTopLevelUnstableV6::Private::setMaximized()
 {
+    zxdg_toplevel_v6_set_maximized(xdgsurfacev6);
 }
 
 void XdgTopLevelUnstableV6::Private::unsetMaximized()
 {
+    zxdg_toplevel_v6_unset_maximized(xdgsurfacev6);
 }
 
 void XdgTopLevelUnstableV6::Private::setFullscreen(Output *output)
 {
+    zxdg_toplevel_v6_set_fullscreen(xdgsurfacev6, *output);
 }
 
 void XdgTopLevelUnstableV6::Private::unsetFullscreen()
 {
+    zxdg_toplevel_v6_unset_fullscreen(xdgsurfacev6);
 }
 
 void XdgTopLevelUnstableV6::Private::setMinimized()
 {
+    zxdg_toplevel_v6_set_minimized(xdgsurfacev6);
 }
 
 XdgTopLevelUnstableV6::XdgTopLevelUnstableV6(QObject *parent)

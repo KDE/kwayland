@@ -151,13 +151,11 @@ const struct zxdg_surface_v6_listener XdgShellSurfaceUnstableV6::Private::s_list
     configureCallback
 };
 
-
-
-
-
-void XdgShellSurfaceUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *, uint32_t serial)
+//FIXME,how do we handle this with the Toplevel?
+//two options.
+void XdgShellSurfaceUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *surface, uint32_t serial)
 {
-    //FIXME implement me!
+    zxdg_surface_v6_ack_configure(surface, serial);
 }
 
 XdgShellSurfaceUnstableV6::Private::Private(XdgShellSurface *q)

@@ -56,7 +56,7 @@ public:
     XdgShellInterfaceVersion interfaceVersion;
 
 protected:
-    Private(XdgShellInterfaceVersion interfaceVersion, XdgShellSurfaceInterface *q, XdgShellInterface *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
+    Private(XdgShellInterfaceVersion interfaceVersion, XdgShellSurfaceInterface *q, Global *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
 };
 
 class XdgShellPopupInterface::Private : public Resource::Private, public GenericShellSurface<XdgShellPopupInterface>

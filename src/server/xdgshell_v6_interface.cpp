@@ -128,7 +128,11 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
         }
     );
     shellSurface->d->create(display->getConnection(client), version, id);
-    emit q->surfaceCreated(shellSurface);
+
+    //DAVE - what do we want to do here?
+    //plan:
+    // we don't emit anything until we get a role.
+    //
 }
 
 
@@ -164,8 +168,11 @@ void XdgShellV6Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
+//FIXME, we want to return XdgTopLevelV6Interface's here
+//either we track in shell level (might make sense, we emit here) or we iterate over surfaces
 XdgSurfaceV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
 {
+    qDebug() << "DAVE, I am called yet need fixing";
     if (!resource) {
         return nullptr;
     }
@@ -202,7 +209,7 @@ public:
         return reinterpret_cast<XdgSurfaceV6Interface *>(q);
     }
 
-    void createTopLevel(wl_client *client, uint32_t version, uint32_t id);
+    void createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *);
     void createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner);
 private:
     XdgShellV6Interface *shell;
@@ -271,15 +278,17 @@ void XdgSurfaceV6Interface::Private::destroyCallback(wl_client *client, wl_resou
 void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_resource *resource, uint32_t id)
 {
     auto s = cast<XdgSurfaceV6Interface::Private>(resource);
-    s->createTopLevel(client, wl_resource_get_version(resource), id);
+    s->createTopLevel(client, wl_resource_get_version(resource), id, resource);
 }
 
-void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id)
+void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     //FIXME check if already exists
     XdgTopLevelV6Interface *shellSurface = new XdgTopLevelV6Interface (shell, this->surface, parentResource);
 
     shellSurface->d->create(shell->display()->getConnection(client), version, id);
+
+    shell->surfaceCreated(shellSurface);
 }
 
 void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner)
@@ -337,34 +346,6 @@ XdgSurfaceV6Interface::Private::~Private() = default;
 
 quint32 XdgSurfaceV6Interface::Private::configure(States states, const QSize &size)
 {
-    if (!resource) {
-        return 0;
-    }
-//     const quint32 serial = global->display()->nextSerial();
-//     wl_array state;
-//     wl_array_init(&state);
-//     if (states.testFlag(State::Maximized)) {
-//         uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-//         *s = XDG_SURFACE_STATE_MAXIMIZED;
-//     }
-//     if (states.testFlag(State::Fullscreen)) {
-//         uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-//         *s = XDG_SURFACE_STATE_FULLSCREEN;
-//     }
-//     if (states.testFlag(State::Resizing)) {
-//         uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-//         *s = XDG_SURFACE_STATE_RESIZING;
-//     }
-//     if (states.testFlag(State::Activated)) {
-//         uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-//         *s = XDG_SURFACE_STATE_ACTIVATED;
-//     }
-//     configureSerials << serial;
-//     xdg_surface_send_configure(resource, size.width(), size.height(), &state, serial);
-//     client->flush();
-//     wl_array_release(&state);
-//  return serial;
-
     return 0;
 }
 
@@ -375,9 +356,38 @@ public:
     ~Private();
 
     void close() override {};
+
     quint32 configure(States states, const QSize &size) override {
-        qDebug() << "nope";
-        return 0;
+        if (!resource) {
+            return 0;
+        }
+        const quint32 serial = global->display()->nextSerial();
+        wl_array state;
+        wl_array_init(&state);
+        if (states.testFlag(State::Maximized)) {
+            uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+            *s = ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED;
+        }
+        if (states.testFlag(State::Fullscreen)) {
+            uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+            *s = ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN;
+        }
+        if (states.testFlag(State::Resizing)) {
+            uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+            *s = ZXDG_TOPLEVEL_V6_STATE_RESIZING;
+        }
+        if (states.testFlag(State::Activated)) {
+            uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
+            *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+        }
+        configureSerials << serial;
+        zxdg_toplevel_v6_send_configure(resource, size.width(), size.height(), &state);
+
+        zxdg_surface_v6_send_configure(parentResource, serial);
+
+        client->flush();
+        wl_array_release(&state);
+        return serial;
     };
 
     XdgTopLevelV6Interface *q_func() {
@@ -427,8 +437,6 @@ XdgTopLevelV6Interface::Private::Private(XdgTopLevelV6Interface *q, XdgShellV6In
 }
 
 XdgTopLevelV6Interface::Private::~Private() = default;
-
-
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_popup_v6_interface XdgPopupV6Interface::Private::s_interface = {

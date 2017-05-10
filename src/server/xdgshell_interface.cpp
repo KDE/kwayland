@@ -55,7 +55,7 @@ XdgShellInterface::Private *XdgShellInterface::d_func() const
     return reinterpret_cast<Private*>(d.data());
 }
 
-XdgShellSurfaceInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, XdgShellSurfaceInterface *q, XdgShellInterface *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
+XdgShellSurfaceInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, XdgShellSurfaceInterface *q, Global *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
     : Resource::Private(q, c, parentResource, interface, implementation)
     , GenericShellSurface<XdgShellSurfaceInterface>(q, surface)
     , interfaceVersion(interfaceVersion)

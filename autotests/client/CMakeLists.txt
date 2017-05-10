@@ -349,6 +349,17 @@ add_test(kwayland-testXdgShellV5 testXdgShellV5)
 ecm_mark_as_test(testXdgShellV5)
 
 ########################################################
+# Test XdgShellV6
+########################################################
+set( testXdgShellV6_SRCS
+      test_xdg_shell_v6.cpp
+      )
+add_executable(testXdgShellV6 ${testXdgShellV6_SRCS})
+target_link_libraries( testXdgShellV6 Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
+add_test(kwayland-testXdgShellV6 testXdgShellV6)
+ecm_mark_as_test(testXdgShellV6)
+
+########################################################
 # Test Pointer Constraints
 ########################################################
 add_executable(testPointerConstraints test_pointer_constraints.cpp)

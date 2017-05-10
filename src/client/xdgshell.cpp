@@ -122,7 +122,7 @@ void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
     d->setupV5(xdgsurfacev5);
 }
 
-void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6)
+void XdgShellSurface::setup(zxdg_toplevel_v6 *xdgsurfacev6)
 {
     d->setupV6(xdgsurfacev6);
 }
@@ -155,11 +155,11 @@ XdgShellSurface::operator xdg_surface*() const {
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_surface_v6*() {
+XdgShellSurface::operator zxdg_toplevel_v6*() {
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_surface_v6*() const {
+XdgShellSurface::operator zxdg_toplevel_v6*() const {
     return *(d.data());
 }
 

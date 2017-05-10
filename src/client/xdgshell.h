@@ -29,9 +29,10 @@ struct xdg_surface;
 struct xdg_popup;
 
 struct zxdg_shell_v6;
+struct zxdg_toplevel_v6;
 struct zxdg_surface_v6;
 struct zxdg_popup_v6;
-
+struct zxdg_position_v6;
 
 namespace KWayland
 {
@@ -199,7 +200,7 @@ public:
      **/
     void setup(xdg_surface *xdgsurfacev5);
 
-    void setup(zxdg_surface_v6 *xdgsurfacev5);
+    void setup(zxdg_toplevel_v6 *xdgsurfacev6);
 
     /**
      * @returns @c true if managing a xdg_surface.
@@ -326,8 +327,8 @@ public:
 
     operator xdg_surface*();
     operator xdg_surface*() const;
-    operator zxdg_surface_v6*();
-    operator zxdg_surface_v6*() const;
+    operator zxdg_toplevel_v6*();
+    operator zxdg_toplevel_v6*() const;
 
 Q_SIGNALS:
     /**

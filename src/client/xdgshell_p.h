@@ -84,18 +84,29 @@ private:
     class Private;
 };
 
-class XdgShellSurfaceUnstableV6 : public XdgShellSurface
+class XdgShellSurfaceUnstableV5 : public XdgShellSurface
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellSurfaceUnstableV6();
+    virtual ~XdgShellSurfaceUnstableV5();
 
 private:
-    explicit XdgShellSurfaceUnstableV6(QObject *parent = nullptr);
-    friend class XdgShellUnstableV6;
+    explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
+    friend class XdgShellUnstableV5;
     class Private;
 };
 
+class XdgTopLevelUnstableV6 : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgTopLevelUnstableV6();
+
+private:
+    explicit XdgTopLevelUnstableV6(QObject *parent = nullptr);
+    friend class XdgShellUnstableV6;
+    class Private;
+};
 
 class XdgShellSurface::Private
 {
@@ -107,7 +118,7 @@ public:
     virtual void setupV5(xdg_surface *surface) {
         Q_UNUSED(surface)
     }
-    virtual void setupV6(zxdg_surface_v6 *surface) {
+    virtual void setupV6(zxdg_toplevel_v6 *surface) {
         Q_UNUSED(surface)
     }
     virtual void release() = 0;
@@ -119,10 +130,10 @@ public:
     virtual operator xdg_surface*() const {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() {
+    virtual operator zxdg_toplevel_v6*() {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() const {
+    virtual operator zxdg_toplevel_v6*() const {
         return nullptr;
     }
 
@@ -143,18 +154,6 @@ protected:
     Private(XdgShellSurface *q);
 
     XdgShellSurface *q;
-};
-
-class XdgShellSurfaceUnstableV5 : public XdgShellSurface
-{
-    Q_OBJECT
-public:
-    virtual ~XdgShellSurfaceUnstableV5();
-
-private:
-    explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
-    friend class XdgShellUnstableV5;
-    class Private;
 };
 
 class XdgShellPopup::Private

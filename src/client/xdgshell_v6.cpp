@@ -75,13 +75,21 @@ bool XdgShellUnstableV6::Private::isValid() const
 
 XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QObject *parent)
 {
+    //To match API, the XdgShellSurface configusingly wraps the top level, not the surface
+
     Q_ASSERT(isValid());
-    XdgShellSurface *s = new XdgShellSurfaceUnstableV6(parent);
-    auto w = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
-    if (queue) {
-        queue->addProxy(w);
+    auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
+
+    if (!ss) {
+        return nullptr;
     }
-    s->setup(w);
+
+    auto s = new XdgTopLevelUnstableV6(parent);
+    auto toplevel = zxdg_surface_v6_get_toplevel(ss);
+    if (queue) {
+        queue->addProxy(toplevel);
+    }
+    s->setup(toplevel);
     return s;
 }
 
@@ -111,20 +119,20 @@ XdgShellUnstableV6::XdgShellUnstableV6(QObject *parent)
 
 XdgShellUnstableV6::~XdgShellUnstableV6() = default;
 
-class XdgShellSurfaceUnstableV6::Private : public XdgShellSurface::Private
+class XdgTopLevelUnstableV6::Private : public XdgShellSurface::Private
 {
 public:
     Private(XdgShellSurface *q);
-    WaylandPointer<zxdg_surface_v6, zxdg_surface_v6_destroy> xdgsurfacev6;
+    WaylandPointer<zxdg_toplevel_v6, zxdg_toplevel_v6_destroy> xdgsurfacev6;
 
-    void setupV6(zxdg_surface_v6 *surface) override;
+    void setupV6(zxdg_toplevel_v6 *surface) override;
     void release() override;
     void destroy() override;
     bool isValid() const override;
-    operator zxdg_surface_v6*() override {
+    operator zxdg_toplevel_v6*() override {
         return xdgsurfacev6;
     }
-    operator zxdg_surface_v6*() const override {
+    operator zxdg_toplevel_v6*() const override {
         return xdgsurfacev6;
     }
 
@@ -142,106 +150,104 @@ public:
     void setMinimized() override;
 
 private:
-    static void configureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
+//     static void configureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
 
-    static const struct zxdg_surface_v6_listener s_listener;
+// //     static const struct zxdg_surface_v6_listener s_surfaceListener;
 };
 
-const struct zxdg_surface_v6_listener XdgShellSurfaceUnstableV6::Private::s_listener = {
-    configureCallback
-};
+// const struct zxdg_surface_v6_listener XdgTopLevelUnstableV6::Private::s_listener = {
+//     configureCallback
+// };
 
-//FIXME,how do we handle this with the Toplevel?
-//two options.
-void XdgShellSurfaceUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *surface, uint32_t serial)
-{
-    zxdg_surface_v6_ack_configure(surface, serial);
-}
+// void XdgTopLevelUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *surface, uint32_t serial)
+// {
+//     zxdg_surface_v6_ack_configure(surface, serial);
+// }
 
-XdgShellSurfaceUnstableV6::Private::Private(XdgShellSurface *q)
+XdgTopLevelUnstableV6::Private::Private(XdgShellSurface *q)
     : XdgShellSurface::Private(q)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::setupV6(zxdg_surface_v6 *surface)
+void XdgTopLevelUnstableV6::Private::setupV6(zxdg_toplevel_v6 *surface)
 {
     Q_ASSERT(surface);
     Q_ASSERT(!xdgsurfacev6);
     xdgsurfacev6.setup(surface);
-    zxdg_surface_v6_add_listener(xdgsurfacev6, &s_listener, this);
+//     zxdg_surface_v6_add_listener(xdgsurfacev6, &s_listener, this);
 }
 
-void XdgShellSurfaceUnstableV6::Private::release()
+void XdgTopLevelUnstableV6::Private::release()
 {
     xdgsurfacev6.release();
 }
 
-void XdgShellSurfaceUnstableV6::Private::destroy()
+void XdgTopLevelUnstableV6::Private::destroy()
 {
     xdgsurfacev6.destroy();
 }
 
-bool XdgShellSurfaceUnstableV6::Private::isValid() const
+bool XdgTopLevelUnstableV6::Private::isValid() const
 {
     return xdgsurfacev6.isValid();
 }
 
 
-void XdgShellSurfaceUnstableV6::Private::setTransientFor(XdgShellSurface *parent)
+void XdgTopLevelUnstableV6::Private::setTransientFor(XdgShellSurface *parent)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::setTitle(const QString & title)
+void XdgTopLevelUnstableV6::Private::setTitle(const QString & title)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::setAppId(const QByteArray & appId)
+void XdgTopLevelUnstableV6::Private::setAppId(const QByteArray & appId)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::showWindowMenu(Seat *seat, quint32 serial, qint32 x, qint32 y)
+void XdgTopLevelUnstableV6::Private::showWindowMenu(Seat *seat, quint32 serial, qint32 x, qint32 y)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::move(Seat *seat, quint32 serial)
+void XdgTopLevelUnstableV6::Private::move(Seat *seat, quint32 serial)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::resize(Seat *seat, quint32 serial, Qt::Edges edges)
+void XdgTopLevelUnstableV6::Private::resize(Seat *seat, quint32 serial, Qt::Edges edges)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::ackConfigure(quint32 serial)
+void XdgTopLevelUnstableV6::Private::ackConfigure(quint32 serial)
 {
-    zxdg_surface_v6_ack_configure(xdgsurfacev6, serial);
+//     zxdg_surface_v6_ack_configure(xdgsurfacev6, serial);
 }
 
-void XdgShellSurfaceUnstableV6::Private::setMaximized()
-{
-}
-
-void XdgShellSurfaceUnstableV6::Private::unsetMaximized()
+void XdgTopLevelUnstableV6::Private::setMaximized()
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::setFullscreen(Output *output)
+void XdgTopLevelUnstableV6::Private::unsetMaximized()
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::unsetFullscreen()
+void XdgTopLevelUnstableV6::Private::setFullscreen(Output *output)
 {
 }
 
-void XdgShellSurfaceUnstableV6::Private::setMinimized()
+void XdgTopLevelUnstableV6::Private::unsetFullscreen()
 {
 }
 
-XdgShellSurfaceUnstableV6::XdgShellSurfaceUnstableV6(QObject *parent)
+void XdgTopLevelUnstableV6::Private::setMinimized()
+{
+}
+
+XdgTopLevelUnstableV6::XdgTopLevelUnstableV6(QObject *parent)
     : XdgShellSurface(new Private(this), parent)
 {
 }
 
-XdgShellSurfaceUnstableV6::~XdgShellSurfaceUnstableV6() = default;
+XdgTopLevelUnstableV6::~XdgTopLevelUnstableV6() = default;
 
 class XdgShellPopupUnstableV6::Private : public XdgShellPopup::Private
 {

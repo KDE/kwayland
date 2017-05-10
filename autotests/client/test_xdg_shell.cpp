@@ -45,6 +45,9 @@ Q_DECLARE_METATYPE(Qt::MouseButton)
 class XdgShellTest : public QObject
 {
     Q_OBJECT
+
+protected:
+    XdgShellTest(XdgShellInterfaceVersion version);
 private Q_SLOTS:
     void init();
     void cleanup();
@@ -82,7 +85,14 @@ private:
     Output *m_output1 = nullptr;
     Output *m_output2 = nullptr;
     Seat *m_seat = nullptr;
+
+    XdgShellInterfaceVersion m_version;
 };
+
+
+XdgShellTest::XdgShellTest(XdgShellInterfaceVersion version):
+    m_version(version)
+{}
 
 static const QString s_socketName = QStringLiteral("kwayland-test-xdg_shell-0");
 
@@ -107,8 +117,8 @@ void XdgShellTest::init()
     m_seatInterface->create();
     m_compositorInterface = m_display->createCompositor(m_display);
     m_compositorInterface->create();
-    m_xdgShellInterface = m_display->createXdgShell(XdgShellInterfaceVersion::UnstableV5, m_display);
-    QCOMPARE(m_xdgShellInterface->interfaceVersion(), XdgShellInterfaceVersion::UnstableV5);
+    m_xdgShellInterface = m_display->createXdgShell(m_version, m_display);
+    QCOMPARE(m_xdgShellInterface->interfaceVersion(), m_version);
     m_xdgShellInterface->create();
 
     // setup connection
@@ -645,5 +655,4 @@ void XdgShellTest::testPopup()
     // TODO: test that this sends also the done to all parents
 }
 
-QTEST_GUILESS_MAIN(XdgShellTest)
 #include "test_xdg_shell.moc"

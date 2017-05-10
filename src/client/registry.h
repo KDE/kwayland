@@ -50,6 +50,7 @@ struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
 struct xdg_shell;
+struct zxdg_shell_v6;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
@@ -495,7 +496,7 @@ public:
      * @see createXdgShell
      * @since 5.25
      **/
-    xdg_shell *bindXdgShellUnstableV6(uint32_t name, uint32_t version) const;
+    zxdg_shell_v6 *bindXdgShellUnstableV6(uint32_t name, uint32_t version) const;
     /**
      * Binds the zwp_relative_pointer_manager_v1 with @p name and @p version.
      * If the @p name does not exist or is not for the relative pointer interface in unstable version 1,

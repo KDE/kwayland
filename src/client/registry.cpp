@@ -584,6 +584,7 @@ BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND(XdgShellUnstableV5, xdg_shell)
+BIND(XdgShellUnstableV6, zxdg_shell_v6)
 BIND(RelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1)
 BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
@@ -592,7 +593,6 @@ BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
-BIND(XdgShellUnstableV6, zxdg_shell_v6)
 
 #undef BIND
 #undef BIND2

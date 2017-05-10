@@ -199,6 +199,7 @@ void XdgTopLevelUnstableV6::Private::setTransientFor(XdgShellSurface *parent)
 
 void XdgTopLevelUnstableV6::Private::setTitle(const QString & title)
 {
+    zxdg_toplevel_v6_set_title(xdgsurfacev6, title.toUtf8().constData());
 }
 
 void XdgTopLevelUnstableV6::Private::setAppId(const QByteArray & appId)

@@ -48,6 +48,12 @@ void XdgShell::setup(xdg_shell *xdgshellv5)
     d->setupV5(xdgshellv5);
 }
 
+void XdgShell::setup(zxdg_shell_v6 *xdgshellv6)
+{
+    d->setupV6(xdgshellv6);
+}
+
+
 void XdgShell::release()
 {
     d->release();

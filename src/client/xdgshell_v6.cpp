@@ -261,7 +261,11 @@ void XdgTopLevelUnstableV6::Private::unsetMaximized()
 
 void XdgTopLevelUnstableV6::Private::setFullscreen(Output *output)
 {
-    zxdg_toplevel_v6_set_fullscreen(xdgsurfacev6, *output);
+    wl_output *o = nullptr;
+    if (output) {
+        o = *output;
+    }
+    zxdg_toplevel_v6_set_fullscreen(xdgsurfacev6, o);
 }
 
 void XdgTopLevelUnstableV6::Private::unsetFullscreen()

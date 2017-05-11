@@ -221,6 +221,7 @@ void PlasmaWindowModelTest::testRoleNames_data()
     QTest::newRow("decoration") << int(Qt::DecorationRole) << QByteArrayLiteral("DecorationRole");
 
     QTest::newRow("AppId")                << int(PlasmaWindowModel::AppId) << QByteArrayLiteral("AppId");
+    QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QByteArrayLiteral("Pid");
     QTest::newRow("IsActive")             << int(PlasmaWindowModel::IsActive) << QByteArrayLiteral("IsActive");
     QTest::newRow("IsFullscreenable")     << int(PlasmaWindowModel::IsFullscreenable) << QByteArrayLiteral("IsFullscreenable");
     QTest::newRow("IsFullscreen")         << int(PlasmaWindowModel::IsFullscreen) << QByteArrayLiteral("IsFullscreen");

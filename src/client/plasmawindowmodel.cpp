@@ -81,9 +81,6 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
         [window, this] { this->dataChanged(window, PlasmaWindowModel::AppId); }
     );
 
-    QObject::connect(window, &PlasmaWindow::pidChanged, q,
-        [window, this] { this->dataChanged(window, PlasmaWindowModel::Pid); }
-    );
 
     QObject::connect(window, &PlasmaWindow::activeChanged, q,
         [window, this] { this->dataChanged(window, IsActive); }

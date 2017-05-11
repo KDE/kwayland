@@ -277,7 +277,10 @@ const struct zxdg_surface_v6_interface XdgSurfaceV6Interface::Private::s_interfa
 #endif
 
 void XdgSurfaceV6Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
-{}
+{
+    Q_UNUSED(client)
+    wl_resource_destroy(resource);
+}
 
 void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_resource *resource, uint32_t id)
 {

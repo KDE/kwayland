@@ -232,6 +232,11 @@ void XdgShellSurface::setMaxSize(const QSize &size)
     d->setMaxSize(size);
 }
 
+void XdgShellSurface::setMinSize(const QSize &size)
+{
+    d->setMinSize(size);
+}
+
 void XdgShellSurface::requestMinimize()
 {
     d->setMinimized();

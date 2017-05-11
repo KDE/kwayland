@@ -243,7 +243,17 @@ Q_SIGNALS:
      **/
     void transientForChanged();
 
+    /**
+     * Emitted whenever the maximun size hint changes
+     * @since 5.35
+     */
     void maxSizeChanged(const QSize &size);
+
+    /**
+     * Emitted whenever the minimum size hint changes
+     * @since 5.35
+     */
+    void minSizeChanged(const QSize &size);
 
 protected:
     class Private;

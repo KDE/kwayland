@@ -150,6 +150,7 @@ public:
     virtual void unsetFullscreen() = 0;
     virtual void setMinimized() = 0;
     virtual void setMaxSize(const QSize &size) = 0;
+    virtual void setMinSize(const QSize &size) = 0;
 
 protected:
     Private(XdgShellSurface *q);

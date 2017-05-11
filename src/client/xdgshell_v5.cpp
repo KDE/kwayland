@@ -133,6 +133,7 @@ public:
     void unsetFullscreen() override;
     void setMinimized() override;
     void setMaxSize(const QSize &size) override;
+    void setMinSize(const QSize &size) override;
 
 private:
     static void configureCallback(void *data, xdg_surface *xdg_surface, int32_t width, int32_t height, wl_array *states, uint32_t serial);
@@ -303,6 +304,11 @@ void XdgShellSurfaceUnstableV5::Private::setMinimized()
 }
 
 void XdgShellSurfaceUnstableV5::Private::setMaxSize(const QSize &size)
+{
+    //TODO: notify an error?
+}
+
+void XdgShellSurfaceUnstableV5::Private::setMinSize(const QSize &size)
 {
     //TODO: notify an error?
 }

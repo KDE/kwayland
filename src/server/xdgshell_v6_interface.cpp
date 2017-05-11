@@ -401,7 +401,6 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent) {}
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y);
-    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges) {}
     static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height);
     static void setMinSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
     static void setMaximizedCallback(wl_client *client, wl_resource *resource);

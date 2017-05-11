@@ -352,7 +352,7 @@ public:
     Private(XdgTopLevelV6Interface* q, XdgShellV6Interface* c, SurfaceInterface* surface, wl_resource* parentResource);
     ~Private();
 
-    void close() override {};
+    void close() override;
 
     quint32 configure(States states, const QSize &size) override {
         if (!resource) {
@@ -406,6 +406,12 @@ private:
 
     static const struct zxdg_toplevel_v6_interface s_interface;
 };
+
+void XdgTopLevelV6Interface::Private::close()
+{
+    zxdg_toplevel_v6_send_close(resource);
+    client->flush();
+}
 
 void XdgTopLevelV6Interface::Private::setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height)
 {

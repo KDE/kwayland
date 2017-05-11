@@ -152,19 +152,34 @@ public:
     void setMinSize(const QSize &size) override;
 
 private:
-//     static void configureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
+    static void configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state);
+    static void closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel);
+    //static void configureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
 
-// //     static const struct zxdg_surface_v6_listener s_surfaceListener;
+     static const struct zxdg_toplevel_v6_listener s_toplevelListener;
 };
 
-// const struct zxdg_surface_v6_listener XdgTopLevelUnstableV6::Private::s_listener = {
-//     configureCallback
-// };
+const struct zxdg_toplevel_v6_listener XdgTopLevelUnstableV6::Private::s_toplevelListener = {
+    configureCallback,
+    closeCallback
+};
 
-// void XdgTopLevelUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *surface, uint32_t serial)
-// {
-//     zxdg_surface_v6_ack_configure(surface, serial);
-// }
+//void XdgTopLevelUnstableV6::Private::configureCallback(void *data, zxdg_surface_v6 *surface, uint32_t serial)
+//{
+//    zxdg_surface_v6_ack_configure(surface, serial);
+//}
+
+
+void XdgTopLevelUnstableV6::Private::configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)
+{
+}
+
+void XdgTopLevelUnstableV6::Private::closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel)
+{
+    auto s = reinterpret_cast<XdgTopLevelUnstableV6::Private*>(data);
+    Q_ASSERT(s->xdgsurfacev6 == xdg_toplevel);
+    emit s->q->closeRequested();
+}
 
 XdgTopLevelUnstableV6::Private::Private(XdgShellSurface *q)
     : XdgShellSurface::Private(q)
@@ -176,7 +191,7 @@ void XdgTopLevelUnstableV6::Private::setupV6(zxdg_toplevel_v6 *surface)
     Q_ASSERT(surface);
     Q_ASSERT(!xdgsurfacev6);
     xdgsurfacev6.setup(surface);
-//     zxdg_surface_v6_add_listener(xdgsurfacev6, &s_listener, this);
+    zxdg_toplevel_v6_add_listener(xdgsurfacev6, &s_toplevelListener, this);
 }
 
 void XdgTopLevelUnstableV6::Private::release()

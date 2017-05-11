@@ -98,7 +98,7 @@ public:
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
-    static void pidChangedCallback(void *data, org_kde_plasma_window *window, int32_t pid);
+    static void pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid);
     static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
     static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
@@ -426,7 +426,7 @@ void PlasmaWindow::Private::appIdChangedCallback(void *data, org_kde_plasma_wind
     emit p->q->appIdChanged();
 }
 
-void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window *window, int32_t pid)
+void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid)
 {
     Q_UNUSED(window)
     Private *p = cast(data);

@@ -86,6 +86,7 @@ XdgShellSurfaceInterface
     Q_OBJECT
 public:
     virtual ~XdgTopLevelV6Interface();
+
 private:
     //not really a direct parent.//mayeb also pass XdgShurfaceV6Interface as arg
     explicit XdgTopLevelV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);

@@ -148,6 +148,7 @@ public:
     void setFullscreen(Output *output) override;
     void unsetFullscreen() override;
     void setMinimized() override;
+    void setMaxSize(const QSize &size) override;
 
 private:
 //     static void configureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
@@ -276,6 +277,11 @@ void XdgTopLevelUnstableV6::Private::unsetFullscreen()
 void XdgTopLevelUnstableV6::Private::setMinimized()
 {
     zxdg_toplevel_v6_set_minimized(xdgsurfacev6);
+}
+
+void XdgTopLevelUnstableV6::Private::setMaxSize(const QSize &size)
+{
+    zxdg_toplevel_v6_set_max_size(xdgsurfacev6, size.width(), size.height());
 }
 
 XdgTopLevelUnstableV6::XdgTopLevelUnstableV6(QObject *parent)

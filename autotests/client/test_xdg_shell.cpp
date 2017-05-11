@@ -69,19 +69,21 @@ private Q_SLOTS:
     void testConfigureMultipleAcks();
     void testPopup();
 
+protected:
+    XdgShellInterface *m_xdgShellInterface = nullptr;
+    Compositor *m_compositor = nullptr;
+    XdgShell *m_xdgShell = nullptr;
+
 private:
     Display *m_display = nullptr;
     CompositorInterface *m_compositorInterface = nullptr;
     OutputInterface *m_o1Interface = nullptr;
     OutputInterface *m_o2Interface = nullptr;
     SeatInterface *m_seatInterface = nullptr;
-    XdgShellInterface *m_xdgShellInterface = nullptr;
     ConnectionThread *m_connection = nullptr;
     QThread *m_thread = nullptr;
     EventQueue *m_queue = nullptr;
-    Compositor *m_compositor = nullptr;
     ShmPool *m_shmPool = nullptr;
-    XdgShell *m_xdgShell = nullptr;
     Output *m_output1 = nullptr;
     Output *m_output2 = nullptr;
     Seat *m_seat = nullptr;

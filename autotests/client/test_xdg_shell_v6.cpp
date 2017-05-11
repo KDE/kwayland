@@ -5,7 +5,36 @@ class XdgShellTestV6 : public XdgShellTest {
 public:
     XdgShellTestV6() :
         XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::UnstableV6) {}
+
+private Q_SLOTS:
+    void testMaxSize();
 };
+
+void XdgShellTestV6::testMaxSize()
+{
+    qRegisterMetaType<OutputInterface*>();
+    // this test verifies changing the window maxSize
+    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
+    QVERIFY(xdgSurfaceCreatedSpy.isValid());
+    QScopedPointer<Surface> surface(m_compositor->createSurface());
+    QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data()));
+    QVERIFY(xdgSurfaceCreatedSpy.wait());
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    QVERIFY(serverXdgSurface);
+
+    QSignalSpy maxSizeSpy(serverXdgSurface, &XdgShellSurfaceInterface::maxSizeChanged);
+    QVERIFY(maxSizeSpy.isValid());
+
+    xdgSurface->setMaxSize(QSize(100, 100));
+    QVERIFY(maxSizeSpy.wait());
+    QCOMPARE(maxSizeSpy.count(), 1);
+    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(100,100));
+
+    xdgSurface->setMaxSize(QSize(200, 200));
+    QVERIFY(maxSizeSpy.wait());
+    QCOMPARE(maxSizeSpy.count(), 2);
+    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(200,200));
+}
 
 QTEST_GUILESS_MAIN(XdgShellTestV6)
 

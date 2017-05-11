@@ -401,7 +401,8 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent) {}
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y);
-    static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
+    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges) {}
+    static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height);
     static void setMinSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
     static void setMaximizedCallback(wl_client *client, wl_resource *resource);
     static void unsetMaximizedCallback(wl_client *client, wl_resource *resource);
@@ -411,6 +412,13 @@ private:
 
     static const struct zxdg_toplevel_v6_interface s_interface;
 };
+
+void XdgTopLevelV6Interface::Private::setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height)
+{
+    auto s = cast<Private>(resource);
+    Q_ASSERT(client == *s->client);
+    s->q_func()->maxSizeChanged(QSize(width, height));
+}
 
 const struct zxdg_toplevel_v6_interface XdgTopLevelV6Interface::Private::s_interface = {
     destroyCallback,

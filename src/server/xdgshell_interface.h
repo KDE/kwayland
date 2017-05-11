@@ -243,6 +243,8 @@ Q_SIGNALS:
      **/
     void transientForChanged();
 
+    void maxSizeChanged(const QSize &size);
+
 protected:
     class Private;
     explicit XdgShellSurfaceInterface(Private *p);

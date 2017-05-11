@@ -227,6 +227,11 @@ void XdgShellSurface::setFullscreen(bool set, Output *output)
     }
 }
 
+void XdgShellSurface::setMaxSize(const QSize &size)
+{
+    d->setMaxSize(size);
+}
+
 void XdgShellSurface::requestMinimize()
 {
     d->setMinimized();

@@ -325,6 +325,8 @@ public:
      **/
     void requestMinimize();
 
+    void setMaxSize(const QSize &size);
+
     operator xdg_surface*();
     operator xdg_surface*() const;
     operator zxdg_toplevel_v6*();

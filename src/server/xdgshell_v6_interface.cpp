@@ -222,45 +222,45 @@ private:
     static const struct zxdg_surface_v6_interface s_interface;
 };
 
-// namespace {
-// template <>
-// Qt::Edges edgesToQtEdges(zxdg_toplevel_v6_resize_edge edges)
-// {
-//     Qt::Edges qtEdges;
-//     switch (edges) {
-//     case XDG_SURFACE_RESIZE_EDGE_TOP:
-//         qtEdges = Qt::TopEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_BOTTOM:
-//         qtEdges = Qt::BottomEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_LEFT:
-//         qtEdges = Qt::LeftEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_TOP_LEFT:
-//         qtEdges = Qt::TopEdge | Qt::LeftEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_BOTTOM_LEFT:
-//         qtEdges = Qt::BottomEdge | Qt::LeftEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_RIGHT:
-//         qtEdges = Qt::RightEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_TOP_RIGHT:
-//         qtEdges = Qt::TopEdge | Qt::RightEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_BOTTOM_RIGHT:
-//         qtEdges = Qt::BottomEdge | Qt::RightEdge;
-//         break;
-//     case XDG_SURFACE_RESIZE_EDGE_NONE:
-//         break;
-//     default:
-//         Q_UNREACHABLE();
-//         break;
-//     }
-//     return qtEdges;
-// }
-// }
+namespace {
+template <>
+Qt::Edges edgesToQtEdges(zxdg_toplevel_v6_resize_edge edges)
+{
+    Qt::Edges qtEdges;
+    switch (edges) {
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP:
+        qtEdges = Qt::TopEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM:
+        qtEdges = Qt::BottomEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_LEFT:
+        qtEdges = Qt::LeftEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_LEFT:
+        qtEdges = Qt::TopEdge | Qt::LeftEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_LEFT:
+        qtEdges = Qt::BottomEdge | Qt::LeftEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_RIGHT:
+        qtEdges = Qt::RightEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_RIGHT:
+        qtEdges = Qt::TopEdge | Qt::RightEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_RIGHT:
+        qtEdges = Qt::BottomEdge | Qt::RightEdge;
+        break;
+    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_NONE:
+        break;
+    default:
+        Q_UNREACHABLE();
+        break;
+    }
+    return qtEdges;
+}
+}
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_surface_v6_interface XdgSurfaceV6Interface::Private::s_interface = {
@@ -396,10 +396,9 @@ public:
 
 private:
     //FIXME implement
-    static void destroyCallback(wl_client *client, wl_resource *resource) {}
+    static void destroyCallback(wl_client *client, wl_resource *resource);
     static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent) {}
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y);
-    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges) {}
     static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
     static void setMinSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
     static void setMaximizedCallback(wl_client *client, wl_resource *resource) {}
@@ -418,7 +417,7 @@ const struct zxdg_toplevel_v6_interface XdgTopLevelV6Interface::Private::s_inter
     setAppIdCallback,
     showWindowMenuCallback,
     moveCallback,
-    resizeCallback,
+    resizeCallback<zxdg_toplevel_v6_resize_edge>,
     setMaxSizeCallback,
     setMinSizeCallback,
     setMaximizedCallback,
@@ -427,6 +426,12 @@ const struct zxdg_toplevel_v6_interface XdgTopLevelV6Interface::Private::s_inter
     unsetFullscreenCallback,
     setMinimizedCallback
 };
+
+void XdgTopLevelV6Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client)
+    wl_resource_destroy(resource);
+}
 
 void XdgTopLevelV6Interface::Private::showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y)
 {

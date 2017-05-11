@@ -478,6 +478,7 @@ Q_SIGNALS:
     /**
      * The process id changed.
      * @see pid
+     * @since 5.35
      **/
     void pidChanged();
     /**

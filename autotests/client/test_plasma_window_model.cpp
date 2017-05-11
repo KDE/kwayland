@@ -333,6 +333,7 @@ void PlasmaWindowModelTest::testDefaultData_data()
     QTest::newRow("IsVirtualDesktopChangeable") << int(PlasmaWindowModel::IsVirtualDesktopChangeable) << QVariant(false);
     QTest::newRow("IsCloseable")          << int(PlasmaWindowModel::IsCloseable) << QVariant(false);
     QTest::newRow("Geometry")             << int(PlasmaWindowModel::Geometry) << QVariant(QRect());
+    QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QVariant(0);
 }
 
 void PlasmaWindowModelTest::testDefaultData()

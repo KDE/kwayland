@@ -37,6 +37,7 @@ class Display;
 class OutputInterface;
 class SeatInterface;
 class SurfaceInterface;
+class XdgTopLevelV6Interface;
 class XdgPopupV6Interface;
 class XdgSurfaceV6Interface;
 template <typename T>
@@ -51,7 +52,7 @@ public:
     /**
      * @returns The XdgSurfaceV6Interface for the @p native resource.
      **/
-    XdgSurfaceV6Interface *getSurface(wl_resource *native);
+    XdgTopLevelV6Interface *getSurface(wl_resource *native);
 
     Display *display() const;
 
@@ -62,17 +63,21 @@ private:
     Private *d_func() const;
 };
 
-class XdgSurfaceV6Interface : public XdgShellSurfaceInterface
+class XdgSurfaceV6Interface : public KWayland::Server::Resource
 {
     Q_OBJECT
 public:
     virtual ~XdgSurfaceV6Interface();
+    SurfaceInterface* surface() const;
+    XdgTopLevelV6Interface* topLevel() const;
+//     XdgPopupV6Interface *popup() const;
 
 private:
     explicit XdgSurfaceV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
     friend class XdgShellV6Interface;
 
     class Private;
+    Private *d_func() const;
 };
 
 class XdgTopLevelV6Interface : public
@@ -88,6 +93,7 @@ private:
     friend class XdgSurfaceV6Interface;
 
     class Private;
+    Private *d_func() const;
 };
 
 class XdgPopupV6Interface : public XdgShellPopupInterface

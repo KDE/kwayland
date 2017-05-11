@@ -319,6 +319,12 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
 
 void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
+    auto s = cast<Private>(resource);
+    if (s->m_topLevel) {
+        emit s->m_topLevel->configureAcknowledged(serial);
+    } else if (s->m_popup) {
+        emit s->m_popup->configureAcknowledged(serial);
+    }
 }
 
 void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -340,11 +346,6 @@ XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Inte
 }
 
 XdgSurfaceV6Interface::Private::~Private() = default;
-
-// quint32 XdgSurfaceV6Interface::Private::configure(States states, const QSize &size)
-// {
-//     return 0;
-// }
 
 class XdgTopLevelV6Interface::Private : public XdgShellSurfaceInterface::Private
 {
@@ -466,7 +467,6 @@ void XdgTopLevelV6Interface::Private::setParentCallback(wl_client *client, wl_re
         }
     }
 }
-
 
 void XdgTopLevelV6Interface::Private::showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y)
 {

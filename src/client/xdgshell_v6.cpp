@@ -155,12 +155,15 @@ public:
     void setMinSize(const QSize &size) override;
 
 private:
+    QSize pendingSize;
+    States pendingState;
+
     static void configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state);
     static void closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel);
     static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
 
-     static const struct zxdg_toplevel_v6_listener s_toplevelListener;
-     static const struct zxdg_surface_v6_listener s_surfaceListener;
+    static const struct zxdg_toplevel_v6_listener s_toplevelListener;
+    static const struct zxdg_surface_v6_listener s_surfaceListener;
 };
 
 const struct zxdg_toplevel_v6_listener XdgTopLevelUnstableV6::Private::s_toplevelListener = {
@@ -174,11 +177,38 @@ const struct zxdg_surface_v6_listener XdgTopLevelUnstableV6::Private::s_surfaceL
 
 void XdgTopLevelUnstableV6::Private::surfaceConfigureCallback(void *data, struct zxdg_surface_v6 *surface, uint32_t serial)
 {
-
+    auto s = reinterpret_cast<Private*>(data);
+    s->q->configureRequested(s->pendingSize, s->pendingState, serial);
+    s->q->setSize(s->pendingSize);
+    s->pendingSize = QSize();
+    s->pendingState = 0;
 }
 
 void XdgTopLevelUnstableV6::Private::configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)
 {
+    Q_UNUSED(xdg_toplevel)
+    auto s = reinterpret_cast<Private*>(data);
+    States states;
+
+    uint32_t *statePtr = reinterpret_cast<uint32_t *>(state->data);
+    for (size_t i = 0; i < state->size / sizeof(uint32_t); i++) {
+        switch (statePtr[i]) {
+        case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
+            states = states | XdgShellSurface::State::Maximized;
+            break;
+        case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
+            states = states | XdgShellSurface::State::Fullscreen;
+            break;
+        case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
+            states = states | XdgShellSurface::State::Resizing;
+            break;
+        case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
+            states = states | XdgShellSurface::State::Activated;
+            break;
+        }
+    }
+    s->pendingSize = QSize(width, height);
+    s->pendingState = states;
 }
 
 void XdgTopLevelUnstableV6::Private::closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel)

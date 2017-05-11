@@ -193,9 +193,13 @@ bool XdgTopLevelUnstableV6::Private::isValid() const
     return xdgsurfacev6.isValid();
 }
 
-
 void XdgTopLevelUnstableV6::Private::setTransientFor(XdgShellSurface *parent)
 {
+    zxdg_toplevel_v6 *parentSurface = nullptr;
+    if (parent) {
+        parentSurface = *parent;
+    }
+    zxdg_toplevel_v6_set_parent(xdgsurfacev6, parentSurface);
 }
 
 void XdgTopLevelUnstableV6::Private::setTitle(const QString & title)

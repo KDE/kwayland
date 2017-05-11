@@ -172,14 +172,10 @@ XdgTopLevelV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
         return nullptr;
     }
     Q_D();
-    auto it = std::find_if(d->surfaces.constBegin(), d->surfaces.constEnd(),
-                           [resource] (XdgSurfaceV6Interface *surface) {
-                               return surface->resource() == resource;
-                            }
-                          );
-    if (it != d->surfaces.constEnd()) {
+
+    for (auto it = d->surfaces.constBegin(); it != d->surfaces.constEnd() ; it++) {
         auto topLevel = (*it)->topLevel();
-        if (topLevel) {
+        if (topLevel && topLevel->resource() == resource) {
             return topLevel;
         }
     }
@@ -323,7 +319,6 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
 
 void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
-//
 }
 
 void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -399,7 +394,7 @@ public:
 private:
     //FIXME implement
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent) {}
+    static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent);
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y);
     static void setMaxSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height);
     static void setMinSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
@@ -441,6 +436,24 @@ void XdgTopLevelV6Interface::Private::destroyCallback(wl_client *client, wl_reso
     Q_UNUSED(client)
     wl_resource_destroy(resource);
 }
+
+void XdgTopLevelV6Interface::Private::setParentCallback(wl_client *client, wl_resource *resource, wl_resource *parent)
+{
+    auto s = cast<Private>(resource);
+    Q_ASSERT(client == *s->client);
+    if (!parent) {
+        //setting null is valid API. Clear
+        s->parent = nullptr;
+        emit s->q_func()->transientForChanged();
+    } else {
+        auto parentSurface = static_cast<XdgShellV6Interface*>(s->q->global())->getSurface(parent);
+        if (s->parent.data() != parentSurface) {
+            s->parent = QPointer<XdgTopLevelV6Interface>(parentSurface);
+            emit s->q_func()->transientForChanged();
+        }
+    }
+}
+
 
 void XdgTopLevelV6Interface::Private::showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y)
 {

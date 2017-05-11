@@ -110,7 +110,7 @@ private:
     PlasmaWindowInterface *q;
     QString m_title;
     QString m_appId;
-    quint32 m_pid;
+    quint32 m_pid = 0;
     QString m_themedIconName;
     QIcon m_icon;
     quint32 m_virtualDesktop = 0;
@@ -330,6 +330,9 @@ void PlasmaWindowInterface::Private::createResource(wl_resource *parent, uint32_
     org_kde_plasma_window_send_virtual_desktop_changed(resource, m_virtualDesktop);
     if (!m_appId.isEmpty()) {
         org_kde_plasma_window_send_app_id_changed(resource, m_appId.toUtf8().constData());
+    }
+    if (m_pid != 0) {
+        org_kde_plasma_window_send_pid_changed(resource, m_pid);
     }
     if (!m_title.isEmpty()) {
         org_kde_plasma_window_send_title_changed(resource, m_title.toUtf8().constData());

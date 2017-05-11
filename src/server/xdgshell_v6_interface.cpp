@@ -114,7 +114,7 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
     auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(),
         [surface](XdgSurfaceV6Interface *s) {
             return false;
-//             return surface == s->surface();
+            return surface == s->surface();
         }
     );
     if (it != surfaces.constEnd()) {
@@ -129,11 +129,6 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
         }
     );
     shellSurface->d->create(display->getConnection(client), version, id);
-
-    //DAVE - what do we want to do here?
-    //plan:
-    // we don't emit anything until we get a role.
-    //
 }
 
 
@@ -219,8 +214,8 @@ public:
 
     //effectively a union, only one of these should be populated.
     //a surface cannot have two roles
-    XdgTopLevelV6Interface *m_topLevel;
-    XdgTopLevelV6Interface *m_popup;
+    XdgTopLevelV6Interface *m_topLevel = 0;
+    XdgTopLevelV6Interface *m_popup = 0;
 
 private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
@@ -292,12 +287,18 @@ void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_r
 
 void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
-    //FIXME check if already exists
-    XdgTopLevelV6Interface *shellSurface = new XdgTopLevelV6Interface (m_shell, m_surface, parentResource);
+    if (m_topLevel) {
+        //FIXME post error
+        return;
+    }
+    if (m_popup) {
+        //FIXME post error, role already assigned
+        return;
+    }
+    m_topLevel = new XdgTopLevelV6Interface (m_shell, m_surface, parentResource);
+    m_topLevel->d->create(m_shell->display()->getConnection(client), version, id);
 
-    shellSurface->d->create(m_shell->display()->getConnection(client), version, id);
-
-    m_shell->surfaceCreated(shellSurface);
+    m_shell->surfaceCreated(m_topLevel);
 }
 
 void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner)

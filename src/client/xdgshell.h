@@ -200,7 +200,7 @@ public:
      **/
     void setup(xdg_surface *xdgsurfacev5);
 
-    void setup(zxdg_toplevel_v6 *xdgsurfacev6);
+    void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *toplevel);
 
     /**
      * @returns @c true if managing a xdg_surface.

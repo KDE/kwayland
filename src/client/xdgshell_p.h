@@ -118,7 +118,9 @@ public:
     virtual void setupV5(xdg_surface *surface) {
         Q_UNUSED(surface)
     }
-    virtual void setupV6(zxdg_toplevel_v6 *surface) {
+    virtual void setupV6(zxdg_surface_v6 *surface, zxdg_toplevel_v6 *toplevel)
+    {
+        Q_UNUSED(toplevel)
         Q_UNUSED(surface)
     }
     virtual void release() = 0;

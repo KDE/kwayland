@@ -128,9 +128,9 @@ void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
     d->setupV5(xdgsurfacev5);
 }
 
-void XdgShellSurface::setup(zxdg_toplevel_v6 *xdgsurfacev6)
+void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *xdgtoplevelv6)
 {
-    d->setupV6(xdgsurfacev6);
+    d->setupV6(xdgsurfacev6, xdgtoplevelv6);
 }
 
 void XdgShellSurface::release()

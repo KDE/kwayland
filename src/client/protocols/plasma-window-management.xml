@@ -264,7 +264,7 @@
         The pid will initially be 0, meaning it hasn't been set. As the compositor sets it, the client
         gets notified.
       </description>
-      <arg name="pid" type="int" summary="process id"/>
+      <arg name="pid" type="uint" summary="process id"/>
     </event>
 
   </interface>

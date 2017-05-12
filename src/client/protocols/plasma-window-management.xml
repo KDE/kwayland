@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_window_management" version="7">
+  <interface name="org_kde_plasma_window_management" version="8">
     <description summary="application windows management">
       This interface manages application windows.
       It provides requests to show and hide the desktop and emits
@@ -257,5 +257,15 @@
             The client can request the icon using get_icon.
         </description>
     </event>
+
+    <event name="pid_changed">
+      <description summary="process id of application owning the window has changed">
+        This event will be sent when the compositor has set the process id this window belongs to.
+        The pid will initially be 0, meaning it has not been set. As the compositor sets it, the client
+        gets notified.
+      </description>
+      <arg name="pid" type="uint" summary="process id"/>
+    </event>
+
   </interface>
 </protocol>

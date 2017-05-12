@@ -93,10 +93,12 @@ public:
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
     QRect geometry;
+    quint32 pid = 0;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
+    static void pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid);
     static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
     static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
@@ -124,6 +126,7 @@ private:
     void setResizable(bool set);
     void setVirtualDesktopChangeable(bool set);
     void setParentWindow(PlasmaWindow *parentWindow);
+    void setPid(const quint32 pid);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -341,7 +344,8 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     initialStateCallback,
     parentWindowCallback,
     windowGeometryCallback,
-    iconChangedCallback
+    iconChangedCallback,
+    pidChangedCallback
 };
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
@@ -420,6 +424,17 @@ void PlasmaWindow::Private::appIdChangedCallback(void *data, org_kde_plasma_wind
     }
     p->appId = s;
     emit p->q->appIdChanged();
+}
+
+void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    if (p->pid == static_cast<quint32>(pid)) {
+        return;
+    }
+    p->pid = pid;
+    emit p->q->pidChanged();
 }
 
 void PlasmaWindow::Private::virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number)
@@ -747,6 +762,11 @@ PlasmaWindow::operator org_kde_plasma_window*()
 QString PlasmaWindow::appId() const
 {
     return d->appId;
+}
+
+quint32 PlasmaWindow::pid() const
+{
+    return d->pid;
 }
 
 QString PlasmaWindow::title() const

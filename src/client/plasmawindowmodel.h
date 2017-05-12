@@ -101,7 +101,11 @@ public:
         /**
         * @since 5.25
         */
-        Geometry
+        Geometry,
+        /**
+         * @since 5.35
+         */
+        Pid
     };
     Q_ENUM(AdditionalRoles)
 

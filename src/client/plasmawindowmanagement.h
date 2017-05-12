@@ -380,6 +380,12 @@ public:
      * @since 5.22
      */
     bool isVirtualDesktopChangeable() const;
+    /**
+     * @returns The process id this window belongs to.
+     * @see pidChanged
+     * @since 5.35
+     */
+    quint32 pid() const;
 
     /**
      * Requests to activate the window.
@@ -469,6 +475,12 @@ Q_SIGNALS:
      * @see appId
      **/
     void appIdChanged();
+    /**
+     * The process id changed.
+     * @see pid
+     * @since 5.35
+     **/
+    void pidChanged();
     /**
      * The virtual desktop changed.
      * @see virtualDesktop

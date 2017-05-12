@@ -176,10 +176,7 @@ private:
     static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
 
     static const struct zxdg_toplevel_v6_listener s_toplevelListener;
-<<<<<<< b461e9405d61eb4e1996f2630c09f0f0450db0bb
     static const struct zxdg_surface_v6_listener s_surfaceListener;
-=======
->>>>>>> implement ping and pong for xdgshell v5 and 6
 };
 
 const struct zxdg_toplevel_v6_listener XdgTopLevelUnstableV6::Private::s_toplevelListener = {

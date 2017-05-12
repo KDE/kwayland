@@ -45,11 +45,14 @@ private:
     void createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource);
     void createPopup(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, SurfaceInterface *parent, SeatInterface *seat, quint32 serial, const QPoint &pos, wl_resource *parentResource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
+    void ping() override;
 
     static void unbind(wl_resource *resource);
     static Private *cast(wl_resource *r) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
     }
+
+    wl_resource *resource = nullptr;
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void useUnstableVersionCallback(wl_client *client, wl_resource *resource, int32_t version);
@@ -153,9 +156,11 @@ void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t versi
 void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
     Q_UNUSED(client)
-    Q_UNUSED(resource)
-    Q_UNUSED(serial)
-    // TODO: implement
+    auto s = cast(resource);
+    if (s->pingTimer->isActive() && serial == s->pingSerial) {
+        s->pingTimer->stop();
+        emit s->q->pongReceived();
+    }
 }
 
 XdgShellV5Interface::Private::Private(XdgShellV5Interface *q, Display *d)
@@ -167,7 +172,7 @@ XdgShellV5Interface::Private::Private(XdgShellV5Interface *q, Display *d)
 void XdgShellV5Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&xdg_shell_interface, qMin(version, s_version), id);
+    resource = c->createResource(&xdg_shell_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -197,6 +202,16 @@ XdgSurfaceV5Interface *XdgShellV5Interface::getSurface(wl_resource *resource)
         return *it;
     }
     return nullptr;
+}
+
+void XdgShellV5Interface::Private::ping()
+{
+    if (!resource || pingTimer->isActive()) {
+        return;
+    }
+    pingSerial = display->nextSerial();
+    xdg_shell_send_ping(resource, pingSerial);
+    pingTimer->start();
 }
 
 XdgShellV5Interface::Private *XdgShellV5Interface::d_func() const

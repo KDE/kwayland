@@ -63,6 +63,7 @@ private Q_SLOTS:
     void testResize_data();
     void testResize();
     void testTransient();
+    void testPing();
     void testClose();
     void testConfigureStates_data();
     void testConfigureStates();
@@ -481,6 +482,19 @@ void XdgShellTest::testTransient()
     QVERIFY(!serverXdgSurface2->isTransient());
     QVERIFY(serverXdgSurface2->transientFor().isNull());
     QVERIFY(!serverXdgSurface->isTransient());
+}
+
+void XdgShellTest::testPing()
+{
+    // this test verifies that a ping request is sent to the client
+    SURFACE
+
+    QSignalSpy pingSpy(m_xdgShellInterface, &XdgShellInterface::pongReceived);
+    QVERIFY(pingSpy.isValid());
+
+    m_xdgShellInterface->ping();
+    QVERIFY(pingSpy.wait());
+    QCOMPARE(pingSpy.count(), 1);
 }
 
 void XdgShellTest::testClose()

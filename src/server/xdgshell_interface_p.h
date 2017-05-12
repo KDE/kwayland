@@ -24,6 +24,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "generic_shell_surface_p.h"
 #include "resource_p.h"
 
+#include <QTimer>
+
 namespace KWayland
 {
 namespace Server
@@ -33,6 +35,10 @@ class XdgShellInterface::Private : public Global::Private
 {
 public:
     XdgShellInterfaceVersion interfaceVersion;
+
+    virtual void ping() = 0;
+    quint32 pingSerial = 0;
+    QScopedPointer<QTimer> pingTimer;
 
 protected:
     Private(XdgShellInterfaceVersion interfaceVersion, XdgShellInterface *q, Display *d, const wl_interface *interface, quint32 version);

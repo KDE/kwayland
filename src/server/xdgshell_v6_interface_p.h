@@ -56,6 +56,8 @@ public:
 
     Display *display() const;
 
+    void ping();
+
 private:
     explicit XdgShellV6Interface(Display *display, QObject *parent = nullptr);
     friend class Display;

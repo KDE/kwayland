@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "generic_shell_surface_p.h"
 #include "display.h"
 #include "global_p.h"
+#include "global.h"
 #include "resource_p.h"
 #include "output_interface.h"
 #include "seat_interface.h"
@@ -47,10 +48,14 @@ private:
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
+    void ping() override;
+
     static void unbind(wl_resource *resource);
     static Private *cast(wl_resource *r) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
     }
+
+    wl_resource *resource = nullptr;
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void createPositionerCallback(wl_client *client, wl_resource *resource, uint32_t id);
@@ -135,9 +140,11 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
 void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
     Q_UNUSED(client)
-    Q_UNUSED(resource)
-    Q_UNUSED(serial)
-    // TODO: implement
+    auto s = cast(resource);
+    if (s->pingTimer->isActive() && serial == s->pingSerial) {
+        s->pingTimer->stop();
+        emit s->q->pongReceived();
+    }
 }
 
 XdgShellV6Interface::Private::Private(XdgShellV6Interface *q, Display *d)
@@ -149,7 +156,7 @@ XdgShellV6Interface::Private::Private(XdgShellV6Interface *q, Display *d)
 void XdgShellV6Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
-    wl_resource *resource = c->createResource(&zxdg_shell_v6_interface, qMin(version, s_version), id);
+    resource = c->createResource(&zxdg_shell_v6_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -180,6 +187,16 @@ XdgTopLevelV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
         }
     }
     return nullptr;
+}
+
+void XdgShellV6Interface::Private::ping()
+{
+    if (!resource || pingTimer->isActive()) {
+        return;
+    }
+    pingSerial = display->nextSerial();
+    zxdg_shell_v6_send_ping(resource, pingSerial);
+    pingTimer->start();
 }
 
 XdgShellV6Interface::Private *XdgShellV6Interface::d_func() const

@@ -46,8 +46,20 @@ public:
         return xdgshellv6;
     }
 
+    static void pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial);
+
     WaylandPointer<zxdg_shell_v6, zxdg_shell_v6_destroy> xdgshellv6;
+    static const struct zxdg_shell_v6_listener s_shellListener;
 };
+
+const struct zxdg_shell_v6_listener XdgShellUnstableV6::Private::s_shellListener = {
+    pingCallback,
+};
+
+void XdgShellUnstableV6::Private::pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial)
+{
+    zxdg_shell_v6_pong(shell, serial);
+}
 
 void XdgShellUnstableV6::Private::setupV6(zxdg_shell_v6 *shell)
 {
@@ -56,6 +68,7 @@ void XdgShellUnstableV6::Private::setupV6(zxdg_shell_v6 *shell)
     xdgshellv6.setup(shell);
     //FIXME?
 //     xdg_shell_use_unstable_version(xdgshellv6, 6);
+    zxdg_shell_v6_add_listener(shell, &s_shellListener, this);
 }
 
 void XdgShellUnstableV6::Private::release()
@@ -163,7 +176,10 @@ private:
     static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
 
     static const struct zxdg_toplevel_v6_listener s_toplevelListener;
+<<<<<<< b461e9405d61eb4e1996f2630c09f0f0450db0bb
     static const struct zxdg_surface_v6_listener s_surfaceListener;
+=======
+>>>>>>> implement ping and pong for xdgshell v5 and 6
 };
 
 const struct zxdg_toplevel_v6_listener XdgTopLevelUnstableV6::Private::s_toplevelListener = {

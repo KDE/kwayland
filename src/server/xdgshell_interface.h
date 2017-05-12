@@ -77,6 +77,8 @@ public:
      **/
     XdgShellSurfaceInterface *getSurface(wl_resource *native);
 
+    void ping();
+
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
     /**
@@ -89,6 +91,8 @@ Q_SIGNALS:
      * @param serial The serial of the action on the seat
      **/
     void popupCreated(KWayland::Server::XdgShellPopupInterface *surface, KWayland::Server::SeatInterface *seat, quint32 serial);
+
+    void pongReceived();
 
 protected:
     class Private;

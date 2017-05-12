@@ -27,8 +27,11 @@ namespace Server
 XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, XdgShellInterface *q, Display *d, const wl_interface *interface, quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
+    , pingTimer(new QTimer)
     , q(q)
 {
+    pingTimer->setSingleShot(true);
+    pingTimer->setInterval(1000);
 }
 
 XdgShellInterface::XdgShellInterface(Private *d, QObject *parent)
@@ -48,6 +51,11 @@ XdgShellInterfaceVersion XdgShellInterface::interfaceVersion() const
 {
     Q_D();
     return d->interfaceVersion;
+}
+
+void XdgShellInterface::ping()
+{
+    d_func()->ping();
 }
 
 XdgShellInterface::Private *XdgShellInterface::d_func() const

@@ -115,6 +115,17 @@ private:
     Private *d_func() const;
 };
 
+class XdgPositionerV6Interface: public KWayland::Server::Resource
+{
+public:
+private:
+    explicit XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource);
+    friend class XdgShellV6Interface;
+
+    class Private;
+    Private *d_func() const;
+};
+
 }
 }
 

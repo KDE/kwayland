@@ -45,6 +45,7 @@ public:
 private:
 
     void createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource);
+    void createPositioner(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource);
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
@@ -104,8 +105,8 @@ void XdgShellV6Interface::Private::destroyCallback(wl_client *client, wl_resourc
 
 void XdgShellV6Interface::Private::createPositionerCallback(wl_client *client, wl_resource *resource, uint32_t id)
 {
-    qDebug() << "creating positioner - not implemented";
-    //FIXME
+    auto s = cast(resource);
+    s->createPositioner(client, wl_resource_get_version(resource), id, resource);
 }
 
 void XdgShellV6Interface::Private::getXdgSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
@@ -136,6 +137,13 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
     shellSurface->d->create(display->getConnection(client), version, id);
 }
 
+void XdgShellV6Interface::Private::createPositioner(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
+{
+    Q_UNUSED(client)
+    auto s = cast(resource);
+    XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
+    positioner->d->create(display->getConnection(client), version, id);
+}
 
 void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
@@ -364,6 +372,42 @@ XdgSurfaceV6Interface::Private::Private(XdgSurfaceV6Interface *q, XdgShellV6Inte
 
 XdgSurfaceV6Interface::Private::~Private() = default;
 
+
+class XdgPositionerV6Interface::Private : public KWayland::Server::Resource::Private
+{
+public:
+    Private(XdgPositionerV6Interface *q,  XdgShellV6Interface *c, wl_resource* parentResource);
+
+private:
+    static void destroyCallback(wl_client *client, wl_resource *resource) {}
+    static void setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
+    static void setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {}
+    static void setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {}
+    static void setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {}
+    static void setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {}
+    static void setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y) {}
+
+    static const struct zxdg_positioner_v6_interface s_interface;
+};
+
+XdgPositionerV6Interface::Private::Private(XdgPositionerV6Interface *q, XdgShellV6Interface *c, wl_resource *parentResource)
+    : KWayland::Server::Resource::Private(q, c, parentResource, &zxdg_positioner_v6_interface, &s_interface)
+{
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_interface = {
+    destroyCallback,
+    setSizeCallback,
+    setAnchorRectCallback,
+    setAnchorCallback,
+    setGravityCallback,
+    setConstraintAdjustmentCallback,
+    setOffsetCallback
+};
+#endif
+
+
 class XdgTopLevelV6Interface::Private : public XdgShellSurfaceInterface::Private
 {
 public:
@@ -587,6 +631,13 @@ SurfaceInterface* XdgSurfaceV6Interface::surface() const
     //FIXME, I have no idea why d->m_surface doesn't work..
     return reinterpret_cast<Private*>(d.data())->m_surface;
 }
+
+XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource) : KWayland::Server::Resource(new Private(this, parent, parentResource))
+{
+}
+
+// XdgPositionerV6Interface::~XdgPositionerV6Interface() = default;
+
 
 XdgTopLevelV6Interface* XdgSurfaceV6Interface::topLevel() const
 {

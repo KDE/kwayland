@@ -261,8 +261,7 @@
     <event name="pid_changed">
       <description summary="process id of application owning the window has changed">
         This event will be sent when the compositor has set the process id this window belongs to.
-        The pid will initially be 0, meaning it has not been set. As the compositor sets it, the client
-        gets notified.
+        This should be set once before the initial_state is sent.
       </description>
       <arg name="pid" type="uint" summary="process id"/>
     </event>

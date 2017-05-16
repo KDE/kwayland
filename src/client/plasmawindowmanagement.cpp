@@ -434,7 +434,6 @@ void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window
         return;
     }
     p->pid = pid;
-    emit p->q->pidChanged();
 }
 
 void PlasmaWindow::Private::virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number)

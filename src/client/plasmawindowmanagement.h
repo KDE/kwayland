@@ -382,7 +382,7 @@ public:
     bool isVirtualDesktopChangeable() const;
     /**
      * @returns The process id this window belongs to.
-     * @see pidChanged
+     * or 0 if unset
      * @since 5.35
      */
     quint32 pid() const;
@@ -475,12 +475,6 @@ Q_SIGNALS:
      * @see appId
      **/
     void appIdChanged();
-    /**
-     * The process id changed.
-     * @see pid
-     * @since 5.35
-     **/
-    void pidChanged();
     /**
      * The virtual desktop changed.
      * @see virtualDesktop

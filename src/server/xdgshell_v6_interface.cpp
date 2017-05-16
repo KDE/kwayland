@@ -312,11 +312,11 @@ void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_r
 void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     if (m_topLevel) {
-        //FIXME post error
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Top level already created on this surface");
         return;
     }
     if (m_popup) {
-        //FIXME post error, role already assigned
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup role already created on this surface");
         return;
     }
     m_topLevel = new XdgTopLevelV6Interface (m_shell, m_surface, parentResource);

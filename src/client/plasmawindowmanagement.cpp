@@ -530,22 +530,24 @@ void PlasmaWindow::Private::iconChangedCallback(void *data, org_kde_plasma_windo
         QByteArray content;
         if (readData(pipeFd, content) != 0) {
             close(pipeFd);
-            return QIcon::fromTheme(QStringLiteral("wayland"));
+            return QIcon();
         }
         close(pipeFd);
         QDataStream ds(content);
         QIcon icon;
         ds >> icon;
-        if (icon.isNull()) {
-            return QIcon::fromTheme(QStringLiteral("wayland"));
-        }
         return icon;
     };
     QFutureWatcher<QIcon> *watcher = new QFutureWatcher<QIcon>(p->q);
     QObject::connect(watcher, &QFutureWatcher<QIcon>::finished, p->q,
         [p, watcher] {
             watcher->deleteLater();
-            p->icon = watcher->result();
+            QIcon icon = watcher->result();
+            if (!icon.isNull()) {
+                p->icon = icon;
+            } else {
+                p->icon = QIcon::fromTheme(QStringLiteral("wayland"));
+            }
             emit p->q->iconChanged();
         }
     );

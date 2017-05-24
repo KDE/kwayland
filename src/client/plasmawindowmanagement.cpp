@@ -903,6 +903,32 @@ void PlasmaWindow::requestVirtualDesktop(quint32 desktop)
     org_kde_plasma_window_set_virtual_desktop(d->window, desktop);
 }
 
+void PlasmaWindow::requestToggleKeepAbove()
+{
+    if (d->keepAbove) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+    }
+}
+
+void PlasmaWindow::requestToggleKeepBelow()
+{
+    if (d->keepBelow) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW);
+    }
+}
+
 void PlasmaWindow::requestToggleMinimized()
 {
     if (d->minimized) {

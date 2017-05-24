@@ -317,6 +317,20 @@ Q_INVOKABLE void PlasmaWindowModel::requestVirtualDesktop(int row, quint32 deskt
     }
 }
 
+Q_INVOKABLE void PlasmaWindowModel::requestToggleKeepAbove(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleKeepAbove();
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestToggleKeepBelow(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleKeepBelow();
+    }
+}
+
 Q_INVOKABLE void PlasmaWindowModel::requestToggleMinimized(int row)
 {
     if (row >= 0 && row < d->windows.count()) {

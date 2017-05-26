@@ -58,6 +58,7 @@ const struct zxdg_shell_v6_listener XdgShellUnstableV6::Private::s_shellListener
 
 void XdgShellUnstableV6::Private::pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial)
 {
+    Q_UNUSED(data)
     zxdg_shell_v6_pong(shell, serial);
 }
 
@@ -105,19 +106,8 @@ XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QO
 XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
 {
     Q_ASSERT(isValid());
-    XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
-
     //FIXME
-    //the old XDG made popups on the shell
-    //v6 makes it on the xdgsurface
-    //
-
-//     auto w = zxdg_surface_v6_get_popup(, *parentSurface, *seat, serial, parentPos.x(), parentPos.y());
-//     if (queue) {
-//         queue->addProxy(w);
-//     }
-//     s->setup(w);
-//     return s;
+    XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
     return s;
 }
 
@@ -188,8 +178,10 @@ void XdgTopLevelUnstableV6::Private::surfaceConfigureCallback(void *data, struct
 {
     auto s = reinterpret_cast<Private*>(data);
     s->q->configureRequested(s->pendingSize, s->pendingState, serial);
-    s->q->setSize(s->pendingSize);
-    s->pendingSize = QSize();
+    if (!s->pendingSize.isNull()) {
+        s->q->setSize(s->pendingSize);
+        s->pendingSize = QSize();
+    }
     s->pendingState = 0;
 }
 

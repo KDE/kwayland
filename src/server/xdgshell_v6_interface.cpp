@@ -219,9 +219,6 @@ public:
 
     wl_resource *parentResource;
 
-//     void close() override {};
-//     quint32 configure(States states, const QSize &size) override;
-
     XdgSurfaceV6Interface *q_func() {
         return reinterpret_cast<XdgSurfaceV6Interface *>(q);
     }
@@ -298,6 +295,7 @@ const struct zxdg_surface_v6_interface XdgSurfaceV6Interface::Private::s_interfa
 void XdgSurfaceV6Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
+    //FIXME check if we have attached toplevels first and throw an error
     wl_resource_destroy(resource);
 }
 
@@ -334,7 +332,7 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     //FIXME positioner
     //FIXME check if already exists
 
-    qDebug() << "creating a popup";
+    qDebug() << "creating a popup - not done yet";
     XdgPopupV6Interface *popup = new XdgPopupV6Interface(m_shell, m_surface, parent);
     popup->d->create(m_shell->display()->getConnection(client), version, id);
 }
@@ -343,10 +341,12 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
 void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
 {
     auto s = cast<Private>(resource);
+    Q_ASSERT(client == *s->client);
+
     if (s->m_topLevel) {
         emit s->m_topLevel->configureAcknowledged(serial);
     } else if (s->m_popup) {
-        emit s->m_popup->configureAcknowledged(serial);
+//         emit s->m_popup->configureAcknowledged(serial);
     }
 }
 

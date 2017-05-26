@@ -35,6 +35,9 @@ namespace Client
 class Surface;
 class Touch;
 
+/**
+ * TODO
+ */
 class KWAYLANDCLIENT_EXPORT TouchPoint
 {
 public:

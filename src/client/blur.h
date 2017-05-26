@@ -47,6 +47,9 @@ class Blur;
 class Surface;
 class Region;
 
+/**
+ * TODO
+ */
 class KWAYLANDCLIENT_EXPORT BlurManager : public QObject
 {
     Q_OBJECT

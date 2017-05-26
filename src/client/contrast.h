@@ -40,6 +40,9 @@ class Contrast;
 class Surface;
 class Region;
 
+/**
+ * TODO
+ */
 class KWAYLANDCLIENT_EXPORT ContrastManager : public QObject
 {
     Q_OBJECT

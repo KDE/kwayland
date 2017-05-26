@@ -143,6 +143,9 @@ private:
     QScopedPointer<Private> d;
 };
 
+/**
+ * TODO
+ */
 class KWAYLANDCLIENT_EXPORT Slide : public QObject
 {
     Q_OBJECT

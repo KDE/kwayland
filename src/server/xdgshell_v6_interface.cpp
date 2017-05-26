@@ -230,8 +230,8 @@ public:
 
     //effectively a union, only one of these should be populated.
     //a surface cannot have two roles
-    XdgTopLevelV6Interface *m_topLevel = 0;
-    XdgTopLevelV6Interface *m_popup = 0;
+    QPointer<XdgTopLevelV6Interface> m_topLevel;
+    QPointer<XdgPopupV6Interface> m_popup;
 
 private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
@@ -240,6 +240,8 @@ private:
     static void ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial);
     static void setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
     static const struct zxdg_surface_v6_interface s_interface;
+
+
 };
 
 namespace {
@@ -639,7 +641,7 @@ XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, 
 
 XdgTopLevelV6Interface* XdgSurfaceV6Interface::topLevel() const
 {
-    return reinterpret_cast<Private*>(d.data())->m_topLevel;
+    return reinterpret_cast<Private*>(d.data())->m_topLevel.data();
 }
 
 XdgSurfaceV6Interface::Private *XdgSurfaceV6Interface::d_func() const

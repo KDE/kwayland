@@ -66,8 +66,6 @@ void XdgShellUnstableV6::Private::setupV6(zxdg_shell_v6 *shell)
     Q_ASSERT(shell);
     Q_ASSERT(!xdgshellv6);
     xdgshellv6.setup(shell);
-    //FIXME?
-//     xdg_shell_use_unstable_version(xdgshellv6, 6);
     zxdg_shell_v6_add_listener(shell, &s_shellListener, this);
 }
 
@@ -88,8 +86,6 @@ bool XdgShellUnstableV6::Private::isValid() const
 
 XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QObject *parent)
 {
-    //To match API, the XdgShellSurface configusingly wraps the top level, not the surface
-
     Q_ASSERT(isValid());
     auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
 
@@ -133,7 +129,7 @@ XdgShellUnstableV6::XdgShellUnstableV6(QObject *parent)
 XdgShellUnstableV6::~XdgShellUnstableV6() = default;
 
 
-//A top level wraps both xdg_surface_v6 and xdg_top_level    into the public API XdgShelllSurface
+//A top level wraps both xdg_surface_v6 and xdg_top_level into the public API XdgShelllSurface
 class XdgTopLevelUnstableV6::Private : public XdgShellSurface::Private
 {
 public:

@@ -50,7 +50,7 @@ public:
     virtual ~XdgShellV6Interface();
 
     /**
-     * @returns The XdgSurfaceV6Interface for the @p native resource.
+     * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
     XdgTopLevelV6Interface *getSurface(wl_resource *native);
 

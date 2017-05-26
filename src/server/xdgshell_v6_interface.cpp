@@ -179,8 +179,6 @@ void XdgShellV6Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
-//FIXME, we want to return XdgTopLevelV6Interface's here
-//either we track in shell level (might make sense, we emit here) or we iterate over surfaces
 XdgTopLevelV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
 {
     if (!resource) {

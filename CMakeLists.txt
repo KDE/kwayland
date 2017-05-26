@@ -18,7 +18,10 @@ include(ECMGenerateHeaders)
 include(CMakeFindFrameworks)
 
 include(ECMPoQmTools)
+include(ECMAddQch)
 
+option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
+add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
 ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h"
@@ -61,6 +64,16 @@ add_subdirectory(tests)
 
 # create a Config.cmake and a ConfigVersion.cmake file and install them
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5Wayland")
+
+if (BUILD_QCH)
+    ecm_install_qch_export(
+        TARGETS KF5Wayland_QCH
+        FILE KF5WaylandQchTargets.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel
+    )
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5WaylandQchTargets.cmake\")")
+endif()
 
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KF5WaylandConfig.cmake.in"
                               "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfig.cmake"

@@ -286,8 +286,8 @@ public:
     QByteArray language() const;
 
     /**
-     * The cursor position inside the @link{composingText} (as byte offset) relative
-     * to the start of the @link{composingText}.
+     * The cursor position inside the {@link composingText} (as byte offset) relative
+     * to the start of the {@link composingText}.
      * If index is a negative number no cursor is shown.
      * @see composingText
      * @see composingTextChanged
@@ -295,14 +295,14 @@ public:
     qint32 composingTextCursorPosition() const;
 
     /**
-     * The currently being composed text around the @link{composingTextCursorPosition}.
+     * The currently being composed text around the {@link composingTextCursorPosition}.
      * @see composingTextCursorPosition
      * @see composingTextChanged
      **/
     QByteArray composingText() const;
 
     /**
-     * The fallback text can be used to replace the @link{composingText} in some cases
+     * The fallback text can be used to replace the {@link composingText} in some cases
      * (for example when losing focus).
      *
      * @see composingText
@@ -322,13 +322,13 @@ public:
     QByteArray commitText() const;
 
     /**
-     * The cursor position in bytes at which the @link{commitText} should be inserted.
+     * The cursor position in bytes at which the {@link commitText} should be inserted.
      * @see committed
      **/
     qint32 cursorPosition() const;
 
     /**
-     * The text between anchorPosition and @link(cursorPosition} should be selected.
+     * The text between anchorPosition and {@link cursorPosition} should be selected.
      * @see cursorPosition
      * @see committed
      **/
@@ -398,8 +398,8 @@ Q_SIGNALS:
 
     /**
      * Emitted when the currently composing text got committed.
-     * The @link{commitText} should get inserted at the @link{cursorPosition} and
-     * the text around @link{deleteSurroundingText} should be deleted.
+     * The {@link commitText} should get inserted at the {@link cursorPosition} and
+     * the text around {@link deleteSurroundingText} should be deleted.
      *
      * @see commitText
      * @see cursorPosition

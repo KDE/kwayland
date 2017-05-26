@@ -152,7 +152,7 @@ public:
      * Creating a LockedPointer does not lock the pointer immediately; in the
      * future, when the compositor deems implementation-specific constraints
      * are satisfied, the pointer lock will be activated and the compositor
-     * sends a locked event, reported by @link{LockedPointer::locked}.
+     * sends a locked event, reported by {@link LockedPointer::locked}.
      *
      * The protocol provides no guarantee that the constraints are ever
      * satisfied, and does not require the compositor to send an error if the
@@ -173,8 +173,8 @@ public:
      * A Surface may receive pointer focus without the lock being activated.
      *
      * Note that while a pointer is locked, the Pointer objects of the
-     * corresponding seat will not emit any @link{Pointer::motion} signals, but
-     * relative motion events will still be emitted via @link{RelativePointer::relativeMotion}.
+     * corresponding seat will not emit any {@link Pointer::motion} signals, but
+     * relative motion events will still be emitted via {@link RelativePointer::relativeMotion}.
      * Pointer axis and button events are unaffected.
      *
      * @param surface The Surface which should be constrained in pointer motion
@@ -194,7 +194,7 @@ public:
      * does not take effect immediately; in the future, when the compositor
      * deems implementation-specific constraints are satisfied, the pointer
      * confinement will be	activated and the compositor sends a confined event,
-     * which is reported through the @link{ConfinedPointer::confined} signal.
+     * which is reported through the {@link ConfinedPointer::confined} signal.
      *
      * The intersection of the @p region passed and the input region of the
      * @p surface is used to determine where the pointer must be
@@ -235,7 +235,7 @@ private:
  * The LockedPointer represents a locked pointer state.
  *
  * While the lock of this object is active, the Pointer objects of the
- * associated seat will not emit any @link{Pointer::motion} events.
+ * associated seat will not emit any {@link Pointer::motion} events.
  *
  * This object will send the signal locked when the lock is activated.
  * Whenever the lock is activated, it is guaranteed that the locked surface
@@ -249,7 +249,7 @@ private:
  *
  * When unlocking, the compositor may warp the cursor position to the set
  * cursor position hint. If it does, it will not result in any relative
- * motion events emitted via @link{RelativePointer::relativeMotion}.
+ * motion events emitted via {@link RelativePointer::relativeMotion}.
  *
  * If the Surface the lock was requested on is destroyed and the lock is not
  * yet activated, the LockedPointer object is now defunct and must be
@@ -308,7 +308,7 @@ public:
      *
      * The cursor position hint is double buffered. The new hint will only take
      * effect when the associated surface gets it pending state applied.
-     * See @link{Surface::commit} for details.
+     * See {@link Surface::commit} for details.
      *
      * @param surfaceLocal The new position hint in surface local coordinates
      * @see Surface::commit
@@ -320,7 +320,7 @@ public:
      *
      * The new lock region is double-buffered. The new lock region will
      * only take effect when the associated Surface gets its pending state
-     * applied. See @link{Surface::commit} for details.
+     * applied. See {@link Surface::commit} for details.
      *
      * @param region The new lock region.
      * @see Surface::commit
@@ -421,13 +421,13 @@ public:
      *
      * The new confine region is double-buffered. The new confine region will
      * only take effect when the associated Surface gets its pending state
-     * applied. See @link{Surface::commit} for details.
+     * applied. See {@link Surface::commit} for details.
      *
      * If the confinement is active when the new confinement region is applied
      * and the pointer ends up outside of newly applied region, the pointer may
      * warped to a position within the new confinement region. If warped, a
-     * @link{Pointer::motion} signal will be emitted, but no
-     * @link{RelativePointer::relativeMotion} signal.
+     * {@link Pointer::motion} signal will be emitted, but no
+     * {@link RelativePointer::relativeMotion} signal.
      *
      * The compositor may also, instead of using the new region, unconfine the
      * pointer.

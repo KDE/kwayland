@@ -123,7 +123,7 @@ public:
     /**
      * Creates a new IdleTimeout for the @p seat. If the @p seat has been idle,
      * that is none of the connected input devices got used for @p msec, the
-     * IdleTimeout will emit the @link{IdleTimeout::idle} signal.
+     * IdleTimeout will emit the {@link IdleTimeout::idle} signal.
      *
      * It is not guaranteed that the signal will be emitted exactly at the given
      * timeout. A Wayland server might for example have a minimum timeout which is
@@ -166,7 +166,7 @@ class KWAYLANDCLIENT_EXPORT IdleTimeout : public QObject
     Q_OBJECT
 public:
     /**
-     * To create an IdleTimeout prefer using @link{Idle::getTimeout} which sets up the
+     * To create an IdleTimeout prefer using {@link Idle::getTimeout} which sets up the
      * IdleTimeout to be fully functional.
      **/
     explicit IdleTimeout(QObject *parent = nullptr);
@@ -211,7 +211,7 @@ public:
 
     /**
      * Simulates user activity. If the IdleTimeout is in idle state this will trigger the
-     * @link{resumeFromIdle} signal. The current idle duration is reset, so the @link{idle}
+     * {@link resumeFromIdle} signal. The current idle duration is reset, so the {@link idle}
      * will only be emitted after a complete idle duration as requested for this IdleTimeout.
      */
     void simulateUserActivity();

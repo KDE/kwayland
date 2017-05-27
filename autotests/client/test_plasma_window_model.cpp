@@ -79,6 +79,7 @@ private Q_SLOTS:
     void testGeometry();
     void testTitle();
     void testAppId();
+    void testPid();
     void testVirtualDesktop();
     // TODO icon: can we ensure a theme is installed on CI?
     void testRequests();
@@ -220,6 +221,7 @@ void PlasmaWindowModelTest::testRoleNames_data()
     QTest::newRow("decoration") << int(Qt::DecorationRole) << QByteArrayLiteral("DecorationRole");
 
     QTest::newRow("AppId")                << int(PlasmaWindowModel::AppId) << QByteArrayLiteral("AppId");
+    QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QByteArrayLiteral("Pid");
     QTest::newRow("IsActive")             << int(PlasmaWindowModel::IsActive) << QByteArrayLiteral("IsActive");
     QTest::newRow("IsFullscreenable")     << int(PlasmaWindowModel::IsFullscreenable) << QByteArrayLiteral("IsFullscreenable");
     QTest::newRow("IsFullscreen")         << int(PlasmaWindowModel::IsFullscreen) << QByteArrayLiteral("IsFullscreen");
@@ -332,6 +334,7 @@ void PlasmaWindowModelTest::testDefaultData_data()
     QTest::newRow("IsVirtualDesktopChangeable") << int(PlasmaWindowModel::IsVirtualDesktopChangeable) << QVariant(false);
     QTest::newRow("IsCloseable")          << int(PlasmaWindowModel::IsCloseable) << QVariant(false);
     QTest::newRow("Geometry")             << int(PlasmaWindowModel::Geometry) << QVariant(QRect());
+    QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QVariant(0);
 }
 
 void PlasmaWindowModelTest::testDefaultData()
@@ -521,6 +524,24 @@ void PlasmaWindowModelTest::testAppId()
     QCOMPARE(model->data(index, PlasmaWindowModel::AppId).toString(), QStringLiteral("org.kde.testapp"));
 }
 
+void PlasmaWindowModelTest::testPid()
+{
+    auto model = m_pw->createWindowModel();
+    QVERIFY(model);
+    QSignalSpy rowInsertedSpy(model, &PlasmaWindowModel::rowsInserted);
+    QVERIFY(rowInsertedSpy.isValid());
+    auto w = m_pwInterface->createWindow(m_pwInterface);
+    w->setPid(1337);
+    QVERIFY(w);
+    m_connection->flush();
+    m_display->dispatchEvents();
+    QVERIFY(rowInsertedSpy.wait());
+
+    //pid should be set as soon as the new row appears
+    const QModelIndex index = model->index(0);
+    QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), 1337);
+}
+
 void PlasmaWindowModelTest::testVirtualDesktop()
 {
     auto model = m_pw->createWindowModel();
@@ -571,6 +592,10 @@ void PlasmaWindowModelTest::testRequests()
     QVERIFY(resizeRequestedSpy.isValid());
     QSignalSpy virtualDesktopRequestedSpy(w, &PlasmaWindowInterface::virtualDesktopRequested);
     QVERIFY(virtualDesktopRequestedSpy.isValid());
+    QSignalSpy keepAboveRequestedSpy(w, &PlasmaWindowInterface::keepAboveRequested);
+    QVERIFY(keepAboveRequestedSpy.isValid());
+    QSignalSpy keepBelowRequestedSpy(w, &PlasmaWindowInterface::keepBelowRequested);
+    QVERIFY(keepBelowRequestedSpy.isValid());
     QSignalSpy minimizedRequestedSpy(w, &PlasmaWindowInterface::minimizedRequested);
     QVERIFY(minimizedRequestedSpy.isValid());
     QSignalSpy maximizeRequestedSpy(w, &PlasmaWindowInterface::maximizedRequested);
@@ -582,6 +607,8 @@ void PlasmaWindowModelTest::testRequests()
     model->requestActivate(-1);
     model->requestClose(-1);
     model->requestVirtualDesktop(-1, 1);
+    model->requestToggleKeepAbove(-1);
+    model->requestToggleKeepBelow(-1);
     model->requestToggleMinimized(-1);
     model->requestToggleMaximized(-1);
     model->requestActivate(1);
@@ -589,6 +616,8 @@ void PlasmaWindowModelTest::testRequests()
     model->requestMove(1);
     model->requestResize(1);
     model->requestVirtualDesktop(1, 1);
+    model->requestToggleKeepAbove(1);
+    model->requestToggleKeepBelow(1);
     model->requestToggleMinimized(1);
     model->requestToggleMaximized(1);
     model->requestToggleShaded(1);
@@ -661,6 +690,30 @@ void PlasmaWindowModelTest::testRequests()
     QCOMPARE(minimizedRequestedSpy.count(), 0);
     QCOMPARE(maximizeRequestedSpy.count(), 0);
     QCOMPARE(shadeRequestedSpy.count(), 0);
+    // keep above
+    model->requestToggleKeepAbove(0);
+    QVERIFY(keepAboveRequestedSpy.wait());
+    QCOMPARE(keepAboveRequestedSpy.count(), 1);
+    QCOMPARE(keepAboveRequestedSpy.first().first().toBool(), true);
+    QCOMPARE(activateRequestedSpy.count(), 1);
+    QCOMPARE(closeRequestedSpy.count(), 1);
+    QCOMPARE(moveRequestedSpy.count(), 1);
+    QCOMPARE(resizeRequestedSpy.count(), 1);
+    QCOMPARE(virtualDesktopRequestedSpy.count(), 1);
+    QCOMPARE(maximizeRequestedSpy.count(), 0);
+    QCOMPARE(shadeRequestedSpy.count(), 0);
+    // keep Below
+    model->requestToggleKeepBelow(0);
+    QVERIFY(keepBelowRequestedSpy.wait());
+    QCOMPARE(keepBelowRequestedSpy.count(), 1);
+    QCOMPARE(keepBelowRequestedSpy.first().first().toBool(), true);
+    QCOMPARE(activateRequestedSpy.count(), 1);
+    QCOMPARE(closeRequestedSpy.count(), 1);
+    QCOMPARE(moveRequestedSpy.count(), 1);
+    QCOMPARE(resizeRequestedSpy.count(), 1);
+    QCOMPARE(virtualDesktopRequestedSpy.count(), 1);
+    QCOMPARE(maximizeRequestedSpy.count(), 0);
+    QCOMPARE(shadeRequestedSpy.count(), 0);
     // minimize
     model->requestToggleMinimized(0);
     QVERIFY(minimizedRequestedSpy.wait());
@@ -700,6 +753,20 @@ void PlasmaWindowModelTest::testRequests()
     // the toggles can also support a different state
     QSignalSpy dataChangedSpy(model, &PlasmaWindowModel::dataChanged);
     QVERIFY(dataChangedSpy.isValid());
+    // keepAbove
+    w->setKeepAbove(true);
+    QVERIFY(dataChangedSpy.wait());
+    model->requestToggleKeepAbove(0);
+    QVERIFY(keepAboveRequestedSpy.wait());
+    QCOMPARE(keepAboveRequestedSpy.count(), 2);
+    QCOMPARE(keepAboveRequestedSpy.last().first().toBool(), false);
+    // keepBelow
+    w->setKeepBelow(true);
+    QVERIFY(dataChangedSpy.wait());
+    model->requestToggleKeepBelow(0);
+    QVERIFY(keepBelowRequestedSpy.wait());
+    QCOMPARE(keepBelowRequestedSpy.count(), 2);
+    QCOMPARE(keepBelowRequestedSpy.last().first().toBool(), false);
     // minimize
     w->setMinimized(true);
     QVERIFY(dataChangedSpy.wait());

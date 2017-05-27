@@ -93,10 +93,12 @@ public:
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
     QRect geometry;
+    quint32 pid = 0;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
+    static void pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid);
     static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
     static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
@@ -124,6 +126,7 @@ private:
     void setResizable(bool set);
     void setVirtualDesktopChangeable(bool set);
     void setParentWindow(PlasmaWindow *parentWindow);
+    void setPid(const quint32 pid);
 
     static Private *cast(void *data) {
         return reinterpret_cast<Private*>(data);
@@ -341,7 +344,8 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     initialStateCallback,
     parentWindowCallback,
     windowGeometryCallback,
-    iconChangedCallback
+    iconChangedCallback,
+    pidChangedCallback
 };
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
@@ -420,6 +424,16 @@ void PlasmaWindow::Private::appIdChangedCallback(void *data, org_kde_plasma_wind
     }
     p->appId = s;
     emit p->q->appIdChanged();
+}
+
+void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    if (p->pid == static_cast<quint32>(pid)) {
+        return;
+    }
+    p->pid = pid;
 }
 
 void PlasmaWindow::Private::virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number)
@@ -516,22 +530,24 @@ void PlasmaWindow::Private::iconChangedCallback(void *data, org_kde_plasma_windo
         QByteArray content;
         if (readData(pipeFd, content) != 0) {
             close(pipeFd);
-            return QIcon::fromTheme(QStringLiteral("wayland"));
+            return QIcon();
         }
         close(pipeFd);
         QDataStream ds(content);
         QIcon icon;
         ds >> icon;
-        if (icon.isNull()) {
-            return QIcon::fromTheme(QStringLiteral("wayland"));
-        }
         return icon;
     };
     QFutureWatcher<QIcon> *watcher = new QFutureWatcher<QIcon>(p->q);
     QObject::connect(watcher, &QFutureWatcher<QIcon>::finished, p->q,
         [p, watcher] {
             watcher->deleteLater();
-            p->icon = watcher->result();
+            QIcon icon = watcher->result();
+            if (!icon.isNull()) {
+                p->icon = icon;
+            } else {
+                p->icon = QIcon::fromTheme(QStringLiteral("wayland"));
+            }
             emit p->q->iconChanged();
         }
     );
@@ -749,6 +765,11 @@ QString PlasmaWindow::appId() const
     return d->appId;
 }
 
+quint32 PlasmaWindow::pid() const
+{
+    return d->pid;
+}
+
 QString PlasmaWindow::title() const
 {
     return d->title;
@@ -880,6 +901,32 @@ void PlasmaWindow::requestResize()
 void PlasmaWindow::requestVirtualDesktop(quint32 desktop)
 {
     org_kde_plasma_window_set_virtual_desktop(d->window, desktop);
+}
+
+void PlasmaWindow::requestToggleKeepAbove()
+{
+    if (d->keepAbove) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+    }
+}
+
+void PlasmaWindow::requestToggleKeepBelow()
+{
+    if (d->keepBelow) {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW,
+            0);
+    } else {
+        org_kde_plasma_window_set_state(d->window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW);
+    }
 }
 
 void PlasmaWindow::requestToggleMinimized()

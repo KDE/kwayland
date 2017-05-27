@@ -61,12 +61,15 @@ private Q_SLOTS:
     void testRequests();
     void testRequestsBoolean_data();
     void testRequestsBoolean();
+    void testKeepAbove();
+    void testKeepBelow();
     void testShowingDesktop();
     void testRequestShowingDesktop_data();
     void testRequestShowingDesktop();
     void testParentWindow();
     void testGeometry();
     void testIcon();
+    void testPid();
 
     void cleanup();
 
@@ -160,6 +163,7 @@ void TestWindowManagement::init()
     QSignalSpy windowSpy(m_windowManagement, SIGNAL(windowCreated(KWayland::Client::PlasmaWindow *)));
     QVERIFY(windowSpy.isValid());
     m_windowInterface = m_windowManagementInterface->createWindow(this);
+    m_windowInterface->setPid(1337);
 
     QVERIFY(windowSpy.wait());
     m_window = windowSpy.first().first().value<KWayland::Client::PlasmaWindow *>();
@@ -475,6 +479,50 @@ void TestWindowManagement::testRequestShowingDesktop()
     QTEST(requestSpy.first().first().value<PlasmaWindowManagementInterface::ShowingDesktopState>(), "expectedValue");
 }
 
+void TestWindowManagement::testKeepAbove()
+{
+    using namespace KWayland::Server;
+    // this test verifies setting the keep above state
+    QVERIFY(!m_window->isKeepAbove());
+    QSignalSpy keepAboveChangedSpy(m_window, &KWayland::Client::PlasmaWindow::keepAboveChanged);
+    QVERIFY(keepAboveChangedSpy.isValid());
+    m_windowInterface->setKeepAbove(true);
+    QVERIFY(keepAboveChangedSpy.wait());
+    QCOMPARE(keepAboveChangedSpy.count(), 1);
+    QVERIFY(m_window->isKeepAbove());
+    // setting to same should not change
+    m_windowInterface->setKeepAbove(true);
+    QVERIFY(!keepAboveChangedSpy.wait(100));
+    QCOMPARE(keepAboveChangedSpy.count(), 1);
+    // setting to other state should change
+    m_windowInterface->setKeepAbove(false);
+    QVERIFY(keepAboveChangedSpy.wait());
+    QCOMPARE(keepAboveChangedSpy.count(), 2);
+    QVERIFY(!m_window->isKeepAbove());
+}
+
+void TestWindowManagement::testKeepBelow()
+{
+    using namespace KWayland::Server;
+    // this test verifies setting the keep below state
+    QVERIFY(!m_window->isKeepBelow());
+    QSignalSpy keepBelowChangedSpy(m_window, &KWayland::Client::PlasmaWindow::keepBelowChanged);
+    QVERIFY(keepBelowChangedSpy.isValid());
+    m_windowInterface->setKeepBelow(true);
+    QVERIFY(keepBelowChangedSpy.wait());
+    QCOMPARE(keepBelowChangedSpy.count(), 1);
+    QVERIFY(m_window->isKeepBelow());
+    // setting to same should not change
+    m_windowInterface->setKeepBelow(true);
+    QVERIFY(!keepBelowChangedSpy.wait(100));
+    QCOMPARE(keepBelowChangedSpy.count(), 1);
+    // setting to other state should change
+    m_windowInterface->setKeepBelow(false);
+    QVERIFY(keepBelowChangedSpy.wait());
+    QCOMPARE(keepBelowChangedSpy.count(), 2);
+    QVERIFY(!m_window->isKeepBelow());
+}
+
 void TestWindowManagement::testParentWindow()
 {
     using namespace KWayland::Client;
@@ -579,6 +627,23 @@ void TestWindowManagement::testIcon()
         QEXPECT_FAIL("", "no icon", Continue);
     }
     QCOMPARE(m_window->icon().name(), QStringLiteral("xorg"));
+}
+
+void TestWindowManagement::testPid()
+{
+    using namespace KWayland::Client;
+    QVERIFY(m_window);
+    QVERIFY(m_window->pid() == 1337);
+
+    //test server not setting a PID for whatever reason
+    QScopedPointer<KWayland::Server::PlasmaWindowInterface> newWindowInterface(m_windowManagementInterface->createWindow(this));
+    QSignalSpy windowSpy(m_windowManagement, SIGNAL(windowCreated(KWayland::Client::PlasmaWindow *)));
+    QVERIFY(windowSpy.wait());
+    QScopedPointer<PlasmaWindow> newWindow( windowSpy.first().first().value<KWayland::Client::PlasmaWindow *>());
+    QVERIFY(newWindow);
+    QVERIFY(newWindow->pid() == 0);
+
+
 }
 
 QTEST_MAIN(TestWindowManagement)

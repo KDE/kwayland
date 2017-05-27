@@ -225,6 +225,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->icon();
     } else if (role == AppId) {
         return window->appId();
+    } else if (role == Pid) {
+        return window->pid();
     } else if (role == IsActive) {
         return window->isActive();
     } else if (role == IsFullscreenable) {
@@ -312,6 +314,20 @@ Q_INVOKABLE void PlasmaWindowModel::requestVirtualDesktop(int row, quint32 deskt
 {
     if (row >= 0 && row < d->windows.count()) {
         d->windows.at(row)->requestVirtualDesktop(desktop);
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestToggleKeepAbove(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleKeepAbove();
+    }
+}
+
+Q_INVOKABLE void PlasmaWindowModel::requestToggleKeepBelow(int row)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestToggleKeepBelow();
     }
 }
 

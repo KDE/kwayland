@@ -380,6 +380,12 @@ public:
      * @since 5.22
      */
     bool isVirtualDesktopChangeable() const;
+    /**
+     * @returns The process id this window belongs to.
+     * or 0 if unset
+     * @since 5.35
+     */
+    quint32 pid() const;
 
     /**
      * Requests to activate the window.
@@ -403,6 +409,19 @@ public:
      * Requests to send the window to virtual @p desktop.
      **/
     void requestVirtualDesktop(quint32 desktop);
+
+    /**
+     * Requests the window at this model row index have its keep above state toggled.
+     * @since 5.35
+     */
+    void requestToggleKeepAbove();
+
+    /**
+     * Requests the window at this model row index have its keep below state toggled.
+     * @since 5.35
+     */
+    void requestToggleKeepBelow();
+
     /**
      * Requests the window at this model row index have its minimized state toggled.
      */

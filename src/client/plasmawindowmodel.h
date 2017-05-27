@@ -101,7 +101,11 @@ public:
         /**
         * @since 5.25
         */
-        Geometry
+        Geometry,
+        /**
+         * @since 5.35
+         */
+        Pid
     };
     Q_ENUM(AdditionalRoles)
 
@@ -145,6 +149,18 @@ public:
      * Request the window at this model row index be moved to this virtual desktop.
      **/
     Q_INVOKABLE void requestVirtualDesktop(int row, quint32 desktop);
+
+    /**
+     * Requests the window at this model row index have its keep above state toggled.
+     * @since 5.35
+     */
+    Q_INVOKABLE void requestToggleKeepAbove(int row);
+
+    /**
+     * Requests the window at this model row index have its keep above state toggled.
+     * @since 5.35
+     */
+    Q_INVOKABLE void requestToggleKeepBelow(int row);
 
     /**
      * Requests the window at this model row index have its minimized state toggled.

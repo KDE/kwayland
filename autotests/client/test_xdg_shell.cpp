@@ -17,81 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
-// Qt
-#include <QtTest/QtTest>
-// client
-#include "../../src/client/xdgshell.h"
-#include "../../src/client/connection_thread.h"
-#include "../../src/client/compositor.h"
-#include "../../src/client/event_queue.h"
-#include "../../src/client/registry.h"
-#include "../../src/client/output.h"
-#include "../../src/client/seat.h"
-#include "../../src/client/shm_pool.h"
-#include "../../src/client/surface.h"
-// server
-#include "../../src/server/display.h"
-#include "../../src/server/compositor_interface.h"
-#include "../../src/server/output_interface.h"
-#include "../../src/server/seat_interface.h"
-#include "../../src/server/surface_interface.h"
-#include "../../src/server/xdgshell_interface.h"
 
-using namespace KWayland::Client;
-using namespace KWayland::Server;
-
-Q_DECLARE_METATYPE(Qt::MouseButton)
-
-class XdgShellTest : public QObject
-{
-    Q_OBJECT
-
-protected:
-    XdgShellTest(XdgShellInterfaceVersion version);
-private Q_SLOTS:
-    void init();
-    void cleanup();
-
-    void testCreateSurface();
-    void testTitle();
-    void testWindowClass();
-    void testMaximize();
-    void testMinimize();
-    void testFullscreen();
-    void testShowWindowMenu();
-    void testMove();
-    void testResize_data();
-    void testResize();
-    void testTransient();
-    void testPing();
-    void testClose();
-    void testConfigureStates_data();
-    void testConfigureStates();
-    void testConfigureMultipleAcks();
-    void testPopup();
-
-protected:
-    XdgShellInterface *m_xdgShellInterface = nullptr;
-    Compositor *m_compositor = nullptr;
-    XdgShell *m_xdgShell = nullptr;
-
-private:
-    Display *m_display = nullptr;
-    CompositorInterface *m_compositorInterface = nullptr;
-    OutputInterface *m_o1Interface = nullptr;
-    OutputInterface *m_o2Interface = nullptr;
-    SeatInterface *m_seatInterface = nullptr;
-    ConnectionThread *m_connection = nullptr;
-    QThread *m_thread = nullptr;
-    EventQueue *m_queue = nullptr;
-    ShmPool *m_shmPool = nullptr;
-    Output *m_output1 = nullptr;
-    Output *m_output2 = nullptr;
-    Seat *m_seat = nullptr;
-
-    XdgShellInterfaceVersion m_version;
-};
-
+#include "test_xdg_shell.h"
 
 XdgShellTest::XdgShellTest(XdgShellInterfaceVersion version):
     m_version(version)

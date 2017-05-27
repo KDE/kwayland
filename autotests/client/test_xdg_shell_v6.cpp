@@ -1,4 +1,4 @@
-#include "test_xdg_shell.cpp"
+#include "test_xdg_shell.h"
 
 class XdgShellTestV6 : public XdgShellTest {
     Q_OBJECT

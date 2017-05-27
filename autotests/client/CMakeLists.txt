@@ -341,6 +341,7 @@ ecm_mark_as_test(testSelection)
 # Test XdgShellV5
 ########################################################
 set( testXdgShellV5_SRCS
+      test_xdg_shell.cpp
       test_xdg_shell_v5.cpp
       )
 add_executable(testXdgShellV5 ${testXdgShellV5_SRCS})
@@ -352,6 +353,7 @@ ecm_mark_as_test(testXdgShellV5)
 # Test XdgShellV6
 ########################################################
 set( testXdgShellV6_SRCS
+      test_xdg_shell.cpp
       test_xdg_shell_v6.cpp
       )
 add_executable(testXdgShellV6 ${testXdgShellV6_SRCS})

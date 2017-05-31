@@ -1,4 +1,6 @@
-#include "test_xdg_shell.h"
+    #include "test_xdg_shell.h"
+#include <wayland-xdg-shell-v6-client-protocol.h>
+
 
 class XdgShellTestV6 : public XdgShellTest {
     Q_OBJECT
@@ -9,6 +11,7 @@ public:
 private Q_SLOTS:
     void testMaxSize();
     void testMinSize();
+    void testMultipleRoles();
 };
 
 void XdgShellTestV6::testMaxSize()
@@ -61,6 +64,35 @@ void XdgShellTestV6::testMinSize()
     QVERIFY(minSizeSpy.wait());
     QCOMPARE(minSizeSpy.count(), 2);
     QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(100,100));
+}
+
+void XdgShellTestV6::testMultipleRoles()
+{
+    //setting multiple roles on an xdg surface should fail
+    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
+    QVERIFY(xdgSurfaceCreatedSpy.isValid());
+
+    QScopedPointer<Surface> surface(m_compositor->createSurface());
+    //This is testing we work when a client does something stupid
+    //we can't use KWayland API here because by design that stops you from doing anything stupid
+    auto xdgSurface = zxdg_shell_v6_get_xdg_surface(*m_xdgShell, *surface.data());
+
+    //create a top level
+    auto xdgTopLevel1 = zxdg_surface_v6_get_toplevel(xdgSurface);
+    QVERIFY(xdgSurfaceCreatedSpy.wait());
+
+    //now try to create another top level for the same xdg surface. It should fail
+    auto xdgTopLevel2 = zxdg_surface_v6_get_toplevel(xdgSurface);
+    QVERIFY(!xdgSurfaceCreatedSpy.wait(10));
+
+    zxdg_toplevel_v6_destroy(xdgTopLevel1);
+    zxdg_toplevel_v6_destroy(xdgTopLevel2);
+    zxdg_surface_v6_destroy(xdgSurface);
+
+    //TODO:
+    //toplevel then popup
+    //popup then toplevel
+    //popup then popup
 }
 
 QTEST_GUILESS_MAIN(XdgShellTestV6)

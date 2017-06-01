@@ -57,6 +57,17 @@ enum class XdgShellInterfaceVersion
     UnstableV6
 };
 
+enum class PositionerConstraint {
+    SlideX = 1 << 0,
+    SlideY = 1 << 1,
+    FlipX = 1 << 2,
+    FlipY = 1 << 3,
+    ResizeX = 1 << 4,
+    ResizeY = 1 << 5
+};
+
+Q_DECLARE_FLAGS(PositionerConstraints, PositionerConstraint)
+
 /**
  *
  * @since 5.25
@@ -293,8 +304,41 @@ public:
      *
      * @returns offset in parent coordinate system.
      * @see transientFor
+     * @deprecated see anchorRect
      **/
     QPoint transientOffset() const;
+
+    /*
+     * The size of the surface that is to be positioned.
+     *
+     */
+    QSize initialSize() const; //DAVE remember to divide this by surface->scale()
+
+    /*
+     * The area this popup should be positioned around
+     */
+    QRect anchorRect() const;
+
+    /*
+     * Which edge of the anchor should the popup be positioned around
+     */
+    Qt::Edges anchorEdge() const;
+
+    /*
+     *
+     */
+    QPoint anchorOffset() const;
+
+    /*
+     * Specifies in what direction the offset should be positioned around the anchor
+     */
+    //DAVE left + right is illegal, so this is possible a bad return value? Maybe an enum with 9 entries left, topleft, top, ..
+    Qt::Edges gravity() const;
+
+    /*
+     * Specifies how the compositor should position the popup if it does not fit in the requested position
+     */
+    PositionerConstraints constraintAdjustment() const;
 
     /**
      * Dismiss this popup. This indicates to the client that it should destroy this popup.

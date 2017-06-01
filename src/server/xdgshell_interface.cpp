@@ -166,10 +166,46 @@ QPointer<SurfaceInterface> XdgShellPopupInterface::transientFor() const
     return d->parent;
 }
 
+QSize XdgShellPopupInterface::initialSize() const
+{
+    Q_D();
+    return d->initialSize;
+}
+
 QPoint XdgShellPopupInterface::transientOffset() const
 {
     Q_D();
     return d->transientOffset;
+}
+
+QRect XdgShellPopupInterface::anchorRect() const
+{
+    Q_D();
+    return d->anchorRect;
+}
+
+Qt::Edges XdgShellPopupInterface::anchorEdge() const
+{
+    Q_D();
+    return d->anchorEdge;
+}
+
+Qt::Edges XdgShellPopupInterface::gravity() const
+{
+    Q_D();
+    return d->gravity;
+}
+
+QPoint XdgShellPopupInterface::anchorOffset() const
+{
+    Q_D();
+    return d->anchorOffset;
+}
+
+PositionerConstraints XdgShellPopupInterface::constraintAdjustment() const
+{
+    Q_D();
+    return d->constraintAdjustment;
 }
 
 void XdgShellPopupInterface::popupDone()

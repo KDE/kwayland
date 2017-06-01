@@ -76,7 +76,14 @@ public:
     }
 
     QPointer<SurfaceInterface> parent;
-    QPoint transientOffset;
+    QPoint transientOffset; //DAVE kill this, change client code to set an anchor rect with 1x1 size
+    QSize initialSize;
+    QRect anchorRect;
+    Qt::Edges anchorEdge;
+    Qt::Edges gravity;
+    PositionerConstraints constraintAdjustment;
+    QPoint anchorOffset;
+
     XdgShellInterfaceVersion interfaceVersion;
 
 protected:

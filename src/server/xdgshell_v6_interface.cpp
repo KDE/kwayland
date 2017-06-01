@@ -41,6 +41,7 @@ public:
     Private(XdgShellV6Interface *q, Display *d);
 
     QVector<XdgSurfaceV6Interface*> surfaces;
+    QVector<XdgPositionerV6Interface*> positioners;
 
 private:
 
@@ -252,6 +253,7 @@ void XdgShellV6Interface::Private::createPositioner(wl_client *client, uint32_t 
     auto s = cast(resource);
     XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
     positioner->d->create(display->getConnection(client), version, id);
+    positioners << positioner;
 }
 
 void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
@@ -397,6 +399,7 @@ void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t 
 
     m_shell->surfaceCreated(m_topLevel);
 }
+
 
 void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner)
 {

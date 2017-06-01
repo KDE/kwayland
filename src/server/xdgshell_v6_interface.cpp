@@ -453,14 +453,21 @@ class XdgPositionerV6Interface::Private : public KWayland::Server::Resource::Pri
 public:
     Private(XdgPositionerV6Interface *q,  XdgShellV6Interface *c, wl_resource* parentResource);
 
+    QSize initialSize;
+    QRect anchorRect;
+    Qt::Edges anchorEdge;
+    Qt::Edges gravity;
+    PositionerConstraints constraintAdjustments;
+    QPoint anchorOffset;
+
 private:
     static void destroyCallback(wl_client *client, wl_resource *resource) {}
-    static void setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {}
-    static void setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {}
-    static void setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {}
-    static void setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {}
-    static void setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {}
-    static void setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y) {}
+    static void setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height);
+    static void setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
+    static void setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor);
+    static void setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity);
+    static void setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment);
+    static void setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y);
 
     static const struct zxdg_positioner_v6_interface s_interface;
 };
@@ -481,6 +488,40 @@ const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_i
     setOffsetCallback
 };
 #endif
+
+
+void XdgPositionerV6Interface::Private::setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {
+    auto s = cast<Private>(resource);
+    s->initialSize = QSize(width, height);
+}
+
+void XdgPositionerV6Interface::Private::setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+    auto s = cast<Private>(resource);
+    s->anchorRect = QRect(x, y, width, height);
+}
+
+void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {
+    auto s = cast<Private>(resource);
+    //FIXME
+}
+
+void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {
+    auto s = cast<Private>(resource);
+    //FIXME
+}
+
+void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {
+    auto s = cast<Private>(resource);
+    //FIXME
+}
+
+void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y)
+{
+    auto s = cast<Private>(resource);
+    s->anchorOffset = QPoint(x,y);
+    //FIXME
+}
 
 void XdgTopLevelV6Interface::Private::close()
 {
@@ -650,6 +691,48 @@ XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, 
 }
 
 // XdgPositionerV6Interface::~XdgPositionerV6Interface() = default;
+
+QSize XdgPositionerV6Interface::initialSize() const
+{
+    Q_D();
+    return d->initialSize;
+}
+
+QRect XdgPositionerV6Interface::anchorRect() const
+{
+    Q_D();
+    return d->anchorRect;
+}
+
+Qt::Edges XdgPositionerV6Interface::anchorEdge() const
+{
+    Q_D();
+    return d->anchorEdge;
+}
+
+Qt::Edges XdgPositionerV6Interface::gravity() const
+{
+    Q_D();
+    return d->gravity;
+}
+
+PositionerConstraints XdgPositionerV6Interface::constraintAdjustments() const
+{
+    Q_D();
+    return d->constraintAdjustments;
+}
+
+QPoint XdgPositionerV6Interface::anchorOffset() const
+{
+    Q_D();
+    return d->anchorOffset;
+}
+
+
+XdgPositionerV6Interface::Private *XdgPositionerV6Interface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
 
 
 XdgTopLevelV6Interface* XdgSurfaceV6Interface::topLevel() const

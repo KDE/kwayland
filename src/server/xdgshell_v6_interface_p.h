@@ -118,6 +118,12 @@ private:
 class XdgPositionerV6Interface: public KWayland::Server::Resource
 {
 public:
+    QSize initialSize() const;
+    QRect anchorRect() const;
+    Qt::Edges anchorEdge() const;
+    Qt::Edges gravity() const;
+    PositionerConstraints constraintAdjustments() const;
+    QPoint anchorOffset() const;
 private:
     explicit XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource);
     friend class XdgShellV6Interface;

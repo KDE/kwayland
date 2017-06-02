@@ -92,6 +92,7 @@ public:
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
+
     /**
      * Emitted whenever a new popup got created.
      *
@@ -101,7 +102,14 @@ Q_SIGNALS:
      * @param seat The seat on which an action triggered the popup
      * @param serial The serial of the action on the seat
      **/
+
     void popupCreated(KWayland::Server::XdgShellPopupInterface *surface, KWayland::Server::SeatInterface *seat, quint32 serial);
+
+
+    //Dave - why a different name - because otherwise old kwin wouldn't compile against a new
+    //frameworks as the popup signal would be overloaded \o/
+    void popupCreated2(KWayland::Server::XdgShellPopupInterface *surface);
+
 
     void pongReceived();
 
@@ -293,6 +301,13 @@ public:
      * @return The SurfaceInterface this XdgShellPopupInterface got created for.
      **/
     SurfaceInterface *surface() const;
+
+    /*
+     * Ask the popup surface to configure itself for the given configuration.
+     *
+     * @arg
+     */
+    quint32 configure(const QRect &rect);
 
     /**
      * @returns the parent surface.

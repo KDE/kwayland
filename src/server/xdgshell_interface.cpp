@@ -175,7 +175,8 @@ QSize XdgShellPopupInterface::initialSize() const
 QPoint XdgShellPopupInterface::transientOffset() const
 {
     Q_D();
-    return d->transientOffset;
+//     switch(d->anchorEdge) {}
+    return d->anchorRect.topLeft();
 }
 
 QRect XdgShellPopupInterface::anchorRect() const
@@ -212,6 +213,12 @@ void XdgShellPopupInterface::popupDone()
 {
     Q_D();
     return d->popupDone();
+}
+
+quint32 XdgShellPopupInterface::configure(const QRect &rect)
+{
+    Q_D();
+    return d->configure(rect);
 }
 
 XdgShellPopupInterface::Private *XdgShellPopupInterface::d_func() const

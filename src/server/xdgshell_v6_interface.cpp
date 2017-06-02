@@ -76,12 +76,14 @@ public:
     ~Private();
 
     void popupDone() override;
+    quint32 configure(const QRect &rect) override;
 
     XdgPopupV6Interface *q_func() {
         return reinterpret_cast<XdgPopupV6Interface *>(q);
     }
-
 private:
+    static void destroyCallback(wl_client *client, wl_resource *resource) {}
+    static void grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial) {}
 
     static const struct zxdg_popup_v6_interface s_interface;
 };
@@ -306,6 +308,20 @@ XdgTopLevelV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
     return nullptr;
 }
 
+XdgPositionerV6Interface *XdgShellV6Interface::getPositioner(wl_resource *resource)
+{
+    if (!resource) {
+        return nullptr;
+    }
+    Q_D();
+    for (auto it = d->positioners.constBegin(); it != d->positioners.constEnd() ; it++) {
+        if ((*it)->resource() == resource) {
+            return *it;
+        }
+    }
+    return nullptr;
+}
+
 void XdgShellV6Interface::Private::ping()
 {
     if (!resource || pingTimer->isActive()) {
@@ -409,6 +425,8 @@ void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_reso
 
 void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner)
 {
+
+    qDebug() << "new popup";
     if (m_topLevel) {
         wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
         return;
@@ -433,7 +451,8 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     m_popup->d_func()->constraintAdjustments = xdgPositioner->constraintAdjustments();
     m_popup->d_func()->anchorOffset = xdgPositioner->anchorOffset();
 
-    emit m_shell->popupCreated((m_popup);
+    emit m_shell->popupCreated2(m_popup.data());
+    qDebug() << "new popup \o/ at " << xdgPositioner->anchorRect();
 }
 
 
@@ -660,8 +679,8 @@ XdgTopLevelV6Interface::Private::~Private() = default;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_popup_v6_interface XdgPopupV6Interface::Private::s_interface = {
-//     destroyCallback,
-//     grabCallback
+    destroyCallback,
+    grabCallback
 };
 #endif
 
@@ -672,6 +691,16 @@ XdgPopupV6Interface::Private::Private(XdgPopupV6Interface *q, XdgShellV6Interfac
 
 XdgPopupV6Interface::Private::~Private() = default;
 
+quint32 XdgPopupV6Interface::Private::configure(const QRect &rect)
+{
+    if (!resource) {
+        return 0;
+    }
+    const quint32 serial = global->display()->nextSerial();
+    zxdg_popup_v6_send_configure(resource, rect.x(), rect.y(), rect.width(), rect.height());
+    zxdg_surface_v6_send_configure(parentResource, serial);
+    return serial;
+}
 
 void XdgPopupV6Interface::Private::popupDone()
 {

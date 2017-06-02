@@ -387,17 +387,17 @@ void XdgSurfaceV6Interface::Private::getTopLevelCallback(wl_client *client, wl_r
 void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     if (m_topLevel) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Top level already created on this surface");
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
         return;
     }
     if (m_popup) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup role already created on this surface");
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup already created on this surface");
         return;
     }
     m_topLevel = new XdgTopLevelV6Interface (m_shell, m_surface, parentResource);
     m_topLevel->d->create(m_shell->display()->getConnection(client), version, id);
 
-    m_shell->surfaceCreated(m_topLevel);
+    emit m_shell->surfaceCreated(m_topLevel);
 }
 
 
@@ -409,12 +409,31 @@ void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_reso
 
 void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner)
 {
-    //FIXME positioner
-    //FIXME check if already exists
+    if (m_topLevel) {
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
+        return;
+    }
+    if (m_popup) {
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup already created on this surface");
+        return;
+    }
 
-    qDebug() << "creating a popup - not done yet";
-    XdgPopupV6Interface *popup = new XdgPopupV6Interface(m_shell, m_surface, parent);
-    popup->d->create(m_shell->display()->getConnection(client), version, id);
+    auto xdgPositioner = m_shell->getPositioner(positioner);
+    if (!xdgPositioner) {
+        qDebug() << "Nope!!";
+        return;
+    }
+    m_popup = new XdgPopupV6Interface(m_shell, m_surface, parent);
+    m_popup->d->create(m_shell->display()->getConnection(client), version, id);
+
+    m_popup->d_func()->initialSize = xdgPositioner->initialSize();
+    m_popup->d_func()->anchorRect = xdgPositioner->anchorRect();
+    m_popup->d_func()->anchorEdge = xdgPositioner->anchorEdge();
+    m_popup->d_func()->gravity = xdgPositioner->gravity();
+    m_popup->d_func()->constraintAdjustments = xdgPositioner->constraintAdjustments();
+    m_popup->d_func()->anchorOffset = xdgPositioner->anchorOffset();
+
+    emit m_shell->popupCreated((m_popup);
 }
 
 

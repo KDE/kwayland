@@ -202,10 +202,10 @@ QPoint XdgShellPopupInterface::anchorOffset() const
     return d->anchorOffset;
 }
 
-PositionerConstraints XdgShellPopupInterface::constraintAdjustment() const
+PositionerConstraints XdgShellPopupInterface::constraintAdjustments() const
 {
     Q_D();
-    return d->constraintAdjustment;
+    return d->constraintAdjustments;
 }
 
 void XdgShellPopupInterface::popupDone()

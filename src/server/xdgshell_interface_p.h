@@ -81,7 +81,7 @@ public:
     QRect anchorRect;
     Qt::Edges anchorEdge;
     Qt::Edges gravity;
-    PositionerConstraints constraintAdjustment;
+    PositionerConstraints constraintAdjustments;
     QPoint anchorOffset;
 
     XdgShellInterfaceVersion interfaceVersion;

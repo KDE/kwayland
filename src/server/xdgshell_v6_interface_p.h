@@ -39,6 +39,7 @@ class SeatInterface;
 class SurfaceInterface;
 class XdgTopLevelV6Interface;
 class XdgPopupV6Interface;
+class XdgPositionerV6Interface;
 class XdgSurfaceV6Interface;
 template <typename T>
 class GenericShellSurface;
@@ -53,6 +54,7 @@ public:
      * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
     XdgTopLevelV6Interface *getSurface(wl_resource *native);
+    XdgPositionerV6Interface *getPositioner(wl_resource *native);
 
     Display *display() const;
 

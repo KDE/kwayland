@@ -338,7 +338,7 @@ public:
     /*
      * Specifies how the compositor should position the popup if it does not fit in the requested position
      */
-    PositionerConstraints constraintAdjustment() const;
+    PositionerConstraints constraintAdjustments() const;
 
     /**
      * Dismiss this popup. This indicates to the client that it should destroy this popup.

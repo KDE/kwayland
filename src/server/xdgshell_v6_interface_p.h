@@ -54,7 +54,12 @@ public:
      * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
     XdgTopLevelV6Interface *getSurface(wl_resource *native);
+    //DAVE rename this, and make XdgShell::getSurface call that
+    //also use a less terrible argument name than native. It's obvious it's native from the type
+
     XdgPositionerV6Interface *getPositioner(wl_resource *native);
+
+    XdgSurfaceV6Interface *realGetSurface(wl_resource *native);
 
     Display *display() const;
 

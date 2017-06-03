@@ -308,6 +308,21 @@ XdgTopLevelV6Interface *XdgShellV6Interface::getSurface(wl_resource *resource)
     return nullptr;
 }
 
+XdgSurfaceV6Interface *XdgShellV6Interface::realGetSurface(wl_resource *resource)
+{
+    if (!resource) {
+        return nullptr;
+    }
+    Q_D();
+
+    for (auto it = d->surfaces.constBegin(); it != d->surfaces.constEnd() ; it++) {
+        if ((*it)->resource() == resource) {
+            return (*it);
+        }
+    }
+    return nullptr;
+}
+
 XdgPositionerV6Interface *XdgShellV6Interface::getPositioner(wl_resource *resource)
 {
     if (!resource) {
@@ -442,17 +457,27 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
         return;
     }
     m_popup = new XdgPopupV6Interface(m_shell, m_surface, parent);
-    m_popup->d->create(m_shell->display()->getConnection(client), version, id);
+    auto pd = m_popup->d_func();
 
-    m_popup->d_func()->initialSize = xdgPositioner->initialSize();
-    m_popup->d_func()->anchorRect = xdgPositioner->anchorRect();
-    m_popup->d_func()->anchorEdge = xdgPositioner->anchorEdge();
-    m_popup->d_func()->gravity = xdgPositioner->gravity();
-    m_popup->d_func()->constraintAdjustments = xdgPositioner->constraintAdjustments();
-    m_popup->d_func()->anchorOffset = xdgPositioner->anchorOffset();
+    pd->create(m_shell->display()->getConnection(client), version, id);
+
+    auto parentXdgSurface = m_shell->realGetSurface(parent);
+    if (parentXdgSurface) {
+        pd->parent = parentXdgSurface->surface();
+    } else {
+        qDebug() << "creating a popup with no parent that we know of?";
+        //DAVE ERROR
+    }
+
+    pd->initialSize = xdgPositioner->initialSize();
+    pd->anchorRect = xdgPositioner->anchorRect();
+    pd->anchorEdge = xdgPositioner->anchorEdge();
+    pd->gravity = xdgPositioner->gravity();
+    pd->constraintAdjustments = xdgPositioner->constraintAdjustments();
+    pd->anchorOffset = xdgPositioner->anchorOffset();
 
     emit m_shell->popupCreated2(m_popup.data());
-    qDebug() << "new popup \o/ at " << xdgPositioner->anchorRect();
+    qDebug() << "new popup \o/ at " << xdgPositioner->anchorRect() <<  pd->parent;
 }
 
 

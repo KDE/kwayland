@@ -76,10 +76,11 @@ public:
     }
 
     virtual quint32 configure(const QRect &rect) {
+        Q_UNUSED(rect)
         return 0;
     };
 
-
+    QVector<quint32> configureSerials;
     QPointer<SurfaceInterface> parent;
     QPoint transientOffset; //DAVE kill this, change v5 code to set an anchor rect with 1x1 size
     QSize initialSize;

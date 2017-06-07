@@ -75,6 +75,20 @@ public:
     Private(XdgPopupV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
     ~Private();
 
+    void ackConfigure(quint32 serial) {
+        if (!configureSerials.contains(serial)) {
+            // TODO: send error?
+            return;
+        }
+        while (!configureSerials.isEmpty()) {
+            quint32 i = configureSerials.takeFirst();
+            emit q_func()->configureAcknowledged(i);
+            if (i == serial) {
+                break;
+            }
+        }
+    }
+
     void popupDone() override;
     quint32 configure(const QRect &rect) override;
 
@@ -181,7 +195,6 @@ public:
     }
 
 private:
-    //FIXME implement
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void setParentCallback(struct wl_client *client, struct wl_resource *resource, wl_resource *parent);
     static void showWindowMenuCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, int32_t x, int32_t y);
@@ -489,7 +502,7 @@ void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_
     if (s->m_topLevel) {
         s->m_topLevel->d_func()->ackConfigure(serial);
     } else if (s->m_popup) {
-//         emit s->m_popup->ackConfigure(serial);
+        s->m_topLevel->d_func()->ackConfigure(serial);
     }
 }
 

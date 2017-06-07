@@ -362,6 +362,13 @@ public:
      **/
     void popupDone();
 
+Q_SIGNALS:
+    /**
+     * A configure event with @p serial got acknowledged.
+     * @see configure
+     **/
+    void configureAcknowledged(quint32 serial);
+
 protected:
     class Private;
     explicit XdgShellPopupInterface(Private *p);

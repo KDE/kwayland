@@ -369,6 +369,9 @@ Q_SIGNALS:
      **/
     void configureAcknowledged(quint32 serial);
 
+    //DAVE compatibility - we make V5 emit this on creation?
+    void grabbed(KWayland::Server::SeatInterface *seat, quint32 serial);
+
 protected:
     class Private;
     explicit XdgShellPopupInterface(Private *p);

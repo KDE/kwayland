@@ -96,8 +96,7 @@ public:
         return reinterpret_cast<XdgPopupV6Interface *>(q);
     }
 private:
-    static void destroyCallback(wl_client *client, wl_resource *resource) {}
-    static void grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial) {}
+    static void grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial);
 
     static const struct zxdg_popup_v6_interface s_interface;
 };
@@ -539,7 +538,6 @@ public:
     QPoint anchorOffset;
 
 private:
-    static void destroyCallback(wl_client *client, wl_resource *resource) {}
     static void setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height);
     static void setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
     static void setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor);
@@ -716,7 +714,7 @@ XdgTopLevelV6Interface::Private::~Private() = default;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_popup_v6_interface XdgPopupV6Interface::Private::s_interface = {
-    destroyCallback,
+    resourceDestroyedCallback,
     grabCallback
 };
 #endif
@@ -724,6 +722,13 @@ const struct zxdg_popup_v6_interface XdgPopupV6Interface::Private::s_interface =
 XdgPopupV6Interface::Private::Private(XdgPopupV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
     : XdgShellPopupInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_popup_v6_interface, &s_interface)
 {
+}
+
+void XdgPopupV6Interface::Private::grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial)
+{
+    auto s = cast<Private>(resource);
+    auto seatInterface = SeatInterface::get(seat);
+    s->q_func()->grabbed(seatInterface, serial);
 }
 
 XdgPopupV6Interface::Private::~Private() = default;

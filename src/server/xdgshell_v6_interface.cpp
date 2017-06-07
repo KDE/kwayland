@@ -257,6 +257,7 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
             surfaces.removeAll(shellSurface);
         }
     );
+
     shellSurface->d->create(display->getConnection(client), version, id);
 }
 
@@ -265,8 +266,14 @@ void XdgShellV6Interface::Private::createPositioner(wl_client *client, uint32_t 
     Q_UNUSED(client)
     auto s = cast(resource);
     XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
-    positioner->d->create(display->getConnection(client), version, id);
     positioners << positioner;
+
+    QObject::connect(positioner, &XdgSurfaceV6Interface::destroyed, q,
+        [this, positioner] {
+            positioners.removeAll(positioner);
+        }
+    );
+    positioner->d->create(display->getConnection(client), version, id);
 }
 
 void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)

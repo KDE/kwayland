@@ -54,7 +54,7 @@ public:
      * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
     XdgTopLevelV6Interface *getSurface(wl_resource *native);
-    //DAVE rename this, and make XdgShell::getSurface call that
+    //DAVE we want to rename this, as it's bloody confusing. But XdgShellInterface::getSurface exists and expects that
     //also use a less terrible argument name than native. It's obvious it's native from the type
 
     XdgPositionerV6Interface *getPositioner(wl_resource *native);
@@ -122,6 +122,10 @@ private:
     Private *d_func() const;
 };
 
+/*
+ * This is a private internal class that keeps track of sent data
+ * At the time of PopupCreation these values are copied to the popup
+ */
 class XdgPositionerV6Interface: public KWayland::Server::Resource
 {
 public:

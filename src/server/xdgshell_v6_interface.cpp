@@ -545,7 +545,7 @@ XdgPositionerV6Interface::Private::Private(XdgPositionerV6Interface *q, XdgShell
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_interface = {
-    destroyCallback,
+    resourceDestroyedCallback,
     setSizeCallback,
     setAnchorRectCallback,
     setAnchorCallback,

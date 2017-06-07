@@ -124,7 +124,6 @@ public:
     //a surface cannot have two roles
     QPointer<XdgTopLevelV6Interface> m_topLevel;
     QPointer<XdgPopupV6Interface> m_popup;
-    QVector<quint32> configureSerials;
 
 private:
     static void destroyCallback(wl_client *client, wl_resource *resource);

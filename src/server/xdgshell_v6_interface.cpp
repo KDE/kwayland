@@ -507,7 +507,7 @@ void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_
     if (s->m_topLevel) {
         s->m_topLevel->d_func()->ackConfigure(serial);
     } else if (s->m_popup) {
-        s->m_topLevel->d_func()->ackConfigure(serial);
+        s->m_popup->d_func()->ackConfigure(serial);
     }
 }
 

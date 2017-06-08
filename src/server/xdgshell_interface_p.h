@@ -84,6 +84,10 @@ public:
     QPointer<SurfaceInterface> parent;
     QPoint transientOffset; //DAVE kill this, change v5 code to set an anchor rect with 1x1 size
     QSize initialSize;
+
+    /*
+     *
+     */
     QRect anchorRect;
     Qt::Edges anchorEdge;
     Qt::Edges gravity;

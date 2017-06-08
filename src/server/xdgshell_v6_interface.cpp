@@ -482,6 +482,7 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     auto parentXdgSurface = m_shell->realGetSurface(parent);
     if (parentXdgSurface) {
         pd->parent = parentXdgSurface->surface();
+        qDebug() << "parent surface set to " << pd->parent;
     } else {
         qDebug() << "creating a popup with no parent that we know of?";
         //DAVE ERROR
@@ -494,8 +495,8 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     pd->constraintAdjustments = xdgPositioner->constraintAdjustments();
     pd->anchorOffset = xdgPositioner->anchorOffset();
 
-    emit m_shell->popupCreated2(m_popup.data());
     qDebug() << "new popup \o/ at " << xdgPositioner->anchorRect() <<  pd->parent;
+    emit m_shell->popupCreated2(m_popup.data());
 }
 
 

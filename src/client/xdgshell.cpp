@@ -105,6 +105,11 @@ XdgShellPopup *XdgShell::createPopup(Surface *surface, Surface *parentSurface, S
     return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
 }
 
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+{
+    return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
+}
+
 XdgShellSurface::Private::Private(XdgShellSurface *q)
     : q(q)
 {
@@ -158,6 +163,14 @@ XdgShellSurface::operator xdg_surface*() {
 }
 
 XdgShellSurface::operator xdg_surface*() const {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() const {
     return *(d.data());
 }
 
@@ -278,6 +291,11 @@ XdgShellPopup::~XdgShellPopup()
 void XdgShellPopup::setup(xdg_popup *xdgpopupv5)
 {
     d->setupV5(xdgpopupv5);
+}
+
+void XdgShellPopup::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopupv6)
+{
+    d->setupV6(xdgsurfacev6, xdgpopupv6);
 }
 
 void XdgShellPopup::release()

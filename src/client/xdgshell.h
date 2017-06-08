@@ -132,6 +132,12 @@ public:
      **/
     XdgShellPopup *createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
+    //DAVE - we need XdgV6ShellSurface for parent surface, it's easy to go get surface from shell, but not this way round. Suggest to deprecate this method, instead replace with these two - (could be one method if I do my template trickery)
+
+    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
+//     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
+
+
     operator xdg_shell*();
     operator xdg_shell*() const;
     operator zxdg_shell_v6*();
@@ -330,6 +336,9 @@ public:
 
     operator xdg_surface*();
     operator xdg_surface*() const;
+
+    operator zxdg_surface_v6*();
+    operator zxdg_surface_v6*() const;
     operator zxdg_toplevel_v6*();
     operator zxdg_toplevel_v6*() const;
 
@@ -387,7 +396,8 @@ public:
      * When using XdgShell::createXdgShellPopup there is no need to call this
      * method.
      **/
-    void setup(zxdg_popup_v6 *xdgpopup6);
+    void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopup6);
+
     /**
      * @returns @c true if managing an xdg_popup.
      **/
@@ -436,6 +446,12 @@ Q_SIGNALS:
      * compositor. The user should delete this instance at this point.
      **/
     void popupDone();
+
+    /**
+     *
+     **/
+    void configureRequested(const QRect &relativePosition, quint32 serial);
+
 
 protected:
     class Private;

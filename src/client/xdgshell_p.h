@@ -56,6 +56,12 @@ public:
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
     virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) = 0;
 
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
+        //DAVE - TODO make base class call the Surface version
+        return nullptr;
+    };
+
+
     EventQueue *queue = nullptr;
 
 protected:
@@ -132,6 +138,12 @@ public:
     virtual operator xdg_surface*() const {
         return nullptr;
     }
+    virtual operator zxdg_surface_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() const {
+        return nullptr;
+    }
     virtual operator zxdg_toplevel_v6*() {
         return nullptr;
     }
@@ -171,7 +183,7 @@ public:
     virtual void setupV5(xdg_popup *p) {
         Q_UNUSED(p)
     }
-    virtual void setupV6(zxdg_popup_v6 *p) {
+    virtual void setupV6(zxdg_surface_v6 *s,  zxdg_popup_v6 *p) {
         Q_UNUSED(p)
     }
     virtual void release() = 0;

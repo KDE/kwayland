@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland_pointer_p.h"
 #include <wayland-xdg-shell-v6-client-protocol.h>
 
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Client
@@ -39,6 +41,8 @@ public:
     bool isValid() const override;
     XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
+    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
+
     operator zxdg_shell_v6*() override {
         return xdgshellv6;
     }
@@ -105,9 +109,32 @@ XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QO
 
 XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
 {
+    qWarning() << "Nope! - see comment API";
+    return nullptr;
+}
+
+XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+{
     Q_ASSERT(isValid());
-    //FIXME
+    auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
+    if (!ss) {
+        return nullptr;
+    }
+
+    QRect anchorRect(parentPos, QSize(1,1));
+    auto positioner  = zxdg_shell_v6_create_positioner(xdgshellv6);
+    zxdg_positioner_v6_set_anchor_rect(positioner, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
+
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
+    auto popup = zxdg_surface_v6_get_popup(*parentSurface, ss, positioner);
+    if (queue) {
+        queue->addProxy(popup);
+    }
+    s->setup(ss, popup);
+
+//     s->grab(seat, serial);
+
+    //delete positioner
     return s;
 }
 
@@ -131,6 +158,13 @@ public:
     void release() override;
     void destroy() override;
     bool isValid() const override;
+
+    operator zxdg_surface_v6*() override {
+        return xdgsurfacev6;
+    }
+    operator zxdg_surface_v6*() const override {
+        return xdgsurfacev6;
+    }
     operator zxdg_toplevel_v6*() override {
         return xdgtoplevelv6;
     }
@@ -363,7 +397,7 @@ class XdgShellPopupUnstableV6::Private : public XdgShellPopup::Private
 public:
     Private(XdgShellPopup *q);
 
-    void setupV6(zxdg_popup_v6 *p) override;
+    void setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p) override;
     void release() override;
     void destroy() override;
     bool isValid() const override;
@@ -373,22 +407,41 @@ public:
     operator zxdg_popup_v6*() const override {
         return xdgpopupv6;
     }
+    WaylandPointer<zxdg_surface_v6, zxdg_surface_v6_destroy> xdgsurfacev6;
     WaylandPointer<zxdg_popup_v6, zxdg_popup_v6_destroy> xdgpopupv6;
 
 private:
     static void configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height);
     static void popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup);
-    static const struct zxdg_popup_v6_listener s_listener;
+    static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
+
+    static const struct zxdg_popup_v6_listener s_popupListener;
+    static const struct zxdg_surface_v6_listener s_surfaceListener;
 };
 
-const struct zxdg_popup_v6_listener XdgShellPopupUnstableV6::Private::s_listener = {
+const struct zxdg_popup_v6_listener XdgShellPopupUnstableV6::Private::s_popupListener = {
     configureCallback,
     popupDoneCallback
+};
+
+const struct zxdg_surface_v6_listener XdgShellPopupUnstableV6::Private::s_surfaceListener = {
+    surfaceConfigureCallback,
 };
 
 void XdgShellPopupUnstableV6::Private::configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     //FIXME
+}
+
+void XdgShellPopupUnstableV6::Private::surfaceConfigureCallback(void *data, struct zxdg_surface_v6 *surface, uint32_t serial)
+{
+    auto s = reinterpret_cast<Private*>(data);
+//     s->q->configureRequested(s->pendingSize, s->pendingState, serial);
+//     if (!s->pendingSize.isNull()) {
+//         s->q->setSize(s->pendingSize);
+//         s->pendingSize = QSize();
+//     }
+//     s->pendingState = 0;
 }
 
 void XdgShellPopupUnstableV6::Private::popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup)
@@ -403,12 +456,15 @@ XdgShellPopupUnstableV6::Private::Private(XdgShellPopup *q)
 {
 }
 
-void XdgShellPopupUnstableV6::Private::setupV6(zxdg_popup_v6 *p)
+void XdgShellPopupUnstableV6::Private::setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p)
 {
     Q_ASSERT(p);
     Q_ASSERT(!xdgpopupv6);
+
+    xdgsurfacev6.setup(s);
     xdgpopupv6.setup(p);
-    zxdg_popup_v6_add_listener(xdgpopupv6, &s_listener, this);
+    zxdg_surface_v6_add_listener(xdgsurfacev6, &s_surfaceListener, this);
+    zxdg_popup_v6_add_listener(xdgpopupv6, &s_popupListener, this);
 }
 
 void XdgShellPopupUnstableV6::Private::release()

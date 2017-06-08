@@ -746,8 +746,11 @@ quint32 XdgPopupV6Interface::Private::configure(const QRect &rect)
         return 0;
     }
     const quint32 serial = global->display()->nextSerial();
+    configureSerials << serial;
     zxdg_popup_v6_send_configure(resource, rect.x(), rect.y(), rect.width(), rect.height());
     zxdg_surface_v6_send_configure(parentResource, serial);
+    client->flush();
+
     return serial;
 }
 

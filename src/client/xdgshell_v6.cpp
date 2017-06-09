@@ -126,7 +126,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     zxdg_positioner_v6_set_anchor_rect(positioner, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
 
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
-    auto popup = zxdg_surface_v6_get_popup(*parentSurface, ss, positioner);
+    auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, positioner);
     if (queue) {
         queue->addProxy(popup);
     }
@@ -459,6 +459,7 @@ XdgShellPopupUnstableV6::Private::Private(XdgShellPopup *q)
 void XdgShellPopupUnstableV6::Private::setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p)
 {
     Q_ASSERT(p);
+    Q_ASSERT(!xdgsurfacev6);
     Q_ASSERT(!xdgpopupv6);
 
     xdgsurfacev6.setup(s);

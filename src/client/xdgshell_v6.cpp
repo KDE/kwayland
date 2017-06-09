@@ -101,6 +101,7 @@ XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QO
     auto s = new XdgTopLevelUnstableV6(parent);
     auto toplevel = zxdg_surface_v6_get_toplevel(ss);
     if (queue) {
+        queue->addProxy(ss);
         queue->addProxy(toplevel);
     }
     s->setup(ss, toplevel);
@@ -128,6 +129,8 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
     auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, positioner);
     if (queue) {
+        //deliberately not adding the positioner because the positioner has no events sent to it
+        queue->addProxy(ss);
         queue->addProxy(popup);
     }
     s->setup(ss, popup);

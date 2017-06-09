@@ -132,6 +132,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     }
     s->setup(ss, popup);
 
+    zxdg_positioner_v6_destroy(positioner);
 //     s->grab(seat, serial);
 
     //delete positioner

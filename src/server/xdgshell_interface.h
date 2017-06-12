@@ -314,12 +314,14 @@ public:
      * @see transientOffset
      **/
     QPointer<SurfaceInterface> transientFor() const;
+
     /**
      * The offset of the Surface in the coordinate system of the SurfaceInterface this surface is a transient for.
      *
+     * For XDG V6 this returns the point on the anchorRect defined by the anchor edge.
+     *
      * @returns offset in parent coordinate system.
      * @see transientFor
-     * @deprecated see anchorRect
      **/
     QPoint transientOffset() const;
 
@@ -327,7 +329,7 @@ public:
      * The size of the surface that is to be positioned.
      *
      */
-    QSize initialSize() const; //DAVE remember to divide this by surface->scale()
+    QSize initialSize() const;
 
     /*
      * The area this popup should be positioned around

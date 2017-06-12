@@ -89,8 +89,8 @@ public:
      *
      */
     QRect anchorRect;
-    Qt::Edges anchorEdge;
-    Qt::Edges gravity;
+    Qt::Edges anchorEdge = Qt::BottomEdge;
+    Qt::Edges gravity = Qt::TopEdge;
     PositionerConstraints constraintAdjustments;
     QPoint anchorOffset;
 

@@ -114,8 +114,8 @@ public:
         return reinterpret_cast<XdgSurfaceV6Interface *>(q);
     }
 
-    void createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *);
-    void createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner);
+    void createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource);
+    void createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource, wl_resource *parentWindow, wl_resource *positioner);
     XdgShellV6Interface *m_shell;
     SurfaceInterface *m_surface;
 
@@ -265,10 +265,10 @@ void XdgShellV6Interface::Private::createPositioner(wl_client *client, uint32_t 
 {
     Q_UNUSED(client)
     auto s = cast(resource);
+
     XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
     positioners << positioner;
-
-    QObject::connect(positioner, &XdgSurfaceV6Interface::destroyed, q,
+    QObject::connect(positioner, &Resource::destroyed, q,
         [this, positioner] {
             positioners.removeAll(positioner);
         }
@@ -453,10 +453,10 @@ void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t 
 void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner)
 {
     auto s = cast<XdgSurfaceV6Interface::Private>(resource);
-    s->createPopup(client, wl_resource_get_version(resource), id, parent, positioner);
+    s->createPopup(client, wl_resource_get_version(resource), id, resource, parent, positioner);
 }
 
-void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parent, wl_resource *positioner)
+void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource, wl_resource *parentSurface, wl_resource *positioner)
 {
 
     qDebug() << "new popup";
@@ -474,12 +474,12 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
         qDebug() << "Nope!!";
         return;
     }
-    m_popup = new XdgPopupV6Interface(m_shell, m_surface, parent);
+    m_popup = new XdgPopupV6Interface(m_shell, m_surface, parentResource);
     auto pd = m_popup->d_func();
 
     pd->create(m_shell->display()->getConnection(client), version, id);
 
-    auto parentXdgSurface = m_shell->realGetSurface(parent);
+    auto parentXdgSurface = m_shell->realGetSurface(parentSurface);
     if (parentXdgSurface) {
         pd->parent = parentXdgSurface->surface();
         qDebug() << "parent surface set to " << pd->parent;
@@ -790,7 +790,8 @@ SurfaceInterface* XdgSurfaceV6Interface::surface() const
     return reinterpret_cast<Private*>(d.data())->m_surface;
 }
 
-XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource) : KWayland::Server::Resource(new Private(this, parent, parentResource))
+XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource)
+    : KWayland::Server::Resource(new Private(this, parent, parentResource))
 {
 }
 

@@ -125,6 +125,8 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     QRect anchorRect(parentPos, QSize(1,1));
     auto positioner  = zxdg_shell_v6_create_positioner(xdgshellv6);
     zxdg_positioner_v6_set_anchor_rect(positioner, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
+    zxdg_positioner_v6_set_anchor(positioner, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM);
+    zxdg_positioner_v6_set_gravity(positioner, ZXDG_POSITIONER_V6_GRAVITY_TOP);
 
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
     auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, positioner);
@@ -136,9 +138,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     s->setup(ss, popup);
 
     zxdg_positioner_v6_destroy(positioner);
-//     s->grab(seat, serial);
 
-    //delete positioner
     return s;
 }
 

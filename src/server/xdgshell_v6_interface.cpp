@@ -786,8 +786,8 @@ XdgSurfaceV6Interface::~XdgSurfaceV6Interface() = default;
 
 SurfaceInterface* XdgSurfaceV6Interface::surface() const
 {
-    //FIXME, I have no idea why d->m_surface doesn't work..
-    return reinterpret_cast<Private*>(d.data())->m_surface;
+    Q_D();
+    return d->m_surface;
 }
 
 XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource)
@@ -842,7 +842,14 @@ XdgPositionerV6Interface::Private *XdgPositionerV6Interface::d_func() const
 
 XdgTopLevelV6Interface* XdgSurfaceV6Interface::topLevel() const
 {
-    return reinterpret_cast<Private*>(d.data())->m_topLevel.data();
+    Q_D();
+    return d->m_topLevel.data();
+}
+
+XdgPopupV6Interface* XdgSurfaceV6Interface::popup() const
+{
+    Q_D();
+    return d->m_popup.data();
 }
 
 XdgSurfaceV6Interface::Private *XdgSurfaceV6Interface::d_func() const

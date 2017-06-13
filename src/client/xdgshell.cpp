@@ -105,9 +105,14 @@ XdgShellPopup *XdgShell::createPopup(Surface *surface, Surface *parentSurface, S
     return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
 }
 
-XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
 {
-    return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
+    return d->getXdgPopup(surface, parentSurface, positioner, seat, serial, parent);
+}
+
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+{
+    return d->getXdgPopup(surface, parentSurface, positioner, seat, serial, parent);
 }
 
 XdgShellSurface::Private::Private(XdgShellSurface *q)
@@ -339,7 +344,7 @@ bool XdgShellPopup::isValid() const
     return d->isValid();
 }
 
-XdgPositioner::XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
+XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
 :d (new Private)
 {
     d->initialSize = initialSize;

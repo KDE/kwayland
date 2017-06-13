@@ -40,8 +40,10 @@ public:
     void destroy() override;
     bool isValid() const override;
     XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) override;
-    XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
-    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
+
+    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) override;
+//     XdgShellPopup *getXdgPopup((Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+
 
     operator zxdg_shell_v6*() override {
         return xdgshellv6;
@@ -108,13 +110,8 @@ XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QO
     return s;
 }
 
-XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
-{
-    qWarning() << "Nope! - see comment API";
-    return nullptr;
-}
 
-XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
@@ -122,14 +119,16 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
         return nullptr;
     }
 
-    QRect anchorRect(parentPos, QSize(1,1));
-    auto positioner  = zxdg_shell_v6_create_positioner(xdgshellv6);
-    zxdg_positioner_v6_set_anchor_rect(positioner, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
-    zxdg_positioner_v6_set_anchor(positioner, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM);
-    zxdg_positioner_v6_set_gravity(positioner, ZXDG_POSITIONER_V6_GRAVITY_TOP);
+    auto p = zxdg_shell_v6_create_positioner(xdgshellv6);
+    auto anchorRect = positioner.anchor();
+    zxdg_positioner_v6_set_anchor_rect(p, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
+
+    //FIXME - all the other positioner stuff
+    zxdg_positioner_v6_set_anchor(p, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM);
+    zxdg_positioner_v6_set_gravity(p, ZXDG_POSITIONER_V6_GRAVITY_TOP);
 
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
-    auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, positioner);
+    auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, p);
     if (queue) {
         //deliberately not adding the positioner because the positioner has no events sent to it
         queue->addProxy(ss);
@@ -137,7 +136,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     }
     s->setup(ss, popup);
 
-    zxdg_positioner_v6_destroy(positioner);
+    zxdg_positioner_v6_destroy(p);
 
     return s;
 }

@@ -47,9 +47,7 @@ class XdgShellPopup;
 class XdgShellSurface;
 
 
-
-
-class XdgPositioner
+class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
     enum class Constraint {
         SlideX = 1 << 0,
@@ -85,7 +83,8 @@ public:
 
 private:
     class Private;
-    QScopedPointer<Private> d; //Dave QSharedPointer?
+//     QScopedPointer<Private> d; //Dave QSharedPointer?
+    Private *d;
 };
 
 /**
@@ -174,11 +173,12 @@ public:
      **/
     XdgShellPopup *createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
-    //DAVE - we need XdgV6ShellSurface for parent surface, it's easy to go get surface from shell, but not this way round. Suggest to deprecate this method, instead replace with these two - (could be one method if I do my template trickery)
+    //DAVE - the seat and serial are here so we can do v5 compatibility
+    //make the grab method redundant, so that's not in the public API...for now.
 
-    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
-//     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
+    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
 
+    XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
 
     operator xdg_shell*();
     operator xdg_shell*() const;

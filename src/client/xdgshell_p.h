@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QSize>
 #include <QRect>
+#include <QDebug>
 
 namespace KWayland
 {
@@ -55,13 +56,44 @@ public:
         return nullptr;
     }
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) = 0;
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
-        //DAVE - TODO make base class call the Surface version
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(seat)
+        Q_UNUSED(serial)
+        Q_UNUSED(parentPos)
+        Q_UNUSED(parent)
+        qWarning() << __func__ << " is not supported in this version";
         return nullptr;
     };
 
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) {
+        //Dave - we could implement this in V5 and then make this pure virtual.
+        //would need to a link from XdgShellSurfaceV5 to underlying Surface
+        //or we just make a brand new ctor
+
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(seat)
+        Q_UNUSED(serial)
+        Q_UNUSED(positioner)
+        Q_UNUSED(parent)
+
+        return nullptr;
+    }
+
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) {
+
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(seat)
+        Q_UNUSED(serial)
+        Q_UNUSED(positioner)
+        Q_UNUSED(parent)
+
+        return nullptr;
+    }
 
     EventQueue *queue = nullptr;
 

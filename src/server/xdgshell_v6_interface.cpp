@@ -597,7 +597,26 @@ void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl
 
 void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {
     auto s = cast<Private>(resource);
-    //FIXME
+    PositionerConstraints constraints;
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) {
+        constraints |= PositionerConstraint::SlideX;
+    }
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) {
+        constraints |= PositionerConstraint::SlideY;
+    }
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X) {
+        constraints |= PositionerConstraint::FlipX;
+    }
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y) {
+        constraints |= PositionerConstraint::FlipY;
+    }
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) {
+        constraints |= PositionerConstraint::ResizeX;
+    }
+    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) {
+        constraints |= PositionerConstraint::ResizeY;
+    }
+    s->constraintAdjustments = constraints;
 }
 
 void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y)

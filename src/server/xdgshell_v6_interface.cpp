@@ -604,7 +604,6 @@ void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_
 {
     auto s = cast<Private>(resource);
     s->anchorOffset = QPoint(x,y);
-    //FIXME
 }
 
 void XdgTopLevelV6Interface::Private::close()

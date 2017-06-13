@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell.h"
 
 #include <QSize>
+#include <QRect>
 
 namespace KWayland
 {
@@ -208,6 +209,18 @@ protected:
 private:
 };
 
+class XdgPositioner::Private
+{
+public:
+    QSize initialSize;
+    QRect anchorRect;
+    Qt::Edges gravity;
+    Qt::Edges anchorEdge;
+    XdgPositioner::Constraints constraints;
+    QPoint anchorOffset;
+};
+
+
 class XdgShellPopupUnstableV5 : public XdgShellPopup
 {
 public:
@@ -229,6 +242,7 @@ private:
     friend class XdgShellUnstableV6;
     class Private;
 };
+
 
 
 }

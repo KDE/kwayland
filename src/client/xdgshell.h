@@ -46,6 +46,48 @@ class Seat;
 class XdgShellPopup;
 class XdgShellSurface;
 
+
+
+
+class XdgPositioner
+{
+    enum class Constraint {
+        SlideX = 1 << 0,
+        SlideY = 1 << 1,
+        FlipX = 1 << 2,
+        FlipY = 1 << 3,
+        ResizeX = 1 << 4,
+        ResizeY = 1 << 5
+    };
+
+    Q_DECLARE_FLAGS(Constraints, Constraint)
+
+public:
+    XdgPositioner(const QSize &initialSize, const QRect &anchor);
+
+    Qt::Edges anchorEdge() const;
+    void setAnchorEdge(Qt::Edges edge);
+
+    Qt::Edges gravity() const;
+    void setGravity(Qt::Edges edge);
+
+    QRect anchor() const;
+    void setAnchor(const QRect &anchor);
+
+    QSize initialSize() const;
+    void setInitialSize(const QSize &size);
+
+    Constraints constraints() const;
+    void setConstraint(Constraints constaints);
+
+    QPoint anchorOffset() const;
+    void setAnchorOffset(const QPoint &offset);
+
+private:
+    class Private;
+    QScopedPointer<Private> d; //Dave QSharedPointer?
+};
+
 /**
  * @short Wrapper for the xdg_shell interface.
  *

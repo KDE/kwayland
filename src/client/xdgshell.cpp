@@ -339,6 +339,74 @@ bool XdgShellPopup::isValid() const
     return d->isValid();
 }
 
+XdgPositioner::XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
+:d (new Private)
+{
+    d->initialSize = initialSize;
+    d->anchorRect = anchor;
+}
+
+void XdgPositioner::setInitialSize(const QSize& size)
+{
+    d->initialSize = size;
+}
+
+QSize XdgPositioner::initialSize() const
+{
+    return d->initialSize;
+}
+
+void XdgPositioner::setAnchor(const QRect& anchor)
+{
+    d->anchorRect = anchor;
+}
+
+QRect XdgPositioner::anchor() const
+{
+    return d->anchorRect;
+}
+
+void XdgPositioner::setAnchorEdge(Qt::Edges edge)
+{
+    d->anchorEdge = edge;
+}
+
+Qt::Edges XdgPositioner::anchorEdge() const
+{
+    return d->anchorEdge;
+}
+
+void XdgPositioner::setAnchorOffset(const QPoint& offset)
+{
+    d->anchorOffset = offset;
+}
+
+QPoint XdgPositioner::anchorOffset() const
+{
+    return d->anchorOffset;
+}
+
+void XdgPositioner::setGravity(Qt::Edges edge)
+{
+    d->gravity = edge;
+}
+
+Qt::Edges XdgPositioner::gravity() const
+{
+    return d->gravity;
+}
+
+void XdgPositioner::setConstraint(Constraints constraints)
+{
+    d->constraints = constraints;
+}
+
+XdgPositioner::Constraints XdgPositioner::constraints() const
+{
+    return d->constraints;
+}
+
+
 }
 }
 

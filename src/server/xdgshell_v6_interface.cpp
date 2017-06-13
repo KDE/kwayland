@@ -587,12 +587,71 @@ void XdgPositionerV6Interface::Private::setAnchorRectCallback(wl_client *client,
 
 void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {
     auto s = cast<Private>(resource);
-    //FIXME
+    //Note - see David E's email to wayland-devel about this being bad API
+    if ((anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) &&
+        (anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+    if ((anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP) &&
+        (anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+    if (anchor == 0) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+
+    Qt::Edges edges;
+    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) {
+        edges |= Qt::LeftEdge;
+    }
+    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP) {
+        edges |= Qt::TopEdge;
+    }
+    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT) {
+        edges |= Qt::RightEdge;
+    }
+    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM) {
+        edges |= Qt::BottomEdge;
+    }
+
+    s->anchorEdge = edges;
 }
 
 void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {
     auto s = cast<Private>(resource);
-    //FIXME
+    if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT) &&
+        (gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+    if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP) &&
+        (gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+    if (gravity == 0) {
+        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+        return;
+    }
+
+    Qt::Edges edges;
+    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_LEFT) {
+        edges |= Qt::LeftEdge;
+    }
+    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_TOP) {
+        edges |= Qt::TopEdge;
+    }
+    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_RIGHT) {
+        edges |= Qt::RightEdge;
+    }
+    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM) {
+        edges |= Qt::BottomEdge;
+    }
+
+    s->gravity = edges;
 }
 
 void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {

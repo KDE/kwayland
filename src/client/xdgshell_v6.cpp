@@ -133,11 +133,36 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     }
 
     uint32_t anchor = 0;
+    if (positioner.anchorEdge().testFlag(Qt::LeftEdge)) {
+        anchor |= ZXDG_POSITIONER_V6_ANCHOR_LEFT;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::TopEdge)) {
+        anchor |= ZXDG_POSITIONER_V6_ANCHOR_TOP;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::RightEdge)) {
+        anchor |= ZXDG_POSITIONER_V6_ANCHOR_RIGHT;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::BottomEdge)) {
+        anchor |= ZXDG_POSITIONER_V6_ANCHOR_BOTTOM;
+    }
     if (anchor != 0) {
         zxdg_positioner_v6_set_anchor(p, anchor);
     }
 
     uint32_t gravity = 0;
+    if (positioner.anchorEdge().testFlag(Qt::LeftEdge)) {
+        gravity |= ZXDG_POSITIONER_V6_GRAVITY_LEFT;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::TopEdge)) {
+        gravity |= ZXDG_POSITIONER_V6_GRAVITY_TOP;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::RightEdge)) {
+        gravity |= ZXDG_POSITIONER_V6_GRAVITY_RIGHT;
+    }
+    if (positioner.anchorEdge().testFlag(Qt::BottomEdge)) {
+        gravity |= ZXDG_POSITIONER_V6_GRAVITY_BOTTOM;
+    }
+    zxdg_positioner_v6_set_anchor(p, anchor);
     if (gravity != 0) {
         zxdg_positioner_v6_set_gravity(p, gravity);
     }

@@ -495,7 +495,6 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     pd->constraintAdjustments = xdgPositioner->constraintAdjustments();
     pd->anchorOffset = xdgPositioner->anchorOffset();
 
-    qDebug() << "new popup \o/ at " << xdgPositioner->anchorRect() <<  pd->parent;
     emit m_shell->popupCreated2(m_popup.data());
 }
 
@@ -598,10 +597,6 @@ void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_
         wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
-    if (anchor == 0) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
-        return;
-    }
 
     Qt::Edges edges;
     if (anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) {
@@ -629,10 +624,6 @@ void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl
     }
     if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP) &&
         (gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
-        return;
-    }
-    if (gravity == 0) {
         wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
@@ -871,8 +862,6 @@ XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellV6Interface *parent, 
     : KWayland::Server::Resource(new Private(this, parent, parentResource))
 {
 }
-
-// XdgPositionerV6Interface::~XdgPositionerV6Interface() = default;
 
 QSize XdgPositionerV6Interface::initialSize() const
 {

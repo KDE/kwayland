@@ -331,6 +331,14 @@ XdgShellPopup::operator xdg_popup*() const {
     return *(d.data());
 }
 
+XdgShellPopup::operator zxdg_surface_v6*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_surface_v6*() const {
+    return *(d.data());
+}
+
 XdgShellPopup::operator zxdg_popup_v6*() {
     return *(d.data());
 }

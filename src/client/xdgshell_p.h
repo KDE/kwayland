@@ -229,6 +229,12 @@ public:
     virtual operator xdg_popup*() const {
         return nullptr;
     }
+    virtual operator zxdg_surface_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() const {
+        return nullptr;
+    }
     virtual operator zxdg_popup_v6*() {
         return nullptr;
     }

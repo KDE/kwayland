@@ -478,6 +478,8 @@ public:
 
     operator xdg_popup*();
     operator xdg_popup*() const;
+    operator zxdg_surface_v6*();
+    operator zxdg_surface_v6*() const;
     operator zxdg_popup_v6*();
     operator zxdg_popup_v6*() const;
 

@@ -174,9 +174,10 @@ QSize XdgShellPopupInterface::initialSize() const
 
 QPoint XdgShellPopupInterface::transientOffset() const
 {
-    Q_D();
     const QPoint center = anchorRect().center();
     const QRect rect = anchorRect().adjusted(0,0,1,1); //compensate for the stupid QRect::right fiasco
+
+    qDebug() << "anchor edge is " << anchorEdge();
 
     switch(anchorEdge()) {
         case Qt::TopEdge | Qt::LeftEdge:
@@ -196,9 +197,9 @@ QPoint XdgShellPopupInterface::transientOffset() const
         case Qt::LeftEdge:
                 return QPoint(rect.left(), center.y());
         default:
-            Q_ASSERT(false);
+            return center;
     }
-    return QPoint();
+    Q_UNREACHABLE();
 }
 
 QRect XdgShellPopupInterface::anchorRect() const

@@ -45,6 +45,7 @@ public:
 private:
     void setupRegistry(Registry *registry);
     void render();
+    void renderPopup();
     QThread *m_connectionThread;
     ConnectionThread *m_connectionThreadObject;
     EventQueue *m_eventQueue = nullptr;
@@ -53,6 +54,8 @@ private:
     Surface *m_surface = nullptr;
     XdgShell *m_xdgShell = nullptr;
     XdgShellSurface *m_xdgShellSurface = nullptr;
+    Surface *m_popupSurface = nullptr;
+    XdgShellPopup *m_xdgShellPopup = nullptr;
 };
 
 XdgTest::XdgTest(QObject *parent)
@@ -116,6 +119,15 @@ void XdgTest::setupRegistry(Registry *registry)
             Q_ASSERT(m_xdgShellSurface);
             connect(m_xdgShellSurface, &XdgShellSurface::sizeChanged, this, &XdgTest::render);
             render();
+
+            //create popup
+            m_popupSurface = m_compositor->createSurface(this);
+
+            XdgPositioner positioner(QSize(50,50), QRect(100,100, 20, 20));
+            //DAVE pass seat info like the v5 did
+            m_xdgShellPopup = m_xdgShell->createPopup(m_popupSurface, m_xdgShellSurface, positioner, 0, 0, this);
+            renderPopup();
+            //connect size changed
         }
     );
     registry->setEventQueue(m_eventQueue);
@@ -137,6 +149,23 @@ void XdgTest::render()
     m_surface->commit(Surface::CommitFlag::None);
     buffer->setUsed(false);
 }
+
+void XdgTest::renderPopup()
+{
+//     const QSize &size = m_xdgShellSurface->size().isValid() ? m_xdgShellSurface->size() : QSize(300, 200);
+    QSize size(200,200);
+    auto buffer = m_shm->getBuffer(size, size.width() * 4).toStrongRef();
+    buffer->setUsed(true);
+    QImage image(buffer->address(), size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
+    image.fill(QColor(255, 0, 0, 255));
+
+    m_popupSurface->attachBuffer(*buffer);
+    m_popupSurface->damage(QRect(QPoint(0, 0), size));
+    m_popupSurface->commit(Surface::CommitFlag::None);
+    buffer->setUsed(false);
+}
+
+
 
 int main(int argc, char **argv)
 {

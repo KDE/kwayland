@@ -177,8 +177,6 @@ QPoint XdgShellPopupInterface::transientOffset() const
     const QPoint center = anchorRect().center();
     const QRect rect = anchorRect().adjusted(0,0,1,1); //compensate for the stupid QRect::right fiasco
 
-    qDebug() << "anchor edge is " << anchorEdge();
-
     switch(anchorEdge()) {
         case Qt::TopEdge | Qt::LeftEdge:
             return rect.topLeft();

@@ -217,6 +217,7 @@ public:
         Q_UNUSED(p)
     }
     virtual void setupV6(zxdg_surface_v6 *s,  zxdg_popup_v6 *p) {
+        Q_UNUSED(s)
         Q_UNUSED(p)
     }
     virtual void release() = 0;

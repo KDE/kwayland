@@ -476,6 +476,8 @@ public:
     WaylandPointer<zxdg_surface_v6, zxdg_surface_v6_destroy> xdgsurfacev6;
     WaylandPointer<zxdg_popup_v6, zxdg_popup_v6_destroy> xdgpopupv6;
 
+    QRect pendingRect;
+
 private:
     static void configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height);
     static void popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup);
@@ -496,18 +498,15 @@ const struct zxdg_surface_v6_listener XdgShellPopupUnstableV6::Private::s_surfac
 
 void XdgShellPopupUnstableV6::Private::configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
-    //FIXME
+    auto s = reinterpret_cast<Private*>(data);
+    s->pendingRect = QRect(x, y, width, height);
 }
 
 void XdgShellPopupUnstableV6::Private::surfaceConfigureCallback(void *data, struct zxdg_surface_v6 *surface, uint32_t serial)
 {
     auto s = reinterpret_cast<Private*>(data);
-//     s->q->configureRequested(s->pendingSize, s->pendingState, serial);
-//     if (!s->pendingSize.isNull()) {
-//         s->q->setSize(s->pendingSize);
-//         s->pendingSize = QSize();
-//     }
-//     s->pendingState = 0;
+    s->q->configureRequested(s->pendingRect, serial);
+    s->pendingRect = QRect();
 }
 
 void XdgShellPopupUnstableV6::Private::popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup)

@@ -318,11 +318,13 @@ void XdgShellSurfaceUnstableV5::Private::setMinimized()
 
 void XdgShellSurfaceUnstableV5::Private::setMaxSize(const QSize &size)
 {
+    Q_UNUSED(size)
     //TODO: notify an error?
 }
 
 void XdgShellSurfaceUnstableV5::Private::setMinSize(const QSize &size)
 {
+    Q_UNUSED(size)
     //TODO: notify an error?
 }
 

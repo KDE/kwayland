@@ -120,12 +120,50 @@ XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShe
     }
 
     auto p = zxdg_shell_v6_create_positioner(xdgshellv6);
+
     auto anchorRect = positioner.anchor();
     zxdg_positioner_v6_set_anchor_rect(p, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
 
-    //FIXME - all the other positioner stuff
-    zxdg_positioner_v6_set_anchor(p, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM);
-    zxdg_positioner_v6_set_gravity(p, ZXDG_POSITIONER_V6_GRAVITY_TOP);
+    QSize initialSize = positioner.initialSize();
+    zxdg_positioner_v6_set_size(p, initialSize.width(), initialSize.height());
+
+    QPoint anchorOffset = positioner.anchorOffset();
+    if (!anchorOffset.isNull()) {
+        zxdg_positioner_v6_set_offset(p, anchorOffset.x(), anchorOffset.y());
+    }
+
+    uint32_t anchor = 0;
+    if (anchor != 0) {
+        zxdg_positioner_v6_set_anchor(p, anchor);
+    }
+
+    uint32_t gravity = 0;
+    if (gravity != 0) {
+        zxdg_positioner_v6_set_gravity(p, gravity);
+    }
+
+    uint32_t constraint = 0;
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::SlideX)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X;
+    }
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::SlideY)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
+    }
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::FlipX)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X;
+    }
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::FlipY)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y;
+    }
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeX)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
+    }
+    if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeY)) {
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
+    }
+    if (constraint != 0) {
+        zxdg_positioner_v6_set_constraint_adjustment(p, constraint);
+    }
 
     XdgShellPopup *s = new XdgShellPopupUnstableV6(parent);
     auto popup = zxdg_surface_v6_get_popup(ss, *parentSurface, p);

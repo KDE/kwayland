@@ -49,6 +49,7 @@ class XdgShellSurface;
 
 class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
+public:
     enum class Constraint {
         SlideX = 1 << 0,
         SlideY = 1 << 1,
@@ -60,7 +61,6 @@ class KWAYLANDCLIENT_EXPORT XdgPositioner
 
     Q_DECLARE_FLAGS(Constraints, Constraint)
 
-public:
     XdgPositioner(const QSize &initialSize, const QRect &anchor);
 
     Qt::Edges anchorEdge() const;

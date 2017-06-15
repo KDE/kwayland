@@ -170,14 +170,23 @@ public:
 
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface.
+     * @deprecated
      **/
     XdgShellPopup *createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
     //DAVE - the seat and serial are here so we can do v5 compatibility
-    //make the grab method redundant, so that's not in the public API...for now.
+    //this make the grab method redundant, so that's not in the public API...for now..
 
+    /**
+     * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
+     * A grab will be called with the relevant seat and serial.
+     **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
 
+        /**
+     * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
+     * A grab will be called with the relevant seat and serial.
+     **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
 
     operator xdg_shell*();

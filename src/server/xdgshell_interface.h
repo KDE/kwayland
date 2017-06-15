@@ -53,16 +53,39 @@ enum class XdgShellInterfaceVersion
     UnstableV5,
     /**
      * zxdg_shell_v6 (unstable v6)
+     * @since 5.XDGMERGE_VERSION
      **/
     UnstableV6
 };
 
+/*
+ * Flags describing how a popup should be reposition if constrained
+ * @since 5.XDGMERGE_VERSION
+ */
 enum class PositionerConstraint {
+    /*
+     * Slide the popup on the X axis until there is room
+     */
     SlideX = 1 << 0,
+    /*
+     * Slide the popup on the Y axis until there is room
+     */
     SlideY = 1 << 1,
+    /*
+     * Invert the anchor and gravity on the X axis
+     */
     FlipX = 1 << 2,
+    /*
+     * Invert the anchor and gravity on the Y axis
+     */
     FlipY = 1 << 3,
+    /*
+     * Resize the popup in the X axis
+     */
     ResizeX = 1 << 4,
+    /*
+     * Resize the popup in the Y axis
+     */
     ResizeY = 1 << 5
 };
 
@@ -98,6 +121,7 @@ Q_SIGNALS:
      *
      * A popup only gets created in response to an action on the @p seat.
      *
+     * @deprecated
      * @param surface The popup xdg shell surface which got created
      * @param seat The seat on which an action triggered the popup
      * @param serial The serial of the action on the seat
@@ -108,6 +132,13 @@ Q_SIGNALS:
 
     //Dave - why a different name - because otherwise old kwin wouldn't compile against a new
     //frameworks as the popup signal would be overloaded \o/
+
+    /*
+     * Emitted whenever a new popup got created.
+     *
+     * @param surface The popup xdg shell surface which got created
+     * XDGMERGE_VERSION
+     */
     void popupCreated2(KWayland::Server::XdgShellPopupInterface *surface);
 
 
@@ -268,13 +299,13 @@ Q_SIGNALS:
 
     /**
      * Emitted whenever the maximun size hint changes
-     * @since 5.35
+     * @since 5.XDGMERGE_VERSION
      */
     void maxSizeChanged(const QSize &size);
 
     /**
      * Emitted whenever the minimum size hint changes
-     * @since 5.35
+     * @since 5.XDGMERGE_VERSION
      */
     void minSizeChanged(const QSize &size);
 
@@ -305,7 +336,8 @@ public:
     /*
      * Ask the popup surface to configure itself for the given configuration.
      *
-     * @arg
+     * @arg rect. The position of the surface relative to the transient parent
+     * @since 5.XDGMERGE_VERSION
      */
     quint32 configure(const QRect &rect);
 
@@ -328,32 +360,39 @@ public:
     /*
      * The size of the surface that is to be positioned.
      *
+     * @since 5.XDGMERGE_VERSION
      */
     QSize initialSize() const;
 
     /*
      * The area this popup should be positioned around
+     * @since 5.XDGMERGE_VERSION
      */
     QRect anchorRect() const;
 
     /*
      * Which edge of the anchor should the popup be positioned around
+     * @since 5.XDGMERGE_VERSION
      */
     Qt::Edges anchorEdge() const;
 
     /*
      *
+     * @since 5.XDGMERGE_VERSION
      */
     QPoint anchorOffset() const;
 
     /*
      * Specifies in what direction the offset should be positioned around the anchor
+     * @since 5.XDGMERGE_VERSION
      */
-    //DAVE left + right is illegal, so this is possible a bad return value? Maybe an enum with 9 entries left, topleft, top, ..
+
+    //DAVE left + right is illegal, so this is possible a useless return value? Maybe an enum with 9 entries left, topleft, top, ..
     Qt::Edges gravity() const;
 
     /*
      * Specifies how the compositor should position the popup if it does not fit in the requested position
+     * @since 5.XDGMERGE_VERSION
      */
     PositionerConstraints constraintAdjustments() const;
 
@@ -368,10 +407,17 @@ Q_SIGNALS:
     /**
      * A configure event with @p serial got acknowledged.
      * @see configure
+     * @since 5.XDGMERGE_VERSION
      **/
     void configureAcknowledged(quint32 serial);
 
-    //DAVE compatibility - we make V5 emit this on creation?
+    /*
+     * The client requested that this popup gets a grab event
+     *
+     * @param seat The seat on which an action triggered the popup
+     * @param serial The serial of the action on the seat
+     * @since 5.XDGMERGE_VERSION
+     */
     void grabbed(KWayland::Server::SeatInterface *seat, quint32 serial);
 
 protected:

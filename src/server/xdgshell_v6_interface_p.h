@@ -79,7 +79,7 @@ public:
     virtual ~XdgSurfaceV6Interface();
     SurfaceInterface* surface() const;
     XdgTopLevelV6Interface* topLevel() const;
-//     XdgPopupV6Interface *popup() const;
+    XdgPopupV6Interface *popup() const;
 
 private:
     explicit XdgSurfaceV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
@@ -97,7 +97,6 @@ public:
     virtual ~XdgTopLevelV6Interface();
 
 private:
-    //not really a direct parent.//mayeb also pass XdgShurfaceV6Interface as arg
     explicit XdgTopLevelV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
     friend class XdgShellV6Interface;
     friend class XdgSurfaceV6Interface;

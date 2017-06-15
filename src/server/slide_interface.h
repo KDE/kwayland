@@ -32,6 +32,9 @@ namespace Server
 
 class Display;
 
+/**
+ * TODO
+ */
 class KWAYLANDSERVER_EXPORT SlideManagerInterface : public Global
 {
     Q_OBJECT
@@ -44,15 +47,18 @@ private:
     class Private;
 };
 
+/**
+ * TODO
+ */
 class KWAYLANDSERVER_EXPORT SlideInterface : public Resource
 {
     Q_OBJECT
 public:
     enum Location {
-        Left = 0, /** Slide from the left edge of the screen */
-        Top, /** Slide from the top edge of the screen */
-        Right, /** Slide from the bottom edge of the screen */
-        Bottom /** Slide from the bottom edge of the screen */
+        Left = 0, /**< Slide from the left edge of the screen */
+        Top, /**< Slide from the top edge of the screen */
+        Right, /**< Slide from the bottom edge of the screen */
+        Bottom /**< Slide from the bottom edge of the screen */
     };
 
     virtual ~SlideInterface();

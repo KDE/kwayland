@@ -256,7 +256,7 @@ public:
      * on the @p grabbedSeat. It needs to pass the @p grabSerial indicating the implicit grab
      * to the request for setting the surface. The implicit grab is turned into a popup grab
      * which will persist after the implicit grab ends. The popup grab ends when the ShellSurface
-     * gets destroyed or when the compositor breaks the grab through the @link{popupDone} signal.
+     * gets destroyed or when the compositor breaks the grab through the {@link popupDone} signal.
      *
      * @param parent The parent Surface of this ShellSurface
      * @param grabbedSeat The Seat on which an implicit grab exists

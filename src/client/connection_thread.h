@@ -135,7 +135,7 @@ public:
      * as that's managed by Qt.
      *
      * The returned ConnectionThread is not able to detect (protocol) error. The signal
-     * @link{errorOccurred} won't be emitted, @link{hasError} will return @c false, even if the
+     * {@link errorOccurred} won't be emitted, {@link hasError} will return @c false, even if the
      * actual connection held by QtWayland is on error. The behavior of QtWayland is to exit the
      * application on error.
      *
@@ -238,7 +238,7 @@ Q_SIGNALS:
     /**
      * The Wayland connection experienced a fatal error.
      * The ConnectionThread is no longer valid, no requests may be sent.
-     * This has the same effects as @link{connectionDied}.
+     * This has the same effects as {@link connectionDied}.
      *
      * @see hasError
      * @see errorCode

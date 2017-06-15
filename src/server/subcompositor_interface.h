@@ -39,6 +39,9 @@ class Display;
 class SurfaceInterface;
 class SubSurfaceInterface;
 
+/**
+ * @todo Add documentation
+ */
 class KWAYLANDSERVER_EXPORT SubCompositorInterface : public Global
 {
     Q_OBJECT
@@ -54,6 +57,9 @@ private:
     class Private;
 };
 
+/**
+ * @todo Add documentation
+ */
 class KWAYLANDSERVER_EXPORT SubSurfaceInterface : public Resource
 {
     Q_OBJECT
@@ -72,7 +78,7 @@ public:
 
     /**
      * Whether this SubSurfaceInterface is in synchronized mode.
-     * A SubSurface is in synchronized mode if either @link mode is
+     * A SubSurface is in synchronized mode if either {@link mode} is
      * @c Mode::Synchronized or if the parent surface is in synchronized
      * mode. If a SubSurfaceInterface is in synchronized mode all child
      * SubSurfaceInterfaces are also in synchronized mode ignoring the actual mode.

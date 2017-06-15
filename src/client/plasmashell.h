@@ -292,10 +292,10 @@ public:
     /**
      * Requests to hide a surface with Role Panel and PanelBahvior AutoHide.
      *
-     * Once the compositor has hidden the panel the signal @link{autoHidePanelHidden} gets
-     * emitted. Once it is shown again the signal @link{autoHidePanelShown} gets emitted.
+     * Once the compositor has hidden the panel the signal {@link autoHidePanelHidden} gets
+     * emitted. Once it is shown again the signal {@link autoHidePanelShown} gets emitted.
      *
-     * To show the surface again from client side use @link{requestShowAutoHidingPanel}.
+     * To show the surface again from client side use {@link requestShowAutoHidingPanel}.
      *
      * @see autoHidePanelHidden
      * @see autoHidePanelShown
@@ -308,7 +308,7 @@ public:
      * Requests to show a surface with Role Panel and PanelBahvior AutoHide.
      *
      * This request allows the client to show a surface which it previously
-     * requested to be hidden with @link{requestHideAutoHidingPanel}.
+     * requested to be hidden with {@link requestHideAutoHidingPanel}.
      *
      * @see autoHidePanelHidden
      * @see autoHidePanelShown

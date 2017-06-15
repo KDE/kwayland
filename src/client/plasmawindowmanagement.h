@@ -161,7 +161,7 @@ public:
     QList<PlasmaWindow*> windows() const;
     /**
      * @returns The currently active PlasmaWindow, the PlasmaWindow which
-     * returns @c true in @link{PlasmaWindow::isActive} or @c nullptr in case
+     * returns @c true in {@link PlasmaWindow::isActive} or @c nullptr in case
      * there is no active window.
      **/
     PlasmaWindow *activeWindow() const;
@@ -216,7 +216,7 @@ private:
  * @short Wrapper for the org_kde_plasma_window interface.
  *
  * A PlasmaWindow gets created by the PlasmaWindowManagement and announced through
- * the @link{PlasmaWindowManagement::windowCreated} signal. The PlasmaWindow encapsulates
+ * the {@link PlasmaWindowManagement::windowCreated} signal. The PlasmaWindow encapsulates
  * state about a window managed by the Wayland server and allows to request state changes.
  *
  * The PlasmaWindow will be automatically deleted when the PlasmaWindow gets unmapped.

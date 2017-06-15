@@ -264,7 +264,6 @@ void XdgShellV6Interface::Private::createSurface(wl_client *client, uint32_t ver
 void XdgShellV6Interface::Private::createPositioner(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     Q_UNUSED(client)
-    auto s = cast(resource);
 
     XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
     positioners << positioner;
@@ -459,7 +458,6 @@ void XdgSurfaceV6Interface::Private::getPopupCallback(wl_client *client, wl_reso
 void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource, wl_resource *parentSurface, wl_resource *positioner)
 {
 
-    qDebug() << "new popup";
     if (m_topLevel) {
         wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
         return;
@@ -471,7 +469,7 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
 
     auto xdgPositioner = m_shell->getPositioner(positioner);
     if (!xdgPositioner) {
-        qDebug() << "Nope!!";
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_INVALID_POSITIONER, "Invalid positioner");
         return;
     }
     m_popup = new XdgPopupV6Interface(m_shell, m_surface, parentResource);
@@ -482,10 +480,9 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     auto parentXdgSurface = m_shell->realGetSurface(parentSurface);
     if (parentXdgSurface) {
         pd->parent = parentXdgSurface->surface();
-        qDebug() << "parent surface set to " << pd->parent;
     } else {
-        qDebug() << "creating a popup with no parent that we know of?";
-        //DAVE ERROR
+        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_INVALID_POPUP_PARENT, "Invalid popup parent");
+        return;
     }
 
     pd->initialSize = xdgPositioner->initialSize();
@@ -513,7 +510,7 @@ void XdgSurfaceV6Interface::Private::ackConfigureCallback(wl_client *client, wl_
 
 void XdgSurfaceV6Interface::Private::setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
 {
-    // TODO: implement
+    // TODO: implement - not done for v5 either
     Q_UNUSED(client)
     Q_UNUSED(resource)
     Q_UNUSED(x)
@@ -574,17 +571,21 @@ const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_i
 
 
 void XdgPositionerV6Interface::Private::setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     s->initialSize = QSize(width, height);
 }
 
 void XdgPositionerV6Interface::Private::setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
 {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     s->anchorRect = QRect(x, y, width, height);
 }
 
 void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {
+    Q_UNUSED(client)
+
     auto s = cast<Private>(resource);
     //Note - see David E's email to wayland-devel about this being bad API
     if ((anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) &&
@@ -616,6 +617,7 @@ void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_
 }
 
 void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT) &&
         (gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)) {
@@ -646,6 +648,7 @@ void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl
 }
 
 void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     PositionerConstraints constraints;
     if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) {
@@ -671,6 +674,7 @@ void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_clien
 
 void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y)
 {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     s->anchorOffset = QPoint(x,y);
 }
@@ -802,6 +806,7 @@ XdgPopupV6Interface::Private::Private(XdgPopupV6Interface *q, XdgShellV6Interfac
 
 void XdgPopupV6Interface::Private::grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial)
 {
+    Q_UNUSED(client)
     auto s = cast<Private>(resource);
     auto seatInterface = SeatInterface::get(seat);
     s->q_func()->grabbed(seatInterface, serial);

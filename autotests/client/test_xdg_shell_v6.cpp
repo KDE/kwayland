@@ -11,7 +11,8 @@ public:
 private Q_SLOTS:
     void testMaxSize();
     void testMinSize();
-    void testMultipleRoles();
+    void testMultipleRoles1();
+    void testMultipleRoles2();
 };
 
 void XdgShellTestV6::testMaxSize()
@@ -66,11 +67,15 @@ void XdgShellTestV6::testMinSize()
     QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(100,100));
 }
 
-void XdgShellTestV6::testMultipleRoles()
+//top level then toplevel
+void XdgShellTestV6::testMultipleRoles1()
 {
     //setting multiple roles on an xdg surface should fail
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
+    QVERIFY(xdgPopupCreatedSpy.isValid());
 
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     //This is testing we work when a client does something stupid
@@ -88,12 +93,46 @@ void XdgShellTestV6::testMultipleRoles()
     zxdg_toplevel_v6_destroy(xdgTopLevel1);
     zxdg_toplevel_v6_destroy(xdgTopLevel2);
     zxdg_surface_v6_destroy(xdgSurface);
-
-    //TODO:
-    //toplevel then popup
-    //popup then toplevel
-    //popup then popup
 }
+
+//toplevel then popup
+void XdgShellTestV6::testMultipleRoles2()
+{
+    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+
+    QVERIFY(xdgSurfaceCreatedSpy.isValid());
+    QVERIFY(xdgPopupCreatedSpy.isValid());
+
+    QScopedPointer<Surface> surface(m_compositor->createSurface());
+    QScopedPointer<Surface> parentSurface(m_compositor->createSurface());
+
+    auto parentXdgSurface = zxdg_shell_v6_get_xdg_surface(*m_xdgShell, *parentSurface.data());
+    auto xdgTopLevelParent = zxdg_surface_v6_get_toplevel(parentXdgSurface);
+    QVERIFY(xdgSurfaceCreatedSpy.wait());
+
+
+    auto xdgSurface = zxdg_shell_v6_get_xdg_surface(*m_xdgShell, *surface.data());
+    //create a top level
+    auto xdgTopLevel1 = zxdg_surface_v6_get_toplevel(xdgSurface);
+    QVERIFY(xdgSurfaceCreatedSpy.wait());
+
+    //now try to create a popup on the same xdg surface. It should fail
+
+    auto positioner = zxdg_shell_v6_create_positioner(*m_xdgShell);
+    zxdg_positioner_v6_set_anchor_rect(positioner,10, 10, 10, 10);
+    zxdg_positioner_v6_set_size(positioner,10, 100);
+
+    auto xdgPopup2 = zxdg_surface_v6_get_popup(xdgSurface, parentXdgSurface, positioner);
+    QVERIFY(!xdgPopupCreatedSpy.wait(10));
+
+    zxdg_positioner_v6_destroy(positioner);
+    zxdg_toplevel_v6_destroy(xdgTopLevel1);
+    zxdg_toplevel_v6_destroy(xdgTopLevelParent);
+    zxdg_popup_v6_destroy(xdgPopup2);
+    zxdg_surface_v6_destroy(xdgSurface);
+}
+
 
 QTEST_GUILESS_MAIN(XdgShellTestV6)
 

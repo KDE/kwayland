@@ -168,7 +168,7 @@ set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION_S
 
 install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES
+set(CLIENT_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
   blur.h
   buffer.h
@@ -210,8 +210,15 @@ install(FILES
   touch.h
   textinput.h
   xdgshell.h
+)
+
+install(FILES
+  ${CLIENT_LIB_HEADERS}
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
 )
+
+# make available to ecm_add_qch in parent folder
+set(KWaylandClient_APIDOX_SRCS ${CLIENT_LIB_HEADERS} PARENT_SCOPE)
 
 include(ECMGeneratePriFile)
 ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF5WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5})

@@ -46,8 +46,6 @@ class Seat;
 class XdgShellPopup;
 class XdgShellSurface;
 
-#include <QSharedDataPointer>
-
 class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
 public:
@@ -550,5 +548,8 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::State)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::States)
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraint)
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraints)
+
 
 #endif

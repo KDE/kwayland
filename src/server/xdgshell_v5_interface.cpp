@@ -148,9 +148,15 @@ void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t versi
     XdgPopupV5Interface *popupSurface = new XdgPopupV5Interface(q, surface, parentResource);
     auto d = popupSurface->d_func();
     d->parent = QPointer<SurfaceInterface>(parent);
-    d->transientOffset = pos;
+    d->anchorRect = QRect(pos, QSize(0,0));
     d->create(display->getConnection(client), version, id);
+
+    //compat
     emit q->popupCreated(popupSurface, seat, serial);
+
+    //new system
+    emit q->popupCreated2(popupSurface);
+    emit popupSurface->grabbed(seat, serial);
 }
 
 void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)

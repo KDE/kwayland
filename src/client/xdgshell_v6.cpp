@@ -132,7 +132,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface
 
     auto p = zxdg_shell_v6_create_positioner(xdgshellv6);
 
-    auto anchorRect = positioner.anchor();
+    auto anchorRect = positioner.anchorRect();
     zxdg_positioner_v6_set_anchor_rect(p, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
 
     QSize initialSize = positioner.initialSize();

@@ -21,6 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KWAYLAND_CLIENT_XDG_SHELL_V5_H
 
 #include <QObject>
+#include <QSize>
+#include <QRect>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -82,7 +84,8 @@ public:
 
     Q_DECLARE_FLAGS(Constraints, Constraint)
 
-    XdgPositioner(const QSize &initialSize, const QRect &anchor);
+    XdgPositioner(const QSize &initialSize = QSize(), const QRect &anchor = QRect());
+    XdgPositioner(const XdgPositioner &other);
     ~XdgPositioner();
 
     Qt::Edges anchorEdge() const;
@@ -98,7 +101,7 @@ public:
     void setInitialSize(const QSize &size);
 
     Constraints constraints() const;
-    void setConstraint(Constraints constaints);
+    void setConstraints(Constraints constaints);
 
     QPoint anchorOffset() const;
     void setAnchorOffset(const QPoint &offset);
@@ -549,6 +552,10 @@ private:
 }
 }
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgShellSurface::States)
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgPositioner::Constraints)
+
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::State)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::States)
 Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraint)

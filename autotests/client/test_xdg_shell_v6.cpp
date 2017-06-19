@@ -1,6 +1,5 @@
-    #include "test_xdg_shell.h"
+#include "test_xdg_shell.h"
 #include <wayland-xdg-shell-v6-client-protocol.h>
-
 
 class XdgShellTestV6 : public XdgShellTest {
     Q_OBJECT
@@ -48,19 +47,54 @@ void XdgShellTestV6::testMaxSize()
 
 void XdgShellTestV6::testPositioner_data()
 {
+    QTest::addColumn<XdgPositioner>("positioners");
+    XdgPositioner positioner(QSize(10,10), QRect(100,100,50,50));
+    QTest::newRow("default") << positioner;
+
+    XdgPositioner positioner2(QSize(20,20), QRect(101,102,51,52));
+    QTest::newRow("sizeAndAnchorRect") << positioner2;
+
+    positioner.setAnchorEdge(Qt::TopEdge | Qt::RightEdge);
+    QTest::newRow("anchorEdge") << positioner;
+
+    positioner.setGravity(Qt::BottomEdge);
+    QTest::newRow("gravity") << positioner;
+
+    positioner.setGravity(Qt::TopEdge | Qt::RightEdge);
+    QTest::newRow("gravity2") << positioner;
+
+    positioner.setConstraints(XdgPositioner::Constraint::SlideX | XdgPositioner::Constraint::FlipY);
+    QTest::newRow("constraints") << positioner;
+
+    positioner.setConstraints(XdgPositioner::Constraint::SlideX | XdgPositioner::Constraint::SlideY | XdgPositioner::Constraint::FlipX | XdgPositioner::Constraint::FlipY | XdgPositioner::Constraint::ResizeX | XdgPositioner::Constraint::ResizeY);
+    QTest::newRow("constraints2") << positioner;
+
+    positioner.setAnchorOffset(QPoint(4,5));
+    QTest::newRow("offset") << positioner;
 }
 
 void XdgShellTestV6::testPositioner()
 {
-//     QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
 //
-//     QScopedPointer<Surface> parentSurface(m_compositor->createSurface());
-//     QScopedPointer<XdgShellSurface> xdgParentSurface(m_xdgShell->createSurface(surface.data()));
-//
-//
-//     QScopedPointer<Surface> surface(m_compositor->createSurface());
-//     XdgPositioner positioner(QSize(10,10), QRect(100,100,100,100));
-//     QScopedPointer<XdgShellPopup> xdgSurface(m_xdgShell->createPopup(surface.data(), xdgParentSurface.data(), positioner);
+    QScopedPointer<Surface> parentSurface(m_compositor->createSurface());
+    QScopedPointer<XdgShellSurface> xdgParentSurface(m_xdgShell->createSurface(parentSurface.data()));
+
+    XdgPositioner positioner(QSize(10,10), QRect(100,100,50,50));
+
+    QScopedPointer<Surface> surface(m_compositor->createSurface());
+    QScopedPointer<XdgShellPopup> xdgSurface(m_xdgShell->createPopup(surface.data(), xdgParentSurface.data(), positioner));
+    QVERIFY(xdgPopupCreatedSpy.wait());
+    auto serverXdgPopup = xdgPopupCreatedSpy.first().first().value<XdgShellPopupInterface*>();
+    QVERIFY(serverXdgPopup);
+
+    QCOMPARE(serverXdgPopup->initialSize(), positioner.initialSize());
+    QCOMPARE(serverXdgPopup->anchorRect(), positioner.anchorRect());
+    QCOMPARE(serverXdgPopup->anchorEdge(), positioner.anchorEdge());
+    QCOMPARE(serverXdgPopup->gravity(), positioner.gravity());
+    QCOMPARE(serverXdgPopup->anchorOffset(), positioner.anchorOffset());
+    //we have different enums for client server, but they share the same values
+    QCOMPARE((int)serverXdgPopup->constraintAdjustments(), (int)positioner.constraints());
 }
 
 void XdgShellTestV6::testMinSize()

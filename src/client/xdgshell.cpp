@@ -364,6 +364,13 @@ XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
     d->anchorRect = anchor;
 }
 
+
+XdgPositioner::XdgPositioner(const XdgPositioner &other)
+:d (new Private)
+{
+    *d = *other.d;
+}
+
 XdgPositioner::~XdgPositioner()
 {
 }
@@ -418,7 +425,7 @@ Qt::Edges XdgPositioner::gravity() const
     return d->gravity;
 }
 
-void XdgPositioner::setConstraint(Constraints constraints)
+void XdgPositioner::setConstraints(Constraints constraints)
 {
     d->constraints = constraints;
 }

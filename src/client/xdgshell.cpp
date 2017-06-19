@@ -364,6 +364,10 @@ XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
     d->anchorRect = anchor;
 }
 
+XdgPositioner::~XdgPositioner()
+{
+}
+
 void XdgPositioner::setInitialSize(const QSize& size)
 {
     d->initialSize = size;

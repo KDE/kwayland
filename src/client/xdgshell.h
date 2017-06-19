@@ -83,6 +83,7 @@ public:
     Q_DECLARE_FLAGS(Constraints, Constraint)
 
     XdgPositioner(const QSize &initialSize, const QRect &anchor);
+    ~XdgPositioner();
 
     Qt::Edges anchorEdge() const;
     void setAnchorEdge(Qt::Edges edge);
@@ -104,7 +105,7 @@ public:
 
 private:
     class Private;
-    Private *d;
+    QScopedPointer<Private> d;
 };
 
 /**

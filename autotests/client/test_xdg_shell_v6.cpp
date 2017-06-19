@@ -11,8 +11,8 @@ private Q_SLOTS:
     void testMaxSize();
     void testMinSize();
 
-    void testPositioner_data();
-    void testPositioner();
+    void testPopup_data();
+    void testPopup();
 
     void testMultipleRoles1();
     void testMultipleRoles2();
@@ -45,7 +45,7 @@ void XdgShellTestV6::testMaxSize()
 }
 
 
-void XdgShellTestV6::testPositioner_data()
+void XdgShellTestV6::testPopup_data()
 {
     QTest::addColumn<XdgPositioner>("positioners");
     XdgPositioner positioner(QSize(10,10), QRect(100,100,50,50));
@@ -73,7 +73,7 @@ void XdgShellTestV6::testPositioner_data()
     QTest::newRow("offset") << positioner;
 }
 
-void XdgShellTestV6::testPositioner()
+void XdgShellTestV6::testPopup()
 {
     QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
 //

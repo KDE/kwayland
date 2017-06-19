@@ -68,14 +68,11 @@ private Q_SLOTS:
     void testConfigureStates_data();
     void testConfigureStates();
     void testConfigureMultipleAcks();
-    void testPopup();
 
 protected:
     XdgShellInterface *m_xdgShellInterface = nullptr;
     Compositor *m_compositor = nullptr;
     XdgShell *m_xdgShell = nullptr;
-
-private:
     Display *m_display = nullptr;
     CompositorInterface *m_compositorInterface = nullptr;
     OutputInterface *m_o1Interface = nullptr;
@@ -89,5 +86,16 @@ private:
     Output *m_output2 = nullptr;
     Seat *m_seat = nullptr;
 
+private:
     XdgShellInterfaceVersion m_version;
 };
+
+#define SURFACE \
+    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated); \
+    QVERIFY(xdgSurfaceCreatedSpy.isValid()); \
+    QScopedPointer<Surface> surface(m_compositor->createSurface()); \
+    QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data())); \
+    QCOMPARE(xdgSurface->size(), QSize()); \
+    QVERIFY(xdgSurfaceCreatedSpy.wait()); \
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>(); \
+    QVERIFY(serverXdgSurface);

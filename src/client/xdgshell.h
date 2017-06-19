@@ -23,7 +23,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QSize>
 #include <QRect>
-
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct xdg_shell;

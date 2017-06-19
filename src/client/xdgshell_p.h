@@ -68,27 +68,19 @@ public:
         return nullptr;
     };
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) {
-        //Dave - we could implement this in V5 and then make this pure virtual.
-        //would need to a link from XdgShellSurfaceV5 to underlying Surface
-        //or we just make a brand new ctor
-
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) {
         Q_UNUSED(surface)
         Q_UNUSED(parentSurface)
-        Q_UNUSED(seat)
-        Q_UNUSED(serial)
         Q_UNUSED(positioner)
         Q_UNUSED(parent)
 
         return nullptr;
     }
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) {
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) {
 
         Q_UNUSED(surface)
         Q_UNUSED(parentSurface)
-        Q_UNUSED(seat)
-        Q_UNUSED(serial)
         Q_UNUSED(positioner)
         Q_UNUSED(parent)
 
@@ -223,6 +215,10 @@ public:
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
+    virtual void requestGrab(Seat *seat, quint32 serial) {
+        Q_UNUSED(seat);
+        Q_UNUSED(serial);
+    };
     virtual operator xdg_popup*() {
         return nullptr;
     }

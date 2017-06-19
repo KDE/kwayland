@@ -41,9 +41,8 @@ public:
     bool isValid() const override;
     XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) override;
 
-    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) override;
-    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent) override;
-
+    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
+    XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
 
     operator zxdg_shell_v6*() override {
         return xdgshellv6;
@@ -53,7 +52,7 @@ public:
     }
 
 private:
-    XdgShellPopup *internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent);
+    XdgShellPopup *internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, QObject *parent);
     static void pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial);
 
     WaylandPointer<zxdg_shell_v6, zxdg_shell_v6_destroy> xdgshellv6;
@@ -112,17 +111,17 @@ XdgShellSurface *XdgShellUnstableV6::Private::getXdgSurface(Surface *surface, QO
     return s;
 }
 
-XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
-    return internalGetXdgPopup(surface, *parentSurface, positioner, seat, serial, parent);
+    return internalGetXdgPopup(surface, *parentSurface, positioner, parent);
 }
 
-XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+XdgShellPopup *XdgShellUnstableV6::Private::getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
-    return internalGetXdgPopup(surface, *parentSurface, positioner, seat, serial, parent);
+    return internalGetXdgPopup(surface, *parentSurface, positioner, parent);
 }
 
-XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
@@ -211,8 +210,6 @@ XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface
     s->setup(ss, popup);
 
     zxdg_positioner_v6_destroy(p);
-
-    zxdg_popup_v6_grab(popup, *seat, serial);
 
     return s;
 }
@@ -481,6 +478,7 @@ public:
     void release() override;
     void destroy() override;
     bool isValid() const override;
+    void requestGrab(Seat *seat, quint32 serial) override;
     operator zxdg_surface_v6*() override {
         return xdgsurfacev6;
     }
@@ -569,6 +567,12 @@ bool XdgShellPopupUnstableV6::Private::isValid() const
 {
     return xdgpopupv6.isValid();
 }
+
+void XdgShellPopupUnstableV6::Private::requestGrab(Seat *seat, quint32 serial)
+{
+    zxdg_popup_v6_grab(xdgpopupv6, *seat, serial);
+}
+
 
 XdgShellPopupUnstableV6::XdgShellPopupUnstableV6(QObject *parent)
     : XdgShellPopup(new Private(this), parent)

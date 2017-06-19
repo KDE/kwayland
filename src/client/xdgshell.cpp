@@ -105,14 +105,14 @@ XdgShellPopup *XdgShell::createPopup(Surface *surface, Surface *parentSurface, S
     return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
 }
 
-XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
-    return d->getXdgPopup(surface, parentSurface, positioner, seat, serial, parent);
+    return d->getXdgPopup(surface, parentSurface, positioner, parent);
 }
 
-XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent)
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
-    return d->getXdgPopup(surface, parentSurface, positioner, seat, serial, parent);
+    return d->getXdgPopup(surface, parentSurface, positioner, parent);
 }
 
 XdgShellSurface::Private::Private(XdgShellSurface *q)
@@ -321,6 +321,11 @@ void XdgShellPopup::setEventQueue(EventQueue *queue)
 EventQueue *XdgShellPopup::eventQueue()
 {
     return d->queue;
+}
+
+void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
+{
+    d->requestGrab(seat, serial);
 }
 
 XdgShellPopup::operator xdg_popup*() {

@@ -190,24 +190,19 @@ public:
 
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface.
-     * @deprecated
+     * @deprecated This method is only valid for v5
      **/
     XdgShellPopup *createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
-    //DAVE - the seat and serial are here so we can do v5 compatibility
-    //this make the grab method redundant, so that's not in the public API...for now..
-
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
-     * A grab will be called with the relevant seat and serial.
      **/
-    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
+    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
         /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
-     * A grab will be called with the relevant seat and serial.
      **/
-    XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, Seat *seat, quint32 serial, QObject *parent = nullptr);
+    XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
     operator xdg_shell*();
     operator xdg_shell*() const;
@@ -513,6 +508,13 @@ public:
      * @returns The event queue to use for bound proxies.
      **/
     EventQueue *eventQueue();
+
+    /**
+     * Requests a grab on this popup
+     * @since 5.XDGMERGE_VERSION
+     */
+    void requestGrab(Seat *seat, quint32 serial);
+
 
     operator xdg_popup*();
     operator xdg_popup*() const;

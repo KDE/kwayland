@@ -11,6 +11,10 @@ public:
 private Q_SLOTS:
     void testMaxSize();
     void testMinSize();
+
+    void testPositioner_data();
+    void testPositioner();
+
     void testMultipleRoles1();
     void testMultipleRoles2();
 };
@@ -39,6 +43,24 @@ void XdgShellTestV6::testMaxSize()
     QVERIFY(maxSizeSpy.wait());
     QCOMPARE(maxSizeSpy.count(), 2);
     QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(200,200));
+}
+
+
+void XdgShellTestV6::testPositioner_data()
+{
+}
+
+void XdgShellTestV6::testPositioner()
+{
+//     QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+//
+//     QScopedPointer<Surface> parentSurface(m_compositor->createSurface());
+//     QScopedPointer<XdgShellSurface> xdgParentSurface(m_xdgShell->createSurface(surface.data()));
+//
+//
+//     QScopedPointer<Surface> surface(m_compositor->createSurface());
+//     XdgPositioner positioner(QSize(10,10), QRect(100,100,100,100));
+//     QScopedPointer<XdgShellPopup> xdgSurface(m_xdgShell->createPopup(surface.data(), xdgParentSurface.data(), positioner);
 }
 
 void XdgShellTestV6::testMinSize()

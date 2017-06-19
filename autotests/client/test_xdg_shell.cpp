@@ -575,7 +575,7 @@ void XdgShellTest::testPopup()
 
     XdgPositioner positioner(QSize(50,50), QRect(10,20, 20, 20));
     positioner.setAnchorEdge(Qt::TopEdge | Qt::LeftEdge);
-    QScopedPointer<XdgShellPopup> xdgPopup(m_xdgShell->createPopup(popupSurface.data(), xdgSurface.data(), positioner, m_seat, 120));
+    QScopedPointer<XdgShellPopup> xdgPopup(m_xdgShell->createPopup(popupSurface.data(), xdgSurface.data(), positioner));
     QVERIFY(xdgPopupSpy.wait());
     QCOMPARE(xdgPopupSpy.count(), 1);
 //     QCOMPARE(xdgPopupSpy.first().at(1).value<SeatInterface*>(), m_seatInterface);

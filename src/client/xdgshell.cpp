@@ -369,12 +369,12 @@ QSize XdgPositioner::initialSize() const
     return d->initialSize;
 }
 
-void XdgPositioner::setAnchor(const QRect& anchor)
+void XdgPositioner::setAnchorRect(const QRect& anchor)
 {
     d->anchorRect = anchor;
 }
 
-QRect XdgPositioner::anchor() const
+QRect XdgPositioner::anchorRect() const
 {
     return d->anchorRect;
 }

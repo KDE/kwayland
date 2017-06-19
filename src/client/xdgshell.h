@@ -46,16 +46,39 @@ class Seat;
 class XdgShellPopup;
 class XdgShellSurface;
 
+#include <QSharedDataPointer>
 
 class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
 public:
+    /*
+    * Flags describing how a popup should be reposition if constrained
+    * @since 5.XDGMERGE_VERSION
+    */
     enum class Constraint {
+        /*
+        * Slide the popup on the X axis until there is room
+        */
         SlideX = 1 << 0,
+        /*
+        * Slide the popup on the Y axis until there is room
+        */
         SlideY = 1 << 1,
+        /*
+        * Invert the anchor and gravity on the X axis
+        */
         FlipX = 1 << 2,
+        /*
+        * Invert the anchor and gravity on the Y axis
+        */
         FlipY = 1 << 3,
+        /*
+        * Resize the popup in the X axis
+        */
         ResizeX = 1 << 4,
+        /*
+        * Resize the popup in the Y axis
+        */
         ResizeY = 1 << 5
     };
 
@@ -69,8 +92,8 @@ public:
     Qt::Edges gravity() const;
     void setGravity(Qt::Edges edge);
 
-    QRect anchor() const;
-    void setAnchor(const QRect &anchor);
+    QRect anchorRect() const;
+    void setAnchorRect(const QRect &anchor);
 
     QSize initialSize() const;
     void setInitialSize(const QSize &size);
@@ -83,7 +106,6 @@ public:
 
 private:
     class Private;
-//     QScopedPointer<Private> d; //Dave QSharedPointer?
     Private *d;
 };
 
@@ -382,7 +404,16 @@ public:
      **/
     void requestMinimize();
 
+    /*
+     * Set this surface to have a given maximum size
+     * @since 5.XDGMERGE_VERSION
+     */
     void setMaxSize(const QSize &size);
+
+    /*
+     * Set this surface to have a given minimum size
+     * @since 5.XDGMERGE_VERSION
+     */
     void setMinSize(const QSize &size);
 
     operator xdg_surface*();

@@ -5,7 +5,7 @@ class XdgShellTestV5 : public XdgShellTest {
 public:
     XdgShellTestV5() :
         XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::UnstableV5) {}
-
+private Q_SLOTS:
     void testPopup();
 };
 
@@ -16,6 +16,11 @@ void XdgShellTestV5::testPopup()
     QSignalSpy surfaceCreatedSpy(m_compositorInterface, &CompositorInterface::surfaceCreated);
     QVERIFY(surfaceCreatedSpy.isValid());
     QSignalSpy xdgPopupSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated);
+
+    //check as well as the compat signal, the new signal is also fired
+    QSignalSpy xdgPopupSpyNew(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+
+
     QVERIFY(xdgPopupSpy.isValid());
 
     QScopedPointer<Surface> popupSurface(m_compositor->createSurface());
@@ -25,6 +30,9 @@ void XdgShellTestV5::testPopup()
     QScopedPointer<XdgShellPopup> xdgPopup(m_xdgShell->createPopup(popupSurface.data(), surface.data(), m_seat, 120, QPoint(10, 20)));
     QVERIFY(xdgPopupSpy.wait());
     QCOMPARE(xdgPopupSpy.count(), 1);
+    QCOMPARE(xdgPopupSpyNew.count(), 1);
+
+
     QCOMPARE(xdgPopupSpy.first().at(1).value<SeatInterface*>(), m_seatInterface);
     QCOMPARE(xdgPopupSpy.first().at(2).value<quint32>(), 120u);
     auto serverXdgPopup = xdgPopupSpy.first().first().value<XdgShellPopupInterface*>();

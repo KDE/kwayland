@@ -102,8 +102,7 @@ void XdgShellTest::init()
     QVERIFY(m_seat);
     QVERIFY(m_seat->isValid());
 
-    //FIXME
-//     QCOMPARE(xdgShellAnnouncedSpy.count(), 1);
+    QCOMPARE(xdgShellAnnouncedSpy.count(), 1);
 
     Registry::Interface iface = m_version == XdgShellInterfaceVersion::UnstableV5 ? Registry::Interface::XdgShellUnstableV5 : Registry::Interface::XdgShellUnstableV6;
 

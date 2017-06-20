@@ -149,6 +149,9 @@ void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t versi
     auto d = popupSurface->d_func();
     d->parent = QPointer<SurfaceInterface>(parent);
     d->anchorRect = QRect(pos, QSize(0,0));
+    //default open like a normal popup
+    d->anchorEdge = Qt::BottomEdge;
+    d->gravity = Qt::TopEdge;
     d->create(display->getConnection(client), version, id);
 
     //compat

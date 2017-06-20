@@ -124,10 +124,8 @@ void XdgTest::setupRegistry(Registry *registry)
             m_popupSurface = m_compositor->createSurface(this);
 
             XdgPositioner positioner(QSize(50,50), QRect(100,100, 20, 20));
-            //DAVE pass seat info like the v5 did
             m_xdgShellPopup = m_xdgShell->createPopup(m_popupSurface, m_xdgShellSurface, positioner, this);
             renderPopup();
-            //connect size changed
         }
     );
     registry->setEventQueue(m_eventQueue);

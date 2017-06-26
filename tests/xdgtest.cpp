@@ -150,7 +150,6 @@ void XdgTest::render()
 
 void XdgTest::renderPopup()
 {
-//     const QSize &size = m_xdgShellSurface->size().isValid() ? m_xdgShellSurface->size() : QSize(300, 200);
     QSize size(200,200);
     auto buffer = m_shm->getBuffer(size, size.width() * 4).toStrongRef();
     buffer->setUsed(true);

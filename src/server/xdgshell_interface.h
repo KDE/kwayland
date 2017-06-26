@@ -111,6 +111,13 @@ public:
      **/
     XdgShellSurfaceInterface *getSurface(wl_resource *native);
 
+    /*
+     * Confirm the client is still alive and responding
+     *
+     * Will result in pong being emitted
+     *
+     * @since XDGMERGE_VERSION
+     */
     void ping();
 
 Q_SIGNALS:
@@ -121,27 +128,31 @@ Q_SIGNALS:
      *
      * A popup only gets created in response to an action on the @p seat.
      *
-     * @deprecated
+     *
      * @param surface The popup xdg shell surface which got created
      * @param seat The seat on which an action triggered the popup
      * @param serial The serial of the action on the seat
+     *
+     * @deprecated use both xdgPopupCreated
+     * and XdgShellPopupInterface::grabbed
      **/
 
     void popupCreated(KWayland::Server::XdgShellPopupInterface *surface, KWayland::Server::SeatInterface *seat, quint32 serial);
 
-
-    //Dave - why a different name - because otherwise old kwin wouldn't compile against a new
-    //frameworks as the popup signal would be overloaded \o/
-
     /*
-     * Emitted whenever a new popup got created.
+     * Emitted whenever a new popup gets created.
      *
      * @param surface The popup xdg shell surface which got created
-     * XDGMERGE_VERSION
+     * @since XDGMERGE_VERSION
      */
-    void popupCreated2(KWayland::Server::XdgShellPopupInterface *surface);
+    void xdgPopupCreated(KWayland::Server::XdgShellPopupInterface *surface);
 
-
+    /*
+     * Emitted in response to a ping request
+     *
+     * @param surface The popup xdg shell surface which got created
+     * @since XDGMERGE_VERSION
+     */
     void pongReceived();
 
 protected:
@@ -377,13 +388,17 @@ public:
     Qt::Edges anchorEdge() const;
 
     /*
+     * An additional offset that should be applied to the popup from the anchor rect
      *
      * @since 5.XDGMERGE_VERSION
      */
     QPoint anchorOffset() const;
 
     /*
-     * Specifies in what direction the offset should be positioned around the anchor
+     * Specifies in what direction the popup should be positioned around the anchor
+     * i.e if the gravity is "bottom", then then the top of top of the poup will be at the anchor edge
+     * if the gravity is top, then the bottom of the popup will be at the anchor edge
+     *
      * @since 5.XDGMERGE_VERSION
      */
 

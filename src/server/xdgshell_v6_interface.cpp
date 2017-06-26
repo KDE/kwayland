@@ -492,7 +492,7 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     pd->constraintAdjustments = xdgPositioner->constraintAdjustments();
     pd->anchorOffset = xdgPositioner->anchorOffset();
 
-    emit m_shell->popupCreated2(m_popup.data());
+    emit m_shell->xdgPopupCreated(m_popup.data());
 }
 
 

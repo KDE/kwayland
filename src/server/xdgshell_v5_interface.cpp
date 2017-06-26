@@ -158,7 +158,7 @@ void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t versi
     emit q->popupCreated(popupSurface, seat, serial);
 
     //new system
-    emit q->popupCreated2(popupSurface);
+    emit q->xdgPopupCreated(popupSurface);
     emit popupSurface->grabbed(seat, serial);
 }
 

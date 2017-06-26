@@ -47,12 +47,17 @@ class Seat;
 class XdgShellPopup;
 class XdgShellSurface;
 
+/*
+ * Builder class describing how a popup should be positioned
+ * when created
+ *
+ * @since 5.XDGMERGE_VERSION
+ */
 class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
 public:
     /*
     * Flags describing how a popup should be reposition if constrained
-    * @since 5.XDGMERGE_VERSION
     */
     enum class Constraint {
         /*
@@ -87,21 +92,42 @@ public:
     XdgPositioner(const XdgPositioner &other);
     ~XdgPositioner();
 
+    /*
+     * Which edge of the anchor should the popup be positioned around
+     */
     Qt::Edges anchorEdge() const;
     void setAnchorEdge(Qt::Edges edge);
 
+    /*
+     * Specifies in what direction the popup should be positioned around the anchor
+     * i.e if the gravity is "bottom", then then the top of top of the poup will be at the anchor edge
+     * if the gravity is top, then the bottom of the popup will be at the anchor edge
+     *
+     */
     Qt::Edges gravity() const;
     void setGravity(Qt::Edges edge);
 
+    /*
+     * The area this popup should be positioned around
+     */
     QRect anchorRect() const;
     void setAnchorRect(const QRect &anchor);
 
+    /*
+     * The size of the surface that is to be positioned.
+     */
     QSize initialSize() const;
     void setInitialSize(const QSize &size);
 
+    /*
+     * Specifies how the compositor should position the popup if it does not fit in the requested position
+     */
     Constraints constraints() const;
     void setConstraints(Constraints constaints);
 
+    /*
+     * An additional offset that should be applied from the anchor.
+     */
     QPoint anchorOffset() const;
     void setAnchorOffset(const QPoint &offset);
 

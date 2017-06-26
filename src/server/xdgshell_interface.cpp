@@ -32,6 +32,7 @@ XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, X
 {
     pingTimer->setSingleShot(true);
     pingTimer->setInterval(1000);
+    connect(pingTimer.data(), &QTimer::timeout, q, &XdgShellInterface::pingTimeout);
 }
 
 XdgShellInterface::XdgShellInterface(Private *d, QObject *parent)

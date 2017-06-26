@@ -154,6 +154,7 @@ Q_SIGNALS:
      * @since XDGMERGE_VERSION
      */
     void pongReceived();
+    void pingTimeout();
 
 protected:
     class Private;

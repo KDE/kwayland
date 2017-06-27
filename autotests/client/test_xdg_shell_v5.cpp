@@ -18,7 +18,7 @@ void XdgShellTestV5::testPopup()
     QSignalSpy xdgPopupSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated);
 
     //check as well as the compat signal, the new signal is also fired
-    QSignalSpy xdgPopupSpyNew(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+    QSignalSpy xdgPopupSpyNew(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
 
 
     QVERIFY(xdgPopupSpy.isValid());

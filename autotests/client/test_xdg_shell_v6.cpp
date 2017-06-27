@@ -75,7 +75,7 @@ void XdgShellTestV6::testPopup_data()
 
 void XdgShellTestV6::testPopup()
 {
-    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
 //
     QScopedPointer<Surface> parentSurface(m_compositor->createSurface());
     QScopedPointer<XdgShellSurface> xdgParentSurface(m_xdgShell->createSurface(parentSurface.data()));
@@ -128,7 +128,7 @@ void XdgShellTestV6::testMultipleRoles1()
 {
     //setting multiple roles on an xdg surface should fail
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
-    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
 
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
     QVERIFY(xdgPopupCreatedSpy.isValid());
@@ -155,7 +155,7 @@ void XdgShellTestV6::testMultipleRoles1()
 void XdgShellTestV6::testMultipleRoles2()
 {
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
-    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated2);
+    QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
 
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
     QVERIFY(xdgPopupCreatedSpy.isValid());

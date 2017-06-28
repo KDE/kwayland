@@ -166,8 +166,10 @@ void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *
 {
     Q_UNUSED(client)
     auto s = cast(resource);
-    if (s->pingTimer->isActive() && serial == s->pingSerial) {
-        s->pingTimer->stop();
+    auto timerIt = s->pingTimers.find(serial);
+    if (timerIt != s->pingTimers.end() && timerIt.value()->isActive()) {
+        delete timerIt.value();
+        s->pingTimers.erase(timerIt);
         emit s->q->pongReceived(serial);
     }
 }
@@ -215,12 +217,27 @@ XdgSurfaceV5Interface *XdgShellV5Interface::getSurface(wl_resource *resource)
 
 quint32 XdgShellV5Interface::Private::ping()
 {
-    if (!resource || pingTimer->isActive()) {
+    if (!resource) {
         return -1;
     }
-    pingSerial = display->nextSerial();
+    const qint32 pingSerial = display->nextSerial();
     xdg_shell_send_ping(resource, pingSerial);
+
+    QTimer *pingTimer = new QTimer();
+    pingTimer->setSingleShot(true);
+    pingTimer->setInterval(1000);
+    connect(pingTimer, &QTimer::timeout, q, [this, pingSerial]() {
+        auto timerIt = pingTimers.find(pingSerial);
+        if (timerIt != pingTimers.end()) {
+            delete timerIt.value();
+            pingTimers.erase(timerIt);
+        }
+        emit q->pingTimeout(pingSerial);
+    });
+
+    pingTimers.insert(pingSerial, pingTimer);
     pingTimer->start();
+
     return pingSerial;
 }
 

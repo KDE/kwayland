@@ -27,19 +27,13 @@ namespace Server
 XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, XdgShellInterface *q, Display *d, const wl_interface *interface, quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
-    , pingTimer(new QTimer)
     , q(q)
 {
-    pingTimer->setSingleShot(true);
-    pingTimer->setInterval(1000);
 }
 
 XdgShellInterface::XdgShellInterface(Private *d, QObject *parent)
     : Global(d, parent)
 {
-    connect(d->pingTimer.data(), &QTimer::timeout, this, [this, d]() {
-        emit pingTimeout(d->pingSerial);
-    });
 }
 
 XdgShellInterface::~XdgShellInterface() = default;

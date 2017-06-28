@@ -37,8 +37,8 @@ public:
     XdgShellInterfaceVersion interfaceVersion;
 
     virtual quint32 ping() = 0;
-    quint32 pingSerial = 0;
-    QScopedPointer<QTimer> pingTimer;
+    //pingserial/timer correspondence
+    QHash <qint32, QTimer *> pingTimers;
 
 protected:
     Private(XdgShellInterfaceVersion interfaceVersion, XdgShellInterface *q, Display *d, const wl_interface *interface, quint32 version);

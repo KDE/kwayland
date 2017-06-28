@@ -32,12 +32,14 @@ XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, X
 {
     pingTimer->setSingleShot(true);
     pingTimer->setInterval(1000);
-    connect(pingTimer.data(), &QTimer::timeout, q, &XdgShellInterface::pingTimeout);
 }
 
 XdgShellInterface::XdgShellInterface(Private *d, QObject *parent)
     : Global(d, parent)
 {
+    connect(d->pingTimer.data(), &QTimer::timeout, this, [this, d]() {
+        emit pingTimeout(d->pingSerial);
+    });
 }
 
 XdgShellInterface::~XdgShellInterface() = default;
@@ -54,9 +56,9 @@ XdgShellInterfaceVersion XdgShellInterface::interfaceVersion() const
     return d->interfaceVersion;
 }
 
-void XdgShellInterface::ping()
+quint32 XdgShellInterface::ping()
 {
-    d_func()->ping();
+    return d_func()->ping();
 }
 
 XdgShellInterface::Private *XdgShellInterface::d_func() const

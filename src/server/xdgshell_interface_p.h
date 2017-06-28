@@ -36,7 +36,7 @@ class XdgShellInterface::Private : public Global::Private
 public:
     XdgShellInterfaceVersion interfaceVersion;
 
-    virtual void ping() = 0;
+    virtual quint32 ping() = 0;
     quint32 pingSerial = 0;
     QScopedPointer<QTimer> pingTimer;
 

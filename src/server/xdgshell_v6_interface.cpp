@@ -50,7 +50,7 @@ private:
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    void ping() override;
+    quint32 ping() override;
 
     static void unbind(wl_resource *resource);
     static Private *cast(wl_resource *r) {
@@ -281,7 +281,7 @@ void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *
     auto s = cast(resource);
     if (s->pingTimer->isActive() && serial == s->pingSerial) {
         s->pingTimer->stop();
-        emit s->q->pongReceived();
+        emit s->q->pongReceived(serial);
     }
 }
 
@@ -354,14 +354,15 @@ XdgPositionerV6Interface *XdgShellV6Interface::getPositioner(wl_resource *resour
     return nullptr;
 }
 
-void XdgShellV6Interface::Private::ping()
+quint32 XdgShellV6Interface::Private::ping()
 {
     if (!resource || pingTimer->isActive()) {
-        return;
+        return -1;
     }
     pingSerial = display->nextSerial();
     zxdg_shell_v6_send_ping(resource, pingSerial);
     pingTimer->start();
+    return pingSerial;
 }
 
 XdgShellV6Interface::Private *XdgShellV6Interface::d_func() const

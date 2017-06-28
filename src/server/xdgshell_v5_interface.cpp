@@ -45,7 +45,7 @@ private:
     void createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource);
     void createPopup(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, SurfaceInterface *parent, SeatInterface *seat, quint32 serial, const QPoint &pos, wl_resource *parentResource);
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
-    void ping() override;
+    quint32 ping() override;
 
     static void unbind(wl_resource *resource);
     static Private *cast(wl_resource *r) {
@@ -168,7 +168,7 @@ void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *
     auto s = cast(resource);
     if (s->pingTimer->isActive() && serial == s->pingSerial) {
         s->pingTimer->stop();
-        emit s->q->pongReceived();
+        emit s->q->pongReceived(serial);
     }
 }
 
@@ -213,14 +213,15 @@ XdgSurfaceV5Interface *XdgShellV5Interface::getSurface(wl_resource *resource)
     return nullptr;
 }
 
-void XdgShellV5Interface::Private::ping()
+quint32 XdgShellV5Interface::Private::ping()
 {
     if (!resource || pingTimer->isActive()) {
-        return;
+        return -1;
     }
     pingSerial = display->nextSerial();
     xdg_shell_send_ping(resource, pingSerial);
     pingTimer->start();
+    return pingSerial;
 }
 
 XdgShellV5Interface::Private *XdgShellV5Interface::d_func() const

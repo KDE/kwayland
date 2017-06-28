@@ -118,7 +118,7 @@ public:
      *
      * @since XDGMERGE_VERSION
      */
-    void ping();
+    quint32 ping();
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
@@ -153,8 +153,8 @@ Q_SIGNALS:
      * @param surface The popup xdg shell surface which got created
      * @since XDGMERGE_VERSION
      */
-    void pongReceived();
-    void pingTimeout();
+    void pongReceived(quint32 serial);
+    void pingTimeout(quint32 serial);
 
 protected:
     class Private;

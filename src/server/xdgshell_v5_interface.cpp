@@ -224,14 +224,9 @@ quint32 XdgShellV5Interface::Private::ping()
     xdg_shell_send_ping(resource, pingSerial);
 
     QTimer *pingTimer = new QTimer();
-    pingTimer->setSingleShot(true);
+    pingTimer->setSingleShot(false);
     pingTimer->setInterval(1000);
     connect(pingTimer, &QTimer::timeout, q, [this, pingSerial]() {
-        auto timerIt = pingTimers.find(pingSerial);
-        if (timerIt != pingTimers.end()) {
-            delete timerIt.value();
-            pingTimers.erase(timerIt);
-        }
         emit q->pingTimeout(pingSerial);
     });
 

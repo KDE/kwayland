@@ -368,11 +368,6 @@ quint32 XdgShellV6Interface::Private::ping()
     pingTimer->setSingleShot(true);
     pingTimer->setInterval(1000);
     connect(pingTimer, &QTimer::timeout, q, [this, pingSerial]() {
-        auto timerIt = pingTimers.find(pingSerial);
-        if (timerIt != pingTimers.end()) {
-            delete timerIt.value();
-            pingTimers.erase(timerIt);
-        }
         emit q->pingTimeout(pingSerial);
     });
 

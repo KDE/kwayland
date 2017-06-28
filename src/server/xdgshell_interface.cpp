@@ -55,6 +55,15 @@ quint32 XdgShellInterface::ping()
     return d_func()->ping();
 }
 
+void XdgShellInterface::discardPing(qint32 serial)
+{
+    auto timerIt = d_func()->pingTimers.find(serial);
+    if (timerIt != d_func()->pingTimers.end()) {
+        delete timerIt.value();
+        d_func()->pingTimers.erase(timerIt);
+    }
+}
+
 XdgShellInterface::Private *XdgShellInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());

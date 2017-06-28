@@ -111,14 +111,22 @@ public:
      **/
     XdgShellSurfaceInterface *getSurface(wl_resource *native);
 
-    /*
+    /**
      * Confirm the client is still alive and responding
      *
      * Will result in pong being emitted
      *
+     * @returns unique identifier for this request
      * @since XDGMERGE_VERSION
      */
     quint32 ping();
+
+    /**
+     * Discard a running ping request
+     * @param serial unique identifier for the request
+     * @since XDGMERGE_VERSION
+     */
+    void discardPing(qint32 serial);
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
@@ -150,10 +158,17 @@ Q_SIGNALS:
     /*
      * Emitted in response to a ping request
      *
-     * @param surface The popup xdg shell surface which got created
+     * @param serial unique identifier for the request
      * @since XDGMERGE_VERSION
      */
     void pongReceived(quint32 serial);
+
+    /*
+     * Emitted when the application doesn't answer to a ping
+     *
+     * @param serial unique identifier for the request
+     * @since XDGMERGE_VERSION
+     */
     void pingTimeout(quint32 serial);
 
 protected:

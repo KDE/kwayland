@@ -121,13 +121,6 @@ public:
      */
     quint32 ping();
 
-    /**
-     * Discard a running ping request
-     * @param serial unique identifier for the request
-     * @since XDGMERGE_VERSION
-     */
-    void discardPing(qint32 serial);
-
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
 
@@ -165,11 +158,13 @@ Q_SIGNALS:
 
     /*
      * Emitted when the application doesn't answer to a ping
+     * more than one timeout can be emitted before it gives up
      *
      * @param serial unique identifier for the request
+     * @param attempt how many timeouts occured for this ping
      * @since XDGMERGE_VERSION
      */
-    void pingTimeout(quint32 serial);
+    void pingTimeout(quint32 serial, uint attempt);
 
 protected:
     class Private;

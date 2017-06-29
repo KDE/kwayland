@@ -31,6 +31,27 @@ XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, X
 {
 }
 
+void XdgShellInterface::Private::setupTimer(qint32 serial)
+{
+    QTimer *pingTimer = new QTimer();
+    pingTimer->setSingleShot(false);
+    pingTimer->setInterval(1000);
+    int attempt = 0;
+    connect(pingTimer, &QTimer::timeout, q, [this, serial, attempt]() mutable {
+        emit q->pingTimeout(serial, ++attempt);
+        if (attempt > 2) {
+            auto timerIt = pingTimers.find(serial);
+            if (timerIt != pingTimers.end()) {
+                delete timerIt.value();
+                pingTimers.erase(timerIt);
+            }
+        }
+    });
+
+    pingTimers.insert(serial, pingTimer);
+    pingTimer->start();
+}
+
 XdgShellInterface::XdgShellInterface(Private *d, QObject *parent)
     : Global(d, parent)
 {
@@ -53,15 +74,6 @@ XdgShellInterfaceVersion XdgShellInterface::interfaceVersion() const
 quint32 XdgShellInterface::ping()
 {
     return d_func()->ping();
-}
-
-void XdgShellInterface::discardPing(qint32 serial)
-{
-    auto timerIt = d_func()->pingTimers.find(serial);
-    if (timerIt != d_func()->pingTimers.end()) {
-        delete timerIt.value();
-        d_func()->pingTimers.erase(timerIt);
-    }
 }
 
 XdgShellInterface::Private *XdgShellInterface::d_func() const

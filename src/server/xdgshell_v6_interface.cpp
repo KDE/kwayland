@@ -364,16 +364,7 @@ quint32 XdgShellV6Interface::Private::ping()
     const qint32 pingSerial = display->nextSerial();
     zxdg_shell_v6_send_ping(resource, pingSerial);
 
-    QTimer *pingTimer = new QTimer();
-    pingTimer->setSingleShot(true);
-    pingTimer->setInterval(1000);
-    connect(pingTimer, &QTimer::timeout, q, [this, pingSerial]() {
-        emit q->pingTimeout(pingSerial);
-    });
-
-    pingTimers.insert(pingSerial, pingTimer);
-    pingTimer->start();
-
+    setupTimer(pingSerial);
     return pingSerial;
 }
 

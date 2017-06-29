@@ -37,6 +37,7 @@ public:
     XdgShellInterfaceVersion interfaceVersion;
 
     virtual quint32 ping() = 0;
+    void setupTimer(qint32 serial);
     //pingserial/timer correspondence
     QHash <qint32, QTimer *> pingTimers;
 

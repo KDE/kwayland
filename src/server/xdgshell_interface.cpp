@@ -31,7 +31,7 @@ XdgShellInterface::Private::Private(XdgShellInterfaceVersion interfaceVersion, X
 {
 }
 
-void XdgShellInterface::Private::setupTimer(qint32 serial)
+void XdgShellInterface::Private::setupTimer(quint32 serial)
 {
     QTimer *pingTimer = new QTimer();
     pingTimer->setSingleShot(false);

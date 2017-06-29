@@ -408,10 +408,10 @@ void XdgShellTest::testPing()
     QSignalSpy pingSpy(m_xdgShellInterface, &XdgShellInterface::pongReceived);
     QVERIFY(pingSpy.isValid());
 
-    qint32 serial = m_xdgShellInterface->ping();
+    quint32 serial = m_xdgShellInterface->ping();
     QVERIFY(pingSpy.wait());
     QCOMPARE(pingSpy.count(), 1);
-    QCOMPARE(pingSpy.takeFirst().at(0).value<qint32>(), serial);
+    QCOMPARE(pingSpy.takeFirst().at(0).value<quint32>(), serial);
 }
 
 void XdgShellTest::testClose()

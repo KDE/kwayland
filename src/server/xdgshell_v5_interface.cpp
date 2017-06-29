@@ -220,7 +220,7 @@ quint32 XdgShellV5Interface::Private::ping()
     if (!resource) {
         return -1;
     }
-    const qint32 pingSerial = display->nextSerial();
+    const quint32 pingSerial = display->nextSerial();
     xdg_shell_send_ping(resource, pingSerial);
 
     setupTimer(pingSerial);

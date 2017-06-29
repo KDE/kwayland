@@ -361,7 +361,7 @@ quint32 XdgShellV6Interface::Private::ping()
     if (!resource) {
         return -1;
     }
-    const qint32 pingSerial = display->nextSerial();
+    const quint32 pingSerial = display->nextSerial();
     zxdg_shell_v6_send_ping(resource, pingSerial);
 
     setupTimer(pingSerial);

@@ -412,6 +412,16 @@ void XdgShellTest::testPing()
     QVERIFY(pingSpy.wait());
     QCOMPARE(pingSpy.count(), 1);
     QCOMPARE(pingSpy.takeFirst().at(0).value<quint32>(), serial);
+
+    // test of a ping failure
+    // disconnecting the connection thread to the queue will break the connection and pings will do a timeout
+    disconnect(m_connection, &ConnectionThread::eventsRead, m_queue, &EventQueue::dispatch);
+    m_xdgShellInterface->ping();
+    QSignalSpy pingDelayedSpy(m_xdgShellInterface, &XdgShellInterface::pingDelayed);
+    QVERIFY(pingDelayedSpy.wait());
+
+    QSignalSpy pingTimeoutSpy(m_xdgShellInterface, &XdgShellInterface::pingTimeout);
+    QVERIFY(pingTimeoutSpy.wait());
 }
 
 void XdgShellTest::testClose()

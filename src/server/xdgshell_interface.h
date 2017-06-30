@@ -157,14 +157,23 @@ Q_SIGNALS:
     void pongReceived(quint32 serial);
 
     /*
-     * Emitted when the application doesn't answer to a ping
-     * more than one timeout can be emitted before it gives up
+     * Emitted when the application takes more than expected
+     * to answer to a ping, this will always be emitted before
+     * eventuallt pingTimeout gets emitted
      *
      * @param serial unique identifier for the request
-     * @param attempt how many timeouts occured for this ping
      * @since XDGMERGE_VERSION
      */
-    void pingTimeout(quint32 serial, uint attempt);
+    void pingDelayed(quint32 serial);
+
+    /*
+     * Emitted when the application doesn't answer to a ping
+     * and the serve gave up on it
+     *
+     * @param serial unique identifier for the request
+     * @since XDGMERGE_VERSION
+     */
+    void pingTimeout(quint32 serial);
 
 protected:
     class Private;

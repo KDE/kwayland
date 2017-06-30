@@ -38,8 +38,11 @@ void XdgShellInterface::Private::setupTimer(quint32 serial)
     pingTimer->setInterval(1000);
     int attempt = 0;
     connect(pingTimer, &QTimer::timeout, q, [this, serial, attempt]() mutable {
-        emit q->pingTimeout(serial, ++attempt);
-        if (attempt > 2) {
+        ++attempt;
+        if (attempt == 1) {
+            emit q->pingDelayed(serial);
+        } else {
+            emit q->pingTimeout(serial);
             auto timerIt = pingTimers.find(serial);
             if (timerIt != pingTimers.end()) {
                 delete timerIt.value();

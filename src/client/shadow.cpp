@@ -175,6 +175,9 @@ void Shadow::attach##__PART__(wl_buffer *buffer) \
 } \
 void Shadow::attach##__PART__(Buffer *buffer) \
 { \
+    if (!buffer) {\
+        return;\
+    }\
     attach##__PART__(buffer->buffer()); \
 } \
 void Shadow::attach##__PART__(Buffer::Ptr buffer) \

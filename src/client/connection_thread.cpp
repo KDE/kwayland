@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QSocketNotifier>
 #include <qpa/qplatformnativeinterface.h>
 // Wayland
@@ -55,9 +57,15 @@ public:
     bool foreign = false;
     QMetaObject::Connection eventDispatcherConnection;
     int error = 0;
+    static QVector<ConnectionThread*> connections;
+    static QMutex mutex;
 private:
     ConnectionThread *q;
 };
+
+QVector<ConnectionThread*> ConnectionThread::Private::connections = QVector<ConnectionThread*>{};
+QMutex ConnectionThread::Private::mutex{QMutex::Recursive};
+
 
 ConnectionThread::Private::Private(ConnectionThread *q)
     : socketName(QString::fromUtf8(qgetenv("WAYLAND_DISPLAY")))
@@ -67,10 +75,18 @@ ConnectionThread::Private::Private(ConnectionThread *q)
     if (socketName.isEmpty()) {
         socketName = QStringLiteral("wayland-0");
     }
+    {
+        QMutexLocker lock(&mutex);
+        connections << q;
+    }
 }
 
 ConnectionThread::Private::~Private()
 {
+    {
+        QMutexLocker lock(&mutex);
+        connections.removeOne(q);
+    }
     if (display && !foreign) {
         wl_display_flush(display);
         wl_display_disconnect(display);
@@ -278,6 +294,11 @@ bool ConnectionThread::hasError() const
 int ConnectionThread::errorCode() const
 {
     return d->error;
+}
+
+QVector<ConnectionThread*> ConnectionThread::connections()
+{
+    return Private::connections;
 }
 
 }

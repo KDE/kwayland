@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_CONNECTION_THREAD_H
 
 #include <QObject>
+#include <QVector>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -197,6 +198,12 @@ public:
      * @since 5.23
      **/
     int errorCode() const;
+
+    /**
+     * @returns all connections created in this application
+     * @since 5.37
+     **/
+    static QVector<ConnectionThread*> connections();
 
 public Q_SLOTS:
     /**

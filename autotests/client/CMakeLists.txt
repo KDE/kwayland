@@ -379,3 +379,14 @@ add_executable(testPointerConstraints test_pointer_constraints.cpp)
 target_link_libraries( testPointerConstraints Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
 add_test(NAME kwayland-testPointerConstraints COMMAND testPointerConstraints)
 ecm_mark_as_test(testPointerConstraints)
+
+########################################################
+# Test RemoteAccess
+########################################################
+set( testRemoteAccess_SRCS
+        test_remote_access.cpp
+    )
+add_executable(testRemoteAccess ${testRemoteAccess_SRCS})
+target_link_libraries( testRemoteAccess Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(kwayland-testRemoteAccess testRemoteAccess)
+ecm_mark_as_test(testRemoteAccess)

@@ -22,6 +22,7 @@ set(CLIENT_LIB_SRCS
     fullscreen_shell.cpp
     idle.cpp
     keyboard.cpp
+    remote_access.cpp
     outputconfiguration.cpp
     outputmanagement.cpp
     outputdevice.cpp
@@ -150,6 +151,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME xdg-foreign-unstable-v2
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/remote-access.xml
+    BASENAME remote-access
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -191,6 +197,7 @@ set(CLIENT_LIB_HEADERS
   fullscreen_shell.h
   idle.h
   keyboard.h
+  remote_access.h
   outputconfiguration.h
   outputmanagement.h
   outputdevice.h

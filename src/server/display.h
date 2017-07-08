@@ -53,6 +53,7 @@ class CompositorInterface;
 class DataDeviceManagerInterface;
 class DpmsManagerInterface;
 class IdleInterface;
+class RemoteAccessManagerInterface;
 class FakeInputInterface;
 class OutputInterface;
 class OutputDeviceInterface;
@@ -172,6 +173,7 @@ public:
     PlasmaWindowManagementInterface *createPlasmaWindowManagement(QObject *parent = nullptr);
     QtSurfaceExtensionInterface *createQtSurfaceExtension(QObject *parent = nullptr);
     IdleInterface *createIdle(QObject *parent = nullptr);
+    RemoteAccessManagerInterface *createRemoteAccessManager(QObject *parent = nullptr);
     FakeInputInterface *createFakeInput(QObject *parent = nullptr);
     ShadowManagerInterface *createShadowManager(QObject *parent = nullptr);
     BlurManagerInterface *createBlurManager(QObject *parent = nullptr);

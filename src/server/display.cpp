@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
 #include "idle_interface.h"
+#include "remote_access_interface.h"
 #include "fakeinput_interface.h"
 #include "logging_p.h"
 #include "output_interface.h"
@@ -287,6 +288,13 @@ QtSurfaceExtensionInterface *Display::createQtSurfaceExtension(QObject *parent)
     auto s = new QtSurfaceExtensionInterface(this, parent);
     connect(this, &Display::aboutToTerminate, s, [this, s] { delete s; });
     return s;
+}
+
+RemoteAccessManagerInterface *Display::createRemoteAccessManager(QObject *parent)
+{
+    auto i = new RemoteAccessManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, i, [this, i] { delete i; });
+    return i;
 }
 
 IdleInterface *Display::createIdle(QObject *parent)

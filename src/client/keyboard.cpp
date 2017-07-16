@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
+#include <QPointer>
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -35,7 +36,7 @@ public:
     void setup(wl_keyboard *k);
 
     WaylandPointer<wl_keyboard, wl_keyboard_release> keyboard;
-    Surface *enteredSurface = nullptr;
+    QPointer<Surface> enteredSurface;
 
     struct {
         qint32 charactersPerSecond = 0;
@@ -119,15 +120,15 @@ void Keyboard::Private::enter(uint32_t serial, wl_surface *surface, wl_array *ke
 
 void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
 {
+    Q_UNUSED(surface)
     auto k = reinterpret_cast<Private*>(data);
     Q_ASSERT(k->keyboard == keyboard);
-    Q_ASSERT(*(k->enteredSurface) == surface);
     k->leave(serial);
 }
 
 void Keyboard::Private::leave(uint32_t serial)
 {
-    enteredSurface = nullptr;
+    enteredSurface.clear();
     emit q->left(serial);
 }
 
@@ -176,12 +177,12 @@ void Keyboard::Private::repeatInfoCallback(void *data, wl_keyboard *keyboard, in
 
 Surface *Keyboard::enteredSurface()
 {
-    return d->enteredSurface;
+    return d->enteredSurface.data();
 }
 
 Surface *Keyboard::enteredSurface() const
 {
-    return d->enteredSurface;
+    return d->enteredSurface.data();
 }
 
 bool Keyboard::isValid() const

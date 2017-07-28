@@ -227,7 +227,17 @@ public:
      **/
     QByteArray uuid() const;
 
-
+    /**
+    * Destroys the data hold by this OutputDevice.
+    * This method is supposed to be used when the connection to the Wayland
+    * server goes away. If the connection is not valid any more, it's not
+    * possible to call release any more as that calls into the Wayland
+    * connection and the call would fail.
+    *
+    * This method is automatically invoked when the Registry which created this
+    * Output gets destroyed.
+    **/
+    void destroy();
 
 Q_SIGNALS:
     /**

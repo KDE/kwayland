@@ -102,10 +102,8 @@ public:
      * that the instance can be deleted or set up to a new org_kde_kwin_idle interface
      * once there is a new connection available.
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, manager, &Idle::destroy);
-     * @endcode
+     * This method is automatically invoked when the Registry which created this
+     * Idle gets destroyed.
      *
      * @see release
      **/

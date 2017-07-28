@@ -439,6 +439,11 @@ QByteArray OutputDevice::uuid() const
     return d->uuid;
 }
 
+void OutputDevice::destroy()
+{
+    d->output.destroy();
+
+}
 
 }
 }

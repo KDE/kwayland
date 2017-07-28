@@ -391,5 +391,10 @@ Output *Output::get(wl_output *o)
     return Private::get(o);
 }
 
+void Output::destroy()
+{
+    d->output.destroy();
+}
+
 }
 }

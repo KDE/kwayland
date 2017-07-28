@@ -97,10 +97,8 @@ public:
      * that the instance can be deleted or set up to a new wl_data_device_manager interface
      * once there is a new connection available.
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, manager, &DataDeviceManager::destroy);
-     * @endcode
+     * This method is automatically invoked when the Registry which created this
+     * DataDeviceManager gets destroyed.
      *
      * @see release
      **/

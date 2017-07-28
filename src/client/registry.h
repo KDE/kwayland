@@ -1300,6 +1300,12 @@ Q_SIGNALS:
      **/
     void interfacesAnnounced();
 
+Q_SIGNALS:
+    /*
+     * Emitted when the registry has been destroyed rather than released
+     */
+    void registryDestroyed();
+
 private:
     class Private;
     QScopedPointer<Private> d;

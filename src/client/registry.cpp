@@ -361,6 +361,7 @@ void Registry::release()
 
 void Registry::destroy()
 {
+    emit registryDestroyed();
     d->registry.destroy();
     d->callback.destroy();
 }
@@ -380,6 +381,7 @@ void Registry::create(wl_display *display)
 void Registry::create(ConnectionThread *connection)
 {
     create(connection->display());
+    connect(connection, &ConnectionThread::connectionDied, this, &Registry::destroy);
 }
 
 void Registry::setup()
@@ -601,6 +603,7 @@ T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL 
             }
         }
     );
+    QObject::connect(q, &Registry::registryDestroyed, t, &T::destroy);
     return t;
 }
 

@@ -98,10 +98,8 @@ public:
      * that the instance can be deleted or set up to a new org_kde_kwin_dpms_manager interface
      * once there is a new connection available.
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, manager, &DpmsManager::destroy);
-     * @endcode
+     * This method is automatically invoked when the Registry which created this
+     * DPMS gets destroyed.
      *
      * @see release
      **/

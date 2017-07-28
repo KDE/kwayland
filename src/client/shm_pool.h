@@ -164,10 +164,8 @@ public:
      *
      * All Buffers are destroyed!
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, shmPool, &ShmPool::destroy);
-     * @endcode
+     * This method is automatically invoked when the Registry which created this
+     * ShmPool gets destroyed.
      *
      * @see release
      **/

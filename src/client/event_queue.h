@@ -111,11 +111,6 @@ public:
      * that the instance can be deleted or set up to a new wl_event_queue interface
      * once there is a new connection available.
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, queue, &EventQueue::destroy);
-     * @endcode
-     *
      * @see release
      **/
     void destroy();

@@ -98,10 +98,8 @@ public:
     * that the instance can be deleted or setup to a new org_kde_kwin_outputmanagement interface
     * once there is a new connection available.
     *
-    * It is suggested to connect this method to ConnectionThread::connectionDied:
-    * @code
-    * connect(connection, &ConnectionThread::connectionDied, outputmanagement, &OutputManagement::destroy);
-    * @endcode
+    * This method is automatically invoked when the Registry which created this
+    * OutputManagement gets destroyed.
     *
     * @see release
     **/

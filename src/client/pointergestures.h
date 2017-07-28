@@ -106,9 +106,8 @@ public:
      * that the instance can be deleted or set up to a new zwp_pointer_gestures_v1 interface
      * once there is a new connection available.
      *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, pointergestures, &PointerGestures::destroy);
+     * This method is automatically invoked when the Registry which created this
+     * PointerGestures gets destroyed.
      * @endcode
      *
      * @see release

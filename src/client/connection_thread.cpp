@@ -218,6 +218,7 @@ ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
     ConnectionThread *ct = new ConnectionThread(parent);
     ct->d->foreign = true;
     ct->d->display = display;
+    connect(native, &QObject::destroyed, ct, &ConnectionThread::connectionDied);
     return ct;
 }
 

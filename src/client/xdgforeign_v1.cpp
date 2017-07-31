@@ -98,13 +98,13 @@ EventQueue *XdgExporterUnstableV1::eventQueue()
 zxdg_exported_v1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto p = new zxdg_exported_v1(parent);
+    auto p = new XdgExportedUnstableV1(parent);
     auto w = zxdg_exporter_v1_export(d->exporter, *surface);
     if (d->queue) {
         d->queue->addProxy(w);
     }
     p->setup(w);
-    return p;
+    return w;
 }
 
 class XdgImporterUnstableV1::Private
@@ -177,13 +177,14 @@ EventQueue *XdgImporterUnstableV1::eventQueue()
 zxdg_imported_v1 *XdgImporterUnstableV1::import(const QString & handle, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto p = new zxdg_imported_v1(parent);
+    auto p = new XdgImportedUnstableV1(parent);
     auto w = zxdg_importer_v1_import(d->importer, handle.toUtf8());
     if (d->queue) {
-        d->queue->addProxy(w);
+        d->queue->addProxy(p);
     }
     p->setup(w);
-    return p;
+    return w;//there's no point creating a wrapper and then returning the low level struct.
+    //IMHO we could return the surfaceId directly here, and not make wrappers for exported/imported.
 }
 
 class XdgExportedUnstableV1::Private

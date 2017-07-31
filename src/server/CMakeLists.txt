@@ -45,6 +45,7 @@ set(SERVER_LIB_SRCS
     textinput_interface_v2.cpp
     xdgshell_interface.cpp
     xdgshell_v5_interface.cpp
+    #xdgforeign_v1_interface.cpp
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS

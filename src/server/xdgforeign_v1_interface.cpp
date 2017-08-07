@@ -22,15 +22,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "global_p.h"
 #include "resource_p.h"
 
+#include "wayland-xdg-foreign-unstable-v1-server-protocol.h"
+
 namespace KWayland
 {
 namespace Server
 {
 
-class Interface::Private : public Global::Private
+class XdgExporterUnstableV1Interface::Private : public Global::Private
 {
 public:
-    Private(Interface *q, Display *d);
+    Private(XdgExporterUnstableV1Interface *q, Display *d);
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -43,38 +45,41 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
 
-    Interface *q;
+    XdgExporterUnstableV1Interface *q;
     static const struct zxdg_exporter_v1_interface s_interface;
     static const quint32 s_version;
 };
 
-const quint32 Interface::Private::s_version = 1;
+const quint32 XdgExporterUnstableV1Interface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_exporter_v1_interface Interface::Private::s_interface = {
+const struct zxdg_exporter_v1_interface XdgExporterUnstableV1Interface::Private::s_interface = {
     destroyCallback,
     exportCallback
 };
 #endif
 
-void Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
+XdgExporterUnstableV1Interface::~XdgExporterUnstableV1Interface()
+{}
+
+void XdgExporterUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
     wl_resource_destroy(resource);
 }
 
-void Interface::Private::exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
+void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
 {
     // TODO: implement
 }
 
-Interface::Private::Private(Interface *q, Display *d)
+XdgExporterUnstableV1Interface::Private::Private(XdgExporterUnstableV1Interface *q, Display *d)
     : Global::Private(d, &zxdg_exporter_v1_interface, s_version)
     , q(q)
 {
 }
 
-void Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void XdgExporterUnstableV1Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&zxdg_exporter_v1_interface, qMin(version, s_version), id);
@@ -86,16 +91,16 @@ void Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
     // TODO: should we track?
 }
 
-void Interface::Private::unbind(wl_resource *resource)
+void XdgExporterUnstableV1Interface::Private::unbind(wl_resource *resource)
 {
     Q_UNUSED(resource)
     // TODO: implement?
 }
 
-class Interface::Private : public Global::Private
+class XdgImporterUnstableV1Interface::Private : public Global::Private
 {
 public:
-    Private(Interface *q, Display *d);
+    Private(XdgImporterUnstableV1Interface *q, Display *d);
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -108,38 +113,41 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void importCallback(wl_client *client, wl_resource *resource, uint32_t id, const char * handle);
 
-    Interface *q;
+    XdgImporterUnstableV1Interface *q;
     static const struct zxdg_importer_v1_interface s_interface;
     static const quint32 s_version;
 };
 
-const quint32 Interface::Private::s_version = 1;
+const quint32 XdgImporterUnstableV1Interface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_importer_v1_interface Interface::Private::s_interface = {
+const struct zxdg_importer_v1_interface XdgImporterUnstableV1Interface::Private::s_interface = {
     destroyCallback,
     importCallback
 };
 #endif
 
-void Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
+XdgImporterUnstableV1Interface::~XdgImporterUnstableV1Interface()
+{}
+
+void XdgImporterUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
     wl_resource_destroy(resource);
 }
 
-void Interface::Private::importCallback(wl_client *client, wl_resource *resource, uint32_t id, const char * handle)
+void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, wl_resource *resource, uint32_t id, const char * handle)
 {
     // TODO: implement
 }
 
-Interface::Private::Private(Interface *q, Display *d)
+XdgImporterUnstableV1Interface::Private::Private(XdgImporterUnstableV1Interface *q, Display *d)
     : Global::Private(d, &zxdg_importer_v1_interface, s_version)
     , q(q)
 {
 }
 
-void Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
+void XdgImporterUnstableV1Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&zxdg_importer_v1_interface, qMin(version, s_version), id);
@@ -151,79 +159,85 @@ void Interface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
     // TODO: should we track?
 }
 
-void Interface::Private::unbind(wl_resource *resource)
+void XdgImporterUnstableV1Interface::Private::unbind(wl_resource *resource)
 {
     Q_UNUSED(resource)
     // TODO: implement?
 }
 
-class Interface::Private : public Resource::Private
+class XdgExportedUnstableV1Interface::Private : public Resource::Private
 {
 public:
-    Private(Interface *q, Interface *c, wl_resource *parentResource);
+    Private(XdgExportedUnstableV1Interface *q, XdgExporterUnstableV1Interface *c, wl_resource *parentResource);
     ~Private();
 
 private:
 
-    Interface *q_func() {
-        return reinterpret_cast<Interface *>(q);
+    XdgExportedUnstableV1Interface *q_func() {
+        return reinterpret_cast<XdgExportedUnstableV1Interface *>(q);
     }
 
     static const struct zxdg_exported_v1_interface s_interface;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_exported_v1_interface Interface::Private::s_interface = {
+const struct zxdg_exported_v1_interface XdgExportedUnstableV1Interface::Private::s_interface = {
     resourceDestroyedCallback
 };
 #endif
 
-Interface::Private::Private(Interface *q, Interface *c, wl_resource *parentResource)
+XdgExportedUnstableV1Interface::~XdgExportedUnstableV1Interface()
+{}
+
+XdgExportedUnstableV1Interface::Private::Private(XdgExportedUnstableV1Interface *q, XdgExporterUnstableV1Interface *c, wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &zxdg_exported_v1_interface, &s_interface)
 {
 }
 
-Interface::Private::~Private()
+XdgExportedUnstableV1Interface::Private::~Private()
 {
     if (resource) {
         wl_resource_destroy(resource);
         resource = nullptr;
     }
 }
-class Interface::Private : public Resource::Private
+class XdgImportedUnstableV1Interface::Private : public Resource::Private
 {
 public:
-    Private(Interface *q, Interface *c, wl_resource *parentResource);
+    Private(XdgImportedUnstableV1Interface *q, XdgImporterUnstableV1Interface *c, wl_resource *parentResource);
     ~Private();
 
 private:
     static void setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface);
 
-    Interface *q_func() {
-        return reinterpret_cast<Interface *>(q);
+    XdgImportedUnstableV1Interface *q_func() {
+        return reinterpret_cast<XdgImportedUnstableV1Interface *>(q);
     }
 
     static const struct zxdg_imported_v1_interface s_interface;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_imported_v1_interface Interface::Private::s_interface = {
+const struct zxdg_imported_v1_interface XdgImportedUnstableV1Interface::Private::s_interface = {
     resourceDestroyedCallback,
     setParentOfCallback
 };
 #endif
 
-void Interface::Private::setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface)
+XdgImportedUnstableV1Interface::~XdgImportedUnstableV1Interface()
+{}
+
+void XdgImportedUnstableV1Interface::Private::setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface)
 {
     // TODO: implement
 }
 
-Interface::Private::Private(Interface *q, Interface *c, wl_resource *parentResource)
+XdgImportedUnstableV1Interface::Private::Private(XdgImportedUnstableV1Interface *q, XdgImporterUnstableV1Interface *c, wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &zxdg_imported_v1_interface, &s_interface)
 {
 }
 
-Interface::Private::~Private()
+XdgImportedUnstableV1Interface::Private::~Private()
 {
     if (resource) {
         wl_resource_destroy(resource);

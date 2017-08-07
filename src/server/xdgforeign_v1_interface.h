@@ -32,53 +32,53 @@ namespace Server
 
 class Display;
 
-class KWAYLANDSERVER_EXPORT Interface : public Global
+class KWAYLANDSERVER_EXPORT XdgExporterUnstableV1Interface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~Interface();
+    virtual ~XdgExporterUnstableV1Interface();
 
 private:
-    explicit Interface(Display *display, QObject *parent = nullptr);
+    explicit XdgExporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
 };
 
-class KWAYLANDSERVER_EXPORT Interface : public Global
+class KWAYLANDSERVER_EXPORT XdgImporterUnstableV1Interface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~Interface();
+    virtual ~XdgImporterUnstableV1Interface();
 
 private:
-    explicit Interface(Display *display, QObject *parent = nullptr);
+    explicit XdgImporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
 };
 
-class KWAYLANDSERVER_EXPORT Interface : public Resource
+class KWAYLANDSERVER_EXPORT XdgExportedUnstableV1Interface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~Interface();
+    virtual ~XdgExportedUnstableV1Interface();
 
 private:
-    explicit Interface(Interface *parent, wl_resource *parentResource);
-    friend class Interface;
+    explicit XdgExportedUnstableV1Interface(XdgExporterUnstableV1Interface *parent, wl_resource *parentResource);
+    friend class XdgExporterUnstableV1Interface;
 
     class Private;
     Private *d_func() const;
 };
 
-class KWAYLANDSERVER_EXPORT Interface : public Resource
+class KWAYLANDSERVER_EXPORT XdgImportedUnstableV1Interface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~Interface();
+    virtual ~XdgImportedUnstableV1Interface();
 
 private:
-    explicit Interface(Interface *parent, wl_resource *parentResource);
-    friend class Interface;
+    explicit XdgImportedUnstableV1Interface(XdgImporterUnstableV1Interface *parent, wl_resource *parentResource);
+    friend class XdgImporterUnstableV1Interface;
 
     class Private;
     Private *d_func() const;

@@ -125,9 +125,15 @@ void TestForeign::init()
 
     m_exporterInterface = m_display->createXdgExporterUnstableV1(m_display);
     m_importerInterface = m_display->createXdgImporterUnstableV1(m_display);
+    m_exporterInterface->create();
+    m_importerInterface->create();
+    QVERIFY(m_exporterInterface->isValid());
+    QVERIFY(m_importerInterface->isValid());
+    QVERIFY(exporterSpy.wait());
+    QVERIFY(importerSpy.wait());
 
-    m_exporter = new KWayland::Client::XdgExporterUnstableV1(this);
-    m_importer = new KWayland::Client::XdgImporterUnstableV1(this);
+    m_exporter = registry.createXdgExporterUnstableV1(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
+    m_importer = registry.createXdgImporterUnstableV1(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
 }
 
 void TestForeign::cleanup()
@@ -156,7 +162,15 @@ void TestForeign::cleanup()
 
 void TestForeign::testExport()
 {
-    
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QVERIFY(serverSurfaceCreated.isValid());
+
+    QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
+    QVERIFY(serverSurfaceCreated.wait());
+
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+
+    m_exporter->exportSurface(surface.data(), this);
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

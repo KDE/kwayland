@@ -44,6 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "subcompositor_interface.h"
 #include "textinput_interface_p.h"
 #include "xdgshell_v5_interface_p.h"
+#include "xdgforeign_v1_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -406,6 +407,20 @@ PointerConstraintsInterface *Display::createPointerConstraints(const PointerCons
     }
     connect(this, &Display::aboutToTerminate, p, [p] { delete p; });
     return p;
+}
+
+XdgExporterUnstableV1Interface *Display::createXdgExporterUnstableV1(QObject *parent)
+{
+    XdgExporterUnstableV1Interface *exporter = new XdgExporterUnstableV1Interface(this, parent);
+    connect(this, &Display::aboutToTerminate, exporter, [this,exporter] { delete exporter; });
+    return exporter;
+}
+
+XdgImporterUnstableV1Interface *Display::createXdgImporterUnstableV1(QObject *parent)
+{
+    XdgImporterUnstableV1Interface *importer = new XdgImporterUnstableV1Interface(this, parent);
+    connect(this, &Display::aboutToTerminate, importer, [this,importer] { delete importer; });
+    return importer;
 }
 
 void Display::createShm()

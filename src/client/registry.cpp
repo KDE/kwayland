@@ -49,6 +49,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell.h"
 #include "xdgshell_p.h"
 #include "wayland_pointer_p.h"
+#include "xdgforeign_v1.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -72,6 +73,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
+#include <wayland-xdg-foreign-unstable-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -281,6 +283,20 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zwp_pointer_constraints_v1_interface,
         &Registry::pointerConstraintsUnstableV1Announced,
         &Registry::pointerConstraintsUnstableV1Removed
+    }},
+    {Registry::Interface::XdgExporterUnstableV1, {
+        1,
+        QByteArrayLiteral("zxdg_exporter_v1"),
+        &zxdg_exporter_v1_interface,
+        &Registry::exporterUnstableV1Announced,
+        &Registry::exporterUnstableV1Removed
+    }},
+    {Registry::Interface::XdgImporterUnstableV1, {
+        1,
+        QByteArrayLiteral("zxdg_importer_v1"),
+        &zxdg_importer_v1_interface,
+        &Registry::importerUnstableV1Announced,
+        &Registry::importerUnstableV1Removed
     }}
 };
 
@@ -581,6 +597,8 @@ BIND(XdgShellUnstableV5, xdg_shell)
 BIND(RelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1)
 BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
+BIND(XdgExporterUnstableV1, zxdg_exporter_v1)
+BIND(XdgImporterUnstableV1, zxdg_importer_v1)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -634,6 +652,8 @@ CREATE(ContrastManager)
 CREATE(SlideManager)
 CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
+CREATE(XdgExporterUnstableV1)
+CREATE(XdgImporterUnstableV1)
 CREATE2(ShmPool, Shm)
 
 #undef CREATE

@@ -59,6 +59,11 @@ const struct zxdg_exporter_v1_interface XdgExporterUnstableV1Interface::Private:
 };
 #endif
 
+XdgExporterUnstableV1Interface::XdgExporterUnstableV1Interface(Display *display, QObject *parent)
+    : Global(new Private(this, display), parent)
+{
+}
+
 XdgExporterUnstableV1Interface::~XdgExporterUnstableV1Interface()
 {}
 
@@ -126,6 +131,11 @@ const struct zxdg_importer_v1_interface XdgImporterUnstableV1Interface::Private:
     importCallback
 };
 #endif
+
+XdgImporterUnstableV1Interface::XdgImporterUnstableV1Interface(Display *display, QObject *parent)
+    : Global(new Private(this, display), parent)
+{
+}
 
 XdgImporterUnstableV1Interface::~XdgImporterUnstableV1Interface()
 {}

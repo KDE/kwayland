@@ -17,12 +17,17 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
+
 #include "xdgforeign_v1_interface.h"
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
+#include "surface_interface_p.h"
 
 #include "wayland-xdg-foreign-unstable-v1-server-protocol.h"
+
+#include <QUuid>
+#include <QDebug>
 
 namespace KWayland
 {
@@ -48,6 +53,8 @@ private:
     XdgExporterUnstableV1Interface *q;
     static const struct zxdg_exporter_v1_interface s_interface;
     static const quint32 s_version;
+
+    QHash<QString, XdgExportedUnstableV1Interface *> exportedSurfaces;
 };
 
 const quint32 XdgExporterUnstableV1Interface::Private::s_version = 1;
@@ -75,7 +82,19 @@ void XdgExporterUnstableV1Interface::Private::destroyCallback(wl_client *client,
 
 void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
 {
-    // TODO: implement
+    auto s = cast(resource);
+    XdgExportedUnstableV1Interface *e = new XdgExportedUnstableV1Interface(s->q, surface);
+    e->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
+
+    if (!e->resource()) {
+        wl_resource_post_no_memory(resource);
+        delete e;
+        return;
+    }
+
+    const QString handle = QUuid::createUuid().toString();
+    s->exportedSurfaces[handle] = e;
+    zxdg_exported_v1_send_handle(e->resource(), handle.toUtf8().constData());
 }
 
 XdgExporterUnstableV1Interface::Private::Private(XdgExporterUnstableV1Interface *q, Display *d)
@@ -195,6 +214,11 @@ const struct zxdg_exported_v1_interface XdgExportedUnstableV1Interface::Private:
     resourceDestroyedCallback
 };
 #endif
+
+XdgExportedUnstableV1Interface::XdgExportedUnstableV1Interface(XdgExporterUnstableV1Interface *parent, wl_resource *parentResource)
+    : Resource(new Private(this, parent, parentResource))
+{
+}
 
 XdgExportedUnstableV1Interface::~XdgExportedUnstableV1Interface()
 {}

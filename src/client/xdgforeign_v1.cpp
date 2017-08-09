@@ -23,6 +23,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wayland-xdg-foreign-unstable-v1-client-protocol.h>
 
+#include <QDebug>
+
 namespace KWayland
 {
 namespace Client
@@ -95,16 +97,16 @@ EventQueue *XdgExporterUnstableV1::eventQueue()
     return d->queue;
 }
 
-zxdg_exported_v1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QObject *parent)
+XdgExportedUnstableV1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto p = new XdgExportedUnstableV1(parent);
-    auto w = zxdg_exporter_v1_export(d->exporter, *surface);
+    auto w = zxdg_exporter_v1_export_surface(d->exporter, *surface);
     if (d->queue) {
         d->queue->addProxy(w);
     }
     p->setup(w);
-    return w;
+    return p;
 }
 
 class XdgImporterUnstableV1::Private
@@ -174,7 +176,7 @@ EventQueue *XdgImporterUnstableV1::eventQueue()
     return d->queue;
 }
 
-zxdg_imported_v1 *XdgImporterUnstableV1::import(const QString & handle, QObject *parent)
+XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto p = new XdgImportedUnstableV1(parent);
@@ -183,7 +185,7 @@ zxdg_imported_v1 *XdgImporterUnstableV1::import(const QString & handle, QObject 
         d->queue->addProxy(p);
     }
     p->setup(w);
-    return w;//there's no point creating a wrapper and then returning the low level struct.
+    return p;//there's no point creating a wrapper and then returning the low level struct.
     //IMHO we could return the surfaceId directly here, and not make wrappers for exported/imported.
 }
 
@@ -195,6 +197,8 @@ public:
     void setup(zxdg_exported_v1 *arg);
 
     WaylandPointer<zxdg_exported_v1, zxdg_exported_v1_destroy> exported;
+
+    QString handle;
 
 private:
     XdgExportedUnstableV1 *q;
@@ -213,13 +217,9 @@ void XdgExportedUnstableV1::Private::handleCallback(void *data, zxdg_exported_v1
 {
     auto p = reinterpret_cast<XdgExportedUnstableV1::Private*>(data);
     Q_ASSERT(p->exported == zxdg_exported_v1);
-    Q_UNUSED(handle)
-    // TODO: implement
-}
 
-XdgExportedUnstableV1::Private::Private(XdgExportedUnstableV1 *q)
-    : q(q)
-{
+    p->handle = handle;
+    emit p->q->done();
 }
 
 XdgExportedUnstableV1::XdgExportedUnstableV1(QObject *parent)
@@ -234,6 +234,11 @@ void XdgExportedUnstableV1::Private::setup(zxdg_exported_v1 *arg)
     Q_ASSERT(!exported);
     exported.setup(arg);
     zxdg_exported_v1_add_listener(exported, &s_listener, this);
+}
+
+XdgExportedUnstableV1::Private::Private(XdgExportedUnstableV1 *q)
+    : q(q)
+{
 }
 
 XdgExportedUnstableV1::~XdgExportedUnstableV1()
@@ -254,6 +259,11 @@ void XdgExportedUnstableV1::release()
 void XdgExportedUnstableV1::destroy()
 {
     d->exported.destroy();
+}
+
+QString XdgExportedUnstableV1::handle() const
+{
+    return d->handle;
 }
 
 XdgExportedUnstableV1::operator zxdg_exported_v1*() {

@@ -69,7 +69,7 @@
       </description>
     </request>
 
-    <request name="export">
+    <request name="export_surface">
       <description summary="export a surface">
 	The export request exports the passed surface so that it can later be
 	imported via xdg_importer. When called, a new xdg_exported object will

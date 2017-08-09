@@ -38,6 +38,8 @@ namespace Client
 
 class EventQueue;
 class Surface;
+class XdgExportedUnstableV1;
+class XdgImportedUnstableV1;
 
 /**
  * @short Wrapper for the zxdg_exporter_v1 interface.
@@ -118,7 +120,7 @@ public:
      **/
     EventQueue *eventQueue();
 
-    zxdg_exported_v1 *exportSurface(Surface *surface, QObject *parent = nullptr);
+    XdgExportedUnstableV1 *exportSurface(Surface *surface, QObject *parent = nullptr);
 
     operator zxdg_exporter_v1*();
     operator zxdg_exporter_v1*() const;
@@ -216,7 +218,7 @@ public:
      **/
     EventQueue *eventQueue();
 
-    zxdg_imported_v1 *import(const QString & handle, QObject *parent = nullptr);
+    XdgImportedUnstableV1 *import(const QString & handle, QObject *parent = nullptr);
 
     operator zxdg_importer_v1*();
     operator zxdg_importer_v1*() const;
@@ -275,8 +277,16 @@ public:
      **/
     void destroy();
 
+    QString handle() const;
+
     operator zxdg_exported_v1*();
     operator zxdg_exported_v1*() const;
+
+Q_SIGNALS:
+    /**
+     * Emitted when the exported window is fully initialized.
+     **/
+    void done();
 
 private:
     friend class XdgExporterUnstableV1;

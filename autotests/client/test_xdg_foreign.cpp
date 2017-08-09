@@ -124,12 +124,13 @@ void TestForeign::init()
     m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
 
     m_exporterInterface = m_display->createXdgExporterUnstableV1(m_display);
-    m_importerInterface = m_display->createXdgImporterUnstableV1(m_display);
     m_exporterInterface->create();
-    m_importerInterface->create();
     QVERIFY(m_exporterInterface->isValid());
-    QVERIFY(m_importerInterface->isValid());
     QVERIFY(exporterSpy.wait());
+
+    m_importerInterface = m_display->createXdgImporterUnstableV1(m_display);
+    m_importerInterface->create();
+    QVERIFY(m_importerInterface->isValid());
     QVERIFY(importerSpy.wait());
 
     m_exporter = registry.createXdgExporterUnstableV1(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
@@ -156,6 +157,10 @@ void TestForeign::cleanup()
         m_thread = nullptr;
     }
     CLEANUP(m_compositorInterface)
+    CLEANUP(m_exporterInterface)
+    CLEANUP(m_importerInterface)
+    CLEANUP(m_exporter)
+    CLEANUP(m_importer)
     CLEANUP(m_display)
 #undef CLEANUP
 }
@@ -170,7 +175,15 @@ void TestForeign::testExport()
 
     auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
 
-    m_exporter->exportSurface(surface.data(), this);
+    XdgExportedUnstableV1 *exported = m_exporter->exportSurface(surface.data(), this);
+
+    QVERIFY(exported->handle().isEmpty());
+
+    //HACK
+    QSignalSpy doneSpy(exported, &XdgExportedUnstableV1::done);
+    doneSpy.wait();
+
+    QVERIFY(!exported->handle().isEmpty());
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

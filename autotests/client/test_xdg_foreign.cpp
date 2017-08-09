@@ -175,15 +175,25 @@ void TestForeign::testExport()
 
     auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
 
+    //Export a window
     XdgExportedUnstableV1 *exported = m_exporter->exportSurface(surface.data(), this);
-
     QVERIFY(exported->handle().isEmpty());
-
-    //HACK
     QSignalSpy doneSpy(exported, &XdgExportedUnstableV1::done);
     doneSpy.wait();
-
     QVERIFY(!exported->handle().isEmpty());
+
+    //Import the just exported window
+    //TODO: this may need to be in another process to be really significative?
+    XdgImportedUnstableV1 *imported = m_importer->import(exported->handle(), this);
+    QVERIFY(imported->isValid());
+
+    QScopedPointer<KWayland::Client::Surface> surface2(m_compositor->createSurface());
+    QVERIFY(serverSurfaceCreated.wait());
+    auto serverSurface2 = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+
+    imported->setParentOf(surface.data());
+    QTest::qWait(5000);
+    imported->release();
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

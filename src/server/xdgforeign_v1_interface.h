@@ -31,6 +31,7 @@ namespace Server
 {
 
 class Display;
+class XdgExportedUnstableV1Interface;
 
 class KWAYLANDSERVER_EXPORT XdgExporterUnstableV1Interface : public Global
 {
@@ -38,10 +39,13 @@ class KWAYLANDSERVER_EXPORT XdgExporterUnstableV1Interface : public Global
 public:
     virtual ~XdgExporterUnstableV1Interface();
 
+    XdgExportedUnstableV1Interface *exportedSurface(const QString &handle);
+
 private:
     explicit XdgExporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
+    Private *d_func() const;
 };
 
 class KWAYLANDSERVER_EXPORT XdgImporterUnstableV1Interface : public Global
@@ -50,10 +54,14 @@ class KWAYLANDSERVER_EXPORT XdgImporterUnstableV1Interface : public Global
 public:
     virtual ~XdgImporterUnstableV1Interface();
 
+    //FIXME: can this be avoided? perhaps exporter and importer should be merged in a single class?
+    void setExporter(XdgExporterUnstableV1Interface *exporter);
+
 private:
     explicit XdgImporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
+    Private *d_func() const;
 };
 
 class KWAYLANDSERVER_EXPORT XdgExportedUnstableV1Interface : public Resource

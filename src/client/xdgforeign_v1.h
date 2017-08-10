@@ -285,6 +285,7 @@ public:
 Q_SIGNALS:
     /**
      * Emitted when the exported window is fully initialized.
+     * the handle will be valid at this point
      **/
     void done();
 

@@ -132,6 +132,7 @@ void TestForeign::init()
     m_importerInterface->create();
     QVERIFY(m_importerInterface->isValid());
     QVERIFY(importerSpy.wait());
+    m_importerInterface->setExporter(m_exporterInterface);
 
     m_exporter = registry.createXdgExporterUnstableV1(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
     m_importer = registry.createXdgImporterUnstableV1(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
@@ -191,7 +192,7 @@ void TestForeign::testExport()
     QVERIFY(serverSurfaceCreated.wait());
     auto serverSurface2 = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
 
-    imported->setParentOf(surface.data());
+    imported->setParentOf(surface2.data());
     QTest::qWait(5000);
     imported->release();
 }

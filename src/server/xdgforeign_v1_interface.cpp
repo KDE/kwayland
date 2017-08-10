@@ -99,6 +99,7 @@ void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, 
 {
     auto s = cast(resource);
     XdgExportedUnstableV1Interface *e = new XdgExportedUnstableV1Interface(s->q, surface);
+
     e->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
 
     if (!e->resource()) {
@@ -205,11 +206,13 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
 
     XdgExportedUnstableV1Interface *exp = s->exporter->exportedSurface(QString::fromUtf8(handle));
     if (!exp) {
+        zxdg_imported_v1_send_destroyed(resource);
         return;
     }
 
-    wl_resource *surface = exp->resource();
+    wl_resource *surface = exp->parentResource();
     if (!surface) {
+        zxdg_imported_v1_send_destroyed(resource);
         return;
     }
 
@@ -326,7 +329,7 @@ XdgImportedUnstableV1Interface::~XdgImportedUnstableV1Interface()
 void XdgImportedUnstableV1Interface::Private::setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface)
 {
     auto s = cast<Private>(resource);
-
+    qWarning()<<"set_parent_of arrived to the server";
     SurfaceInterface *surf = SurfaceInterface::get(surface);
     if (!surf || !surf->isMapped()) {
         return;

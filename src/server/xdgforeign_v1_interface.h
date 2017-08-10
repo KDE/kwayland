@@ -31,7 +31,9 @@ namespace Server
 {
 
 class Display;
+class SurfaceInterface;
 class XdgExportedUnstableV1Interface;
+class XdgImportedUnstableV1Interface;
 
 class KWAYLANDSERVER_EXPORT XdgExporterUnstableV1Interface : public Global
 {
@@ -56,6 +58,11 @@ public:
 
     //FIXME: can this be avoided? perhaps exporter and importer should be merged in a single class?
     void setExporter(XdgExporterUnstableV1Interface *exporter);
+
+    XdgImportedUnstableV1Interface *importedSurface(const QString &handle);
+
+Q_SIGNALS:
+    void surfaceImported(XdgImportedUnstableV1Interface *imported);
 
 private:
     explicit XdgImporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
@@ -83,6 +90,11 @@ class KWAYLANDSERVER_EXPORT XdgImportedUnstableV1Interface : public Resource
     Q_OBJECT
 public:
     virtual ~XdgImportedUnstableV1Interface();
+
+    SurfaceInterface *child() const;
+
+Q_SIGNALS:
+    void childChanged(KWayland::Server::SurfaceInterface *child);
 
 private:
     explicit XdgImportedUnstableV1Interface(XdgImporterUnstableV1Interface *parent, wl_resource *parentResource);

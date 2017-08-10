@@ -82,9 +82,10 @@ XdgExporterUnstableV1Interface::Private *XdgExporterUnstableV1Interface::d_func(
 XdgExportedUnstableV1Interface *XdgExporterUnstableV1Interface::exportedSurface(const QString &handle)
 {
     Q_D();
-    //FIXME: use an iterator
-    if (d->exportedSurfaces.contains(handle)) {
-        return d->exportedSurfaces.value(handle);
+
+    auto it = d->exportedSurfaces.constFind(handle);
+    if (it != d->exportedSurfaces.constEnd()) {
+        return it.value();
     }
     return nullptr;
 }
@@ -144,6 +145,8 @@ public:
 
     QPointer<XdgExporterUnstableV1Interface> exporter;
 
+    QHash<QString, XdgImportedUnstableV1Interface *> importedSurfaces;
+
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
@@ -158,8 +161,6 @@ private:
     XdgImporterUnstableV1Interface *q;
     static const struct zxdg_importer_v1_interface s_interface;
     static const quint32 s_version;
-
-    QHash<QString, XdgImportedUnstableV1Interface *> importedSurfaces;
 };
 
 const quint32 XdgImporterUnstableV1Interface::Private::s_version = 1;
@@ -183,6 +184,17 @@ void XdgImporterUnstableV1Interface::setExporter(XdgExporterUnstableV1Interface 
 {
     Q_D();
     d->exporter = exporter;
+}
+
+XdgImportedUnstableV1Interface *XdgImporterUnstableV1Interface::importedSurface(const QString &handle)
+{
+    Q_D();
+
+    auto it = d->importedSurfaces.constFind(handle);
+    if (it != d->importedSurfaces.constEnd()) {
+        return it.value();
+    }
+    return nullptr;
 }
 
 XdgImporterUnstableV1Interface::Private *XdgImporterUnstableV1Interface::d_func() const
@@ -226,6 +238,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
     }
 
     s->importedSurfaces[QString::fromUtf8(handle)] = imp;
+    emit s->q->surfaceImported(imp);
 }
 
 XdgImporterUnstableV1Interface::Private::Private(XdgImporterUnstableV1Interface *q, Display *d)
@@ -281,6 +294,11 @@ XdgExportedUnstableV1Interface::XdgExportedUnstableV1Interface(XdgExporterUnstab
 XdgExportedUnstableV1Interface::~XdgExportedUnstableV1Interface()
 {}
 
+XdgExportedUnstableV1Interface::Private *XdgExportedUnstableV1Interface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
+
 XdgExportedUnstableV1Interface::Private::Private(XdgExportedUnstableV1Interface *q, XdgExporterUnstableV1Interface *c, wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &zxdg_exported_v1_interface, &s_interface)
 {
@@ -299,6 +317,8 @@ public:
     Private(XdgImportedUnstableV1Interface *q, XdgImporterUnstableV1Interface *c, wl_resource *parentResource);
     ~Private();
 
+    QPointer<SurfaceInterface> parentOf;
+
 private:
     static void setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface);
 
@@ -307,8 +327,6 @@ private:
     }
 
     static const struct zxdg_imported_v1_interface s_interface;
-
-    QPointer<SurfaceInterface> parentOf;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -326,16 +344,28 @@ XdgImportedUnstableV1Interface::XdgImportedUnstableV1Interface(XdgImporterUnstab
 XdgImportedUnstableV1Interface::~XdgImportedUnstableV1Interface()
 {}
 
+XdgImportedUnstableV1Interface::Private *XdgImportedUnstableV1Interface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
+
+SurfaceInterface *XdgImportedUnstableV1Interface::child() const
+{
+    Q_D();
+    return d->parentOf.data(); 
+}
+
 void XdgImportedUnstableV1Interface::Private::setParentOfCallback(wl_client *client, wl_resource *resource, wl_resource * surface)
 {
     auto s = cast<Private>(resource);
-    qWarning()<<"set_parent_of arrived to the server";
     SurfaceInterface *surf = SurfaceInterface::get(surface);
-    if (!surf || !surf->isMapped()) {
+
+    if (!surf) {
         return;
     }
 
     s->parentOf = surf;
+    emit s->q_func()->childChanged(surf);
 }
 
 XdgImportedUnstableV1Interface::Private::Private(XdgImportedUnstableV1Interface *q, XdgImporterUnstableV1Interface *c, wl_resource *parentResource)

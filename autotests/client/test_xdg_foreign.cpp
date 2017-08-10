@@ -30,7 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../src/client/xdgforeign_v1.h"
 #include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
-#include "../../src/server/region_interface.h"
+#include "../../src/server/surface_interface.h"
 #include "../../src/server/xdgforeign_v1_interface.h"
 
 using namespace KWayland::Client;
@@ -184,16 +184,22 @@ void TestForeign::testExport()
     QVERIFY(!exported->handle().isEmpty());
 
     //Import the just exported window
-    //TODO: this may need to be in another process to be really significative?
+    QSignalSpy importedSpy(m_importerInterface, &KWayland::Server::XdgImporterUnstableV1Interface::surfaceImported);
     XdgImportedUnstableV1 *imported = m_importer->import(exported->handle(), this);
     QVERIFY(imported->isValid());
+    importedSpy.wait();
+
+    KWayland::Server::XdgImportedUnstableV1Interface *importedInterface = importedSpy.first().first().value<KWayland::Server::XdgImportedUnstableV1Interface *>();
+    QVERIFY(importedInterface);
 
     QScopedPointer<KWayland::Client::Surface> surface2(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
     auto serverSurface2 = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    surface2->commit(Surface::CommitFlag::None);
 
+    QSignalSpy childChangedSpy(importedInterface, &KWayland::Server::XdgImportedUnstableV1Interface::childChanged);
     imported->setParentOf(surface2.data());
-    QTest::qWait(5000);
+    QVERIFY(childChangedSpy.wait());
     imported->release();
 }
 

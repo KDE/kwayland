@@ -192,14 +192,18 @@ void TestForeign::testExport()
     KWayland::Server::XdgImportedUnstableV1Interface *importedInterface = importedSpy.first().first().value<KWayland::Server::XdgImportedUnstableV1Interface *>();
     QVERIFY(importedInterface);
 
+    QSignalSpy serverSurface2Created(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QVERIFY(serverSurfaceCreated.isValid());
     QScopedPointer<KWayland::Client::Surface> surface2(m_compositor->createSurface());
-    QVERIFY(serverSurfaceCreated.wait());
-    auto serverSurface2 = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    QVERIFY(serverSurface2Created.wait());
+    auto serverSurface2 = serverSurface2Created.first().first().value<KWayland::Server::SurfaceInterface*>();
     surface2->commit(Surface::CommitFlag::None);
 
     QSignalSpy childChangedSpy(importedInterface, &KWayland::Server::XdgImportedUnstableV1Interface::childChanged);
     imported->setParentOf(surface2.data());
     QVERIFY(childChangedSpy.wait());
+
+    QCOMPARE(importedInterface->child(), serverSurface2);
     imported->release();
 }
 

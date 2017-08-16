@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
 
 #include "xdgforeign_v1_interface.h"
+#include "xdgforeign_v1_interface_p.h"
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"

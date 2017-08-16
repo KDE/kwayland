@@ -49,8 +49,7 @@ private Q_SLOTS:
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::CompositorInterface *m_compositorInterface;
-    KWayland::Server::XdgExporterUnstableV1Interface *m_exporterInterface;
-    KWayland::Server::XdgImporterUnstableV1Interface *m_importerInterface;
+    KWayland::Server::XdgForeignUnstableV1Interface *m_foreignInterface;
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::Compositor *m_compositor;
     KWayland::Client::EventQueue *m_queue;
@@ -123,16 +122,14 @@ void TestForeign::init()
     QVERIFY(compositorSpy.wait());
     m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
 
-    m_exporterInterface = m_display->createXdgExporterUnstableV1(m_display);
-    m_exporterInterface->create();
-    QVERIFY(m_exporterInterface->isValid());
+    m_foreignInterface = m_display->createXdgForeignUnstableV1Interface(m_display);
+    m_foreignInterface->create();
+    QVERIFY(m_foreignInterface->isValid());
+    
     QVERIFY(exporterSpy.wait());
-
-    m_importerInterface = m_display->createXdgImporterUnstableV1(m_display);
-    m_importerInterface->create();
-    QVERIFY(m_importerInterface->isValid());
-    QVERIFY(importerSpy.wait());
-    m_importerInterface->setExporter(m_exporterInterface);
+    //Both importer and exporter should have been triggered by now
+    QCOMPARE(exporterSpy.count(), 1);
+    QCOMPARE(importerSpy.count(), 1);
 
     m_exporter = registry.createXdgExporterUnstableV1(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
     m_importer = registry.createXdgImporterUnstableV1(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
@@ -158,8 +155,7 @@ void TestForeign::cleanup()
         m_thread = nullptr;
     }
     CLEANUP(m_compositorInterface)
-    CLEANUP(m_exporterInterface)
-    CLEANUP(m_importerInterface)
+    CLEANUP(m_foreignInterface)
     CLEANUP(m_exporter)
     CLEANUP(m_importer)
     CLEANUP(m_display)
@@ -184,12 +180,12 @@ void TestForeign::testExport()
     QVERIFY(!exported->handle().isEmpty());
 
     //Import the just exported window
-    QSignalSpy importedSpy(m_importerInterface, &KWayland::Server::XdgImporterUnstableV1Interface::surfaceImported);
+    QSignalSpy importedSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableV1Interface::surfaceImported);
     XdgImportedUnstableV1 *imported = m_importer->import(exported->handle(), this);
     QVERIFY(imported->isValid());
     importedSpy.wait();
 
-    KWayland::Server::XdgImportedUnstableV1Interface *importedInterface = importedSpy.first().first().value<KWayland::Server::XdgImportedUnstableV1Interface *>();
+    KWayland::Server::XdgImportedUnstableV1Interface *importedInterface = importedSpy.first().at(1).value<KWayland::Server::XdgImportedUnstableV1Interface *>();
     QVERIFY(importedInterface);
 
     QSignalSpy serverSurface2Created(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
@@ -204,7 +200,9 @@ void TestForeign::testExport()
     QVERIFY(childChangedSpy.wait());
 
     QCOMPARE(importedInterface->child(), serverSurface2);
-    imported->release();
+
+    //transientFor api
+    QCOMPARE(m_foreignInterface->transientFor(serverSurface2), serverSurface);
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

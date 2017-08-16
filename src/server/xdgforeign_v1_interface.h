@@ -35,6 +35,31 @@ class SurfaceInterface;
 class XdgExportedUnstableV1Interface;
 class XdgImportedUnstableV1Interface;
 
+class KWAYLANDSERVER_EXPORT XdgForeignUnstableV1Interface : public QObject
+{
+    Q_OBJECT
+public:
+    XdgForeignUnstableV1Interface(Display *display, QObject *parent = nullptr);
+    ~XdgForeignUnstableV1Interface();
+
+    void create();
+    bool isValid();
+
+    XdgExportedUnstableV1Interface *exportedSurface(const QString &handle);
+    XdgImportedUnstableV1Interface *importedSurface(const QString &handle);
+
+    SurfaceInterface *transientFor(SurfaceInterface *surface);
+
+Q_SIGNALS:
+    void surfaceImported(const QString &handle, XdgImportedUnstableV1Interface *imported);
+    void surfaceExported(const QString &handle, XdgExportedUnstableV1Interface *exported);
+
+private:
+    friend class Display;
+    class Private;
+    Private *d;
+};
+
 class KWAYLANDSERVER_EXPORT XdgExporterUnstableV1Interface : public Global
 {
     Q_OBJECT
@@ -43,9 +68,13 @@ public:
 
     XdgExportedUnstableV1Interface *exportedSurface(const QString &handle);
 
+Q_SIGNALS:
+    void surfaceExported(const QString &handle, XdgExportedUnstableV1Interface *exported);
+
 private:
-    explicit XdgExporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
+    explicit XdgExporterUnstableV1Interface(Display *display, XdgForeignUnstableV1Interface *parent = nullptr);
     friend class Display;
+    friend class XdgForeignUnstableV1Interface;
     class Private;
     Private *d_func() const;
 };
@@ -56,17 +85,16 @@ class KWAYLANDSERVER_EXPORT XdgImporterUnstableV1Interface : public Global
 public:
     virtual ~XdgImporterUnstableV1Interface();
 
-    //FIXME: can this be avoided? perhaps exporter and importer should be merged in a single class?
-    void setExporter(XdgExporterUnstableV1Interface *exporter);
-
     XdgImportedUnstableV1Interface *importedSurface(const QString &handle);
+    SurfaceInterface *transientFor(SurfaceInterface *surface);
 
 Q_SIGNALS:
-    void surfaceImported(XdgImportedUnstableV1Interface *imported);
+    void surfaceImported(const QString &handle, XdgImportedUnstableV1Interface *imported);
 
 private:
-    explicit XdgImporterUnstableV1Interface(Display *display, QObject *parent = nullptr);
+    explicit XdgImporterUnstableV1Interface(Display *display, XdgForeignUnstableV1Interface *parent = nullptr);
     friend class Display;
+    friend class XdgForeignUnstableV1Interface;
     class Private;
     Private *d_func() const;
 };

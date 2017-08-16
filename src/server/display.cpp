@@ -409,18 +409,11 @@ PointerConstraintsInterface *Display::createPointerConstraints(const PointerCons
     return p;
 }
 
-XdgExporterUnstableV1Interface *Display::createXdgExporterUnstableV1(QObject *parent)
+XdgForeignUnstableV1Interface *Display::createXdgForeignUnstableV1Interface(QObject *parent)
 {
-    XdgExporterUnstableV1Interface *exporter = new XdgExporterUnstableV1Interface(this, parent);
-    connect(this, &Display::aboutToTerminate, exporter, [this,exporter] { delete exporter; });
-    return exporter;
-}
-
-XdgImporterUnstableV1Interface *Display::createXdgImporterUnstableV1(QObject *parent)
-{
-    XdgImporterUnstableV1Interface *importer = new XdgImporterUnstableV1Interface(this, parent);
-    connect(this, &Display::aboutToTerminate, importer, [this,importer] { delete importer; });
-    return importer;
+    XdgForeignUnstableV1Interface *foreign = new XdgForeignUnstableV1Interface(this, parent);
+    connect(this, &Display::aboutToTerminate, foreign, [this,foreign] { delete foreign; });
+    return foreign;
 }
 
 void Display::createShm()

@@ -55,6 +55,7 @@ public:
 Q_SIGNALS:
     void surfaceImported(const QString &handle, XdgImportedUnstableV1Interface *imported);
     void surfaceExported(const QString &handle, XdgExportedUnstableV1Interface *exported);
+    void transientChanged(KWayland::Server::SurfaceInterface *child, KWayland::Server::SurfaceInterface *parent);
 
 private:
     friend class Display;

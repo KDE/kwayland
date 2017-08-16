@@ -55,6 +55,8 @@ XdgForeignUnstableV1Interface::Private::Private(Display *display, XdgForeignUnst
             q, &XdgForeignUnstableV1Interface::surfaceExported);
     connect(importer, &XdgImporterUnstableV1Interface::surfaceImported,
             q, &XdgForeignUnstableV1Interface::surfaceImported);
+    connect(importer, &XdgImporterUnstableV1Interface::transientChanged,
+        q, &XdgForeignUnstableV1Interface::transientChanged);
 }
 
 XdgForeignUnstableV1Interface::XdgForeignUnstableV1Interface(Display *display, QObject *parent)
@@ -307,9 +309,10 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                     s->parents.remove(*it);
                     s->children.erase(it);
                 }
-                s->parents[child] = importedSI;
 
+                s->parents[child] = importedSI;
                 s->children[importedSI] = child;
+                emit s->q->transientChanged(child, importedSI);
 
                 //child surface destroyed
                 connect(child, &QObject::destroyed,
@@ -318,6 +321,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                             if (it != s->parents.end()) {
                                 s->children.remove(*it);
                                 s->parents.erase(it);
+                                emit s->q->transientChanged(*it, nullptr);
                             }
                         });
             });
@@ -329,6 +333,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);
+                    emit s->q->transientChanged(importedSI, nullptr);
                 }
             });
     //parent surface destroyed
@@ -338,6 +343,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);
+                    emit s->q->transientChanged(importedSI, nullptr);
                 }
             });
 

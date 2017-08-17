@@ -69,7 +69,7 @@
       </description>
     </request>
 
-    <request name="export_surface">
+    <request name="export_toplevel">
       <description summary="export a surface">
 	The export request exports the passed surface so that it can later be
 	imported via xdg_importer. When called, a new xdg_exported object will
@@ -101,7 +101,7 @@
       </description>
     </request>
 
-    <request name="import">
+    <request name="import_toplevel">
       <description summary="import a surface">
 	The import request imports a surface from any client given a handle
 	retrieved by exporting said surface using xdg_exporter.export. When

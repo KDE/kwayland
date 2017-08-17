@@ -101,7 +101,7 @@ XdgExportedUnstableV1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QO
 {
     Q_ASSERT(isValid());
     auto p = new XdgExportedUnstableV1(parent);
-    auto w = zxdg_exporter_v1_export_surface(d->exporter, *surface);
+    auto w = zxdg_exporter_v1_export_toplevel(d->exporter, *surface);
     if (d->queue) {
         d->queue->addProxy(w);
     }
@@ -180,7 +180,7 @@ XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QOb
 {
     Q_ASSERT(isValid());
     auto p = new XdgImportedUnstableV1(parent);
-    auto w = zxdg_importer_v1_import(d->importer, handle.toUtf8());
+    auto w = zxdg_importer_v1_import_toplevel(d->importer, handle.toUtf8());
     if (d->queue) {
         d->queue->addProxy(p);
     }

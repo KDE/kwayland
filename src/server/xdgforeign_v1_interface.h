@@ -34,8 +34,6 @@ class Display;
 class SurfaceInterface;
 class XdgExporterUnstableV1Interface;
 class XdgImporterUnstableV1Interface;
-class XdgExportedUnstableV1Interface;
-class XdgImportedUnstableV1Interface;
 
 class KWAYLANDSERVER_EXPORT XdgForeignUnstableV1Interface : public QObject
 {
@@ -47,55 +45,17 @@ public:
     void create();
     bool isValid();
 
-    XdgExportedUnstableV1Interface *exportedSurface(const QString &handle);
-    XdgImportedUnstableV1Interface *importedSurface(const QString &handle);
-
     SurfaceInterface *transientFor(SurfaceInterface *surface);
 
 Q_SIGNALS:
-    void surfaceImported(const QString &handle, KWayland::Server::XdgImportedUnstableV1Interface *imported);
-    void surfaceExported(const QString &handle, KWayland::Server::XdgExportedUnstableV1Interface *exported);
     void transientChanged(KWayland::Server::SurfaceInterface *child, KWayland::Server::SurfaceInterface *parent);
 
 private:
     friend class Display;
+    friend class XdgImporterUnstableV1Interface;
     class Private;
     Private *d;
 };
-
-class KWAYLANDSERVER_EXPORT XdgExportedUnstableV1Interface : public Resource
-{
-    Q_OBJECT
-public:
-    virtual ~XdgExportedUnstableV1Interface();
-
-private:
-    explicit XdgExportedUnstableV1Interface(XdgExporterUnstableV1Interface *parent, wl_resource *parentResource);
-    friend class XdgExporterUnstableV1Interface;
-
-    class Private;
-    Private *d_func() const;
-};
-
-class KWAYLANDSERVER_EXPORT XdgImportedUnstableV1Interface : public Resource
-{
-    Q_OBJECT
-public:
-    virtual ~XdgImportedUnstableV1Interface();
-
-    SurfaceInterface *child() const;
-
-Q_SIGNALS:
-    void childChanged(KWayland::Server::SurfaceInterface *child);
-
-private:
-    explicit XdgImportedUnstableV1Interface(XdgImporterUnstableV1Interface *parent, wl_resource *parentResource);
-    friend class XdgImporterUnstableV1Interface;
-
-    class Private;
-    Private *d_func() const;
-};
-
 
 }
 }

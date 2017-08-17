@@ -73,6 +73,39 @@ private:
     Private *d_func() const;
 };
 
+class XdgExportedUnstableV1Interface : public Resource
+{
+    Q_OBJECT
+public:
+    virtual ~XdgExportedUnstableV1Interface();
+
+private:
+    explicit XdgExportedUnstableV1Interface(XdgExporterUnstableV1Interface *parent, wl_resource *parentResource);
+    friend class XdgExporterUnstableV1Interface;
+
+    class Private;
+    Private *d_func() const;
+};
+
+class XdgImportedUnstableV1Interface : public Resource
+{
+    Q_OBJECT
+public:
+    virtual ~XdgImportedUnstableV1Interface();
+
+    SurfaceInterface *child() const;
+
+Q_SIGNALS:
+    void childChanged(KWayland::Server::SurfaceInterface *child);
+
+private:
+    explicit XdgImportedUnstableV1Interface(XdgImporterUnstableV1Interface *parent, wl_resource *parentResource);
+    friend class XdgImporterUnstableV1Interface;
+
+    class Private;
+    Private *d_func() const;
+};
+
 }
 }
 

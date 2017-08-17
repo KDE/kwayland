@@ -241,6 +241,9 @@ void TestForeign::testDeleteImported()
     m_imported->deleteLater();
     //m_exportedSurface->deleteLater();
     transientSpy.wait();
+    qWarning()<<"parameters"<<transientSpy.first().first()<<transientSpy.first().at(1);
+    QVERIFY(transientSpy.first().first(), m_childSurfaceInterface);
+    QVERIFY(transientSpy.first().at(1), nullptr);
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

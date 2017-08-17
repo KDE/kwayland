@@ -341,6 +341,13 @@ public:
     operator zxdg_imported_v1*();
     operator zxdg_imported_v1*() const;
 
+Q_SIGNALS:
+    /**
+     * Emitted when the imported surface is not valid anymore,
+     * for instance because it's no longer exported on the other end
+     */
+    void importedDestroyed();
+
 private:
     friend class XdgImporterUnstableV1;
     explicit XdgImportedUnstableV1(QObject *parent = nullptr);

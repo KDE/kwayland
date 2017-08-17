@@ -43,6 +43,7 @@ public:
 
 Q_SIGNALS:
     void surfaceExported(const QString &handle, XdgExportedUnstableV1Interface *exported);
+    void surfaceUnexported(const QString &handle);
 
 private:
     explicit XdgExporterUnstableV1Interface(Display *display, XdgForeignUnstableV1Interface *parent = nullptr);
@@ -63,6 +64,7 @@ public:
 
 Q_SIGNALS:
     void surfaceImported(const QString &handle, XdgImportedUnstableV1Interface *imported);
+    void surfaceUnimported(const QString &handle);
     void transientChanged(KWayland::Server::SurfaceInterface *child, KWayland::Server::SurfaceInterface *parent);
 
 private:

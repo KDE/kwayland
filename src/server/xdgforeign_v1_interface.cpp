@@ -161,6 +161,14 @@ void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, 
     }
 
     const QString handle = QUuid::createUuid().toString();
+
+    //a surface not exported anymore
+    connect(e, &QObject::destroyed,
+            s->q, [s, handle]() {
+                s->exportedSurfaces.remove(handle);
+                emit s->q->surfaceUnexported(handle);
+            });
+
     s->exportedSurfaces[handle] = e;
     zxdg_exported_v1_send_handle(e->resource(), handle.toUtf8().constData());
     emit s->q->surfaceExported(handle, e);
@@ -287,6 +295,13 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
     imp->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
     SurfaceInterface *importedSI = SurfaceInterface::get(imp->parentResource());
 
+    //surface no longer exported
+    connect(exp, &QObject::destroyed,
+            s->q, [imp]() {
+                zxdg_imported_v1_send_destroyed(imp->resource());
+                imp->deleteLater();
+            });
+
     connect(imp, &XdgImportedUnstableV1Interface::childChanged,
             s->q, [s, imp, importedSI](SurfaceInterface *child) {
                 //remove any previous association
@@ -302,7 +317,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
 
                 //child surface destroyed
                 connect(child, &QObject::destroyed,
-                        s->q, [s, child, importedSI]() {
+                        s->q, [s, child]() {
                             auto it = s->parents.find(child);
                             if (it != s->parents.end()) {
                                 s->children.remove(*it);
@@ -314,7 +329,10 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
 
     //surface no longer imported
     connect(imp, &QObject::destroyed,
-            s->q, [s, importedSI]() {
+            s->q, [s, handle, importedSI]() {
+                s->importedSurfaces.remove(QString::fromUtf8(handle));
+                emit s->q->surfaceUnimported(QString::fromUtf8(handle));
+
                 auto it = s->children.find(importedSI);
                 if (it != s->children.end()) {
                     s->parents.remove(*it);

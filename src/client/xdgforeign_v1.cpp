@@ -308,7 +308,8 @@ void XdgImportedUnstableV1::Private::destroyedCallback(void *data, zxdg_imported
     auto p = reinterpret_cast<XdgImportedUnstableV1::Private*>(data);
     Q_ASSERT(p->imported == zxdg_imported_v1);
     // TODO: implement
-    qWarning()<<"XdgImportedUnstableV1::Private::destroyedCallback";
+    p->q->release();
+    emit p->q->importedDestroyed();
 }
 
 XdgImportedUnstableV1::Private::Private(XdgImportedUnstableV1 *q)

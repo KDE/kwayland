@@ -52,6 +52,7 @@ Q_SIGNALS:
 
 private:
     friend class Display;
+    friend class XdgExporterUnstableV1Interface;
     friend class XdgImporterUnstableV1Interface;
     class Private;
     Private *d;

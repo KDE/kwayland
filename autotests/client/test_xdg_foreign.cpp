@@ -294,16 +294,20 @@ void TestForeign::testDeleteExported()
     doExport();
 
     QSignalSpy transientSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableV1Interface::transientChanged);
+    QSignalSpy destroyedSpy(m_imported, &KWayland::Client::XdgImportedUnstableV1::importedDestroyed);
  
     QVERIFY(transientSpy.isValid());
     m_exported->deleteLater();
     m_exported = nullptr;
 
     QVERIFY(transientSpy.wait());
+    QVERIFY(destroyedSpy.wait());
 
     QCOMPARE(transientSpy.first().first().value<KWayland::Server::SurfaceInterface *>(), m_childSurfaceInterface.data());
     QCOMPARE(transientSpy.first().at(1).value<KWayland::Server::SurfaceInterface *>(), nullptr);
     QCOMPARE(m_foreignInterface->transientFor(m_childSurfaceInterface), nullptr);
+
+    QVERIFY(!m_imported->isValid());
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

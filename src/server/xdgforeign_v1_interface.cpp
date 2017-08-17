@@ -321,14 +321,14 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                             if (it != s->parents.end()) {
                                 s->children.remove(*it);
                                 s->parents.erase(it);
-                                emit s->q->transientChanged(*it, nullptr);
+                                emit s->q->transientChanged(nullptr, *it);
                             }
                         });
             });
 
     //surface no longer imported
     connect(imp, &QObject::destroyed,
-            s->q, [s, imp, importedSI]() {
+            s->q, [s, importedSI]() {
                 auto it = s->children.find(importedSI);
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
@@ -338,7 +338,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
             });
     //parent surface destroyed
     connect(importedSI, &QObject::destroyed,
-            s->q, [s, imp, importedSI]() {
+            s->q, [s, importedSI]() {
                 auto it = s->children.find(importedSI);
                 if (it != s->children.end()) {
                     s->parents.remove(*it);

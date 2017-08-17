@@ -98,6 +98,8 @@ void TestForeign::init()
     m_display->start();
     QVERIFY(m_display->isRunning());
 
+    qRegisterMetaType<KWayland::Server::SurfaceInterface*>("KWayland::Server::SurfaceInterface");
+
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
     QSignalSpy connectedSpy(m_connection, &ConnectionThread::connected);
@@ -160,6 +162,16 @@ void TestForeign::cleanup()
         delete variable; \
         variable = nullptr; \
     }
+
+    CLEANUP(m_exported)
+    CLEANUP(m_exporter)
+    CLEANUP(m_imported)
+    CLEANUP(m_importer)
+    
+
+    CLEANUP(m_exportedSurface)
+    CLEANUP(m_childSurface)
+
     CLEANUP(m_compositor)
     CLEANUP(m_queue)
     if (m_connection) {
@@ -173,11 +185,12 @@ void TestForeign::cleanup()
         m_thread = nullptr;
     }
     CLEANUP(m_compositorInterface)
+
     CLEANUP(m_foreignInterface)
-    CLEANUP(m_exporter)
-    CLEANUP(m_importer)
+    CLEANUP(m_exportedSurfaceInterface)
+    CLEANUP(m_childSurfaceInterface)
+
     CLEANUP(m_display)
-    //TODO: cleanall the other stuff
 #undef CLEANUP
 }
 
@@ -195,14 +208,14 @@ void TestForeign::doExport()
     m_exported = m_exporter->exportSurface(m_exportedSurface, this);
     QVERIFY(m_exported->handle().isEmpty());
     QSignalSpy doneSpy(m_exported, &XdgExportedUnstableV1::done);
-    doneSpy.wait();
+    QVERIFY(doneSpy.wait());
     QVERIFY(!m_exported->handle().isEmpty());
 
     //Import the just exported window
     QSignalSpy importedSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableV1Interface::surfaceImported);
     m_imported = m_importer->import(m_exported->handle(), this);
     QVERIFY(m_imported->isValid());
-    importedSpy.wait();
+    QVERIFY(importedSpy.wait());
 
     m_importedInterface = importedSpy.first().at(1).value<KWayland::Server::XdgImportedUnstableV1Interface *>();
     QVERIFY(m_importedInterface);
@@ -234,16 +247,16 @@ void TestForeign::testDeleteImported()
     doExport();
 
     QSignalSpy transientSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableV1Interface::transientChanged);
-    //FIXME: why is this needed?
-    qRegisterMetaType<KWayland::Server::SurfaceInterface*>("KWayland::Server::SurfaceInterface");
-    //QSignalSpy transientSpy(m_foreignInterface, SIGNAL(transientChanged(KWayland::Server::SurfaceInterface *, KWayland::Server::SurfaceInterface *)));
+ 
     QVERIFY(transientSpy.isValid());
     m_imported->deleteLater();
-    //m_exportedSurface->deleteLater();
+    m_imported = nullptr;
+
     transientSpy.wait();
-    qWarning()<<"parameters"<<transientSpy.first().first()<<transientSpy.first().at(1);
-    QVERIFY(transientSpy.first().first(), m_childSurfaceInterface);
-    QVERIFY(transientSpy.first().at(1), nullptr);
+
+    QCOMPARE(transientSpy.first().first().value<KWayland::Server::SurfaceInterface *>(), m_childSurfaceInterface);
+    QCOMPARE(transientSpy.first().at(1).value<KWayland::Server::SurfaceInterface *>(), nullptr);
+    QCOMPARE(m_foreignInterface->transientFor(m_childSurfaceInterface), nullptr);
 }
 
 QTEST_GUILESS_MAIN(TestForeign)

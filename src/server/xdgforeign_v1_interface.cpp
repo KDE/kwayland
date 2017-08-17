@@ -333,7 +333,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);
-                    emit s->q->transientChanged(importedSI, nullptr);
+                    emit s->q->transientChanged(*it, nullptr);
                 }
             });
     //parent surface destroyed
@@ -343,7 +343,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);
-                    emit s->q->transientChanged(importedSI, nullptr);
+                    emit s->q->transientChanged(*it, nullptr);
                 }
             });
 

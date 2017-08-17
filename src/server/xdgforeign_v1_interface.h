@@ -53,8 +53,8 @@ public:
     SurfaceInterface *transientFor(SurfaceInterface *surface);
 
 Q_SIGNALS:
-    void surfaceImported(const QString &handle, XdgImportedUnstableV1Interface *imported);
-    void surfaceExported(const QString &handle, XdgExportedUnstableV1Interface *exported);
+    void surfaceImported(const QString &handle, KWayland::Server::XdgImportedUnstableV1Interface *imported);
+    void surfaceExported(const QString &handle, KWayland::Server::XdgExportedUnstableV1Interface *exported);
     void transientChanged(KWayland::Server::SurfaceInterface *child, KWayland::Server::SurfaceInterface *parent);
 
 private:

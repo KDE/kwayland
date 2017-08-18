@@ -114,10 +114,16 @@ void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, 
     const QString handle = QUuid::createUuid().toString();
 
     //a surface not exported anymore
-    connect(e, &QObject::destroyed,
+    connect(e, &XdgExportedUnstableV1Interface::unbound,
             s->q, [s, handle]() {
                 s->exportedSurfaces.remove(handle);
                 emit s->q->surfaceUnexported(handle);
+            });
+
+    //if the surface dies, this dies too
+    connect(SurfaceInterface::get(surface), &Resource::unbound,
+            s->q, [e]() {
+                e->deleteLater();
             });
 
     s->exportedSurfaces[handle] = e;
@@ -160,9 +166,9 @@ public:
     QHash<QString, XdgImportedUnstableV1Interface *> importedSurfaces;
 
     //child->parent hash
-    QHash<SurfaceInterface *, SurfaceInterface*> parents;
+    QHash<SurfaceInterface *, XdgImportedUnstableV1Interface *> parents;
     //parent->child hash
-    QHash<SurfaceInterface *, SurfaceInterface*> children;
+    QHash<XdgImportedUnstableV1Interface *, SurfaceInterface *> children;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -212,7 +218,11 @@ SurfaceInterface *XdgImporterUnstableV1Interface::transientFor(SurfaceInterface 
 {
     Q_D();
 
-    return d->parents.value(surface);
+    auto it = d->parents.constFind(surface);
+    if (it == d->parents.constEnd()) {
+        return nullptr;
+    }
+    return SurfaceInterface::get((*it)->parentResource());
 }
 
 XdgImporterUnstableV1Interface::Private *XdgImporterUnstableV1Interface::d_func() const
@@ -246,7 +256,6 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
 
     XdgImportedUnstableV1Interface *imp = new XdgImportedUnstableV1Interface(s->q, surface);
     imp->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
-    SurfaceInterface *importedSI = SurfaceInterface::get(imp->parentResource());
 
     //surface no longer exported
     connect(exp, &XdgExportedUnstableV1Interface::unbound,
@@ -256,47 +265,38 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
             });
 
     connect(imp, &XdgImportedUnstableV1Interface::childChanged,
-            s->q, [s, imp, importedSI](SurfaceInterface *child) {
+            s->q, [s, imp](SurfaceInterface *child) {
                 //remove any previous association
-                auto it = s->children.find(importedSI);
+                auto it = s->children.find(imp);
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);
                 }
 
-                s->parents[child] = importedSI;
-                s->children[importedSI] = child;
-                emit s->q->transientChanged(child, importedSI);
+                s->parents[child] = imp;
+                s->children[imp] = child;
+                SurfaceInterface *parent = SurfaceInterface::get(imp->parentResource());
+                emit s->q->transientChanged(child, parent);
 
                 //child surface destroyed
-                connect(child, &QObject::destroyed,
+                connect(child, &Resource::unbound,
                         s->q, [s, child]() {
                             auto it = s->parents.find(child);
                             if (it != s->parents.end()) {
                                 s->children.remove(*it);
                                 s->parents.erase(it);
-                                emit s->q->transientChanged(nullptr, *it);
+                                emit s->q->transientChanged(nullptr, SurfaceInterface::get((*it)->parentResource()));
                             }
                         });
             });
 
     //surface no longer imported
     connect(imp, &XdgImportedUnstableV1Interface::unbound,
-            s->q, [s, handle, importedSI]() {
+            s->q, [s, handle, imp]() {
                 s->importedSurfaces.remove(QString::fromUtf8(handle));
                 emit s->q->surfaceUnimported(QString::fromUtf8(handle));
 
-                auto it = s->children.find(importedSI);
-                if (it != s->children.end()) {
-                    s->parents.remove(*it);
-                    s->children.erase(it);
-                    emit s->q->transientChanged(*it, nullptr);
-                }
-            });
-    //parent surface destroyed
-    connect(importedSI, &QObject::destroyed,
-            s->q, [s, importedSI]() {
-                auto it = s->children.find(importedSI);
+                auto it = s->children.find(imp);
                 if (it != s->children.end()) {
                     s->parents.remove(*it);
                     s->children.erase(it);

@@ -267,7 +267,10 @@ void TestForeign::testDeleteChildSurface()
     m_childSurface->deleteLater();
 
     QVERIFY(transientSpy.wait());
-    QVERIFY(!m_childSurfaceInterface);
+
+    //when the client surface dies, the server one will eventually die too
+    QSignalSpy surfaceDestroyedSpy(m_childSurfaceInterface, SIGNAL(destroyed()));
+    QVERIFY(surfaceDestroyedSpy.wait());
 
     QCOMPARE(transientSpy.first().at(0).value<KWayland::Server::SurfaceInterface *>(), nullptr);
     QCOMPARE(transientSpy.first().at(1).value<KWayland::Server::SurfaceInterface *>(), m_exportedSurfaceInterface.data());    

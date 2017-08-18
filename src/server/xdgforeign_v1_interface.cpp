@@ -101,7 +101,7 @@ void XdgExporterUnstableV1Interface::Private::destroyCallback(wl_client *client,
 void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
 {
     auto s = cast(resource);
-    XdgExportedUnstableV1Interface *e = new XdgExportedUnstableV1Interface(s->q, surface);
+    QPointer <XdgExportedUnstableV1Interface> e = new XdgExportedUnstableV1Interface(s->q, surface);
 
     e->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
 
@@ -114,16 +114,18 @@ void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, 
     const QString handle = QUuid::createUuid().toString();
 
     //a surface not exported anymore
-    connect(e, &XdgExportedUnstableV1Interface::unbound,
+    connect(e.data(), &XdgExportedUnstableV1Interface::unbound,
             s->q, [s, handle]() {
                 s->exportedSurfaces.remove(handle);
                 emit s->q->surfaceUnexported(handle);
             });
 
-    //if the surface dies, this dies too
+    //if the surface dies before this, this dies too
     connect(SurfaceInterface::get(surface), &Resource::unbound,
             s->q, [s, e, handle]() {
-                e->deleteLater();
+                if (e) {
+                    e->deleteLater();
+                }
                 s->exportedSurfaces.remove(handle);
                 emit s->q->surfaceUnexported(handle);
             });

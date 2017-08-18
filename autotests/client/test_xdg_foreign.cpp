@@ -180,7 +180,6 @@ void TestForeign::cleanup()
 
 
     CLEANUP(m_compositor)
-    CLEANUP(m_foreignInterface)
     CLEANUP(m_exporter)
     CLEANUP(m_importer)
     CLEANUP(m_queue)
@@ -195,7 +194,7 @@ void TestForeign::cleanup()
         m_thread = nullptr;
     }
     CLEANUP(m_compositorInterface)
-
+    CLEANUP(m_foreignInterface)
     CLEANUP(m_display)
 #undef CLEANUP
 }

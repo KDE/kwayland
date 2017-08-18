@@ -247,7 +247,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
     SurfaceInterface *importedSI = SurfaceInterface::get(imp->parentResource());
 
     //surface no longer exported
-    connect(exp, &QObject::destroyed,
+    connect(exp, &XdgExportedUnstableV1Interface::unbound,
             s->q, [imp]() {
                 zxdg_imported_v1_send_destroyed(imp->resource());
                 imp->deleteLater();
@@ -279,7 +279,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
             });
 
     //surface no longer imported
-    connect(imp, &QObject::destroyed,
+    connect(imp, &XdgImportedUnstableV1Interface::unbound,
             s->q, [s, handle, importedSI]() {
                 s->importedSurfaces.remove(QString::fromUtf8(handle));
                 emit s->q->surfaceUnimported(QString::fromUtf8(handle));
@@ -377,12 +377,8 @@ XdgExportedUnstableV1Interface::Private::Private(XdgExportedUnstableV1Interface 
 }
 
 XdgExportedUnstableV1Interface::Private::~Private()
-{
-    if (resource) {
-        wl_resource_destroy(resource);
-        resource = nullptr;
-    }
-}
+{}
+
 class XdgImportedUnstableV1Interface::Private : public Resource::Private
 {
 public:
@@ -446,12 +442,7 @@ XdgImportedUnstableV1Interface::Private::Private(XdgImportedUnstableV1Interface 
 }
 
 XdgImportedUnstableV1Interface::Private::~Private()
-{
-    if (resource) {
-        wl_resource_destroy(resource);
-        resource = nullptr;
-    }
-}
+{}
 
 }
 }

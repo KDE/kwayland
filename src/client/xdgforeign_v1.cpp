@@ -186,9 +186,6 @@ XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QOb
     }
     p->setup(w);
     return p;
-    //Dave: there's no point creating a wrapper and then returning the low level struct.
-    //IMHO we could return the surfaceId directly here, and not make wrappers for exported/imported.
-    //Mart: i think it's useful to use it for setParentOf method and to un-import at deletio
 }
 
 class XdgExportedUnstableV1::Private

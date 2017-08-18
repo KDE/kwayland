@@ -122,8 +122,10 @@ void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, 
 
     //if the surface dies, this dies too
     connect(SurfaceInterface::get(surface), &Resource::unbound,
-            s->q, [e]() {
+            s->q, [s, e, handle]() {
                 e->deleteLater();
+                s->exportedSurfaces.remove(handle);
+                emit s->q->surfaceUnexported(handle);
             });
 
     s->exportedSurfaces[handle] = e;
@@ -259,9 +261,11 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
 
     //surface no longer exported
     connect(exp, &XdgExportedUnstableV1Interface::unbound,
-            s->q, [imp]() {
+            s->q, [s, imp, handle]() {
                 zxdg_imported_v1_send_destroyed(imp->resource());
                 imp->deleteLater();
+                s->importedSurfaces.remove(QString::fromUtf8(handle));
+                emit s->q->surfaceUnimported(QString::fromUtf8(handle));
             });
 
     connect(imp, &XdgImportedUnstableV1Interface::childChanged,

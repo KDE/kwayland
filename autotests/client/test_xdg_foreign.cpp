@@ -65,8 +65,8 @@ private:
     QPointer<KWayland::Client::Surface> m_exportedSurface;
     QPointer<KWayland::Server::SurfaceInterface> m_exportedSurfaceInterface;
 
-    KWayland::Client::XdgExportedUnstableV1 *m_exported;
-    KWayland::Client::XdgImportedUnstableV1 *m_imported;
+    QPointer<KWayland::Client::XdgExportedUnstableV1> m_exported;
+    QPointer<KWayland::Client::XdgImportedUnstableV1> m_imported;
 
     QPointer<KWayland::Client::Surface> m_childSurface;
     QPointer<KWayland::Server::SurfaceInterface> m_childSurfaceInterface;
@@ -85,6 +85,8 @@ TestForeign::TestForeign(QObject *parent)
     , m_connection(nullptr)
     , m_compositor(nullptr)
     , m_queue(nullptr)
+    , m_exporter(nullptr)
+    , m_importer(nullptr)
     , m_thread(nullptr)
 {
 }
@@ -207,7 +209,7 @@ void TestForeign::doExport()
     //Export a window
     m_exported = m_exporter->exportSurface(m_exportedSurface, this);
     QVERIFY(m_exported->handle().isEmpty());
-    QSignalSpy doneSpy(m_exported, &XdgExportedUnstableV1::done);
+    QSignalSpy doneSpy(m_exported.data(), &XdgExportedUnstableV1::done);
     QVERIFY(doneSpy.wait());
     QVERIFY(!m_exported->handle().isEmpty());
 
@@ -297,7 +299,7 @@ void TestForeign::testDeleteExported()
     doExport();
 
     QSignalSpy transientSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableInterface::transientChanged);
-    QSignalSpy destroyedSpy(m_imported, &KWayland::Client::XdgImportedUnstableV1::importedDestroyed);
+    QSignalSpy destroyedSpy(m_imported.data(), &KWayland::Client::XdgImportedUnstableV1::importedDestroyed);
  
     QVERIFY(transientSpy.isValid());
     m_exported->deleteLater();

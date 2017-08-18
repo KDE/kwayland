@@ -33,7 +33,7 @@ class SurfaceInterface;
 class XdgExportedUnstableV1Interface;
 class XdgImportedUnstableV1Interface;
 
-class XdgForeignUnstableInterface::Private
+class Q_DECL_HIDDEN XdgForeignUnstableInterface::Private
 {
 public:
     Private(Display *display, XdgForeignUnstableInterface *q);
@@ -43,7 +43,7 @@ public:
     XdgImporterUnstableV1Interface *importer;
 };
 
-class XdgExporterUnstableV1Interface : public Global
+class Q_DECL_HIDDEN XdgExporterUnstableV1Interface : public Global
 {
     Q_OBJECT
 public:
@@ -63,7 +63,7 @@ private:
     Private *d_func() const;
 };
 
-class XdgImporterUnstableV1Interface : public Global
+class Q_DECL_HIDDEN XdgImporterUnstableV1Interface : public Global
 {
     Q_OBJECT
 public:
@@ -85,7 +85,7 @@ private:
     Private *d_func() const;
 };
 
-class XdgExportedUnstableV1Interface : public Resource
+class Q_DECL_HIDDEN XdgExportedUnstableV1Interface : public Resource
 {
     Q_OBJECT
 public:
@@ -99,7 +99,7 @@ private:
     Private *d_func() const;
 };
 
-class XdgImportedUnstableV1Interface : public Resource
+class Q_DECL_HIDDEN XdgImportedUnstableV1Interface : public Resource
 {
     Q_OBJECT
 public:

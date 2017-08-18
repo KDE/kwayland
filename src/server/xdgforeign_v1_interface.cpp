@@ -35,7 +35,7 @@ namespace KWayland
 namespace Server
 {
 
-class XdgExporterUnstableV1Interface::Private : public Global::Private
+class Q_DECL_HIDDEN XdgExporterUnstableV1Interface::Private : public Global::Private
 {
 public:
     Private(XdgExporterUnstableV1Interface *q, Display *d, XdgForeignUnstableInterface *foreignInterface);
@@ -150,7 +150,7 @@ void XdgExporterUnstableV1Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
-class XdgImporterUnstableV1Interface::Private : public Global::Private
+class Q_DECL_HIDDEN XdgImporterUnstableV1Interface::Private : public Global::Private
 {
 public:
     Private(XdgImporterUnstableV1Interface *q, Display *d, XdgForeignUnstableInterface *foreignInterface);
@@ -159,7 +159,9 @@ public:
 
     QHash<QString, XdgImportedUnstableV1Interface *> importedSurfaces;
 
+    //child->parent hash
     QHash<SurfaceInterface *, SurfaceInterface*> parents;
+    //parent->child hash
     QHash<SurfaceInterface *, SurfaceInterface*> children;
 
 private:
@@ -337,7 +339,7 @@ void XdgImporterUnstableV1Interface::Private::unbind(wl_resource *resource)
     // TODO: implement?
 }
 
-class XdgExportedUnstableV1Interface::Private : public Resource::Private
+class Q_DECL_HIDDEN XdgExportedUnstableV1Interface::Private : public Resource::Private
 {
 public:
     Private(XdgExportedUnstableV1Interface *q, XdgExporterUnstableV1Interface *c, wl_resource *parentResource);
@@ -379,7 +381,7 @@ XdgExportedUnstableV1Interface::Private::Private(XdgExportedUnstableV1Interface 
 XdgExportedUnstableV1Interface::Private::~Private()
 {}
 
-class XdgImportedUnstableV1Interface::Private : public Resource::Private
+class Q_DECL_HIDDEN XdgImportedUnstableV1Interface::Private : public Resource::Private
 {
 public:
     Private(XdgImportedUnstableV1Interface *q, XdgImporterUnstableV1Interface *c, wl_resource *parentResource);

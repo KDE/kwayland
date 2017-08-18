@@ -30,7 +30,7 @@ namespace KWayland
 namespace Client
 {
 
-class XdgExporterUnstableV1::Private
+class Q_DECL_HIDDEN XdgExporterUnstableV1::Private
 {
 public:
     Private() = default;
@@ -109,7 +109,7 @@ XdgExportedUnstableV1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QO
     return p;
 }
 
-class XdgImporterUnstableV1::Private
+class Q_DECL_HIDDEN XdgImporterUnstableV1::Private
 {
 public:
     Private() = default;
@@ -188,7 +188,7 @@ XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QOb
     return p;
 }
 
-class XdgExportedUnstableV1::Private
+class Q_DECL_HIDDEN XdgExportedUnstableV1::Private
 {
 public:
     Private(XdgExportedUnstableV1 *q);
@@ -278,7 +278,7 @@ bool XdgExportedUnstableV1::isValid() const
     return d->exported.isValid();
 }
 
-class XdgImportedUnstableV1::Private
+class Q_DECL_HIDDEN XdgImportedUnstableV1::Private
 {
 public:
     Private(XdgImportedUnstableV1 *q);

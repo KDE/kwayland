@@ -17,8 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
-#ifndef KWAYLAND_SERVER_XDGFOREIGNV1_H
-#define KWAYLAND_SERVER_XDGFOREIGNV1_H
+#ifndef KWAYLAND_SERVER_XDGFOREIGN_H
+#define KWAYLAND_SERVER_XDGFOREIGN_H
 
 #include "global.h"
 #include "resource.h"
@@ -35,12 +35,12 @@ class SurfaceInterface;
 class XdgExporterUnstableV1Interface;
 class XdgImporterUnstableV1Interface;
 
-class KWAYLANDSERVER_EXPORT XdgForeignUnstableV1Interface : public QObject
+class KWAYLANDSERVER_EXPORT XdgForeignUnstableInterface : public QObject
 {
     Q_OBJECT
 public:
-    XdgForeignUnstableV1Interface(Display *display, QObject *parent = nullptr);
-    ~XdgForeignUnstableV1Interface();
+    XdgForeignUnstableInterface(Display *display, QObject *parent = nullptr);
+    ~XdgForeignUnstableInterface();
 
     void create();
     bool isValid();

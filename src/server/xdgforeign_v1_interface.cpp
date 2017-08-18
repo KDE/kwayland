@@ -256,19 +256,22 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
         return;
     }
 
-    XdgImportedUnstableV1Interface *imp = new XdgImportedUnstableV1Interface(s->q, surface);
+    QPointer<XdgImportedUnstableV1Interface> imp = new XdgImportedUnstableV1Interface(s->q, surface);
     imp->create(s->display->getConnection(client), wl_resource_get_version(resource), id);
 
     //surface no longer exported
     connect(exp, &XdgExportedUnstableV1Interface::unbound,
             s->q, [s, imp, handle]() {
-                zxdg_imported_v1_send_destroyed(imp->resource());
-                imp->deleteLater();
+                //imp valid when the exported is deleted before the imported
+                if (imp) {
+                    zxdg_imported_v1_send_destroyed(imp->resource());
+                    imp->deleteLater();
+                }
                 s->importedSurfaces.remove(QString::fromUtf8(handle));
                 emit s->q->surfaceUnimported(QString::fromUtf8(handle));
             });
 
-    connect(imp, &XdgImportedUnstableV1Interface::childChanged,
+    connect(imp.data(), &XdgImportedUnstableV1Interface::childChanged,
             s->q, [s, imp](SurfaceInterface *child) {
                 //remove any previous association
                 auto it = s->children.find(imp);
@@ -295,7 +298,7 @@ void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, 
             });
 
     //surface no longer imported
-    connect(imp, &XdgImportedUnstableV1Interface::unbound,
+    connect(imp.data(), &XdgImportedUnstableV1Interface::unbound,
             s->q, [s, handle, imp]() {
                 s->importedSurfaces.remove(QString::fromUtf8(handle));
                 emit s->q->surfaceUnimported(QString::fromUtf8(handle));

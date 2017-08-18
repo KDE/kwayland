@@ -71,8 +71,6 @@ private:
     QPointer<KWayland::Client::Surface> m_childSurface;
     QPointer<KWayland::Server::SurfaceInterface> m_childSurfaceInterface;
 
-    
-
     QThread *m_thread;
 };
 
@@ -165,16 +163,26 @@ void TestForeign::cleanup()
         variable = nullptr; \
     }
 
-    CLEANUP(m_exported)
-    CLEANUP(m_exporter)
-    CLEANUP(m_imported)
-    CLEANUP(m_importer)
+    //some tests delete it beforehand
+    if (m_exportedSurfaceInterface) {
+        QSignalSpy exportedSurfaceDestroyedSpy(m_exportedSurfaceInterface.data(), &QObject::destroyed);
+        QVERIFY(exportedSurfaceDestroyedSpy.isValid());
+        CLEANUP(m_exportedSurface)
+        exportedSurfaceDestroyedSpy.wait();
+    }
 
+    if (m_childSurfaceInterface) {
+        QSignalSpy childSurfaceDestroyedSpy(m_childSurfaceInterface.data(), &QObject::destroyed);
+        QVERIFY(childSurfaceDestroyedSpy.isValid());
+        CLEANUP(m_childSurface)
+        childSurfaceDestroyedSpy.wait();
+    }
 
-    CLEANUP(m_exportedSurface)
-    CLEANUP(m_childSurface)
 
     CLEANUP(m_compositor)
+    CLEANUP(m_foreignInterface)
+    CLEANUP(m_exporter)
+    CLEANUP(m_importer)
     CLEANUP(m_queue)
     if (m_connection) {
         m_connection->deleteLater();
@@ -187,10 +195,6 @@ void TestForeign::cleanup()
         m_thread = nullptr;
     }
     CLEANUP(m_compositorInterface)
-
-    CLEANUP(m_foreignInterface)
-    CLEANUP(m_exportedSurfaceInterface)
-    CLEANUP(m_childSurfaceInterface)
 
     CLEANUP(m_display)
 #undef CLEANUP
@@ -286,6 +290,10 @@ void TestForeign::testDeleteParentSurface()
  
     QVERIFY(transientSpy.isValid());
     m_exportedSurface->deleteLater();
+
+    QSignalSpy exportedSurfaceDestroyedSpy(m_exportedSurfaceInterface.data(), &QObject::destroyed);
+    QVERIFY(exportedSurfaceDestroyedSpy.isValid());
+    exportedSurfaceDestroyedSpy.wait();
 
     QVERIFY(transientSpy.wait());
 

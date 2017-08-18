@@ -29,7 +29,7 @@ namespace KWayland
 namespace Client
 {
 
-class DataSource::Private
+class Q_DECL_HIDDEN DataSource::Private
 {
 public:
     explicit Private(DataSource *q);

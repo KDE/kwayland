@@ -31,7 +31,7 @@ namespace KWayland
 namespace Client
 {
 
-class PointerConstraints::Private
+class Q_DECL_HIDDEN PointerConstraints::Private
 {
 public:
     Private() = default;
@@ -154,7 +154,7 @@ ConfinedPointer *PointerConstraints::confinePointer(Surface *surface, Pointer *p
     return p;
 }
 
-class LockedPointer::Private
+class Q_DECL_HIDDEN LockedPointer::Private
 {
 public:
     Private(LockedPointer *q);
@@ -260,7 +260,7 @@ void LockedPointer::setRegion(Region *region)
     zwp_locked_pointer_v1_set_region(d->lockedpointer, wr);
 }
 
-class ConfinedPointer::Private
+class Q_DECL_HIDDEN ConfinedPointer::Private
 {
 public:
     Private(ConfinedPointer *q);

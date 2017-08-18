@@ -30,7 +30,7 @@ namespace KWayland
 namespace Client
 {
 
-class SubCompositor::Private
+class Q_DECL_HIDDEN SubCompositor::Private
 {
 public:
     WaylandPointer<wl_subcompositor, wl_subcompositor_destroy> subCompositor;

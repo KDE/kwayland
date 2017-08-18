@@ -37,7 +37,7 @@ namespace Client
 
 typedef QList<OutputDevice::Mode> Modes;
 
-class OutputDevice::Private
+class Q_DECL_HIDDEN OutputDevice::Private
 {
 public:
     Private(OutputDevice *q);

@@ -29,7 +29,7 @@ namespace KWayland
 namespace Client
 {
 
-class Idle::Private
+class Q_DECL_HIDDEN Idle::Private
 {
 public:
     WaylandPointer<org_kde_kwin_idle, org_kde_kwin_idle_destroy> manager;
@@ -102,7 +102,7 @@ Idle::operator org_kde_kwin_idle*()
     return d->manager;
 }
 
-class IdleTimeout::Private
+class Q_DECL_HIDDEN IdleTimeout::Private
 {
 public:
     explicit Private(IdleTimeout *q);

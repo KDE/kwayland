@@ -38,7 +38,7 @@ namespace KWayland
 namespace Client
 {
 
-class ShmPool::Private
+class Q_DECL_HIDDEN ShmPool::Private
 {
 public:
     Private(ShmPool *q);

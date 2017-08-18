@@ -38,7 +38,7 @@ namespace KWayland
 namespace Client
 {
 
-class PlasmaWindowManagement::Private
+class Q_DECL_HIDDEN PlasmaWindowManagement::Private
 {
 public:
     Private(PlasmaWindowManagement *q);
@@ -60,7 +60,7 @@ private:
     PlasmaWindowManagement *q;
 };
 
-class PlasmaWindow::Private
+class Q_DECL_HIDDEN PlasmaWindow::Private
 {
 public:
     Private(org_kde_plasma_window *window, quint32 internalId, PlasmaWindow *q);

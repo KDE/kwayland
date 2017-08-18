@@ -28,7 +28,7 @@ namespace KWayland
 namespace Client
 {
 
-class XdgShell::Private
+class Q_DECL_HIDDEN XdgShell::Private
 {
 public:
     virtual ~Private();
@@ -64,7 +64,7 @@ private:
     class Private;
 };
 
-class XdgShellSurface::Private
+class Q_DECL_HIDDEN XdgShellSurface::Private
 {
 public:
     virtual ~Private();
@@ -115,7 +115,7 @@ private:
     class Private;
 };
 
-class XdgShellPopup::Private
+class Q_DECL_HIDDEN XdgShellPopup::Private
 {
 public:
     Private(XdgShellPopup *q);

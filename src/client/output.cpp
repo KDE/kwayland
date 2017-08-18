@@ -37,7 +37,7 @@ namespace {
 typedef QList<Output::Mode> Modes;
 }
 
-class Output::Private
+class Q_DECL_HIDDEN Output::Private
 {
 public:
     Private(Output *q);

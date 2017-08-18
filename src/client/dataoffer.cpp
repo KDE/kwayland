@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class DataOffer::Private
+class Q_DECL_HIDDEN DataOffer::Private
 {
 public:
     Private(wl_data_offer *offer, DataOffer *q);

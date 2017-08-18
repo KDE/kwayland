@@ -29,7 +29,7 @@ namespace KWayland
 namespace Client
 {
 
-class SlideManager::Private
+class Q_DECL_HIDDEN SlideManager::Private
 {
 public:
     Private() = default;

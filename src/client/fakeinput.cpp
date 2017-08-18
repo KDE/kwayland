@@ -36,7 +36,7 @@ namespace KWayland
 namespace Client
 {
 
-class FakeInput::Private
+class Q_DECL_HIDDEN FakeInput::Private
 {
 public:
     WaylandPointer<org_kde_kwin_fake_input, org_kde_kwin_fake_input_destroy> manager;

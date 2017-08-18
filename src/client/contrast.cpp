@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class ContrastManager::Private
+class Q_DECL_HIDDEN ContrastManager::Private
 {
 public:
     Private() = default;

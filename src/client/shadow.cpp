@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class ShadowManager::Private
+class Q_DECL_HIDDEN ShadowManager::Private
 {
 public:
     Private() = default;

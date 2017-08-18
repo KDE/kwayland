@@ -31,7 +31,7 @@ namespace KWayland
 namespace Client
 {
 
-class Pointer::Private
+class Q_DECL_HIDDEN Pointer::Private
 {
 public:
     Private(Pointer *q);

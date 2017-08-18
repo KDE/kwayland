@@ -36,7 +36,7 @@ namespace KWayland
 namespace Client
 {
 
-class Surface::Private
+class Q_DECL_HIDDEN Surface::Private
 {
 public:
     Private(Surface *q);

@@ -56,7 +56,6 @@ void XdgExporterUnstableV1::Private::setup(zxdg_exporter_v1 *arg)
 
 XdgExporterUnstableV1::~XdgExporterUnstableV1()
 {
-    release();
 }
 
 void XdgExporterUnstableV1::setup(zxdg_exporter_v1 *exporter)
@@ -135,7 +134,6 @@ void XdgImporterUnstableV1::Private::setup(zxdg_importer_v1 *arg)
 
 XdgImporterUnstableV1::~XdgImporterUnstableV1()
 {
-    release();
 }
 
 void XdgImporterUnstableV1::setup(zxdg_importer_v1 *importer)
@@ -242,7 +240,6 @@ XdgExportedUnstableV1::Private::Private(XdgExportedUnstableV1 *q)
 
 XdgExportedUnstableV1::~XdgExportedUnstableV1()
 {
-    release();
 }
 
 void XdgExportedUnstableV1::setup(zxdg_exported_v1 *exported)
@@ -330,7 +327,6 @@ void XdgImportedUnstableV1::Private::setup(zxdg_imported_v1 *arg)
 
 XdgImportedUnstableV1::~XdgImportedUnstableV1()
 {
-    release();
 }
 
 void XdgImportedUnstableV1::setup(zxdg_imported_v1 *imported)

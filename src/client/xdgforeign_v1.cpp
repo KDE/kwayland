@@ -180,7 +180,7 @@ XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QOb
     auto p = new XdgImportedUnstableV1(parent);
     auto w = zxdg_importer_v1_import_toplevel(d->importer, handle.toUtf8());
     if (d->queue) {
-        d->queue->addProxy(p);
+        d->queue->addProxy(w);
     }
     p->setup(w);
     return p;

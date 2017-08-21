@@ -95,7 +95,6 @@ XdgExportedUnstableV1Interface *XdgExporterUnstableV1Interface::exportedSurface(
 void XdgExporterUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
-    wl_resource_destroy(resource);
 }
 
 void XdgExporterUnstableV1Interface::Private::exportCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
@@ -237,7 +236,6 @@ XdgImporterUnstableV1Interface::Private *XdgImporterUnstableV1Interface::d_func(
 void XdgImporterUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
-    wl_resource_destroy(resource);
 }
 
 void XdgImporterUnstableV1Interface::Private::importCallback(wl_client *client, wl_resource *resource, uint32_t id, const char * handle)

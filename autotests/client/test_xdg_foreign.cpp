@@ -50,6 +50,7 @@ private Q_SLOTS:
     void testDeleteParentSurface();
     void testDeleteExported();
     void testExportTwoTimes();
+    void testImportTwoTimes();
 
 private:
     void doExport();
@@ -339,6 +340,39 @@ void TestForeign::testExportTwoTimes()
 
     //Import the just exported window
     KWayland::Client::XdgImportedUnstableV1 *imported2 = m_importer->import(exported2->handle(), this);
+    QVERIFY(imported2->isValid());
+
+    //create a second child surface
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QVERIFY(serverSurfaceCreated.isValid());
+
+    KWayland::Client::Surface *childSurface2 = m_compositor->createSurface();
+    QVERIFY(serverSurfaceCreated.wait());
+
+    KWayland::Server::SurfaceInterface *childSurface2Interface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+
+    imported2->setParentOf(childSurface2);
+    QVERIFY(transientSpy.wait());
+    
+    QCOMPARE(transientSpy.first().first().value<KWayland::Server::SurfaceInterface *>(), childSurface2Interface);
+    QCOMPARE(transientSpy.first().at(1).value<KWayland::Server::SurfaceInterface *>(), m_exportedSurfaceInterface.data());
+
+    //transientFor api
+    //check the old relationship is still here
+    QCOMPARE(m_foreignInterface->transientFor(m_childSurfaceInterface), m_exportedSurfaceInterface.data());
+    //check the new relationship
+    QCOMPARE(m_foreignInterface->transientFor(childSurface2Interface), m_exportedSurfaceInterface.data());
+}
+
+void TestForeign::testImportTwoTimes()
+{
+    doExport();
+
+    QSignalSpy transientSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableInterface::transientChanged);
+    QVERIFY(transientSpy.isValid());
+
+    //Import another time the exported window
+    KWayland::Client::XdgImportedUnstableV1 *imported2 = m_importer->import(m_exported->handle(), this);
     QVERIFY(imported2->isValid());
 
     //create a second child surface

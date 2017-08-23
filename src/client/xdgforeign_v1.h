@@ -65,7 +65,7 @@ class XdgImportedUnstableV1;
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgExporterUnstableV1 : public XdgExporterUnstable
+class Q_DECL_HIDDEN XdgExporterUnstableV1 : public XdgExporterUnstable
 {
     Q_OBJECT
 public:
@@ -105,7 +105,7 @@ private:
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgImporterUnstableV1 : public XdgImporterUnstable
+class Q_DECL_HIDDEN XdgImporterUnstableV1 : public XdgImporterUnstable
 {
     Q_OBJECT
 public:
@@ -122,7 +122,7 @@ private:
     class Private;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgExportedUnstableV1 : public XdgExportedUnstable
+class Q_DECL_HIDDEN XdgExportedUnstableV1 : public XdgExportedUnstable
 {
     Q_OBJECT
 public:
@@ -134,7 +134,7 @@ private:
     class Private;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgImportedUnstableV1 : public XdgImportedUnstable
+class Q_DECL_HIDDEN XdgImportedUnstableV1 : public XdgImportedUnstable
 {
     Q_OBJECT
 public:

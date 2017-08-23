@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../src/client/region.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/surface.h"
-#include "../../src/client/xdgforeign_v1.h"
+#include "../../src/client/xdgforeign.h"
 #include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/surface_interface.h"
@@ -61,14 +61,14 @@ private:
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::Compositor *m_compositor;
     KWayland::Client::EventQueue *m_queue;
-    KWayland::Client::XdgExporterUnstableV1 *m_exporter;
-    KWayland::Client::XdgImporterUnstableV1 *m_importer;
+    KWayland::Client::XdgExporterUnstable *m_exporter;
+    KWayland::Client::XdgImporterUnstable *m_importer;
 
     QPointer<KWayland::Client::Surface> m_exportedSurface;
     QPointer<KWayland::Server::SurfaceInterface> m_exportedSurfaceInterface;
 
-    QPointer<KWayland::Client::XdgExportedUnstableV1> m_exported;
-    QPointer<KWayland::Client::XdgImportedUnstableV1> m_imported;
+    QPointer<KWayland::Client::XdgExportedUnstable> m_exported;
+    QPointer<KWayland::Client::XdgImportedUnstable> m_imported;
 
     QPointer<KWayland::Client::Surface> m_childSurface;
     QPointer<KWayland::Server::SurfaceInterface> m_childSurfaceInterface;
@@ -153,8 +153,8 @@ void TestForeign::init()
     QCOMPARE(exporterSpy.count(), 1);
     QCOMPARE(importerSpy.count(), 1);
 
-    m_exporter = registry.createXdgExporterUnstableV1(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
-    m_importer = registry.createXdgImporterUnstableV1(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
+    m_exporter = registry.createXdgExporterUnstable(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
+    m_importer = registry.createXdgImporterUnstable(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
 }
 
 void TestForeign::cleanup()
@@ -214,7 +214,7 @@ void TestForeign::doExport()
     //Export a window
     m_exported = m_exporter->exportSurface(m_exportedSurface, this);
     QVERIFY(m_exported->handle().isEmpty());
-    QSignalSpy doneSpy(m_exported.data(), &XdgExportedUnstableV1::done);
+    QSignalSpy doneSpy(m_exported.data(), &XdgExportedUnstable::done);
     QVERIFY(doneSpy.wait());
     QVERIFY(!m_exported->handle().isEmpty());
 
@@ -308,7 +308,7 @@ void TestForeign::testDeleteExported()
     doExport();
 
     QSignalSpy transientSpy(m_foreignInterface, &KWayland::Server::XdgForeignUnstableInterface::transientChanged);
-    QSignalSpy destroyedSpy(m_imported.data(), &KWayland::Client::XdgImportedUnstableV1::importedDestroyed);
+    QSignalSpy destroyedSpy(m_imported.data(), &KWayland::Client::XdgImportedUnstable::importedDestroyed);
  
     QVERIFY(transientSpy.isValid());
     m_exported->deleteLater();
@@ -329,9 +329,9 @@ void TestForeign::testExportTwoTimes()
     doExport();
 
     //Export second window
-    KWayland::Client::XdgExportedUnstableV1 *exported2 = m_exporter->exportSurface(m_exportedSurface, this);
+    KWayland::Client::XdgExportedUnstable *exported2 = m_exporter->exportSurface(m_exportedSurface, this);
     QVERIFY(exported2->handle().isEmpty());
-    QSignalSpy doneSpy(exported2, &XdgExportedUnstableV1::done);
+    QSignalSpy doneSpy(exported2, &XdgExportedUnstable::done);
     QVERIFY(doneSpy.wait());
     QVERIFY(!exported2->handle().isEmpty());
 
@@ -339,7 +339,7 @@ void TestForeign::testExportTwoTimes()
     QVERIFY(transientSpy.isValid());
 
     //Import the just exported window
-    KWayland::Client::XdgImportedUnstableV1 *imported2 = m_importer->import(exported2->handle(), this);
+    KWayland::Client::XdgImportedUnstable *imported2 = m_importer->import(exported2->handle(), this);
     QVERIFY(imported2->isValid());
 
     //create a second child surface
@@ -372,7 +372,7 @@ void TestForeign::testImportTwoTimes()
     QVERIFY(transientSpy.isValid());
 
     //Import another time the exported window
-    KWayland::Client::XdgImportedUnstableV1 *imported2 = m_importer->import(m_exported->handle(), this);
+    KWayland::Client::XdgImportedUnstable *imported2 = m_importer->import(m_exported->handle(), this);
     QVERIFY(imported2->isValid());
 
     //create a second child surface

@@ -51,6 +51,7 @@ set(CLIENT_LIB_SRCS
     xdgshell.cpp
     xdgshell_v5.cpp
     xdgforeign_v1.cpp
+    xdgforeign.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS

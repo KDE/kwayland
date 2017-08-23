@@ -204,7 +204,8 @@ XdgImporterUnstableV1Interface::XdgImporterUnstableV1Interface(Display *display,
 }
 
 XdgImporterUnstableV1Interface::~XdgImporterUnstableV1Interface()
-{}
+{
+}
 
 XdgImportedUnstableV1Interface *XdgImporterUnstableV1Interface::importedSurface(const QString &handle)
 {

@@ -18,6 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
 #include "xdgforeign_v1.h"
+#include "xdgforeign_p.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
 
@@ -30,24 +31,65 @@ namespace KWayland
 namespace Client
 {
 
-class Q_DECL_HIDDEN XdgExporterUnstableV1::Private
+class Q_DECL_HIDDEN XdgExporterUnstableV1::Private : public XdgExporterUnstable::Private
 {
 public:
-    Private() = default;
+    Private();
 
-    void setup(zxdg_exporter_v1 *arg);
+    XdgExportedUnstable *exportTopLevelV1(Surface *surface, QObject *parent) override;
+    void setupV1(zxdg_exporter_v1 *arg) override;
+    zxdg_exporter_v1 *exporterV1() override;
+
+    void release() override;
+    void destroy() override;
+    bool isValid() override;
 
     WaylandPointer<zxdg_exporter_v1, zxdg_exporter_v1_destroy> exporter;
-    EventQueue *queue = nullptr;
 };
 
+XdgExporterUnstableV1::Private::Private()
+    : XdgExporterUnstable::Private()
+{}
+
+zxdg_exporter_v1 *XdgExporterUnstableV1::Private::exporterV1()
+{
+    return exporter;
+}
+
+void XdgExporterUnstableV1::Private::release()
+{
+    exporter.release();
+}
+
+void XdgExporterUnstableV1::Private::destroy()
+{
+    exporter.destroy();
+}
+
+bool XdgExporterUnstableV1::Private::isValid()
+{
+    return exporter.isValid();
+}
+
+XdgExportedUnstable *XdgExporterUnstableV1::Private::exportTopLevelV1(Surface *surface, QObject *parent)
+{
+    Q_ASSERT(isValid());
+    auto p = new XdgExportedUnstableV1(parent);
+    auto w = zxdg_exporter_v1_export_toplevel(exporter, *surface);
+    if (queue) {
+        queue->addProxy(w);
+    }
+    p->setup(w);
+    return p;
+}
+
+
 XdgExporterUnstableV1::XdgExporterUnstableV1(QObject *parent)
-    : QObject(parent)
-    , d(new Private)
+    : XdgExporterUnstable(new Private, parent)
 {
 }
 
-void XdgExporterUnstableV1::Private::setup(zxdg_exporter_v1 *arg)
+void XdgExporterUnstableV1::Private::setupV1(zxdg_exporter_v1 *arg)
 {
     Q_ASSERT(arg);
     Q_ASSERT(!exporter);
@@ -58,74 +100,66 @@ XdgExporterUnstableV1::~XdgExporterUnstableV1()
 {
 }
 
-void XdgExporterUnstableV1::setup(zxdg_exporter_v1 *exporter)
-{
-    d->setup(exporter);
-}
-
-void XdgExporterUnstableV1::release()
-{
-    d->exporter.release();
-}
-
-void XdgExporterUnstableV1::destroy()
-{
-    d->exporter.destroy();
-}
-
-XdgExporterUnstableV1::operator zxdg_exporter_v1*() {
-    return d->exporter;
-}
-
-XdgExporterUnstableV1::operator zxdg_exporter_v1*() const {
-    return d->exporter;
-}
-
-bool XdgExporterUnstableV1::isValid() const
-{
-    return d->exporter.isValid();
-}
-
-void XdgExporterUnstableV1::setEventQueue(EventQueue *queue)
-{
-    d->queue = queue;
-}
-
-EventQueue *XdgExporterUnstableV1::eventQueue()
-{
-    return d->queue;
-}
-
-XdgExportedUnstableV1 *XdgExporterUnstableV1::exportSurface(Surface *surface, QObject *parent)
-{
-    Q_ASSERT(isValid());
-    auto p = new XdgExportedUnstableV1(parent);
-    auto w = zxdg_exporter_v1_export_toplevel(d->exporter, *surface);
-    if (d->queue) {
-        d->queue->addProxy(w);
-    }
-    p->setup(w);
-    return p;
-}
-
-class Q_DECL_HIDDEN XdgImporterUnstableV1::Private
+class Q_DECL_HIDDEN XdgImporterUnstableV1::Private : public XdgImporterUnstable::Private
 {
 public:
-    Private() = default;
+    Private();
 
-    void setup(zxdg_importer_v1 *arg);
+    XdgImportedUnstable *importTopLevelV1(const QString & handle, QObject *parent) override;
+    void setupV1(zxdg_importer_v1 *arg) override;
+    zxdg_importer_v1 *importerV1() override;
+
+    void release() override;
+    void destroy() override;
+    bool isValid() override;
 
     WaylandPointer<zxdg_importer_v1, zxdg_importer_v1_destroy> importer;
     EventQueue *queue = nullptr;
 };
 
+XdgImporterUnstableV1::Private::Private()
+    : XdgImporterUnstable::Private()
+{}
+
+zxdg_importer_v1 *XdgImporterUnstableV1::Private::importerV1()
+{
+    return importer;
+}
+
+void XdgImporterUnstableV1::Private::release()
+{
+    importer.release();
+}
+
+void XdgImporterUnstableV1::Private::destroy()
+{
+    importer.destroy();
+}
+
+bool XdgImporterUnstableV1::Private::isValid()
+{
+    return importer.isValid();
+}
+
+XdgImportedUnstable *XdgImporterUnstableV1::Private::importTopLevelV1(const QString & handle, QObject *parent)
+{
+    Q_ASSERT(isValid());
+    auto p = new XdgImportedUnstableV1(parent);
+    auto w = zxdg_importer_v1_import_toplevel(importer, handle.toUtf8());
+    if (queue) {
+        queue->addProxy(w);
+    }
+    p->setup(w);
+    return p;
+}
+
+
 XdgImporterUnstableV1::XdgImporterUnstableV1(QObject *parent)
-    : QObject(parent)
-    , d(new Private)
+    : XdgImporterUnstable(new Private, parent)
 {
 }
 
-void XdgImporterUnstableV1::Private::setup(zxdg_importer_v1 *arg)
+void XdgImporterUnstableV1::Private::setupV1(zxdg_importer_v1 *arg)
 {
     Q_ASSERT(arg);
     Q_ASSERT(!importer);
@@ -136,75 +170,47 @@ XdgImporterUnstableV1::~XdgImporterUnstableV1()
 {
 }
 
-void XdgImporterUnstableV1::setup(zxdg_importer_v1 *importer)
-{
-    d->setup(importer);
-}
 
-void XdgImporterUnstableV1::release()
-{
-    d->importer.release();
-}
-
-void XdgImporterUnstableV1::destroy()
-{
-    d->importer.destroy();
-}
-
-XdgImporterUnstableV1::operator zxdg_importer_v1*() {
-    return d->importer;
-}
-
-XdgImporterUnstableV1::operator zxdg_importer_v1*() const {
-    return d->importer;
-}
-
-bool XdgImporterUnstableV1::isValid() const
-{
-    return d->importer.isValid();
-}
-
-void XdgImporterUnstableV1::setEventQueue(EventQueue *queue)
-{
-    d->queue = queue;
-}
-
-EventQueue *XdgImporterUnstableV1::eventQueue()
-{
-    return d->queue;
-}
-
-XdgImportedUnstableV1 *XdgImporterUnstableV1::import(const QString & handle, QObject *parent)
-{
-    Q_ASSERT(isValid());
-    auto p = new XdgImportedUnstableV1(parent);
-    auto w = zxdg_importer_v1_import_toplevel(d->importer, handle.toUtf8());
-    if (d->queue) {
-        d->queue->addProxy(w);
-    }
-    p->setup(w);
-    return p;
-}
-
-class Q_DECL_HIDDEN XdgExportedUnstableV1::Private
+class Q_DECL_HIDDEN XdgExportedUnstableV1::Private : public XdgExportedUnstable::Private
 {
 public:
     Private(XdgExportedUnstableV1 *q);
 
-    void setup(zxdg_exported_v1 *arg);
+    void setupV1(zxdg_exported_v1 *arg) override;
+    zxdg_exported_v1 *exportedV1() override;
+
+    void release() override;
+    void destroy() override;
+    bool isValid() override;
 
     WaylandPointer<zxdg_exported_v1, zxdg_exported_v1_destroy> exported;
-
-    QString handle;
-
-private:
-    XdgExportedUnstableV1 *q;
 
 private:
     static void handleCallback(void *data, zxdg_exported_v1 *zxdg_exported_v1, const char * handle);
 
     static const zxdg_exported_v1_listener s_listener;
 };
+
+zxdg_exported_v1 *XdgExportedUnstableV1::Private::exportedV1()
+{
+    return exported;
+}
+
+void XdgExportedUnstableV1::Private::release()
+{
+    exported.release();
+}
+
+void XdgExportedUnstableV1::Private::destroy()
+{
+    exported.destroy();
+}
+
+bool XdgExportedUnstableV1::Private::isValid()
+{
+    return exported.isValid();
+}
+
 
 const zxdg_exported_v1_listener XdgExportedUnstableV1::Private::s_listener = {
     handleCallback
@@ -220,12 +226,11 @@ void XdgExportedUnstableV1::Private::handleCallback(void *data, zxdg_exported_v1
 }
 
 XdgExportedUnstableV1::XdgExportedUnstableV1(QObject *parent)
-    : QObject(parent)
-    , d(new Private(this))
+    : XdgExportedUnstable(new Private(this), parent)
 {
 }
 
-void XdgExportedUnstableV1::Private::setup(zxdg_exported_v1 *arg)
+void XdgExportedUnstableV1::Private::setupV1(zxdg_exported_v1 *arg)
 {
     Q_ASSERT(arg);
     Q_ASSERT(!exported);
@@ -234,7 +239,7 @@ void XdgExportedUnstableV1::Private::setup(zxdg_exported_v1 *arg)
 }
 
 XdgExportedUnstableV1::Private::Private(XdgExportedUnstableV1 *q)
-    : q(q)
+    : XdgExportedUnstable::Private::Private(q)
 {
 }
 
@@ -242,56 +247,57 @@ XdgExportedUnstableV1::~XdgExportedUnstableV1()
 {
 }
 
-void XdgExportedUnstableV1::setup(zxdg_exported_v1 *exported)
-{
-    d->setup(exported);
-}
-
-void XdgExportedUnstableV1::release()
-{
-    d->exported.release();
-}
-
-void XdgExportedUnstableV1::destroy()
-{
-    d->exported.destroy();
-}
-
-QString XdgExportedUnstableV1::handle() const
-{
-    return d->handle;
-}
-
-XdgExportedUnstableV1::operator zxdg_exported_v1*() {
-    return d->exported;
-}
-
-XdgExportedUnstableV1::operator zxdg_exported_v1*() const {
-    return d->exported;
-}
-
-bool XdgExportedUnstableV1::isValid() const
-{
-    return d->exported.isValid();
-}
-
-class Q_DECL_HIDDEN XdgImportedUnstableV1::Private
+class Q_DECL_HIDDEN XdgImportedUnstableV1::Private : public XdgImportedUnstable::Private
 {
 public:
     Private(XdgImportedUnstableV1 *q);
 
-    void setup(zxdg_imported_v1 *arg);
+    void setupV1(zxdg_imported_v1 *arg) override;
+    zxdg_imported_v1 *importedV1() override;
+
+    void setParentOf(Surface *surface) override;
+    void release() override;
+    void destroy() override;
+    bool isValid() override;
 
     WaylandPointer<zxdg_imported_v1, zxdg_imported_v1_destroy> imported;
-
-private:
-    XdgImportedUnstableV1 *q;
 
 private:
     static void destroyedCallback(void *data, zxdg_imported_v1 *zxdg_imported_v1);
 
     static const zxdg_imported_v1_listener s_listener;
 };
+
+XdgImportedUnstableV1::Private::Private(XdgImportedUnstableV1 *q)
+    : XdgImportedUnstable::Private::Private(q)
+{
+}
+
+zxdg_imported_v1 *XdgImportedUnstableV1::Private::importedV1()
+{
+    return imported;
+}
+
+void XdgImportedUnstableV1::Private::release()
+{
+    imported.release();
+}
+
+void XdgImportedUnstableV1::Private::destroy()
+{
+    imported.destroy();
+}
+
+bool XdgImportedUnstableV1::Private::isValid()
+{
+    return imported.isValid();
+}
+
+void XdgImportedUnstableV1::Private::setParentOf(Surface *surface)
+{
+    Q_ASSERT(isValid());
+    zxdg_imported_v1_set_parent_of(imported, *surface);
+}
 
 const zxdg_imported_v1_listener XdgImportedUnstableV1::Private::s_listener = {
     destroyedCallback
@@ -301,23 +307,19 @@ void XdgImportedUnstableV1::Private::destroyedCallback(void *data, zxdg_imported
 {
     auto p = reinterpret_cast<XdgImportedUnstableV1::Private*>(data);
     Q_ASSERT(p->imported == zxdg_imported_v1);
-    // TODO: implement
+
     p->q->release();
     emit p->q->importedDestroyed();
 }
 
-XdgImportedUnstableV1::Private::Private(XdgImportedUnstableV1 *q)
-    : q(q)
-{
-}
+
 
 XdgImportedUnstableV1::XdgImportedUnstableV1(QObject *parent)
-    : QObject(parent)
-    , d(new Private(this))
+    : XdgImportedUnstable(new Private(this), parent)
 {
 }
 
-void XdgImportedUnstableV1::Private::setup(zxdg_imported_v1 *arg)
+void XdgImportedUnstableV1::Private::setupV1(zxdg_imported_v1 *arg)
 {
     Q_ASSERT(arg);
     Q_ASSERT(!imported);
@@ -327,40 +329,6 @@ void XdgImportedUnstableV1::Private::setup(zxdg_imported_v1 *arg)
 
 XdgImportedUnstableV1::~XdgImportedUnstableV1()
 {
-}
-
-void XdgImportedUnstableV1::setup(zxdg_imported_v1 *imported)
-{
-    d->setup(imported);
-}
-
-void XdgImportedUnstableV1::release()
-{
-    d->imported.release();
-}
-
-void XdgImportedUnstableV1::destroy()
-{
-    d->imported.destroy();
-}
-
-XdgImportedUnstableV1::operator zxdg_imported_v1*() {
-    return d->imported;
-}
-
-XdgImportedUnstableV1::operator zxdg_imported_v1*() const {
-    return d->imported;
-}
-
-bool XdgImportedUnstableV1::isValid() const
-{
-    return d->imported.isValid();
-}
-
-void XdgImportedUnstableV1::setParentOf(Surface *surface)
-{
-    Q_ASSERT(isValid());
-    zxdg_imported_v1_set_parent_of(d->imported, *surface);
 }
 
 

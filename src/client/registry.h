@@ -92,6 +92,8 @@ class XdgShell;
 class RelativePointerManager;
 class XdgExporterUnstableV1;
 class XdgImporterUnstableV1;
+class XdgExporterUnstable;
+class XdgImporterUnstable;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -935,8 +937,8 @@ public:
      **/
     PointerConstraints *createPointerConstraints(quint32 name, quint32 version, QObject *parent = nullptr);
 
-    XdgExporterUnstableV1 *createXdgExporterUnstableV1(quint32 name, quint32 version, QObject *parent = nullptr);
-    XdgImporterUnstableV1 *createXdgImporterUnstableV1(quint32 name, quint32 version, QObject *parent = nullptr);
+    XdgExporterUnstable *createXdgExporterUnstable(quint32 name, quint32 version, QObject *parent = nullptr);
+    XdgImporterUnstable *createXdgImporterUnstable(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**

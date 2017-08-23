@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KWAYLAND_CLIENT_XDGFOREIGN_V1_H
 #define KWAYLAND_CLIENT_XDGFOREIGN_V1_H
 
+#include "xdgforeign.h"
 #include "surface.h"
 
 #include <QObject>
@@ -64,7 +65,7 @@ class XdgImportedUnstableV1;
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgExporterUnstableV1 : public QObject
+class KWAYLANDCLIENT_EXPORT XdgExporterUnstableV1 : public XdgExporterUnstable
 {
     Q_OBJECT
 public:
@@ -77,66 +78,8 @@ public:
     explicit XdgExporterUnstableV1(QObject *parent = nullptr);
     virtual ~XdgExporterUnstableV1();
 
-    /**
-     * Setup this  to manage the @p .
-     * When using Registry::create there is no need to call this
-     * method.
-     **/
-    void setup(zxdg_exporter_v1 *);
-    /**
-     * @returns @c true if managing a zxdg_exporter_v1.
-     **/
-    bool isValid() const;
-    /**
-     * Releases the zxdg_exporter_v1 interface.
-     * After the interface has been released the  instance is no
-     * longer valid and can be setup with another zxdg_exporter_v1 interface.
-     **/
-    void release();
-    /**
-     * Destroys the data held by this .
-     * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid anymore, it's not
-     * possible to call release anymore as that calls into the Wayland
-     * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or set up to a new zxdg_exporter_v1 interface
-     * once there is a new connection available.
-     *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, , &::destroy);
-     * @endcode
-     *
-     * @see release
-     **/
-    void destroy();
-
-    /**
-     * Sets the @p queue to use for creating objects with this .
-     **/
-    void setEventQueue(EventQueue *queue);
-    /**
-     * @returns The event queue to use for creating objects with this .
-     **/
-    EventQueue *eventQueue();
-
-    XdgExportedUnstableV1 *exportSurface(Surface *surface, QObject *parent = nullptr);
-
-    operator zxdg_exporter_v1*();
-    operator zxdg_exporter_v1*() const;
-
-Q_SIGNALS:
-    /**
-     * The corresponding global for this interface on the Registry got removed.
-     *
-     * This signal gets only emitted if the  got created by
-     * Registry::create
-     **/
-    void removed();
-
 private:
     class Private;
-    QScopedPointer<Private> d;
 };
 
 /**
@@ -162,7 +105,7 @@ private:
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgImporterUnstableV1 : public QObject
+class KWAYLANDCLIENT_EXPORT XdgImporterUnstableV1 : public XdgImporterUnstable
 {
     Q_OBJECT
 public:
@@ -175,184 +118,32 @@ public:
     explicit XdgImporterUnstableV1(QObject *parent = nullptr);
     virtual ~XdgImporterUnstableV1();
 
-    /**
-     * Setup this  to manage the @p .
-     * When using Registry::create there is no need to call this
-     * method.
-     **/
-    void setup(zxdg_importer_v1 *);
-    /**
-     * @returns @c true if managing a zxdg_importer_v1.
-     **/
-    bool isValid() const;
-    /**
-     * Releases the zxdg_importer_v1 interface.
-     * After the interface has been released the  instance is no
-     * longer valid and can be setup with another zxdg_importer_v1 interface.
-     **/
-    void release();
-    /**
-     * Destroys the data held by this .
-     * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid anymore, it's not
-     * possible to call release anymore as that calls into the Wayland
-     * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or set up to a new zxdg_importer_v1 interface
-     * once there is a new connection available.
-     *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, , &::destroy);
-     * @endcode
-     *
-     * @see release
-     **/
-    void destroy();
-
-    /**
-     * Sets the @p queue to use for creating objects with this .
-     **/
-    void setEventQueue(EventQueue *queue);
-    /**
-     * @returns The event queue to use for creating objects with this .
-     **/
-    EventQueue *eventQueue();
-
-    XdgImportedUnstableV1 *import(const QString & handle, QObject *parent = nullptr);
-
-    operator zxdg_importer_v1*();
-    operator zxdg_importer_v1*() const;
-
-Q_SIGNALS:
-    /**
-     * The corresponding global for this interface on the Registry got removed.
-     *
-     * This signal gets only emitted if the  got created by
-     * Registry::create
-     **/
-    void removed();
-
 private:
     class Private;
-    QScopedPointer<Private> d;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgExportedUnstableV1 : public QObject
+class KWAYLANDCLIENT_EXPORT XdgExportedUnstableV1 : public XdgExportedUnstable
 {
     Q_OBJECT
 public:
     virtual ~XdgExportedUnstableV1();
 
-    /**
-     * Setup this  to manage the @p .
-     * When using ::create there is no need to call this
-     * method.
-     **/
-    void setup(zxdg_exported_v1 *);
-    /**
-     * @returns @c true if managing a zxdg_exported_v1.
-     **/
-    bool isValid() const;
-    /**
-     * Releases the zxdg_exported_v1 interface.
-     * After the interface has been released the  instance is no
-     * longer valid and can be setup with another zxdg_exported_v1 interface.
-     **/
-    void release();
-    /**
-     * Destroys the data held by this .
-     * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid anymore, it's not
-     * possible to call release anymore as that calls into the Wayland
-     * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or set up to a new zxdg_exported_v1 interface
-     * once there is a new connection available.
-     *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, , &::destroy);
-     * @endcode
-     *
-     * @see release
-     **/
-    void destroy();
-
-    QString handle() const;
-
-    operator zxdg_exported_v1*();
-    operator zxdg_exported_v1*() const;
-
-Q_SIGNALS:
-    /**
-     * Emitted when the exported window is fully initialized.
-     * the handle will be valid at this point
-     **/
-    void done();
-
 private:
     friend class XdgExporterUnstableV1;
     explicit XdgExportedUnstableV1(QObject *parent = nullptr);
     class Private;
-    QScopedPointer<Private> d;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgImportedUnstableV1 : public QObject
+class KWAYLANDCLIENT_EXPORT XdgImportedUnstableV1 : public XdgImportedUnstable
 {
     Q_OBJECT
 public:
     virtual ~XdgImportedUnstableV1();
 
-    /**
-     * Setup this  to manage the @p .
-     * When using ::create there is no need to call this
-     * method.
-     **/
-    void setup(zxdg_imported_v1 *);
-    /**
-     * @returns @c true if managing a zxdg_imported_v1.
-     **/
-    bool isValid() const;
-    /**
-     * Releases the zxdg_imported_v1 interface.
-     * After the interface has been released the  instance is no
-     * longer valid and can be setup with another zxdg_imported_v1 interface.
-     **/
-    void release();
-    /**
-     * Destroys the data held by this .
-     * This method is supposed to be used when the connection to the Wayland
-     * server goes away. If the connection is not valid anymore, it's not
-     * possible to call release anymore as that calls into the Wayland
-     * connection and the call would fail. This method cleans up the data, so
-     * that the instance can be deleted or set up to a new zxdg_imported_v1 interface
-     * once there is a new connection available.
-     *
-     * It is suggested to connect this method to ConnectionThread::connectionDied:
-     * @code
-     * connect(connection, &ConnectionThread::connectionDied, , &::destroy);
-     * @endcode
-     *
-     * @see release
-     **/
-    void destroy();
-
-    void setParentOf(Surface *surface);
-
-    operator zxdg_imported_v1*();
-    operator zxdg_imported_v1*() const;
-
-Q_SIGNALS:
-    /**
-     * Emitted when the imported surface is not valid anymore,
-     * for instance because it's no longer exported on the other end
-     */
-    void importedDestroyed();
-
 private:
     friend class XdgImporterUnstableV1;
     explicit XdgImportedUnstableV1(QObject *parent = nullptr);
     class Private;
-    QScopedPointer<Private> d;
 };
 
 

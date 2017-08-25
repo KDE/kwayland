@@ -178,8 +178,6 @@ public:
      **/
     QPointer<XdgShellSurfaceInterface> transientFor() const;
 
-    void setTransientFor(XdgShellSurfaceInterface *parent);
-
     /**
      * Request the client to close the window.
      **/

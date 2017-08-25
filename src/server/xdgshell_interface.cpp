@@ -119,13 +119,6 @@ QPointer<XdgShellSurfaceInterface> XdgShellSurfaceInterface::transientFor() cons
     return d->parent;
 }
 
-void XdgShellSurfaceInterface::setTransientFor(XdgShellSurfaceInterface *parent)
-{
-    Q_D();
-    d->parent = parent;
-    emit transientForChanged();
-}
-
 void XdgShellSurfaceInterface::close()
 {
     Q_D();

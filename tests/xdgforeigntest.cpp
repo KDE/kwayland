@@ -24,7 +24,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../src/client/registry.h"
 #include "../src/client/shell.h"
 #include "../src/client/shm_pool.h"
-#include "../src/client/surface.h"
+#include "../src/client/server_decoration.h"
+#include "../src/client/xdgshell.h"
 #include "../src/client/xdgforeign.h"
 // Qt
 #include <QCommandLineParser>
@@ -51,18 +52,19 @@ private:
     ConnectionThread *m_connectionThreadObject;
     EventQueue *m_eventQueue = nullptr;
     Compositor *m_compositor = nullptr;
-    Shell *m_shell = nullptr;
-    ShellSurface *m_shellSurface = nullptr;
+    XdgShell *m_shell = nullptr;
+    XdgShellSurface *m_shellSurface = nullptr;
     ShmPool *m_shm = nullptr;
     Surface *m_surface = nullptr;
 
-    ShellSurface *m_childShellSurface = nullptr;
+    XdgShellSurface *m_childShellSurface = nullptr;
     Surface *m_childSurface = nullptr;
 
     KWayland::Client::XdgExporter *m_exporter = nullptr;
     KWayland::Client::XdgImporter *m_importer = nullptr;
     KWayland::Client::XdgExported *m_exported = nullptr;
     KWayland::Client::XdgImported *m_imported = nullptr;
+    KWayland::Client::ServerSideDecorationManager *m_decoration = nullptr;
 };
 
 XdgForeignTest::XdgForeignTest(QObject *parent)
@@ -104,9 +106,9 @@ void XdgForeignTest::setupRegistry(Registry *registry)
             m_compositor = registry->createCompositor(name, version, this);
         }
     );
-    connect(registry, &Registry::shellAnnounced, this,
+    connect(registry, &Registry::xdgShellUnstableV5Announced, this,
         [this, registry](quint32 name, quint32 version) {
-            m_shell = registry->createShell(name, version, this);
+            m_shell = registry->createXdgShell(name, version, this);
         }
     );
     connect(registry, &Registry::shmAnnounced, this,
@@ -126,6 +128,12 @@ void XdgForeignTest::setupRegistry(Registry *registry)
             m_importer->setEventQueue(m_eventQueue);
         }
     );
+    connect(registry, &Registry::serverSideDecorationManagerAnnounced, this,
+        [this, registry](quint32 name, quint32 version) {
+            m_decoration = registry->createServerSideDecorationManager(name, version, this);
+            m_decoration->setEventQueue(m_eventQueue);
+        }
+    );
     connect(registry, &Registry::interfacesAnnounced, this,
         [this] {
             Q_ASSERT(m_compositor);
@@ -135,19 +143,20 @@ void XdgForeignTest::setupRegistry(Registry *registry)
             Q_ASSERT(m_importer);
             m_surface = m_compositor->createSurface(this);
             Q_ASSERT(m_surface);
+            auto parentDeco = m_decoration->create(m_surface, this);
             m_shellSurface = m_shell->createSurface(m_surface, this);
             Q_ASSERT(m_shellSurface);
-            m_shellSurface->setToplevel();
-            connect(m_shellSurface, &ShellSurface::sizeChanged, this, &XdgForeignTest::render);
+            connect(m_shellSurface, &XdgShellSurface::sizeChanged, this, &XdgForeignTest::render);
 
             m_childSurface = m_compositor->createSurface(this);
             Q_ASSERT(m_childSurface);
+            auto childDeco = m_decoration->create(m_childSurface, this);
             m_childShellSurface = m_shell->createSurface(m_childSurface, this);
             Q_ASSERT(m_childShellSurface);
-            m_childShellSurface->setToplevel();
-            connect(m_childShellSurface, &ShellSurface::sizeChanged, this, &XdgForeignTest::render);
+            connect(m_childShellSurface, &XdgShellSurface::sizeChanged, this, &XdgForeignTest::render);
 
             m_exported = m_exporter->exportSurface(m_surface, this);
+            Q_ASSERT(m_decoration);
             connect(m_exported, &XdgExported::done, this, [this]() {
                 m_imported = m_importer->import(m_exported->handle(), this);
                 m_imported->setParentOf(m_childSurface);

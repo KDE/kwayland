@@ -35,12 +35,12 @@ class SurfaceInterface;
 class XdgExporterUnstableV1Interface;
 class XdgImporterUnstableV1Interface;
 
-class KWAYLANDSERVER_EXPORT XdgForeignUnstableInterface : public QObject
+class KWAYLANDSERVER_EXPORT XdgForeignInterface : public QObject
 {
     Q_OBJECT
 public:
-    XdgForeignUnstableInterface(Display *display, QObject *parent = nullptr);
-    ~XdgForeignUnstableInterface();
+    XdgForeignInterface(Display *display, QObject *parent = nullptr);
+    ~XdgForeignInterface();
 
     void create();
     bool isValid();

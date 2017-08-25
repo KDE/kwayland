@@ -35,41 +35,41 @@ namespace KWayland
 namespace Server
 {
 
-XdgForeignUnstableInterface::Private::Private(Display *display, XdgForeignUnstableInterface *q)
+XdgForeignInterface::Private::Private(Display *display, XdgForeignInterface *q)
     : q(q)
 {
     exporter = new XdgExporterUnstableV1Interface(display, q);
     importer = new XdgImporterUnstableV1Interface(display, q);
 
     connect(importer, &XdgImporterUnstableV1Interface::transientChanged,
-        q, &XdgForeignUnstableInterface::transientChanged);
+        q, &XdgForeignInterface::transientChanged);
 }
 
-XdgForeignUnstableInterface::XdgForeignUnstableInterface(Display *display, QObject *parent)
+XdgForeignInterface::XdgForeignInterface(Display *display, QObject *parent)
     : QObject(parent),
       d(new Private(display, this))
 {
 }
 
-XdgForeignUnstableInterface::~XdgForeignUnstableInterface()
+XdgForeignInterface::~XdgForeignInterface()
 {
     delete d->exporter;
     delete d->importer;
     delete d;
 }
 
-void XdgForeignUnstableInterface::create()
+void XdgForeignInterface::create()
 {
     d->exporter->create();
     d->importer->create();
 }
 
-bool XdgForeignUnstableInterface::isValid()
+bool XdgForeignInterface::isValid()
 {
     return d->exporter->isValid() && d->importer->isValid();
 }
 
-SurfaceInterface *XdgForeignUnstableInterface::transientFor(SurfaceInterface *surface)
+SurfaceInterface *XdgForeignInterface::transientFor(SurfaceInterface *surface)
 {
     return d->importer->transientFor(surface);
 }

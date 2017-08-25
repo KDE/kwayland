@@ -38,8 +38,8 @@ namespace Client
 
 class EventQueue;
 class Surface;
-class XdgExportedUnstable;
-class XdgImportedUnstable;
+class XdgExported;
+class XdgImported;
 
 /**
  * @short Wrapper for the zxdg_exporter_v1 interface.
@@ -64,11 +64,11 @@ class XdgImportedUnstable;
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgExporterUnstable : public QObject
+class KWAYLANDCLIENT_EXPORT XdgExporter : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgExporterUnstable();
+    virtual ~XdgExporter();
 
     /**
      * Setup this  to manage the @p .
@@ -113,7 +113,7 @@ public:
      **/
     EventQueue *eventQueue();
 
-    XdgExportedUnstable *exportSurface(Surface *surface, QObject *parent = nullptr);
+    XdgExported *exportSurface(Surface *surface, QObject *parent = nullptr);
 
     operator zxdg_exporter_v1*();
     operator zxdg_exporter_v1*() const;
@@ -129,7 +129,7 @@ Q_SIGNALS:
 
 protected:
     class Private;
-    explicit XdgExporterUnstable(Private *p, QObject *parent = nullptr);
+    explicit XdgExporter(Private *p, QObject *parent = nullptr);
     QScopedPointer<Private> d;
 };
 
@@ -156,11 +156,11 @@ protected:
  *
  * @see Registry
  **/
-class KWAYLANDCLIENT_EXPORT XdgImporterUnstable : public QObject
+class KWAYLANDCLIENT_EXPORT XdgImporter : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgImporterUnstable();
+    virtual ~XdgImporter();
 
     /**
      * Setup this  to manage the @p .
@@ -205,7 +205,7 @@ public:
      **/
     EventQueue *eventQueue();
 
-    XdgImportedUnstable *import(const QString & handle, QObject *parent = nullptr);
+    XdgImported *import(const QString & handle, QObject *parent = nullptr);
 
     operator zxdg_importer_v1*();
     operator zxdg_importer_v1*() const;
@@ -221,15 +221,15 @@ Q_SIGNALS:
 
 protected:
     class Private;
-    explicit XdgImporterUnstable(Private *p, QObject *parent = nullptr);
+    explicit XdgImporter(Private *p, QObject *parent = nullptr);
     QScopedPointer<Private> d;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgExportedUnstable : public QObject
+class KWAYLANDCLIENT_EXPORT XdgExported : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgExportedUnstable();
+    virtual ~XdgExported();
 
     /**
      * Setup this  to manage the @p .
@@ -278,17 +278,17 @@ Q_SIGNALS:
     void done();
 
 protected:
-    friend class XdgExporterUnstable;
+    friend class XdgExporter;
     class Private;
-    explicit XdgExportedUnstable(Private *p, QObject *parent = nullptr);
+    explicit XdgExported(Private *p, QObject *parent = nullptr);
     QScopedPointer<Private> d;
 };
 
-class KWAYLANDCLIENT_EXPORT XdgImportedUnstable : public QObject
+class KWAYLANDCLIENT_EXPORT XdgImported : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgImportedUnstable();
+    virtual ~XdgImported();
 
     /**
      * Setup this  to manage the @p .
@@ -337,9 +337,9 @@ Q_SIGNALS:
     void importedDestroyed();
 
 protected:
-    friend class XdgImporterUnstable;
+    friend class XdgImporter;
     class Private;
-    explicit XdgImportedUnstable(Private *p, QObject *parent = nullptr);
+    explicit XdgImported(Private *p, QObject *parent = nullptr);
     QScopedPointer<Private> d;
 };
 

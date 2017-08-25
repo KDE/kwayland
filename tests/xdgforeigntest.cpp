@@ -59,10 +59,10 @@ private:
     ShellSurface *m_childShellSurface = nullptr;
     Surface *m_childSurface = nullptr;
 
-    KWayland::Client::XdgExporterUnstable *m_exporter = nullptr;
-    KWayland::Client::XdgImporterUnstable *m_importer = nullptr;
-    KWayland::Client::XdgExportedUnstable *m_exported = nullptr;
-    KWayland::Client::XdgImportedUnstable *m_imported = nullptr;
+    KWayland::Client::XdgExporter *m_exporter = nullptr;
+    KWayland::Client::XdgImporter *m_importer = nullptr;
+    KWayland::Client::XdgExported *m_exported = nullptr;
+    KWayland::Client::XdgImported *m_imported = nullptr;
 };
 
 XdgForeignTest::XdgForeignTest(QObject *parent)
@@ -148,7 +148,7 @@ void XdgForeignTest::setupRegistry(Registry *registry)
             connect(m_childShellSurface, &ShellSurface::sizeChanged, this, &XdgForeignTest::render);
 
             m_exported = m_exporter->exportSurface(m_surface, this);
-            connect(m_exported, &XdgExportedUnstable::done, this, [this]() {
+            connect(m_exported, &XdgExported::done, this, [this]() {
                 m_imported = m_importer->import(m_exported->handle(), this);
                 m_imported->setParentOf(m_childSurface);
             });

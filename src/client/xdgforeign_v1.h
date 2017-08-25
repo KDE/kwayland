@@ -65,7 +65,7 @@ class XdgImportedUnstableV1;
  *
  * @see Registry
  **/
-class Q_DECL_HIDDEN XdgExporterUnstableV1 : public XdgExporterUnstable
+class Q_DECL_HIDDEN XdgExporterUnstableV1 : public XdgExporter
 {
     Q_OBJECT
 public:
@@ -105,7 +105,7 @@ private:
  *
  * @see Registry
  **/
-class Q_DECL_HIDDEN XdgImporterUnstableV1 : public XdgImporterUnstable
+class Q_DECL_HIDDEN XdgImporterUnstableV1 : public XdgImporter
 {
     Q_OBJECT
 public:
@@ -122,7 +122,7 @@ private:
     class Private;
 };
 
-class Q_DECL_HIDDEN XdgExportedUnstableV1 : public XdgExportedUnstable
+class Q_DECL_HIDDEN XdgExportedUnstableV1 : public XdgExported
 {
     Q_OBJECT
 public:
@@ -134,7 +134,7 @@ private:
     class Private;
 };
 
-class Q_DECL_HIDDEN XdgImportedUnstableV1 : public XdgImportedUnstable
+class Q_DECL_HIDDEN XdgImportedUnstableV1 : public XdgImported
 {
     Q_OBJECT
 public:

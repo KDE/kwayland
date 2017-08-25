@@ -31,13 +31,13 @@ namespace Client
 class XdgExportedUnstableV1;
 class XdgImportedUnstableV1;
 
-class Q_DECL_HIDDEN XdgExporterUnstable::Private
+class Q_DECL_HIDDEN XdgExporter::Private
 {
 public:
     Private();
     virtual ~Private();
 
-    virtual XdgExportedUnstable *exportTopLevelV1(Surface *surface, QObject *parent) = 0;
+    virtual XdgExported *exportTopLevelV1(Surface *surface, QObject *parent) = 0;
 
     virtual void setupV1(zxdg_exporter_v1 *arg) = 0;
     virtual zxdg_exporter_v1 *exporterV1() = 0;
@@ -49,13 +49,13 @@ public:
     EventQueue *queue = nullptr;
 };
 
-class Q_DECL_HIDDEN XdgImporterUnstable::Private
+class Q_DECL_HIDDEN XdgImporter::Private
 {
 public:
     Private();
     virtual ~Private();
 
-    virtual XdgImportedUnstable *importTopLevelV1(const QString & handle, QObject *parent) = 0;
+    virtual XdgImported *importTopLevelV1(const QString & handle, QObject *parent) = 0;
 
     virtual void setupV1(zxdg_importer_v1 *arg) = 0;
     virtual zxdg_importer_v1 *importerV1() = 0;
@@ -68,10 +68,10 @@ public:
 };
 
 
-class Q_DECL_HIDDEN XdgExportedUnstable::Private
+class Q_DECL_HIDDEN XdgExported::Private
 {
 public:
-    Private(XdgExportedUnstable *q);
+    Private(XdgExported *q);
     virtual ~Private();
 
     virtual void setupV1(zxdg_exported_v1 *) = 0;
@@ -84,15 +84,15 @@ public:
     QString handle;
 
 protected:
-    XdgExportedUnstable *q;
+    XdgExported *q;
 
 };
 
 
-class Q_DECL_HIDDEN XdgImportedUnstable::Private
+class Q_DECL_HIDDEN XdgImported::Private
 {
 public:
-    Private(XdgImportedUnstable *q);
+    Private(XdgImported *q);
     virtual ~Private();
 
     virtual void setupV1(zxdg_imported_v1 *) = 0;
@@ -104,7 +104,7 @@ public:
     virtual bool isValid() = 0;
 
 protected:
-    XdgImportedUnstable *q;
+    XdgImported *q;
 };
 
 }

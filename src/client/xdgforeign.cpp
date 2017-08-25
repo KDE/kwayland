@@ -31,235 +31,235 @@ namespace KWayland
 namespace Client
 {
 
-XdgExporterUnstable::Private::Private()
+XdgExporter::Private::Private()
 {
 }
 
-XdgExporterUnstable::Private::~Private()
+XdgExporter::Private::~Private()
 {
 }
 
-XdgExporterUnstable::XdgExporterUnstable(Private *p, QObject *parent)
+XdgExporter::XdgExporter(Private *p, QObject *parent)
     : QObject(parent)
     , d(p)
 {
 }
 
-XdgExporterUnstable::~XdgExporterUnstable()
+XdgExporter::~XdgExporter()
 {
     release();
 }
 
-void XdgExporterUnstable::setup(zxdg_exporter_v1 *exporter)
+void XdgExporter::setup(zxdg_exporter_v1 *exporter)
 {
     d->setupV1(exporter);
 }
 
-void XdgExporterUnstable::release()
+void XdgExporter::release()
 {
     d->release();
 }
 
-void XdgExporterUnstable::destroy()
+void XdgExporter::destroy()
 {
     d->destroy();
 }
 
-XdgExporterUnstable::operator zxdg_exporter_v1*() {
+XdgExporter::operator zxdg_exporter_v1*() {
     return d->exporterV1();
 }
 
-XdgExporterUnstable::operator zxdg_exporter_v1*() const {
+XdgExporter::operator zxdg_exporter_v1*() const {
     return d->exporterV1();
 }
 
-bool XdgExporterUnstable::isValid() const
+bool XdgExporter::isValid() const
 {
     return d->isValid();
 }
 
-void XdgExporterUnstable::setEventQueue(EventQueue *queue)
+void XdgExporter::setEventQueue(EventQueue *queue)
 {
     d->queue = queue;
 }
 
-EventQueue *XdgExporterUnstable::eventQueue()
+EventQueue *XdgExporter::eventQueue()
 {
     return d->queue;
 }
 
-XdgExportedUnstable *XdgExporterUnstable::exportSurface(Surface *surface, QObject *parent)
+XdgExported *XdgExporter::exportSurface(Surface *surface, QObject *parent)
 {
     return d->exportTopLevelV1(surface, parent);
 }
 
 
 
-XdgImporterUnstable::Private::Private()
+XdgImporter::Private::Private()
 {
 }
 
-XdgImporterUnstable::Private::~Private()
+XdgImporter::Private::~Private()
 {
 }
 
-XdgImporterUnstable::XdgImporterUnstable(Private *p, QObject *parent)
+XdgImporter::XdgImporter(Private *p, QObject *parent)
     : QObject(parent)
     , d(p)
 {
 }
 
-XdgImporterUnstable::~XdgImporterUnstable()
+XdgImporter::~XdgImporter()
 {
     release();
 }
 
-void XdgImporterUnstable::setup(zxdg_importer_v1 *importer)
+void XdgImporter::setup(zxdg_importer_v1 *importer)
 {
     d->setupV1(importer);
 }
 
-void XdgImporterUnstable::release()
+void XdgImporter::release()
 {
     d->release();
 }
 
-void XdgImporterUnstable::destroy()
+void XdgImporter::destroy()
 {
     d->destroy();
 }
 
-XdgImporterUnstable::operator zxdg_importer_v1*() {
+XdgImporter::operator zxdg_importer_v1*() {
     return d->importerV1();
 }
 
-XdgImporterUnstable::operator zxdg_importer_v1*() const {
+XdgImporter::operator zxdg_importer_v1*() const {
     return d->importerV1();
 }
 
-bool XdgImporterUnstable::isValid() const
+bool XdgImporter::isValid() const
 {
     return d->isValid();
 }
 
-void XdgImporterUnstable::setEventQueue(EventQueue *queue)
+void XdgImporter::setEventQueue(EventQueue *queue)
 {
     d->queue = queue;
 }
 
-EventQueue *XdgImporterUnstable::eventQueue()
+EventQueue *XdgImporter::eventQueue()
 {
     return d->queue;
 }
 
-XdgImportedUnstable *XdgImporterUnstable::import(const QString & handle, QObject *parent)
+XdgImported *XdgImporter::import(const QString & handle, QObject *parent)
 {
     Q_ASSERT(isValid());
     return d->importTopLevelV1(handle, parent);
 }
 
-XdgExportedUnstable::XdgExportedUnstable(Private *p, QObject *parent)
+XdgExported::XdgExported(Private *p, QObject *parent)
     : QObject(parent)
     , d(p)
 {
 }
 
-XdgExportedUnstable::Private::Private(XdgExportedUnstable *q)
+XdgExported::Private::Private(XdgExported *q)
     : q(q)
 {
 }
 
-XdgExportedUnstable::Private::~Private()
+XdgExported::Private::~Private()
 {
 }
 
-XdgExportedUnstable::~XdgExportedUnstable()
+XdgExported::~XdgExported()
 {
     release();
 }
 
-void XdgExportedUnstable::setup(zxdg_exported_v1 *exported)
+void XdgExported::setup(zxdg_exported_v1 *exported)
 {
     d->setupV1(exported);
 }
 
-void XdgExportedUnstable::release()
+void XdgExported::release()
 {
     d->release();
 }
 
-void XdgExportedUnstable::destroy()
+void XdgExported::destroy()
 {
     d->destroy();
 }
 
-QString XdgExportedUnstable::handle() const
+QString XdgExported::handle() const
 {
     return d->handle;
 }
 
-XdgExportedUnstable::operator zxdg_exported_v1*() {
+XdgExported::operator zxdg_exported_v1*() {
     return d->exportedV1();
 }
 
-XdgExportedUnstable::operator zxdg_exported_v1*() const {
+XdgExported::operator zxdg_exported_v1*() const {
     return d->exportedV1();
 }
 
-bool XdgExportedUnstable::isValid() const
+bool XdgExported::isValid() const
 {
     return d->isValid();
 }
 
-XdgImportedUnstable::Private::Private(XdgImportedUnstable *q)
+XdgImported::Private::Private(XdgImported *q)
     : q(q)
 {
 }
 
-XdgImportedUnstable::Private::~Private()
+XdgImported::Private::~Private()
 {
 }
 
-XdgImportedUnstable::XdgImportedUnstable(Private *p, QObject *parent)
+XdgImported::XdgImported(Private *p, QObject *parent)
     : QObject(parent)
     , d(p)
 {
 }
 
-XdgImportedUnstable::~XdgImportedUnstable()
+XdgImported::~XdgImported()
 {
     release();
 }
 
-void XdgImportedUnstable::setup(zxdg_imported_v1 *imported)
+void XdgImported::setup(zxdg_imported_v1 *imported)
 {
     d->setupV1(imported);
 }
 
-void XdgImportedUnstable::release()
+void XdgImported::release()
 {
     d->release();
 }
 
-void XdgImportedUnstable::destroy()
+void XdgImported::destroy()
 {
     d->destroy();
 }
 
-XdgImportedUnstable::operator zxdg_imported_v1*() {
+XdgImported::operator zxdg_imported_v1*() {
     return d->importedV1();
 }
 
-XdgImportedUnstable::operator zxdg_imported_v1*() const {
+XdgImported::operator zxdg_imported_v1*() const {
     return d->importedV1();
 }
 
-bool XdgImportedUnstable::isValid() const
+bool XdgImported::isValid() const
 {
     return d->isValid();
 }
 
-void XdgImportedUnstable::setParentOf(Surface *surface)
+void XdgImported::setParentOf(Surface *surface)
 {
     Q_ASSERT(isValid());
     d->setParentOf(surface);

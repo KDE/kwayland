@@ -80,7 +80,7 @@ enum class PointerGesturesInterfaceVersion;
 class PointerGesturesInterface;
 enum class PointerConstraintsInterfaceVersion;
 class PointerConstraintsInterface;
-class XdgForeignUnstableInterface;
+class XdgForeignInterface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -220,7 +220,7 @@ public:
      **/
     PointerConstraintsInterface *createPointerConstraints(const PointerConstraintsInterfaceVersion &version, QObject *parent = nullptr);
 
-    XdgForeignUnstableInterface *createXdgForeignUnstableInterface(QObject *parent = nullptr);
+    XdgForeignInterface *createXdgForeignUnstableInterface(QObject *parent = nullptr);
     /**
      * Gets the ClientConnection for the given @p client.
      * If there is no ClientConnection yet for the given @p client, it will be created.

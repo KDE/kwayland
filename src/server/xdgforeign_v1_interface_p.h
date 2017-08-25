@@ -33,12 +33,12 @@ class SurfaceInterface;
 class XdgExportedUnstableV1Interface;
 class XdgImportedUnstableV1Interface;
 
-class Q_DECL_HIDDEN XdgForeignUnstableInterface::Private
+class Q_DECL_HIDDEN XdgForeignInterface::Private
 {
 public:
-    Private(Display *display, XdgForeignUnstableInterface *q);
+    Private(Display *display, XdgForeignInterface *q);
 
-    XdgForeignUnstableInterface *q;
+    XdgForeignInterface *q;
     XdgExporterUnstableV1Interface *exporter;
     XdgImporterUnstableV1Interface *importer;
 };
@@ -56,9 +56,9 @@ Q_SIGNALS:
     void surfaceUnexported(const QString &handle);
 
 private:
-    explicit XdgExporterUnstableV1Interface(Display *display, XdgForeignUnstableInterface *parent = nullptr);
+    explicit XdgExporterUnstableV1Interface(Display *display, XdgForeignInterface *parent = nullptr);
     friend class Display;
-    friend class XdgForeignUnstableInterface;
+    friend class XdgForeignInterface;
     class Private;
     Private *d_func() const;
 };
@@ -78,9 +78,9 @@ Q_SIGNALS:
     void transientChanged(KWayland::Server::SurfaceInterface *child, KWayland::Server::SurfaceInterface *parent);
 
 private:
-    explicit XdgImporterUnstableV1Interface(Display *display, XdgForeignUnstableInterface *parent = nullptr);
+    explicit XdgImporterUnstableV1Interface(Display *display, XdgForeignInterface *parent = nullptr);
     friend class Display;
-    friend class XdgForeignUnstableInterface;
+    friend class XdgForeignInterface;
     class Private;
     Private *d_func() const;
 };

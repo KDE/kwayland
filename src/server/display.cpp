@@ -409,9 +409,9 @@ PointerConstraintsInterface *Display::createPointerConstraints(const PointerCons
     return p;
 }
 
-XdgForeignUnstableInterface *Display::createXdgForeignUnstableInterface(QObject *parent)
+XdgForeignInterface *Display::createXdgForeignUnstableInterface(QObject *parent)
 {
-    XdgForeignUnstableInterface *foreign = new XdgForeignUnstableInterface(this, parent);
+    XdgForeignInterface *foreign = new XdgForeignInterface(this, parent);
     connect(this, &Display::aboutToTerminate, foreign, [this,foreign] { delete foreign; });
     return foreign;
 }

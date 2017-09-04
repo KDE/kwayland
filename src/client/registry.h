@@ -50,6 +50,7 @@ struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
 struct xdg_shell;
+struct zxdg_shell_v6;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
@@ -150,7 +151,8 @@ public:
         XdgShellUnstableV5, ///< Refers to xdg_shell (unstable version 5), @since 5.25
         RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
         PointerGesturesUnstableV1, ///< Refers to zwp_pointer_gestures_v1, @since 5.29
-        PointerConstraintsUnstableV1 ///< Refers to zwp_pointer_constraints_v1, @since 5.29
+        PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
+        XdgShellUnstableV6 ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -485,6 +487,16 @@ public:
      * @since 5.25
      **/
     xdg_shell *bindXdgShellUnstableV5(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the zxdg_shell_v6 (unstable version 6) with @p name and @p version.
+     * If the @p name does not exist or is not for the xdg shell interface in unstable version 5,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgShell instead.
+     * @see createXdgShell
+     * @since 5.XDGMERGE_VERSION
+     **/
+    zxdg_shell_v6 *bindXdgShellUnstableV6(uint32_t name, uint32_t version) const;
     /**
      * Binds the zwp_relative_pointer_manager_v1 with @p name and @p version.
      * If the @p name does not exist or is not for the relative pointer interface in unstable version 1,
@@ -1094,6 +1106,14 @@ Q_SIGNALS:
      **/
     void xdgShellUnstableV5Announced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a zxdg_shell_v6 (unstable version 6) interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.25
+     **/
+    void xdgShellUnstableV6Announced(quint32 name, quint32 version);
+
+    /**
      * Emitted whenever a zwp_relative_pointer_manager_v1 interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1249,6 +1269,12 @@ Q_SIGNALS:
      * @since 5.25
      **/
     void xdgShellUnstableV5Removed(quint32 name);
+    /**
+     * Emitted whenever an xdg_shell (unstable version 5) interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.25
+     **/
+    void xdgShellUnstableV6Removed(quint32 name);
     /**
      * Emitted whenever a zwp_relative_pointer_manager_v1 interface gets removed.
      * @param name The name for the removed interface

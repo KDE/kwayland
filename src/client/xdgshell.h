@@ -21,12 +21,19 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KWAYLAND_CLIENT_XDG_SHELL_V5_H
 
 #include <QObject>
-
+#include <QSize>
+#include <QRect>
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct xdg_shell;
 struct xdg_surface;
 struct xdg_popup;
+
+struct zxdg_shell_v6;
+struct zxdg_toplevel_v6;
+struct zxdg_surface_v6;
+struct zxdg_popup_v6;
+struct zxdg_position_v6;
 
 namespace KWayland
 {
@@ -39,6 +46,95 @@ class Surface;
 class Seat;
 class XdgShellPopup;
 class XdgShellSurface;
+
+/**
+ * Builder class describing how a popup should be positioned
+ * when created
+ *
+ * @since 5.XDGMERGE_VERSION
+ */
+class KWAYLANDCLIENT_EXPORT XdgPositioner
+{
+public:
+    /*
+    * Flags describing how a popup should be reposition if constrained
+    */
+    enum class Constraint {
+        /*
+        * Slide the popup on the X axis until there is room
+        */
+        SlideX = 1 << 0,
+        /*
+        * Slide the popup on the Y axis until there is room
+        */
+        SlideY = 1 << 1,
+        /*
+        * Invert the anchor and gravity on the X axis
+        */
+        FlipX = 1 << 2,
+        /*
+        * Invert the anchor and gravity on the Y axis
+        */
+        FlipY = 1 << 3,
+        /*
+        * Resize the popup in the X axis
+        */
+        ResizeX = 1 << 4,
+        /*
+        * Resize the popup in the Y axis
+        */
+        ResizeY = 1 << 5
+    };
+
+    Q_DECLARE_FLAGS(Constraints, Constraint)
+
+    XdgPositioner(const QSize &initialSize = QSize(), const QRect &anchor = QRect());
+    XdgPositioner(const XdgPositioner &other);
+    ~XdgPositioner();
+
+    /**
+     * Which edge of the anchor should the popup be positioned around
+     */
+    Qt::Edges anchorEdge() const;
+    void setAnchorEdge(Qt::Edges edge);
+
+    /**
+     * Specifies in what direction the popup should be positioned around the anchor
+     * i.e if the gravity is "bottom", then then the top of top of the poup will be at the anchor edge
+     * if the gravity is top, then the bottom of the popup will be at the anchor edge
+     *
+     */
+    Qt::Edges gravity() const;
+    void setGravity(Qt::Edges edge);
+
+    /**
+     * The area this popup should be positioned around
+     */
+    QRect anchorRect() const;
+    void setAnchorRect(const QRect &anchor);
+
+    /**
+     * The size of the surface that is to be positioned.
+     */
+    QSize initialSize() const;
+    void setInitialSize(const QSize &size);
+
+    /**
+     * Specifies how the compositor should position the popup if it does not fit in the requested position
+     */
+    Constraints constraints() const;
+    void setConstraints(Constraints constaints);
+
+    /**
+     * An additional offset that should be applied from the anchor.
+     */
+    QPoint anchorOffset() const;
+    void setAnchorOffset(const QPoint &offset);
+
+private:
+    class Private;
+    QScopedPointer<Private> d;
+};
 
 /**
  * @short Wrapper for the xdg_shell interface.
@@ -76,6 +172,14 @@ public:
      * method.
      **/
     void setup(xdg_shell *xdgshellv5);
+
+    /**
+     * Setup this XdgShell to manage the @p xdgshellv6.
+     * When using Registry::createXdgShell there is no need to call this
+     * method.
+     **/
+    void setup(zxdg_shell_v6 *xdgshellv6);
+
     /**
      * @returns @c true if managing a xdg_shell.
      **/
@@ -118,11 +222,28 @@ public:
 
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface.
+     * This method is only valid for Xdgv5
      **/
     XdgShellPopup *createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent = nullptr);
 
+    /**
+     * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
+     * This method is only valid for Xdgv6 onwards.
+     * @since 5.XDGMERGE_VERSION
+     **/
+    XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
+
+    /**
+     * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
+     * @since 5.XDGMERGE_VERSION
+     **/
+    XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
+
     operator xdg_shell*();
     operator xdg_shell*() const;
+    operator zxdg_shell_v6*();
+    operator zxdg_shell_v6*() const;
+
 
 Q_SIGNALS:
     /**
@@ -185,6 +306,14 @@ public:
      * method.
      **/
     void setup(xdg_surface *xdgsurfacev5);
+
+    /**
+     * Setup this XdgShellSurface to manage the @p toplevel on the relevant @p xdgsurfacev6
+     * When using XdgShell::createXdgShellSurface there is no need to call this
+     * method.
+     **/
+    void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *toplevel);
+
     /**
      * @returns @c true if managing a xdg_surface.
      **/
@@ -308,8 +437,25 @@ public:
      **/
     void requestMinimize();
 
+    /**
+     * Set this surface to have a given maximum size
+     * @since 5.XDGMERGE_VERSION
+     */
+    void setMaxSize(const QSize &size);
+
+    /**
+     * Set this surface to have a given minimum size
+     * @since 5.XDGMERGE_VERSION
+     */
+    void setMinSize(const QSize &size);
+
     operator xdg_surface*();
     operator xdg_surface*() const;
+
+    operator zxdg_surface_v6*();
+    operator zxdg_surface_v6*() const;
+    operator zxdg_toplevel_v6*();
+    operator zxdg_toplevel_v6*() const;
 
 Q_SIGNALS:
     /**
@@ -359,6 +505,15 @@ public:
      * method.
      **/
     void setup(xdg_popup *xdgpopupv5);
+
+    /**
+     * Setup this XdgShellPopup to manage the @p xdgpopupv6 on associated @p xdgsurfacev6
+     * When using XdgShell::createXdgShellPopup there is no need to call this
+     * method.
+     * @since 5.XDGMERGE_VERSION
+     **/
+    void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopup6);
+
     /**
      * @returns @c true if managing an xdg_popup.
      **/
@@ -395,8 +550,20 @@ public:
      **/
     EventQueue *eventQueue();
 
+    /**
+     * Requests a grab on this popup
+     * @since 5.XDGMERGE_VERSION
+     */
+    void requestGrab(Seat *seat, quint32 serial);
+
+
     operator xdg_popup*();
     operator xdg_popup*() const;
+    operator zxdg_surface_v6*();
+    operator zxdg_surface_v6*() const;
+    operator zxdg_popup_v6*();
+    operator zxdg_popup_v6*() const;
+
 
 Q_SIGNALS:
     /**
@@ -404,6 +571,14 @@ Q_SIGNALS:
      * compositor. The user should delete this instance at this point.
      **/
     void popupDone();
+
+    /**
+     * Emitted when the server has configured the popup with the final location of @p relativePosition
+     * This is emitted for V6 surfaces only
+     * @since 5.XDGMERGE_VERSION
+     **/
+    void configureRequested(const QRect &relativePosition, quint32 serial);
+
 
 protected:
     class Private;
@@ -416,7 +591,14 @@ private:
 }
 }
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgShellSurface::States)
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgPositioner::Constraints)
+
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::State)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::States)
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraint)
+Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraints)
+
 
 #endif

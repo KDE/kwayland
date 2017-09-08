@@ -51,7 +51,7 @@ class XdgShellSurface;
  * Builder class describing how a popup should be positioned
  * when created
  *
- * @since 5.XDGMERGE_VERSION
+ * @since 5.39
  */
 class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
@@ -229,13 +229,13 @@ public:
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
      * This method is only valid for Xdgv6 onwards.
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
     /**
      * Creates a new XdgShellPopup for the given @p surface on top of @p parentSurface with the given @p positioner.
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
@@ -439,13 +439,13 @@ public:
 
     /**
      * Set this surface to have a given maximum size
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      */
     void setMaxSize(const QSize &size);
 
     /**
      * Set this surface to have a given minimum size
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      */
     void setMinSize(const QSize &size);
 
@@ -510,7 +510,7 @@ public:
      * Setup this XdgShellPopup to manage the @p xdgpopupv6 on associated @p xdgsurfacev6
      * When using XdgShell::createXdgShellPopup there is no need to call this
      * method.
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      **/
     void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopup6);
 
@@ -552,7 +552,7 @@ public:
 
     /**
      * Requests a grab on this popup
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      */
     void requestGrab(Seat *seat, quint32 serial);
 
@@ -575,7 +575,7 @@ Q_SIGNALS:
     /**
      * Emitted when the server has configured the popup with the final location of @p relativePosition
      * This is emitted for V6 surfaces only
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      **/
     void configureRequested(const QRect &relativePosition, quint32 serial);
 

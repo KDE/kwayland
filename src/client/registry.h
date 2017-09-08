@@ -494,7 +494,7 @@ public:
      *
      * Prefer using createXdgShell instead.
      * @see createXdgShell
-     * @since 5.XDGMERGE_VERSION
+     * @since 5.39
      **/
     zxdg_shell_v6 *bindXdgShellUnstableV6(uint32_t name, uint32_t version) const;
     /**

@@ -32,8 +32,8 @@ namespace Server
 
 class Display;
 class SurfaceInterface;
-class XdgExporterUnstableV1Interface;
-class XdgImporterUnstableV1Interface;
+class XdgExporterUnstableV2Interface;
+class XdgImporterUnstableV2Interface;
 
 class KWAYLANDSERVER_EXPORT XdgForeignInterface : public QObject
 {
@@ -64,8 +64,8 @@ Q_SIGNALS:
 
 private:
     friend class Display;
-    friend class XdgExporterUnstableV1Interface;
-    friend class XdgImporterUnstableV1Interface;
+    friend class XdgExporterUnstableV2Interface;
+    friend class XdgImporterUnstableV2Interface;
     class Private;
     Private *d;
 };

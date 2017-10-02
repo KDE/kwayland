@@ -19,13 +19,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
 
 #include "xdgforeign_interface.h"
-#include "xdgforeign_v1_interface_p.h"
+#include "xdgforeign_v2_interface_p.h"
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
 #include "surface_interface_p.h"
 
-#include "wayland-xdg-foreign-unstable-v1-server-protocol.h"
+#include "wayland-xdg-foreign-unstable-v2-server-protocol.h"
 
 #include <QUuid>
 #include <QDebug>
@@ -38,10 +38,10 @@ namespace Server
 XdgForeignInterface::Private::Private(Display *display, XdgForeignInterface *q)
     : q(q)
 {
-    exporter = new XdgExporterUnstableV1Interface(display, q);
-    importer = new XdgImporterUnstableV1Interface(display, q);
+    exporter = new XdgExporterUnstableV2Interface(display, q);
+    importer = new XdgImporterUnstableV2Interface(display, q);
 
-    connect(importer, &XdgImporterUnstableV1Interface::transientChanged,
+    connect(importer, &XdgImporterUnstableV2Interface::transientChanged,
         q, &XdgForeignInterface::transientChanged);
 }
 

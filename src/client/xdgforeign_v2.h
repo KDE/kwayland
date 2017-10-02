@@ -17,8 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
-#ifndef KWAYLAND_CLIENT_XDGFOREIGN_V1_H
-#define KWAYLAND_CLIENT_XDGFOREIGN_V1_H
+#ifndef KWAYLAND_CLIENT_XDGFOREIGN_V2_H
+#define KWAYLAND_CLIENT_XDGFOREIGN_V2_H
 
 #include "xdgforeign.h"
 #include "surface.h"
@@ -27,10 +27,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
-struct zxdg_exporter_v1;
-struct zxdg_importer_v1;
-struct zxdg_exported_v1;
-struct zxdg_imported_v1;
+struct zxdg_exporter_v2;
+struct zxdg_importer_v2;
+struct zxdg_exported_v2;
+struct zxdg_imported_v2;
 
 namespace KWayland
 {
@@ -39,13 +39,13 @@ namespace Client
 
 class EventQueue;
 class Surface;
-class XdgExportedUnstableV1;
-class XdgImportedUnstableV1;
+class XdgExportedUnstableV2;
+class XdgImportedUnstableV2;
 
 /**
- * @short Wrapper for the zxdg_exporter_v1 interface.
+ * @short Wrapper for the zxdg_exporter_v2 interface.
  *
- * This class provides a convenient wrapper for the zxdg_exporter_v1 interface.
+ * This class provides a convenient wrapper for the zxdg_exporter_v2 interface.
  *
  * To use this class one needs to interact with the Registry. There are two
  * possible ways to create the  interface:
@@ -60,12 +60,12 @@ class XdgImportedUnstableV1;
  * c->setup(registry->bind(name, version));
  * @endcode
  *
- * The  can be used as a drop-in replacement for any zxdg_exporter_v1
+ * The  can be used as a drop-in replacement for any zxdg_exporter_v2
  * pointer as it provides matching cast operators.
  *
  * @see Registry
  **/
-class Q_DECL_HIDDEN XdgExporterUnstableV1 : public XdgExporter
+class Q_DECL_HIDDEN XdgExporterUnstableV2 : public XdgExporter
 {
     Q_OBJECT
 public:
@@ -75,17 +75,17 @@ public:
      * to call setup. In order to get a ready to use  prefer using
      * Registry::create.
      **/
-    explicit XdgExporterUnstableV1(QObject *parent = nullptr);
-    virtual ~XdgExporterUnstableV1();
+    explicit XdgExporterUnstableV2(QObject *parent = nullptr);
+    virtual ~XdgExporterUnstableV2();
 
 private:
     class Private;
 };
 
 /**
- * @short Wrapper for the zxdg_importer_v1 interface.
+ * @short Wrapper for the zxdg_importer_v2 interface.
  *
- * This class provides a convenient wrapper for the zxdg_importer_v1 interface.
+ * This class provides a convenient wrapper for the zxdg_importer_v2 interface.
  *
  * To use this class one needs to interact with the Registry. There are two
  * possible ways to create the  interface:
@@ -100,12 +100,12 @@ private:
  * c->setup(registry->bind(name, version));
  * @endcode
  *
- * The  can be used as a drop-in replacement for any zxdg_importer_v1
+ * The  can be used as a drop-in replacement for any zxdg_importer_v2
  * pointer as it provides matching cast operators.
  *
  * @see Registry
  **/
-class Q_DECL_HIDDEN XdgImporterUnstableV1 : public XdgImporter
+class Q_DECL_HIDDEN XdgImporterUnstableV2 : public XdgImporter
 {
     Q_OBJECT
 public:
@@ -115,34 +115,34 @@ public:
      * to call setup. In order to get a ready to use  prefer using
      * Registry::create.
      **/
-    explicit XdgImporterUnstableV1(QObject *parent = nullptr);
-    virtual ~XdgImporterUnstableV1();
+    explicit XdgImporterUnstableV2(QObject *parent = nullptr);
+    virtual ~XdgImporterUnstableV2();
 
 private:
     class Private;
 };
 
-class Q_DECL_HIDDEN XdgExportedUnstableV1 : public XdgExported
+class Q_DECL_HIDDEN XdgExportedUnstableV2 : public XdgExported
 {
     Q_OBJECT
 public:
-    virtual ~XdgExportedUnstableV1();
+    virtual ~XdgExportedUnstableV2();
 
 private:
-    friend class XdgExporterUnstableV1;
-    explicit XdgExportedUnstableV1(QObject *parent = nullptr);
+    friend class XdgExporterUnstableV2;
+    explicit XdgExportedUnstableV2(QObject *parent = nullptr);
     class Private;
 };
 
-class Q_DECL_HIDDEN XdgImportedUnstableV1 : public XdgImported
+class Q_DECL_HIDDEN XdgImportedUnstableV2 : public XdgImported
 {
     Q_OBJECT
 public:
-    virtual ~XdgImportedUnstableV1();
+    virtual ~XdgImportedUnstableV2();
 
 private:
-    friend class XdgImporterUnstableV1;
-    explicit XdgImportedUnstableV1(QObject *parent = nullptr);
+    friend class XdgImporterUnstableV2;
+    explicit XdgImportedUnstableV2(QObject *parent = nullptr);
     class Private;
 };
 

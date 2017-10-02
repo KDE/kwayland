@@ -124,10 +124,10 @@ void TestForeign::init()
     QSignalSpy compositorSpy(&registry, &Registry::compositorAnnounced);
     QVERIFY(compositorSpy.isValid());
 
-    QSignalSpy exporterSpy(&registry, &Registry::exporterUnstableV1Announced);
+    QSignalSpy exporterSpy(&registry, &Registry::exporterUnstableV2Announced);
     QVERIFY(exporterSpy.isValid());
 
-    QSignalSpy importerSpy(&registry, &Registry::importerUnstableV1Announced);
+    QSignalSpy importerSpy(&registry, &Registry::importerUnstableV2Announced);
     QVERIFY(importerSpy.isValid());
 
     QVERIFY(!registry.eventQueue());

@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
 
-#include <wayland-xdg-foreign-unstable-v1-client-protocol.h>
+#include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 
 #include <QDebug>
 
@@ -50,9 +50,9 @@ XdgExporter::~XdgExporter()
     release();
 }
 
-void XdgExporter::setup(zxdg_exporter_v1 *exporter)
+void XdgExporter::setup(zxdg_exporter_v2 *exporter)
 {
-    d->setupV1(exporter);
+    d->setupV2(exporter);
 }
 
 void XdgExporter::release()
@@ -65,12 +65,12 @@ void XdgExporter::destroy()
     d->destroy();
 }
 
-XdgExporter::operator zxdg_exporter_v1*() {
-    return d->exporterV1();
+XdgExporter::operator zxdg_exporter_v2*() {
+    return d->exporterV2();
 }
 
-XdgExporter::operator zxdg_exporter_v1*() const {
-    return d->exporterV1();
+XdgExporter::operator zxdg_exporter_v2*() const {
+    return d->exporterV2();
 }
 
 bool XdgExporter::isValid() const
@@ -90,7 +90,7 @@ EventQueue *XdgExporter::eventQueue()
 
 XdgExported *XdgExporter::exportSurface(Surface *surface, QObject *parent)
 {
-    return d->exportTopLevelV1(surface, parent);
+    return d->exportTopLevelV2(surface, parent);
 }
 
 
@@ -114,9 +114,9 @@ XdgImporter::~XdgImporter()
     release();
 }
 
-void XdgImporter::setup(zxdg_importer_v1 *importer)
+void XdgImporter::setup(zxdg_importer_v2 *importer)
 {
-    d->setupV1(importer);
+    d->setupV2(importer);
 }
 
 void XdgImporter::release()
@@ -129,12 +129,12 @@ void XdgImporter::destroy()
     d->destroy();
 }
 
-XdgImporter::operator zxdg_importer_v1*() {
-    return d->importerV1();
+XdgImporter::operator zxdg_importer_v2*() {
+    return d->importerV2();
 }
 
-XdgImporter::operator zxdg_importer_v1*() const {
-    return d->importerV1();
+XdgImporter::operator zxdg_importer_v2*() const {
+    return d->importerV2();
 }
 
 bool XdgImporter::isValid() const
@@ -155,7 +155,7 @@ EventQueue *XdgImporter::eventQueue()
 XdgImported *XdgImporter::import(const QString & handle, QObject *parent)
 {
     Q_ASSERT(isValid());
-    return d->importTopLevelV1(handle, parent);
+    return d->importTopLevelV2(handle, parent);
 }
 
 XdgExported::XdgExported(Private *p, QObject *parent)
@@ -178,9 +178,9 @@ XdgExported::~XdgExported()
     release();
 }
 
-void XdgExported::setup(zxdg_exported_v1 *exported)
+void XdgExported::setup(zxdg_exported_v2 *exported)
 {
-    d->setupV1(exported);
+    d->setupV2(exported);
 }
 
 void XdgExported::release()
@@ -198,12 +198,12 @@ QString XdgExported::handle() const
     return d->handle;
 }
 
-XdgExported::operator zxdg_exported_v1*() {
-    return d->exportedV1();
+XdgExported::operator zxdg_exported_v2*() {
+    return d->exportedV2();
 }
 
-XdgExported::operator zxdg_exported_v1*() const {
-    return d->exportedV1();
+XdgExported::operator zxdg_exported_v2*() const {
+    return d->exportedV2();
 }
 
 bool XdgExported::isValid() const
@@ -231,9 +231,9 @@ XdgImported::~XdgImported()
     release();
 }
 
-void XdgImported::setup(zxdg_imported_v1 *imported)
+void XdgImported::setup(zxdg_imported_v2 *imported)
 {
-    d->setupV1(imported);
+    d->setupV2(imported);
 }
 
 void XdgImported::release()
@@ -246,12 +246,12 @@ void XdgImported::destroy()
     d->destroy();
 }
 
-XdgImported::operator zxdg_imported_v1*() {
-    return d->importedV1();
+XdgImported::operator zxdg_imported_v2*() {
+    return d->importedV2();
 }
 
-XdgImported::operator zxdg_imported_v1*() const {
-    return d->importedV1();
+XdgImported::operator zxdg_imported_v2*() const {
+    return d->importedV2();
 }
 
 bool XdgImported::isValid() const

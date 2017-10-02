@@ -28,8 +28,8 @@ namespace KWayland
 namespace Client
 {
 
-class XdgExportedUnstableV1;
-class XdgImportedUnstableV1;
+class XdgExportedUnstableV2;
+class XdgImportedUnstableV2;
 
 class Q_DECL_HIDDEN XdgExporter::Private
 {
@@ -37,10 +37,10 @@ public:
     Private();
     virtual ~Private();
 
-    virtual XdgExported *exportTopLevelV1(Surface *surface, QObject *parent) = 0;
+    virtual XdgExported *exportTopLevelV2(Surface *surface, QObject *parent) = 0;
 
-    virtual void setupV1(zxdg_exporter_v1 *arg) = 0;
-    virtual zxdg_exporter_v1 *exporterV1() = 0;
+    virtual void setupV2(zxdg_exporter_v2 *arg) = 0;
+    virtual zxdg_exporter_v2 *exporterV2() = 0;
 
     virtual void release() = 0;
     virtual void destroy() = 0;
@@ -55,10 +55,10 @@ public:
     Private();
     virtual ~Private();
 
-    virtual XdgImported *importTopLevelV1(const QString & handle, QObject *parent) = 0;
+    virtual XdgImported *importTopLevelV2(const QString & handle, QObject *parent) = 0;
 
-    virtual void setupV1(zxdg_importer_v1 *arg) = 0;
-    virtual zxdg_importer_v1 *importerV1() = 0;
+    virtual void setupV2(zxdg_importer_v2 *arg) = 0;
+    virtual zxdg_importer_v2 *importerV2() = 0;
 
     virtual void release() = 0;
     virtual void destroy() = 0;
@@ -74,8 +74,8 @@ public:
     Private(XdgExported *q);
     virtual ~Private();
 
-    virtual void setupV1(zxdg_exported_v1 *) = 0;
-    virtual zxdg_exported_v1 *exportedV1() = 0;
+    virtual void setupV2(zxdg_exported_v2 *) = 0;
+    virtual zxdg_exported_v2 *exportedV2() = 0;
 
     virtual void release() = 0;
     virtual void destroy() = 0;
@@ -95,8 +95,8 @@ public:
     Private(XdgImported *q);
     virtual ~Private();
 
-    virtual void setupV1(zxdg_imported_v1 *) = 0;
-    virtual zxdg_imported_v1 *importedV1() = 0;
+    virtual void setupV2(zxdg_imported_v2 *) = 0;
+    virtual zxdg_imported_v2 *importedV2() = 0;
 
     virtual void setParentOf(Surface *surface) = 0;
     virtual void release() = 0;

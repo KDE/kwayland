@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<protocol name="xdg_foreign_unstable_v1">
+<protocol name="xdg_foreign_unstable_v2">
 
   <copyright>
     Copyright © 2015-2016 Red Hat Inc.
@@ -56,7 +56,7 @@
     reset.
   </description>
 
-  <interface name="zxdg_exporter_v1" version="1">
+  <interface name="zxdg_exporter_v2" version="1">
     <description summary="interface for exporting surfaces">
       A global interface used for exporting surfaces that can later be imported
       using xdg_importer.
@@ -80,14 +80,14 @@
 	be used to create a xdg_imported multiple times. Only xdg_surface
 	surfaces may be exported.
       </description>
-      <arg name="id" type="new_id" interface="zxdg_exported_v1"
+      <arg name="id" type="new_id" interface="zxdg_exported_v2"
 	   summary="the new xdg_exported object"/>
       <arg name="surface" type="object" interface="wl_surface"
 	   summary="the surface to export"/>
     </request>
   </interface>
 
-  <interface name="zxdg_importer_v1" version="1">
+  <interface name="zxdg_importer_v2" version="1">
     <description summary="interface for importing surfaces">
       A global interface used for importing surfaces exported by xdg_exporter.
       With this interface, a client can create a reference to a surface of
@@ -109,14 +109,14 @@
 	represents the imported surface, and the importing client can
 	manipulate its relationship using it. See xdg_imported for details.
       </description>
-      <arg name="id" type="new_id" interface="zxdg_imported_v1"
+      <arg name="id" type="new_id" interface="zxdg_imported_v2"
 	   summary="the new xdg_imported object"/>
       <arg name="handle" type="string"
 	   summary="the exported surface handle"/>
     </request>
   </interface>
 
-  <interface name="zxdg_exported_v1" version="1">
+  <interface name="zxdg_exported_v2" version="1">
     <description summary="an exported surface handle">
       A xdg_exported object represents an exported reference to a surface. The
       exported surface may be referenced as long as the xdg_exported object not
@@ -143,7 +143,7 @@
     </event>
   </interface>
 
-  <interface name="zxdg_imported_v1" version="1">
+  <interface name="zxdg_imported_v2" version="1">
     <description summary="an imported surface handle">
       A xdg_imported object represents an imported reference to surface exported
       by some client. A client can use this interface to manipulate

@@ -53,8 +53,8 @@ struct xdg_shell;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
-struct zxdg_exporter_v1;
-struct zxdg_importer_v1;
+struct zxdg_exporter_v2;
+struct zxdg_importer_v2;
 
 namespace KWayland
 {
@@ -90,8 +90,8 @@ class TextInputManagerUnstableV0;
 class TextInputManagerUnstableV2;
 class XdgShell;
 class RelativePointerManager;
-class XdgExporterUnstableV1;
-class XdgImporterUnstableV1;
+class XdgExporterUnstableV2;
+class XdgImporterUnstableV2;
 class XdgExporter;
 class XdgImporter;
 
@@ -157,8 +157,8 @@ public:
         RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
         PointerGesturesUnstableV1, ///< Refers to zwp_pointer_gestures_v1, @since 5.29
         PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
-        XdgExporterUnstableV1, ///< refers to zxdg_exporter_v1, @since 5.38
-        XdgImporterUnstableV1 ///< refers to zxdg_importer_v1, @since 5.38
+        XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.39
+        XdgImporterUnstableV2 ///< refers to zxdg_importer_v2, @since 5.39
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -524,8 +524,8 @@ public:
      **/
     zwp_pointer_constraints_v1 *bindPointerConstraintsUnstableV1(uint32_t name, uint32_t version) const;
 
-    zxdg_exporter_v1 *bindXdgExporterUnstableV1(uint32_t name, uint32_t version) const;
-    zxdg_importer_v1 *bindXdgImporterUnstableV1(uint32_t name, uint32_t version) const;
+    zxdg_exporter_v2 *bindXdgExporterUnstableV2(uint32_t name, uint32_t version) const;
+    zxdg_importer_v2 *bindXdgImporterUnstableV2(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -1129,8 +1129,8 @@ Q_SIGNALS:
      **/
     void pointerConstraintsUnstableV1Announced(quint32 name, quint32 version);
 
-    void exporterUnstableV1Announced(quint32 name, quint32 version);
-    void importerUnstableV1Announced(quint32 name, quint32 version);
+    void exporterUnstableV2Announced(quint32 name, quint32 version);
+    void importerUnstableV2Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1285,8 +1285,8 @@ Q_SIGNALS:
      **/
     void pointerConstraintsUnstableV1Removed(quint32 name);
     
-    void exporterUnstableV1Removed(quint32 name);
-    void importerUnstableV1Removed(quint32 name);
+    void exporterUnstableV2Removed(quint32 name);
+    void importerUnstableV2Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

@@ -32,7 +32,7 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 set(REQUIRED_QT_VERSION 5.7.0)
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui)
 
-find_package(Wayland 1.7 COMPONENTS Client Server)
+find_package(Wayland 1.13 COMPONENTS Client Server)
 set_package_properties(Wayland PROPERTIES
                        TYPE REQUIRED
                       )

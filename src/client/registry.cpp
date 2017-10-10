@@ -657,13 +657,13 @@ CREATE2(ShmPool, Shm)
 #undef CREATE
 #undef CREATE2
 
-XdgExporter *Registry::createXdgExporterUnstable(quint32 name, quint32 version, QObject *parent)
+XdgExporter *Registry::createXdgExporter(quint32 name, quint32 version, QObject *parent)
 {
     //only V1 supported for now
     return d->create<XdgExporterUnstableV2>(name, version, parent, &Registry::bindXdgExporterUnstableV2);
 }
 
-XdgImporter *Registry::createXdgImporterUnstable(quint32 name, quint32 version, QObject *parent)
+XdgImporter *Registry::createXdgImporter(quint32 name, quint32 version, QObject *parent)
 {
     //only V1 supported for now
     return d->create<XdgImporterUnstableV2>(name, version, parent, &Registry::bindXdgImporterUnstableV2);

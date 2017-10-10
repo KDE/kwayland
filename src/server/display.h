@@ -220,7 +220,13 @@ public:
      **/
     PointerConstraintsInterface *createPointerConstraints(const PointerConstraintsInterfaceVersion &version, QObject *parent = nullptr);
 
-    XdgForeignInterface *createXdgForeignUnstableInterface(QObject *parent = nullptr);
+    /**
+     * Creates the XdgForeignInterface in interface @p version
+     *
+     * @returns The created manager object
+     * @since 5.40
+     **/
+    XdgForeignInterface *createXdgForeignInterface(QObject *parent = nullptr);
     /**
      * Gets the ClientConnection for the given @p client.
      * If there is no ClientConnection yet for the given @p client, it will be created.

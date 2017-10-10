@@ -144,7 +144,7 @@ void TestForeign::init()
     QVERIFY(compositorSpy.wait());
     m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
 
-    m_foreignInterface = m_display->createXdgForeignUnstableInterface(m_display);
+    m_foreignInterface = m_display->createXdgForeignInterface(m_display);
     m_foreignInterface->create();
     QVERIFY(m_foreignInterface->isValid());
     
@@ -153,8 +153,8 @@ void TestForeign::init()
     QCOMPARE(exporterSpy.count(), 1);
     QCOMPARE(importerSpy.count(), 1);
 
-    m_exporter = registry.createXdgExporterUnstable(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
-    m_importer = registry.createXdgImporterUnstable(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
+    m_exporter = registry.createXdgExporter(exporterSpy.first().first().value<quint32>(), exporterSpy.first().last().value<quint32>(), this);
+    m_importer = registry.createXdgImporter(importerSpy.first().first().value<quint32>(), importerSpy.first().last().value<quint32>(), this);
 }
 
 void TestForeign::cleanup()

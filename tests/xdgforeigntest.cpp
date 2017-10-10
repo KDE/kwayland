@@ -118,13 +118,13 @@ void XdgForeignTest::setupRegistry(Registry *registry)
     );
     connect(registry, &Registry::exporterUnstableV2Announced, this,
         [this, registry](quint32 name, quint32 version) {
-            m_exporter = registry->createXdgExporterUnstable(name, version, this);
+            m_exporter = registry->createXdgExporter(name, version, this);
             m_exporter->setEventQueue(m_eventQueue);
         }
     );
     connect(registry, &Registry::importerUnstableV2Announced, this,
         [this, registry](quint32 name, quint32 version) {
-            m_importer = registry->createXdgImporterUnstable(name, version, this);
+            m_importer = registry->createXdgImporter(name, version, this);
             m_importer->setEventQueue(m_eventQueue);
         }
     );

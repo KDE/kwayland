@@ -88,9 +88,6 @@ Surface *Surface::fromWindow(QWindow *window)
     if (!window) {
         return nullptr;
     }
-    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
-        return nullptr;
-    }
     QPlatformNativeInterface *native = qApp->platformNativeInterface();
     if (!native) {
         return nullptr;

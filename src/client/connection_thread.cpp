@@ -212,9 +212,6 @@ ConnectionThread::~ConnectionThread()
 
 ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
 {
-    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
-        return nullptr;
-    }
     QPlatformNativeInterface *native = qApp->platformNativeInterface();
     if (!native) {
         return nullptr;

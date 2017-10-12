@@ -52,7 +52,15 @@ public:
     XdgForeignInterface(Display *display, QObject *parent = nullptr);
     ~XdgForeignInterface();
 
+    /**
+     * Creates the native zxdg_exporter_v2 and zxdg_importer_v2 interfaces
+     * and announces them to the client.
+     */
     void create();
+
+    /**
+     * @returns true if theimporter and exporter are valid and functional
+     */
     bool isValid();
 
     /**

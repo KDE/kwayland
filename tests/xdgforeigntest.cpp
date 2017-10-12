@@ -155,10 +155,10 @@ void XdgForeignTest::setupRegistry(Registry *registry)
             Q_ASSERT(m_childShellSurface);
             connect(m_childShellSurface, &XdgShellSurface::sizeChanged, this, &XdgForeignTest::render);
 
-            m_exported = m_exporter->exportSurface(m_surface, this);
+            m_exported = m_exporter->exportTopLevel(m_surface, this);
             Q_ASSERT(m_decoration);
             connect(m_exported, &XdgExported::done, this, [this]() {
-                m_imported = m_importer->import(m_exported->handle(), this);
+                m_imported = m_importer->importTopLevel(m_exported->handle(), this);
                 m_imported->setParentOf(m_childSurface);
             });
             render();

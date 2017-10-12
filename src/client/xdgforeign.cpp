@@ -88,7 +88,7 @@ EventQueue *XdgExporter::eventQueue()
     return d->queue;
 }
 
-XdgExported *XdgExporter::exportSurface(Surface *surface, QObject *parent)
+XdgExported *XdgExporter::exportTopLevel(Surface *surface, QObject *parent)
 {
     return d->exportTopLevelV2(surface, parent);
 }
@@ -152,7 +152,7 @@ EventQueue *XdgImporter::eventQueue()
     return d->queue;
 }
 
-XdgImported *XdgImporter::import(const QString & handle, QObject *parent)
+XdgImported *XdgImporter::importTopLevel(const QString & handle, QObject *parent)
 {
     Q_ASSERT(isValid());
     return d->importTopLevelV2(handle, parent);

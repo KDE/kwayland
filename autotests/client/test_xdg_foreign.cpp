@@ -212,7 +212,7 @@ void TestForeign::doExport()
     m_exportedSurfaceInterface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
 
     //Export a window
-    m_exported = m_exporter->exportSurface(m_exportedSurface, this);
+    m_exported = m_exporter->exportTopLevel(m_exportedSurface, this);
     QVERIFY(m_exported->handle().isEmpty());
     QSignalSpy doneSpy(m_exported.data(), &XdgExported::done);
     QVERIFY(doneSpy.wait());
@@ -222,7 +222,7 @@ void TestForeign::doExport()
     QVERIFY(transientSpy.isValid());
 
     //Import the just exported window
-    m_imported = m_importer->import(m_exported->handle(), this);
+    m_imported = m_importer->importTopLevel(m_exported->handle(), this);
     QVERIFY(m_imported->isValid());
 
     QSignalSpy childSurfaceInterfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
@@ -329,7 +329,7 @@ void TestForeign::testExportTwoTimes()
     doExport();
 
     //Export second window
-    KWayland::Client::XdgExported *exported2 = m_exporter->exportSurface(m_exportedSurface, this);
+    KWayland::Client::XdgExported *exported2 = m_exporter->exportTopLevel(m_exportedSurface, this);
     QVERIFY(exported2->handle().isEmpty());
     QSignalSpy doneSpy(exported2, &XdgExported::done);
     QVERIFY(doneSpy.wait());
@@ -339,7 +339,7 @@ void TestForeign::testExportTwoTimes()
     QVERIFY(transientSpy.isValid());
 
     //Import the just exported window
-    KWayland::Client::XdgImported *imported2 = m_importer->import(exported2->handle(), this);
+    KWayland::Client::XdgImported *imported2 = m_importer->importTopLevel(exported2->handle(), this);
     QVERIFY(imported2->isValid());
 
     //create a second child surface
@@ -372,7 +372,7 @@ void TestForeign::testImportTwoTimes()
     QVERIFY(transientSpy.isValid());
 
     //Import another time the exported window
-    KWayland::Client::XdgImported *imported2 = m_importer->import(m_exported->handle(), this);
+    KWayland::Client::XdgImported *imported2 = m_importer->importTopLevel(m_exported->handle(), this);
     QVERIFY(imported2->isValid());
 
     //create a second child surface

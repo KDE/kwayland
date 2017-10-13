@@ -50,6 +50,8 @@ set(CLIENT_LIB_SRCS
     textinput_v2.cpp
     xdgshell.cpp
     xdgshell_v5.cpp
+    xdgforeign_v2.cpp
+    xdgforeign.cpp
     xdgshell_v6.cpp
 )
 
@@ -143,6 +145,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/pointer-constraints-unstable-v1.xml
     BASENAME pointer-constraints-unstable-v1
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-foreign-unstable-v2.xml
+    BASENAME xdg-foreign-unstable-v2
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -210,6 +216,7 @@ set(CLIENT_LIB_HEADERS
   touch.h
   textinput.h
   xdgshell.h
+  xdgforeign_v2.h
 )
 
 install(FILES

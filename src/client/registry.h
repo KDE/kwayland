@@ -54,6 +54,8 @@ struct zxdg_shell_v6;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
+struct zxdg_exporter_v2;
+struct zxdg_importer_v2;
 
 namespace KWayland
 {
@@ -89,6 +91,10 @@ class TextInputManagerUnstableV0;
 class TextInputManagerUnstableV2;
 class XdgShell;
 class RelativePointerManager;
+class XdgExporterUnstableV2;
+class XdgImporterUnstableV2;
+class XdgExporter;
+class XdgImporter;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -152,6 +158,8 @@ public:
         RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
         PointerGesturesUnstableV1, ///< Refers to zwp_pointer_gestures_v1, @since 5.29
         PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
+        XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.40
+        XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
         XdgShellUnstableV6 ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
     };
     explicit Registry(QObject *parent = nullptr);
@@ -527,6 +535,28 @@ public:
      * @since 5.29
      **/
     zwp_pointer_constraints_v1 *bindPointerConstraintsUnstableV1(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the zxdg_exporter_v2 with @p name and @p version.
+     * If the @p name does not exists or isnot for the exporter
+     * extension in unstable version 1,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgExporter
+     * @since 5.40
+     */
+    zxdg_exporter_v2 *bindXdgExporterUnstableV2(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the zxdg_importer_v2 with @p name and @p version.
+     * If the @p name does not exists or isnot for the importer
+     * extension in unstable version 1,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgImporter
+     * @since 5.40
+     */
+    zxdg_importer_v2 *bindXdgImporterUnstableV2(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -937,6 +967,36 @@ public:
      * @since 5.29
      **/
     PointerConstraints *createPointerConstraints(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
+     * Creates an XdgExporter and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li zxdg_exporter_v2
+     *
+     * If @p name is for one of the supported interfaces the corresponding manager will be created,
+     * otherwise @c null will be returned.
+     *
+     * @returns The created XdgExporter
+     * @since 5.40
+     */
+    XdgExporter *createXdgExporter(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
+     * Creates an XdgImporter and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li zxdg_importer_v2
+     *
+     * If @p name is for one of the supported interfaces the corresponding manager will be created,
+     * otherwise @c null will be returned.
+     *
+     * @returns The created XdgImporter
+     * @since 5.40
+     */
+    XdgImporter *createXdgImporter(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**
@@ -1134,6 +1194,22 @@ Q_SIGNALS:
      * @since 5.29
      **/
     void pointerConstraintsUnstableV1Announced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a zxdg_exporter_v2 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.40
+     */
+    void exporterUnstableV2Announced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a zxdg_importer_v2 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.40
+     */
+    void importerUnstableV2Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1293,6 +1369,20 @@ Q_SIGNALS:
      * @since 5.29
      **/
     void pointerConstraintsUnstableV1Removed(quint32 name);
+
+    /**
+     * Emitted whenever a zxdg_exporter_v2 interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.40
+     **/
+    void exporterUnstableV2Removed(quint32 name);
+
+    /**
+     * Emitted whenever a zxdg_importer_v2 interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.40
+     **/
+    void importerUnstableV2Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

@@ -36,7 +36,7 @@ namespace KWayland
 namespace Client
 {
 
-class Surface::Private
+class Q_DECL_HIDDEN Surface::Private
 {
 public:
     Private(Surface *q);
@@ -184,6 +184,13 @@ void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output 
         return;
     }
     s->outputs << o;
+    QObject::connect(o, &Output::removed, s->q, [s, o]() {
+        if (!s->outputs.contains(o)) {
+            return;
+        }
+        s->outputs.removeOne(o);
+        s->q->outputLeft(o);
+    });
     emit s->q->outputEntered(o);
 }
 

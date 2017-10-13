@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class PointerGestures::Private
+class Q_DECL_HIDDEN PointerGestures::Private
 {
 public:
     Private() = default;
@@ -116,7 +116,7 @@ PointerPinchGesture *PointerGestures::createPinchGesture(Pointer *pointer, QObje
     return p;
 }
 
-class PointerSwipeGesture::Private
+class Q_DECL_HIDDEN PointerSwipeGesture::Private
 {
 public:
     Private(PointerSwipeGesture *q);
@@ -233,7 +233,7 @@ bool PointerSwipeGesture::isValid() const
     return d->pointerswipegesture.isValid();
 }
 
-class PointerPinchGesture::Private
+class Q_DECL_HIDDEN PointerPinchGesture::Private
 {
 public:
     Private(PointerPinchGesture *q);

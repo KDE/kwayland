@@ -22,18 +22,23 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell.h"
 
 #include <QSize>
+#include <QRect>
+#include <QDebug>
 
 namespace KWayland
 {
 namespace Client
 {
 
-class XdgShell::Private
+class Q_DECL_HIDDEN XdgShell::Private
 {
 public:
     virtual ~Private();
     virtual void setupV5(xdg_shell *xdgshellv5) {
         Q_UNUSED(xdgshellv5)
+    }
+    virtual void setupV6(zxdg_shell_v6 *xdgshellv6) {
+        Q_UNUSED(xdgshellv6)
     }
     virtual void release() = 0;
     virtual void destroy() = 0;
@@ -44,8 +49,43 @@ public:
     virtual operator xdg_shell*() const {
         return nullptr;
     }
+    virtual operator zxdg_shell_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_shell_v6*() const {
+        return nullptr;
+    }
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) = 0;
+
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(seat)
+        Q_UNUSED(serial)
+        Q_UNUSED(parentPos)
+        Q_UNUSED(parent)
+        Q_ASSERT(false);
+        return nullptr;
+    };
+
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) {
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(positioner)
+        Q_UNUSED(parent)
+        Q_ASSERT(false);
+        return nullptr;
+    }
+
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) {
+
+        Q_UNUSED(surface)
+        Q_UNUSED(parentSurface)
+        Q_UNUSED(positioner)
+        Q_UNUSED(parent)
+        Q_ASSERT(false);
+        return nullptr;
+    }
 
     EventQueue *queue = nullptr;
 
@@ -64,7 +104,42 @@ private:
     class Private;
 };
 
-class XdgShellSurface::Private
+class XdgShellUnstableV6 : public XdgShell
+{
+    Q_OBJECT
+public:
+    explicit XdgShellUnstableV6(QObject *parent = nullptr);
+    virtual ~XdgShellUnstableV6();
+
+private:
+    class Private;
+};
+
+class XdgShellSurfaceUnstableV5 : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgShellSurfaceUnstableV5();
+
+private:
+    explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
+    friend class XdgShellUnstableV5;
+    class Private;
+};
+
+class XdgTopLevelUnstableV6 : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgTopLevelUnstableV6();
+
+private:
+    explicit XdgTopLevelUnstableV6(QObject *parent = nullptr);
+    friend class XdgShellUnstableV6;
+    class Private;
+};
+
+class Q_DECL_HIDDEN XdgShellSurface::Private
 {
 public:
     virtual ~Private();
@@ -74,6 +149,11 @@ public:
     virtual void setupV5(xdg_surface *surface) {
         Q_UNUSED(surface)
     }
+    virtual void setupV6(zxdg_surface_v6 *surface, zxdg_toplevel_v6 *toplevel)
+    {
+        Q_UNUSED(toplevel)
+        Q_UNUSED(surface)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -81,6 +161,18 @@ public:
         return nullptr;
     }
     virtual operator xdg_surface*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_toplevel_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_toplevel_v6*() const {
         return nullptr;
     }
 
@@ -96,6 +188,8 @@ public:
     virtual void setFullscreen(Output *output) = 0;
     virtual void unsetFullscreen() = 0;
     virtual void setMinimized() = 0;
+    virtual void setMaxSize(const QSize &size) = 0;
+    virtual void setMinSize(const QSize &size) = 0;
 
 protected:
     Private(XdgShellSurface *q);
@@ -103,19 +197,7 @@ protected:
     XdgShellSurface *q;
 };
 
-class XdgShellSurfaceUnstableV5 : public XdgShellSurface
-{
-    Q_OBJECT
-public:
-    virtual ~XdgShellSurfaceUnstableV5();
-
-private:
-    explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
-    friend class XdgShellUnstableV5;
-    class Private;
-};
-
-class XdgShellPopup::Private
+class Q_DECL_HIDDEN XdgShellPopup::Private
 {
 public:
     Private(XdgShellPopup *q);
@@ -126,13 +208,33 @@ public:
     virtual void setupV5(xdg_popup *p) {
         Q_UNUSED(p)
     }
+    virtual void setupV6(zxdg_surface_v6 *s,  zxdg_popup_v6 *p) {
+        Q_UNUSED(s)
+        Q_UNUSED(p)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
+    virtual void requestGrab(Seat *seat, quint32 serial) {
+        Q_UNUSED(seat);
+        Q_UNUSED(serial);
+    };
     virtual operator xdg_popup*() {
         return nullptr;
     }
     virtual operator xdg_popup*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_surface_v6*() const {
+        return nullptr;
+    }
+    virtual operator zxdg_popup_v6*() {
+        return nullptr;
+    }
+    virtual operator zxdg_popup_v6*() const {
         return nullptr;
     }
 
@@ -141,6 +243,18 @@ protected:
 
 private:
 };
+
+class XdgPositioner::Private
+{
+public:
+    QSize initialSize;
+    QRect anchorRect;
+    Qt::Edges gravity;
+    Qt::Edges anchorEdge;
+    XdgPositioner::Constraints constraints;
+    QPoint anchorOffset;
+};
+
 
 class XdgShellPopupUnstableV5 : public XdgShellPopup
 {
@@ -152,6 +266,19 @@ private:
     friend class XdgShellUnstableV5;
     class Private;
 };
+
+class XdgShellPopupUnstableV6 : public XdgShellPopup
+{
+public:
+    virtual ~XdgShellPopupUnstableV6();
+
+private:
+    explicit XdgShellPopupUnstableV6(QObject *parent = nullptr);
+    friend class XdgShellUnstableV6;
+    class Private;
+};
+
+
 
 }
 }

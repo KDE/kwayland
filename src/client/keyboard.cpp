@@ -29,7 +29,7 @@ namespace KWayland
 namespace Client
 {
 
-class Keyboard::Private
+class Q_DECL_HIDDEN Keyboard::Private
 {
 public:
     Private(Keyboard *q);

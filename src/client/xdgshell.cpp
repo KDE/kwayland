@@ -48,6 +48,12 @@ void XdgShell::setup(xdg_shell *xdgshellv5)
     d->setupV5(xdgshellv5);
 }
 
+void XdgShell::setup(zxdg_shell_v6 *xdgshellv6)
+{
+    d->setupV6(xdgshellv6);
+}
+
+
 void XdgShell::release()
 {
     d->release();
@@ -76,6 +82,14 @@ XdgShell::operator xdg_shell*() const {
     return *(d.data());
 }
 
+XdgShell::operator zxdg_shell_v6*() {
+    return *(d.data());
+}
+
+XdgShell::operator zxdg_shell_v6*() const {
+    return *(d.data());
+}
+
 bool XdgShell::isValid() const
 {
     return d->isValid();
@@ -89,6 +103,16 @@ XdgShellSurface *XdgShell::createSurface(Surface *surface, QObject *parent)
 XdgShellPopup *XdgShell::createPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
 {
     return d->getXdgPopup(surface, parentSurface, seat, serial, parentPos, parent);
+}
+
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent)
+{
+    return d->getXdgPopup(surface, parentSurface, positioner, parent);
+}
+
+XdgShellPopup *XdgShell::createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent)
+{
+    return d->getXdgPopup(surface, parentSurface, positioner, parent);
 }
 
 XdgShellSurface::Private::Private(XdgShellSurface *q)
@@ -112,6 +136,11 @@ XdgShellSurface::~XdgShellSurface()
 void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
 {
     d->setupV5(xdgsurfacev5);
+}
+
+void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *xdgtoplevelv6)
+{
+    d->setupV6(xdgsurfacev6, xdgtoplevelv6);
 }
 
 void XdgShellSurface::release()
@@ -139,6 +168,22 @@ XdgShellSurface::operator xdg_surface*() {
 }
 
 XdgShellSurface::operator xdg_surface*() const {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_surface_v6*() const {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_toplevel_v6*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator zxdg_toplevel_v6*() const {
     return *(d.data());
 }
 
@@ -200,6 +245,16 @@ void XdgShellSurface::setFullscreen(bool set, Output *output)
     }
 }
 
+void XdgShellSurface::setMaxSize(const QSize &size)
+{
+    d->setMaxSize(size);
+}
+
+void XdgShellSurface::setMinSize(const QSize &size)
+{
+    d->setMinSize(size);
+}
+
 void XdgShellSurface::requestMinimize()
 {
     d->setMinimized();
@@ -243,6 +298,11 @@ void XdgShellPopup::setup(xdg_popup *xdgpopupv5)
     d->setupV5(xdgpopupv5);
 }
 
+void XdgShellPopup::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopupv6)
+{
+    d->setupV6(xdgsurfacev6, xdgpopupv6);
+}
+
 void XdgShellPopup::release()
 {
     d->release();
@@ -263,6 +323,11 @@ EventQueue *XdgShellPopup::eventQueue()
     return d->queue;
 }
 
+void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
+{
+    d->requestGrab(seat, serial);
+}
+
 XdgShellPopup::operator xdg_popup*() {
     return *(d.data());
 }
@@ -271,10 +336,105 @@ XdgShellPopup::operator xdg_popup*() const {
     return *(d.data());
 }
 
+XdgShellPopup::operator zxdg_surface_v6*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_surface_v6*() const {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_popup_v6*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator zxdg_popup_v6*() const {
+    return *(d.data());
+}
+
 bool XdgShellPopup::isValid() const
 {
     return d->isValid();
 }
+
+XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
+:d (new Private)
+{
+    d->initialSize = initialSize;
+    d->anchorRect = anchor;
+}
+
+
+XdgPositioner::XdgPositioner(const XdgPositioner &other)
+:d (new Private)
+{
+    *d = *other.d;
+}
+
+XdgPositioner::~XdgPositioner()
+{
+}
+
+void XdgPositioner::setInitialSize(const QSize& size)
+{
+    d->initialSize = size;
+}
+
+QSize XdgPositioner::initialSize() const
+{
+    return d->initialSize;
+}
+
+void XdgPositioner::setAnchorRect(const QRect& anchor)
+{
+    d->anchorRect = anchor;
+}
+
+QRect XdgPositioner::anchorRect() const
+{
+    return d->anchorRect;
+}
+
+void XdgPositioner::setAnchorEdge(Qt::Edges edge)
+{
+    d->anchorEdge = edge;
+}
+
+Qt::Edges XdgPositioner::anchorEdge() const
+{
+    return d->anchorEdge;
+}
+
+void XdgPositioner::setAnchorOffset(const QPoint& offset)
+{
+    d->anchorOffset = offset;
+}
+
+QPoint XdgPositioner::anchorOffset() const
+{
+    return d->anchorOffset;
+}
+
+void XdgPositioner::setGravity(Qt::Edges edge)
+{
+    d->gravity = edge;
+}
+
+Qt::Edges XdgPositioner::gravity() const
+{
+    return d->gravity;
+}
+
+void XdgPositioner::setConstraints(Constraints constraints)
+{
+    d->constraints = constraints;
+}
+
+XdgPositioner::Constraints XdgPositioner::constraints() const
+{
+    return d->constraints;
+}
+
 
 }
 }

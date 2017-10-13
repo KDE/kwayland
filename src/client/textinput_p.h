@@ -73,7 +73,7 @@ private:
     QScopedPointer<Private> d;
 };
 
-class TextInputManager::Private
+class Q_DECL_HIDDEN TextInputManager::Private
 {
 public:
     Private() = default;
@@ -105,7 +105,7 @@ public:
     EventQueue *queue = nullptr;
 };
 
-class TextInput::Private
+class Q_DECL_HIDDEN TextInput::Private
 {
 public:
     Private(Seat *seat);

@@ -52,6 +52,7 @@ public:
         ARGB32, ///< 32-bit ARGB format, can be used for QImage::Format_ARGB32 and QImage::Format_ARGB32_Premultiplied
         RGB32 ///< 32-bit RGB format, can be used for QImage::Format_RGB32
     };
+
     ~Buffer();
     /**
      * Copies the data from @p src into the Buffer.

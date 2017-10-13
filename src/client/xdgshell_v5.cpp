@@ -46,8 +46,21 @@ public:
         return xdgshellv5;
     }
 
+    static void pingCallback(void *data, struct xdg_shell *shell, uint32_t serial);
+
     WaylandPointer<xdg_shell, xdg_shell_destroy> xdgshellv5;
+    static const struct xdg_shell_listener s_shellListener;
 };
+
+const struct xdg_shell_listener XdgShellUnstableV5::Private::s_shellListener = {
+    pingCallback,
+};
+
+void XdgShellUnstableV5::Private::pingCallback(void *data, struct xdg_shell *shell, uint32_t serial)
+{
+    Q_UNUSED(data);
+    xdg_shell_pong(shell, serial);
+}
 
 void XdgShellUnstableV5::Private::setupV5(xdg_shell *shell)
 {
@@ -55,6 +68,7 @@ void XdgShellUnstableV5::Private::setupV5(xdg_shell *shell)
     Q_ASSERT(!xdgshellv5);
     xdgshellv5.setup(shell);
     xdg_shell_use_unstable_version(xdgshellv5, 5);
+    xdg_shell_add_listener(shell, &s_shellListener, this);
 }
 
 void XdgShellUnstableV5::Private::release()
@@ -132,6 +146,8 @@ public:
     void setFullscreen(Output *output) override;
     void unsetFullscreen() override;
     void setMinimized() override;
+    void setMaxSize(const QSize &size) override;
+    void setMinSize(const QSize &size) override;
 
 private:
     static void configureCallback(void *data, xdg_surface *xdg_surface, int32_t width, int32_t height, wl_array *states, uint32_t serial);
@@ -299,6 +315,18 @@ void XdgShellSurfaceUnstableV5::Private::unsetFullscreen()
 void XdgShellSurfaceUnstableV5::Private::setMinimized()
 {
     xdg_surface_set_minimized(xdgsurfacev5);
+}
+
+void XdgShellSurfaceUnstableV5::Private::setMaxSize(const QSize &size)
+{
+    Q_UNUSED(size)
+    //TODO: notify an error?
+}
+
+void XdgShellSurfaceUnstableV5::Private::setMinSize(const QSize &size)
+{
+    Q_UNUSED(size)
+    //TODO: notify an error?
 }
 
 XdgShellSurfaceUnstableV5::XdgShellSurfaceUnstableV5(QObject *parent)

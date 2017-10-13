@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class BlurManager::Private
+class Q_DECL_HIDDEN BlurManager::Private
 {
 public:
     Private() = default;

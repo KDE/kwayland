@@ -38,7 +38,7 @@ namespace KWayland
 namespace Client
 {
 
-class ConnectionThread::Private
+class Q_DECL_HIDDEN ConnectionThread::Private
 {
 public:
     Private(ConnectionThread *q);

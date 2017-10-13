@@ -32,7 +32,7 @@ namespace Client
 {
 
 
-class OutputConfiguration::Private
+class Q_DECL_HIDDEN OutputConfiguration::Private
 {
 public:
     Private() = default;

@@ -38,7 +38,7 @@ namespace KWayland
 namespace Client
 {
 
-class ShmPool::Private
+class Q_DECL_HIDDEN ShmPool::Private
 {
 public:
     Private(ShmPool *q);
@@ -170,13 +170,15 @@ namespace {
 static Buffer::Format toBufferFormat(const QImage &image)
 {
     switch (image.format()) {
-    case QImage::Format_ARGB32:
     case QImage::Format_ARGB32_Premultiplied:
         return Buffer::Format::ARGB32;
     case QImage::Format_RGB32:
         return Buffer::Format::RGB32;
+    case QImage::Format_ARGB32:
+        qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << ". expect slow performance. Use QImage::Format_ARGB32_Premultiplied";
+        return Buffer::Format::ARGB32;
     default:
-        qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << "going to use ARGB32, expect rendering errors";
+        qCWarning(KWAYLAND_CLIENT) << "Unsupported image format: " << image.format() << ". expect slow performance.";
         return Buffer::Format::ARGB32;
     }
 }
@@ -187,11 +189,17 @@ Buffer::Ptr ShmPool::createBuffer(const QImage& image)
     if (image.isNull() || !d->valid) {
         return QWeakPointer<Buffer>();
     }
-    auto it = d->getBuffer(image.size(), image.bytesPerLine(), toBufferFormat(image));
+    auto format = toBufferFormat(image);
+    auto it = d->getBuffer(image.size(), image.bytesPerLine(), format);
     if (it == d->buffers.end()) {
         return QWeakPointer<Buffer>();
     }
-    (*it)->copy(image.bits());
+    if (format == Buffer::Format::ARGB32 && image.format() != QImage::Format_ARGB32_Premultiplied) {
+        auto imageCopy = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+        (*it)->copy(imageCopy.bits());
+    } else {
+        (*it)->copy(image.bits());
+    }
     return QWeakPointer<Buffer>(*it);
 }
 

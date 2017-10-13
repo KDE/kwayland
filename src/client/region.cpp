@@ -30,7 +30,7 @@ namespace KWayland
 namespace Client
 {
 
-class Region::Private
+class Q_DECL_HIDDEN Region::Private
 {
 public:
     Private(const QRegion &region);

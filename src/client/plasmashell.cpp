@@ -30,14 +30,14 @@ namespace KWayland
 namespace Client
 {
 
-class PlasmaShell::Private
+class Q_DECL_HIDDEN PlasmaShell::Private
 {
 public:
     WaylandPointer<org_kde_plasma_shell, org_kde_plasma_shell_destroy> shell;
     EventQueue *queue = nullptr;
 };
 
-class PlasmaShellSurface::Private
+class Q_DECL_HIDDEN PlasmaShellSurface::Private
 {
 public:
     Private(PlasmaShellSurface *q);

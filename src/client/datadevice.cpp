@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class DataDevice::Private
+class Q_DECL_HIDDEN DataDevice::Private
 {
 public:
     explicit Private(DataDevice *q);

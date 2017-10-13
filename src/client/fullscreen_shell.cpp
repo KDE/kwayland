@@ -32,7 +32,7 @@ namespace KWayland
 namespace Client
 {
 
-class FullscreenShell::Private
+class Q_DECL_HIDDEN FullscreenShell::Private
 {
 public:
     Private(FullscreenShell *q);

@@ -27,7 +27,7 @@ namespace KWayland
 namespace Client
 {
 
-class PlasmaWindowModel::Private
+class Q_DECL_HIDDEN PlasmaWindowModel::Private
 {
 public:
     Private(PlasmaWindowModel *q);

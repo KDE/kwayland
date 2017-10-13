@@ -28,7 +28,7 @@ namespace KWayland
 namespace Client
 {
 
-class EventQueue::Private
+class Q_DECL_HIDDEN EventQueue::Private
 {
 public:
     Private(EventQueue *q);

@@ -252,6 +252,12 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void errorOccurred();
+protected:
+    /*
+     * Creates a connection thread from an existing wl_display object
+     * @see ConnectionThread::fromApplication
+     */
+    explicit ConnectionThread(wl_display *display, QObject *parent);
 
 private Q_SLOTS:
     /**

@@ -197,6 +197,14 @@ ConnectionThread::ConnectionThread(QObject *parent)
         Qt::DirectConnection);
 }
 
+ConnectionThread::ConnectionThread(wl_display *display, QObject *parent)
+    : QObject(parent)
+    , d(new Private(this))
+{
+    d->display = display;
+    d->foreign = true;
+}
+
 ConnectionThread::~ConnectionThread()
 {
     disconnect(d->eventDispatcherConnection);
@@ -215,9 +223,7 @@ ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
     if (!display) {
         return nullptr;
     }
-    ConnectionThread *ct = new ConnectionThread(parent);
-    ct->d->foreign = true;
-    ct->d->display = display;
+    ConnectionThread *ct = new ConnectionThread(display, parent);
     connect(native, &QObject::destroyed, ct, &ConnectionThread::connectionDied);
     return ct;
 }

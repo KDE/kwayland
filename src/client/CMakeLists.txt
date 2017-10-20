@@ -21,6 +21,7 @@ set(CLIENT_LIB_SRCS
     fakeinput.cpp
     fullscreen_shell.cpp
     idle.cpp
+    idleinhibit.cpp
     keyboard.cpp
     outputconfiguration.cpp
     outputmanagement.cpp
@@ -149,6 +150,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-foreign-unstable-v2.xml
     BASENAME xdg-foreign-unstable-v2
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/idle-inhibit-unstable-v1.xml
+    BASENAME idle-inhibit-unstable-v1
+)
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
@@ -190,6 +195,7 @@ set(CLIENT_LIB_HEADERS
   fakeinput.h
   fullscreen_shell.h
   idle.h
+  idleinhibit.h
   keyboard.h
   outputconfiguration.h
   outputmanagement.h

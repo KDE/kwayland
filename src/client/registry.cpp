@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fakeinput.h"
 #include "fullscreen_shell.h"
 #include "idle.h"
+#include "idleinhibit.h"
 #include "logging_p.h"
 #include "outputconfiguration.h"
 #include "outputmanagement.h"
@@ -58,6 +59,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
+#include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-output-management-client-protocol.h>
@@ -305,6 +307,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zxdg_shell_v6_interface,
         &Registry::xdgShellUnstableV6Announced,
         &Registry::xdgShellUnstableV6Removed
+    }},
+    {Registry::Interface::IdleInhibitManagerUnstableV1, {
+        1,
+        QByteArrayLiteral("zwp_idle_inhibit_manager_v1"),
+        &zwp_idle_inhibit_manager_v1_interface,
+        &Registry::idleInhibitManagerUnstableV1Announced,
+        &Registry::idleInhibitManagerUnstableV1Removed
     }}
 };
 
@@ -608,6 +617,7 @@ BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
 BIND(XdgExporterUnstableV2, zxdg_exporter_v2)
 BIND(XdgImporterUnstableV2, zxdg_importer_v2)
+BIND(IdleInhibitManagerUnstableV1, zwp_idle_inhibit_manager_v1)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -727,6 +737,16 @@ PointerConstraints *Registry::createPointerConstraints(quint32 name, quint32 ver
     switch (d->interfaceForName(name)) {
     case Interface::PointerConstraintsUnstableV1:
         return d->create<PointerConstraints>(name, version, parent, &Registry::bindPointerConstraintsUnstableV1);
+    default:
+        return nullptr;
+    }
+}
+
+IdleInhibitManager *Registry::createIdleInhibitManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch (d->interfaceForName(name)) {
+    case Interface::IdleInhibitManagerUnstableV1:
+        return d->create<IdleInhibitManager>(name, version, parent, &Registry::bindIdleInhibitManagerUnstableV1);
     default:
         return nullptr;
     }

@@ -56,6 +56,7 @@ struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
 struct zxdg_exporter_v2;
 struct zxdg_importer_v2;
+struct zwp_idle_inhibit_manager_v1;
 
 namespace KWayland
 {
@@ -72,6 +73,7 @@ class FullscreenShell;
 class OutputManagement;
 class OutputDevice;
 class Idle;
+class IdleInhibitManager;
 class Output;
 class PlasmaShell;
 class PlasmaWindowManagement;
@@ -160,7 +162,8 @@ public:
         PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
         XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.40
         XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
-        XdgShellUnstableV6 ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
+        XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
+        IdleInhibitManagerUnstableV1 ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -557,6 +560,16 @@ public:
      * @since 5.40
      */
     zxdg_importer_v2 *bindXdgImporterUnstableV2(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the zwp_idle_inhibit_manager_v1 with @p name and @p version.
+     * If the @p name does not exists or is not for the idle inhibit manager in unstable version 1,
+     * @c null will be returned.
+     *
+     * Prefer using createIdleInhibitManager
+     * @since 5.41
+     */
+    zwp_idle_inhibit_manager_v1 *bindIdleInhibitManagerUnstableV1(uint32_t name, uint32_t version) const;
     ///@}
 
     /**
@@ -997,6 +1010,21 @@ public:
      * @since 5.40
      */
     XdgImporter *createXdgImporter(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
+     * Creates an IdleInhibitManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * This factory method supports the following interfaces:
+     * @li zwp_idle_inhibit_manager_v1
+     *
+     * If @p name is for one of the supported interfaces the corresponding manager will be created,
+     * otherwise @c null will be returned.
+     *
+     * @returns The created IdleInhibitManager
+     * @since 5.41
+     */
+    IdleInhibitManager *createIdleInhibitManager(quint32 name, quint32 version, QObject *parent = nullptr);
     ///@}
 
     /**
@@ -1210,6 +1238,14 @@ Q_SIGNALS:
      * @since 5.40
      */
     void importerUnstableV2Announced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a zwp_idle_inhibit_manager_v1 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.41
+     */
+    void idleInhibitManagerUnstableV1Announced(quint32 name, quint32 version);
     ///@}
     /**
      * @name Interface removed signals.
@@ -1383,6 +1419,13 @@ Q_SIGNALS:
      * @since 5.40
      **/
     void importerUnstableV2Removed(quint32 name);
+
+    /**
+     * Emitted whenever a zwp_idle_inhibit_manager_v1 interface gets removed.
+     * @param name The name of the removed interface
+     * @since 5.41
+     **/
+    void idleInhibitManagerUnstableV1Removed(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

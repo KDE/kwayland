@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WAYLAND_DATASOURCE_H
 
 #include "buffer.h"
+#include "datadevicemanager.h"
 
 #include <QObject>
 
@@ -85,6 +86,25 @@ public:
     void offer(const QString &mimeType);
     void offer(const QMimeType &mimeType);
 
+    /**
+     * Sets the actions that the source side client supports for this
+     * operation.
+     *
+     * This request must be made once only, and can only be made on sources
+     * used in drag-and-drop, so it must be performed before
+     * @link{DataDevice::startDrag}. Attempting to use the source other than
+     * for drag-and-drop will raise a protocol error.
+     * @since 5.42
+     **/
+    void setDragAndDropActions(DataDeviceManager::DnDActions actions);
+
+    /**
+     * The currently selected drag and drop action by the compositor.
+     * @see selectedDragAndDropActionChanged
+     * @since 5.42
+     **/
+    DataDeviceManager::DnDAction selectedDragAndDropAction() const;
+
     operator wl_data_source*();
     operator wl_data_source*() const;
 
@@ -105,6 +125,43 @@ Q_SIGNALS:
      * The client should clean up and destroy this DataSource.
      **/
     void cancelled();
+
+    /**
+     * The drag-and-drop operation physically finished.
+     *
+     * The user performed the drop action. This signal does not
+     * indicate acceptance, @link{cancelled} may still be
+     * emitted afterwards if the drop destination does not accept any
+     * mime type.
+     *
+     * However, this signal might not be received if the
+     * compositor cancelled the drag-and-drop operation before this
+     * signal could happen.
+     *
+     * Note that the DataSource may still be used in the future and
+     * should not be destroyed here.
+     * @since 5.42
+     **/
+    void dragAndDropPerformed();
+
+    /**
+     * The drag-and-drop operation concluded.
+     *
+     * The drop destination finished interoperating with this DataSource,
+     * so the client is now free to destroy this DataSource.
+     *
+     * If the action used to perform the operation was "move", the
+     * source can now delete the transferred data.
+     * @since 5.42
+     */
+    void dragAndDropFinished();
+
+    /**
+     * Emitted whenever the selected drag and drop action changes.
+     * @see selectedDragAndDropAction
+     * @since 5.42
+     **/
+    void selectedDragAndDropActionChanged();
 
 private:
     class Private;

@@ -64,6 +64,18 @@ class KWAYLANDCLIENT_EXPORT DataDeviceManager : public QObject
     Q_OBJECT
 public:
     /**
+     * Drag and Drop actions supported by DataSource and DataOffer.
+     * @since 5.42
+     **/
+    enum class DnDAction {
+        None = 0,
+        Copy = 1 << 0,
+        Move = 1 << 1,
+        Ask = 1 << 2
+    };
+    Q_DECLARE_FLAGS(DnDActions, DnDAction)
+
+    /**
      * Creates a new Compositor.
      * Note: after constructing the Compositor it is not yet valid and one needs
      * to call setup. In order to get a ready to use Compositor prefer using
@@ -138,5 +150,7 @@ private:
 
 }
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::DataDeviceManager::DnDActions)
 
 #endif

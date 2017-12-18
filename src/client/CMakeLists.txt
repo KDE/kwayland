@@ -6,6 +6,7 @@ remove_definitions(-DQT_NO_CAST_TO_ASCII)
 include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
+    appmenu.cpp
     buffer.cpp
     blur.cpp
     compositor.cpp
@@ -154,6 +155,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/idle-inhibit-unstable-v1.xml
     BASENAME idle-inhibit-unstable-v1
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/appmenu.xml
+    BASENAME appmenu
+)
 
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
@@ -208,6 +213,7 @@ install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_
 
 set(CLIENT_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
+  appmenu.h
   blur.h
   buffer.h
   compositor.h

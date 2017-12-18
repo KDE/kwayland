@@ -51,6 +51,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell_p.h"
 #include "wayland_pointer_p.h"
 #include "xdgforeign_v2.h"
+#include "appmenu.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -77,6 +78,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
+#include <wayland-appmenu-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -314,6 +316,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zwp_idle_inhibit_manager_v1_interface,
         &Registry::idleInhibitManagerUnstableV1Announced,
         &Registry::idleInhibitManagerUnstableV1Removed
+    }},
+    {Registry::Interface::AppMenu, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_appmenu_manager"),
+        &org_kde_kwin_appmenu_manager_interface,
+        &Registry::appMenuAnnounced,
+        &Registry::appMenuRemoved
     }}
 };
 
@@ -623,6 +632,7 @@ BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
+BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
 
 #undef BIND
 #undef BIND2
@@ -672,6 +682,7 @@ CREATE(SlideManager)
 CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
 CREATE2(ShmPool, Shm)
+CREATE(AppMenuManager)
 
 #undef CREATE
 #undef CREATE2

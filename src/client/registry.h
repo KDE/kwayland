@@ -37,6 +37,7 @@ struct wl_subcompositor;
 struct wl_text_input_manager;
 struct zwp_text_input_manager_v2;
 struct _wl_fullscreen_shell;
+struct org_kde_kwin_appmenu_manager;
 struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
@@ -63,6 +64,7 @@ namespace KWayland
 namespace Client
 {
 
+class AppMenuManager;
 class Compositor;
 class ConnectionThread;
 class DataDeviceManager;
@@ -163,7 +165,8 @@ public:
         XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.40
         XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
-        IdleInhibitManagerUnstableV1 ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
+        IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
+        AppMenu ///Refers to org_kde_kwin_appmenu @since 5.XXX
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -571,6 +574,17 @@ public:
      */
     zwp_idle_inhibit_manager_v1 *bindIdleInhibitManagerUnstableV1(uint32_t name, uint32_t version) const;
     ///@}
+
+    /**
+     * Binds the org_kde_kwin_appmenu_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the appmenu manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createAppMenuManager instead.
+     * @see createAppMenuManager
+     * @since 5.XX
+     **/
+    org_kde_kwin_appmenu_manager *bindAppMenuManager(uint32_t name, uint32_t version) const;
 
     /**
      * @name Convenient factory methods for global objects.
@@ -1028,6 +1042,23 @@ public:
     ///@}
 
     /**
+     * Creates a AppMenuManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_appmenu_manager interface,
+     * the returned AppMenuManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_appmenu_manager interface to bind
+     * @param version The version or the org_kde_kwin_appmenu_manager interface to use
+     * @param parent The parent for AppMenuManager
+     *
+     * @returns The created AppMenuManager.
+     * @since 5.XXX
+     **/
+    AppMenuManager *createAppMenuManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
      * cast operator to the low-level Wayland @c wl_registry
      **/
     operator wl_registry*();
@@ -1246,7 +1277,16 @@ Q_SIGNALS:
      * @since 5.41
      */
     void idleInhibitManagerUnstableV1Announced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a org_kde_kwin_appmenu_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.XXX
+     */
+    void appMenuAnnounced(quint32 name, quint32 version);
     ///@}
+
     /**
      * @name Interface removed signals.
      **/
@@ -1426,6 +1466,13 @@ Q_SIGNALS:
      * @since 5.41
      **/
     void idleInhibitManagerUnstableV1Removed(quint32 name);
+
+    /**
+     * Emitted whenever a org_kde_kwin_appmenu_manager gets removed.
+     * @param name The name of the removed interface
+     * @since 5.XX
+     **/
+    void appMenuRemoved(quint32 name);
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

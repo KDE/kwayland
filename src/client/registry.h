@@ -164,9 +164,9 @@ public:
         PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
         XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.40
         XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
-        XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.XX
+        XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
-        AppMenu ///Refers to org_kde_kwin_appmenu @since 5.XXX
+        AppMenu ///Refers to org_kde_kwin_appmenu @since 5.42
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -1054,7 +1054,7 @@ public:
      * @param parent The parent for AppMenuManager
      *
      * @returns The created AppMenuManager.
-     * @since 5.XXX
+     * @since 5.42
      **/
     AppMenuManager *createAppMenuManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
@@ -1282,7 +1282,7 @@ Q_SIGNALS:
      * Emitted whenever a org_kde_kwin_appmenu_manager interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
-     * @since 5.XXX
+     * @since 5.42
      */
     void appMenuAnnounced(quint32 name, quint32 version);
     ///@}
@@ -1470,7 +1470,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a org_kde_kwin_appmenu_manager gets removed.
      * @param name The name of the removed interface
-     * @since 5.XX
+     * @since 5.42
      **/
     void appMenuRemoved(quint32 name);
     ///@}

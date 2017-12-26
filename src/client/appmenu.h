@@ -58,6 +58,7 @@ class AppMenu;
  * pointer as it provides matching cast operators.
  *
  * @see Registry
+ * @since 5.42
  **/
 class KWAYLANDCLIENT_EXPORT AppMenuManager : public QObject
 {
@@ -134,6 +135,10 @@ private:
     QScopedPointer<Private> d;
 };
 
+/**
+ *
+ * @since 5.42
+ **/
 class KWAYLANDCLIENT_EXPORT AppMenu : public QObject
 {
     Q_OBJECT

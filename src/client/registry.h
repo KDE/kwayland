@@ -168,7 +168,7 @@ public:
         XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
-        AppMenu ///Refers to org_kde_kwin_appmenu @since 5.42
+        AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
         ServerSideDecorationPalette ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
     };
     explicit Registry(QObject *parent = nullptr);

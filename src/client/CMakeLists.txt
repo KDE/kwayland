@@ -40,6 +40,7 @@ set(CLIENT_LIB_SRCS
     relativepointer.cpp
     seat.cpp
     server_decoration.cpp
+    server_decoration_palette.cpp
     shadow.cpp
     shell.cpp
     shm_pool.cpp
@@ -159,6 +160,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/appmenu.xml
     BASENAME appmenu
 )
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/server-decoration-palette.xml
+    BASENAME server-decoration-palette
+)
 
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
@@ -174,6 +179,7 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-slide-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-dpms-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-server-decoration-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server-decoration-palette-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v0-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v2-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-client-protocol.h
@@ -245,6 +251,7 @@ set(CLIENT_LIB_HEADERS
   relativepointer.h
   seat.h
   server_decoration.h
+  server_decoration_palette.h
   shadow.h
   shell.h
   shm_pool.h

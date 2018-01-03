@@ -50,6 +50,7 @@ struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
+struct org_kde_kwin_server_decoration_palette_manager;
 struct xdg_shell;
 struct zxdg_shell_v6;
 struct zwp_relative_pointer_manager_v1;
@@ -89,6 +90,7 @@ class SlideManager;
 class Shell;
 class ShmPool;
 class ServerSideDecorationManager;
+class ServerSideDecorationPaletteManager;
 class SubCompositor;
 class TextInputManager;
 class TextInputManagerUnstableV0;
@@ -167,6 +169,7 @@ public:
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
         AppMenu ///Refers to org_kde_kwin_appmenu @since 5.42
+        ServerSideDecorationPalette ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -582,9 +585,21 @@ public:
      *
      * Prefer using createAppMenuManager instead.
      * @see createAppMenuManager
-     * @since 5.XX
+     * @since 5.42
      **/
     org_kde_kwin_appmenu_manager *bindAppMenuManager(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the org_kde_kwin_server_decoration_palette_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the server side decoration palette manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createServerSideDecorationPaletteManager instead.
+     * @see createAppMenuManager
+     * @since 5.42
+     **/
+    org_kde_kwin_server_decoration_palette_manager *bindServerSideDecorationPaletteManager(uint32_t name, uint32_t version) const;
+
 
     /**
      * @name Convenient factory methods for global objects.
@@ -1059,6 +1074,23 @@ public:
     AppMenuManager *createAppMenuManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
     /**
+     * Creates a ServerSideDecorationPaletteManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_appmenu_manager interface,
+     * the returned ServerSideDecorationPaletteManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_server_decoration_palette_manager interface to bind
+     * @param version The version or the org_kde_kwin_server_decoration_palette_manager interface to use
+     * @param parent The parent for ServerSideDecorationPaletteManager
+     *
+     * @returns The created ServerSideDecorationPaletteManager.
+     * @since 5.42
+     **/
+    ServerSideDecorationPaletteManager *createServerSideDecorationPaletteManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
      * cast operator to the low-level Wayland @c wl_registry
      **/
     operator wl_registry*();
@@ -1285,6 +1317,15 @@ Q_SIGNALS:
      * @since 5.42
      */
     void appMenuAnnounced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a org_kde_kwin_server_decoration_palette_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.42
+     */
+    void serverSideDecorationPaletteManagerAnnounced(quint32 name, quint32 version);
+
     ///@}
 
     /**
@@ -1473,6 +1514,14 @@ Q_SIGNALS:
      * @since 5.42
      **/
     void appMenuRemoved(quint32 name);
+
+    /**
+     * Emitted whenever a org_kde_kwin_server_decoration_palette_manager gets removed.
+     * @param name The name of the removed interface
+     * @since 5.42
+     **/
+    void serverSideDecorationPaletteManagerRemoved(quint32 name);
+
     ///@}
     /**
      * Generic announced signal which gets emitted whenever an interface gets

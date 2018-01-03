@@ -52,6 +52,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wayland_pointer_p.h"
 #include "xdgforeign_v2.h"
 #include "appmenu.h"
+#include "server_decoration_palette.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -79,6 +80,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 #include <wayland-appmenu-client-protocol.h>
+#include <wayland-server-decoration-palette-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -323,6 +325,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_appmenu_manager_interface,
         &Registry::appMenuAnnounced,
         &Registry::appMenuRemoved
+    }},
+    {Registry::Interface::ServerSideDecorationPalette, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_server_decoration_palette_manager"),
+        &org_kde_kwin_server_decoration_palette_manager_interface,
+        &Registry::serverSideDecorationPaletteManagerAnnounced,
+        &Registry::serverSideDecorationPaletteManagerRemoved
     }}
 };
 
@@ -633,6 +642,7 @@ BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
 BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
+BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
 
 #undef BIND
 #undef BIND2
@@ -683,6 +693,7 @@ CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
 CREATE2(ShmPool, Shm)
 CREATE(AppMenuManager)
+CREATE(ServerSideDecorationPaletteManager)
 
 #undef CREATE
 #undef CREATE2

@@ -34,7 +34,7 @@ namespace Client
 
 class EventQueue;
 class Surface;
-class ServerDecorationPalette;
+class ServerSideDecorationPalette;
 
 /**
  * @short Wrapper for the org_kde_kwin_server_decoration_palette_manager interface.
@@ -42,19 +42,19 @@ class ServerDecorationPalette;
  * This class provides a convenient wrapper for the org_kde_kwin_server_decoration_palette_manager interface.
  *
  * To use this class one needs to interact with the Registry. There are two
- * possible ways to create the ServerDecorationPaletteManager interface:
+ * possible ways to create the ServerSideDecorationPaletteManager interface:
  * @code
- * ServerDecorationPaletteManager *c = registry->createServerDecorationPaletteManager(name, version);
+ * ServerSideDecorationPaletteManager *c = registry->createServerSideDecorationPaletteManager(name, version);
  * @endcode
  *
- * This creates the ServerDecorationPaletteManager and sets it up directly. As an alternative this
+ * This creates the ServerSideDecorationPaletteManager and sets it up directly. As an alternative this
  * can also be done in a more low level way:
  * @code
- * ServerDecorationPaletteManager *c = new ServerDecorationPaletteManager;
- * c->setup(registry->bindServerDecorationPaletteManager(name, version));
+ * ServerSideDecorationPaletteManager *c = new ServerSideDecorationPaletteManager;
+ * c->setup(registry->bindServerSideDecorationPaletteManager(name, version));
  * @endcode
  *
- * The ServerDecorationPaletteManager can be used as a drop-in replacement for any org_kde_kwin_server_decoration_palette_manager
+ * The ServerSideDecorationPaletteManager can be used as a drop-in replacement for any org_kde_kwin_server_decoration_palette_manager
  * pointer as it provides matching cast operators.
  *
  * @see Registry
@@ -64,32 +64,32 @@ class KWAYLANDCLIENT_EXPORT ServerSideDecorationPaletteManager : public QObject
     Q_OBJECT
 public:
     /**
-     * Creates a new ServerDecorationPaletteManager.
-     * Note: after constructing the ServerDecorationPaletteManager it is not yet valid and one needs
-     * to call setup. In order to get a ready to use ServerDecorationPaletteManager prefer using
-     * Registry::createServerDecorationPaletteManager.
+     * Creates a new ServerSideDecorationPaletteManager.
+     * Note: after constructing the ServerSideDecorationPaletteManager it is not yet valid and one needs
+     * to call setup. In order to get a ready to use ServerSideDecorationPaletteManager prefer using
+     * Registry::createServerSideDecorationPaletteManager.
      **/
     explicit ServerSideDecorationPaletteManager(QObject *parent = nullptr);
     virtual ~ServerSideDecorationPaletteManager();
 
     /**
-     * Setup this ServerDecorationPaletteManager to manage the @p serverDecorationPaletteManager.
-     * When using Registry::createServerDecorationPaletteManager there is no need to call this
+     * Setup this ServerSideDecorationPaletteManager to manage the @p serverSideDecorationPaletteManager.
+     * When using Registry::createServerSideDecorationPaletteManager there is no need to call this
      * method.
      **/
-    void setup(org_kde_kwin_server_decoration_palette_manager *serverDecorationPaletteManager);
+    void setup(org_kde_kwin_server_decoration_palette_manager *serverSideDecorationPaletteManager);
     /**
      * @returns @c true if managing a org_kde_kwin_server_decoration_palette_manager.
      **/
     bool isValid() const;
     /**
      * Releases the org_kde_kwin_server_decoration_palette_manager interface.
-     * After the interface has been released the ServerDecorationPaletteManager instance is no
+     * After the interface has been released the ServerSideDecorationPaletteManager instance is no
      * longer valid and can be setup with another org_kde_kwin_server_decoration_palette_manager interface.
      **/
     void release();
     /**
-     * Destroys the data held by this ServerDecorationPaletteManager.
+     * Destroys the data held by this ServerSideDecorationPaletteManager.
      * This method is supposed to be used when the connection to the Wayland
      * server goes away. If the connection is not valid anymore, it's not
      * possible to call release anymore as that calls into the Wayland
@@ -99,7 +99,7 @@ public:
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, palettemanager, &ServerDecorationPaletteManager::destroy);
+     * connect(connection, &ConnectionThread::connectionDied, palettemanager, &ServerSideDecorationPaletteManager::destroy);
      * @endcode
      *
      * @see release
@@ -107,15 +107,15 @@ public:
     void destroy();
 
     /**
-     * Sets the @p queue to use for creating objects with this ServerDecorationPaletteManager.
+     * Sets the @p queue to use for creating objects with this ServerSideDecorationPaletteManager.
      **/
     void setEventQueue(EventQueue *queue);
     /**
-     * @returns The event queue to use for creating objects with this ServerDecorationPaletteManager.
+     * @returns The event queue to use for creating objects with this ServerSideDecorationPaletteManager.
      **/
     EventQueue *eventQueue();
 
-    ServerDecorationPalette *create(Surface *surface, QObject *parent = nullptr);
+    ServerSideDecorationPalette *create(Surface *surface, QObject *parent = nullptr);
 
     operator org_kde_kwin_server_decoration_palette_manager*();
     operator org_kde_kwin_server_decoration_palette_manager*() const;
@@ -124,8 +124,8 @@ Q_SIGNALS:
     /**
      * The corresponding global for this interface on the Registry got removed.
      *
-     * This signal gets only emitted if the ServerDecorationPaletteManager got created by
-     * Registry::createServerDecorationPaletteManager
+     * This signal gets only emitted if the ServerSideDecorationPaletteManager got created by
+     * Registry::createServerSideDecorationPaletteManager
      **/
     void removed();
 
@@ -134,15 +134,15 @@ private:
     QScopedPointer<Private> d;
 };
 
-class KWAYLANDCLIENT_EXPORT ServerDecorationPalette : public QObject
+class KWAYLANDCLIENT_EXPORT ServerSideDecorationPalette : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~ServerDecorationPalette();
+    virtual ~ServerSideDecorationPalette();
 
     /**
-     * Setup this ServerDecorationPalette to manage the @p serversidedecorationpalette.
-     * When using ServerDecorationPaletteManager::create there is no need to call this
+     * Setup this ServerSideDecorationPalette to manage the @p serversidedecorationpalette.
+     * When using ServerSideDecorationPaletteManager::create there is no need to call this
      * method.
      **/
     void setup(org_kde_kwin_server_decoration_palette *serversidedecorationpalette);
@@ -152,12 +152,12 @@ public:
     bool isValid() const;
     /**
      * Releases the org_kde_kwin_server_decoration_palette interface.
-     * After the interface has been released the ServerDecorationPalette instance is no
+     * After the interface has been released the ServerSideDecorationPalette instance is no
      * longer valid and can be setup with another org_kde_kwin_server_decoration_palette interface.
      **/
     void release();
     /**
-     * Destroys the data held by this ServerDecorationPalette.
+     * Destroys the data held by this ServerSideDecorationPalette.
      * This method is supposed to be used when the connection to the Wayland
      * server goes away. If the connection is not valid anymore, it's not
      * possible to call release anymore as that calls into the Wayland
@@ -167,7 +167,7 @@ public:
      *
      * It is suggested to connect this method to ConnectionThread::connectionDied:
      * @code
-     * connect(connection, &ConnectionThread::connectionDied, palette, &ServerDecorationPalette::destroy);
+     * connect(connection, &ConnectionThread::connectionDied, palette, &ServerSideDecorationPalette::destroy);
      * @endcode
      *
      * @see release
@@ -186,7 +186,7 @@ public:
 
 private:
     friend class ServerSideDecorationPaletteManager;
-    explicit ServerDecorationPalette(QObject *parent = nullptr);
+    explicit ServerSideDecorationPalette(QObject *parent = nullptr);
     class Private;
     QScopedPointer<Private> d;
 };

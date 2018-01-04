@@ -98,10 +98,10 @@ EventQueue *ServerSideDecorationPaletteManager::eventQueue()
     return d->queue;
 }
 
-ServerDecorationPalette *ServerSideDecorationPaletteManager::create(Surface *surface, QObject *parent)
+ServerSideDecorationPalette *ServerSideDecorationPaletteManager::create(Surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto p = new ServerDecorationPalette(parent);
+    auto p = new ServerSideDecorationPalette(parent);
     auto w = org_kde_kwin_server_decoration_palette_manager_create(d->serverdecomanager, *surface);
     if (d->queue) {
         d->queue->addProxy(w);
@@ -111,71 +111,71 @@ ServerDecorationPalette *ServerSideDecorationPaletteManager::create(Surface *sur
     return p;
 }
 
-class ServerDecorationPalette::Private
+class ServerSideDecorationPalette::Private
 {
 public:
-    Private(ServerDecorationPalette *q);
+    Private(ServerSideDecorationPalette *q);
 
     void setup(org_kde_kwin_server_decoration_palette *arg);
 
     WaylandPointer<org_kde_kwin_server_decoration_palette, org_kde_kwin_server_decoration_palette_release> decoration_palette;
 
 private:
-    ServerDecorationPalette *q;
+    ServerSideDecorationPalette *q;
 };
 
-ServerDecorationPalette::Private::Private(ServerDecorationPalette *q)
+ServerSideDecorationPalette::Private::Private(ServerSideDecorationPalette *q)
     : q(q)
 {
 }
 
-ServerDecorationPalette::ServerDecorationPalette(QObject *parent)
+ServerSideDecorationPalette::ServerSideDecorationPalette(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
 }
 
-void ServerDecorationPalette::Private::setup(org_kde_kwin_server_decoration_palette *arg)
+void ServerSideDecorationPalette::Private::setup(org_kde_kwin_server_decoration_palette *arg)
 {
     Q_ASSERT(arg);
     Q_ASSERT(!decoration_palette);
     decoration_palette.setup(arg);
 }
 
-ServerDecorationPalette::~ServerDecorationPalette()
+ServerSideDecorationPalette::~ServerSideDecorationPalette()
 {
     release();
 }
 
-void ServerDecorationPalette::setup(org_kde_kwin_server_decoration_palette *decoration_palette)
+void ServerSideDecorationPalette::setup(org_kde_kwin_server_decoration_palette *decoration_palette)
 {
     d->setup(decoration_palette);
 }
 
-void ServerDecorationPalette::release()
+void ServerSideDecorationPalette::release()
 {
     d->decoration_palette.release();
 }
 
-void ServerDecorationPalette::destroy()
+void ServerSideDecorationPalette::destroy()
 {
     d->decoration_palette.destroy();
 }
 
-ServerDecorationPalette::operator org_kde_kwin_server_decoration_palette*() {
+ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette*() {
     return d->decoration_palette;
 }
 
-ServerDecorationPalette::operator org_kde_kwin_server_decoration_palette*() const {
+ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette*() const {
     return d->decoration_palette;
 }
 
-bool ServerDecorationPalette::isValid() const
+bool ServerSideDecorationPalette::isValid() const
 {
     return d->decoration_palette.isValid();
 }
 
-void ServerDecorationPalette::setPalette(const QString &palette)
+void ServerSideDecorationPalette::setPalette(const QString &palette)
 {
     Q_ASSERT(isValid());
     org_kde_kwin_server_decoration_palette_set_palette(*this, palette.toUtf8());

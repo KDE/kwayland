@@ -576,7 +576,6 @@ public:
      * @since 5.41
      */
     zwp_idle_inhibit_manager_v1 *bindIdleInhibitManagerUnstableV1(uint32_t name, uint32_t version) const;
-    ///@}
 
     /**
      * Binds the org_kde_kwin_appmenu_manager with @p name and @p version.
@@ -599,7 +598,7 @@ public:
      * @since 5.42
      **/
     org_kde_kwin_server_decoration_palette_manager *bindServerSideDecorationPaletteManager(uint32_t name, uint32_t version) const;
-
+    ///@}
 
     /**
      * @name Convenient factory methods for global objects.
@@ -1054,7 +1053,6 @@ public:
      * @since 5.41
      */
     IdleInhibitManager *createIdleInhibitManager(quint32 name, quint32 version, QObject *parent = nullptr);
-    ///@}
 
     /**
      * Creates a AppMenuManager and sets it up to manage the interface identified by
@@ -1089,6 +1087,8 @@ public:
      * @since 5.42
      **/
     ServerSideDecorationPaletteManager *createServerSideDecorationPaletteManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    ///@}
+
 
     /**
      * cast operator to the low-level Wayland @c wl_registry

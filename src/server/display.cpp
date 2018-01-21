@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputmanagement_interface.h"
 #include "outputdevice_interface.h"
 #include "idle_interface.h"
+#include "idleinhibit_interface_p.h"
 #include "remote_access_interface.h"
 #include "fakeinput_interface.h"
 #include "logging_p.h"
@@ -47,6 +48,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell_v5_interface_p.h"
 #include "xdgforeign_interface.h"
 #include "xdgshell_v6_interface_p.h"
+#include "appmenu_interface.h"
+#include "server_decoration_palette_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -426,6 +429,32 @@ XdgForeignInterface *Display::createXdgForeignInterface(QObject *parent)
     XdgForeignInterface *foreign = new XdgForeignInterface(this, parent);
     connect(this, &Display::aboutToTerminate, foreign, [this,foreign] { delete foreign; });
     return foreign;
+}
+
+IdleInhibitManagerInterface *Display::createIdleInhibitManager(const IdleInhibitManagerInterfaceVersion &version, QObject *parent)
+{
+    IdleInhibitManagerInterface *i = nullptr;
+    switch (version) {
+    case IdleInhibitManagerInterfaceVersion::UnstableV1:
+        i = new IdleInhibitManagerUnstableV1Interface(this, parent);
+        break;
+    }
+    connect(this, &Display::aboutToTerminate, i, [this,i] { delete i; });
+    return i;
+}
+
+AppMenuManagerInterface *Display::createAppMenuManagerInterface(QObject *parent)
+{
+    auto b = new AppMenuManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
+    return b;
+}
+
+ServerSideDecorationPaletteManagerInterface *Display::createServerSideDecorationPaletteManager(QObject *parent)
+{
+    auto b = new ServerSideDecorationPaletteManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
+    return b;
 }
 
 void Display::createShm()

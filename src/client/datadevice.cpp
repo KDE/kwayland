@@ -41,7 +41,7 @@ public:
     WaylandPointer<wl_data_device, wl_data_device_release> device;
     QScopedPointer<DataOffer> selectionOffer;
     struct Drag {
-        DataOffer *offer = nullptr;
+        QPointer<DataOffer> offer;
         QPointer<Surface> surface;
     };
     Drag drag;
@@ -174,6 +174,9 @@ DataDevice::DataDevice(QObject *parent)
 
 DataDevice::~DataDevice()
 {
+    if (d->drag.offer) {
+        delete d->drag.offer;
+    }
     release();
 }
 

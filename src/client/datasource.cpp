@@ -36,11 +36,16 @@ public:
     void setup(wl_data_source *s);
 
     WaylandPointer<wl_data_source, wl_data_source_destroy> source;
+    DataDeviceManager::DnDAction selectedAction = DataDeviceManager::DnDAction::None;
 
 private:
+    void setAction(DataDeviceManager::DnDAction action);
     static void targetCallback(void *data, wl_data_source *dataSource, const char *mimeType);
     static void sendCallback(void *data, wl_data_source *dataSource, const char *mimeType, int32_t fd);
     static void cancelledCallback(void *data, wl_data_source *dataSource);
+    static void dndDropPerformedCallback(void *data, wl_data_source *wl_data_source);
+    static void dndFinishedCallback(void *data, wl_data_source *wl_data_source);
+    static void actionCallback(void *data, wl_data_source *wl_data_source, uint32_t dnd_action);
 
     static const struct wl_data_source_listener s_listener;
 
@@ -50,7 +55,10 @@ private:
 const wl_data_source_listener DataSource::Private::s_listener = {
     targetCallback,
     sendCallback,
-    cancelledCallback
+    cancelledCallback,
+    dndDropPerformedCallback,
+    dndFinishedCallback,
+    actionCallback
 };
 
 DataSource::Private::Private(DataSource *q)
@@ -77,6 +85,51 @@ void DataSource::Private::cancelledCallback(void *data, wl_data_source *dataSour
     auto d = reinterpret_cast<DataSource::Private*>(data);
     Q_ASSERT(d->source == dataSource);
     emit d->q->cancelled();
+}
+
+void DataSource::Private::dndDropPerformedCallback(void *data, wl_data_source *wl_data_source)
+{
+    Q_UNUSED(wl_data_source)
+    auto d = reinterpret_cast<DataSource::Private*>(data);
+    emit d->q->dragAndDropPerformed();
+}
+
+void DataSource::Private::dndFinishedCallback(void *data, wl_data_source *wl_data_source)
+{
+    Q_UNUSED(wl_data_source)
+    auto d = reinterpret_cast<DataSource::Private*>(data);
+    emit d->q->dragAndDropFinished();
+}
+
+void DataSource::Private::actionCallback(void *data, wl_data_source *wl_data_source, uint32_t dnd_action)
+{
+    Q_UNUSED(wl_data_source)
+    auto d = reinterpret_cast<Private*>(data);
+    switch(dnd_action) {
+    case WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY:
+        d->setAction(DataDeviceManager::DnDAction::Copy);
+        break;
+    case WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE:
+        d->setAction(DataDeviceManager::DnDAction::Move);
+        break;
+    case WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK:
+        d->setAction(DataDeviceManager::DnDAction::Ask);
+        break;
+    case WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE:
+        d->setAction(DataDeviceManager::DnDAction::None);
+        break;
+    default:
+        Q_UNREACHABLE();
+    }
+}
+
+void DataSource::Private::setAction(DataDeviceManager::DnDAction action)
+{
+    if (action == selectedAction) {
+        return;
+    }
+    selectedAction = action;
+    emit q->selectedDragAndDropActionChanged();
 }
 
 void DataSource::Private::setup(wl_data_source *s)
@@ -139,6 +192,26 @@ DataSource::operator wl_data_source*() const
 DataSource::operator wl_data_source*()
 {
     return d->source;
+}
+
+void DataSource::setDragAndDropActions(DataDeviceManager::DnDActions actions)
+{
+    uint32_t wlActions = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
+    if (actions.testFlag(DataDeviceManager::DnDAction::Copy)) {
+        wlActions |= WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
+    }
+    if (actions.testFlag(DataDeviceManager::DnDAction::Move)) {
+        wlActions |= WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
+    }
+    if (actions.testFlag(DataDeviceManager::DnDAction::Ask)) {
+        wlActions |= WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK;
+    }
+    wl_data_source_set_actions(d->source, wlActions);
+}
+
+DataDeviceManager::DnDAction DataSource::selectedDragAndDropAction() const
+{
+    return d->selectedAction;
 }
 
 }

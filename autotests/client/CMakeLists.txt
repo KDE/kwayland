@@ -24,6 +24,8 @@ ecm_mark_as_test(testWaylandRegistry)
 # Test WaylandFullscreenShell
 ########################################################
 if(Wayland_VERSION VERSION_GREATER "1.4.0")
+  find_program(WESTON_EXECUTABLE weston DOC "Path to the weston executable.")
+  if(WESTON_EXECUTABLE)
     set( testWaylandFullscreenShell_SRCS
             test_wayland_fullscreen_shell.cpp
         )
@@ -31,6 +33,9 @@ if(Wayland_VERSION VERSION_GREATER "1.4.0")
     target_link_libraries( testWaylandFullscreenShell Qt5::Test KF5::WaylandClient Wayland::Client)
     add_test(NAME kwayland-testWaylandFullscreenShell COMMAND testWaylandFullscreenShell)
     ecm_mark_as_test(testWaylandFullscreenShell)
+  else()
+    message(STATUS "The weston executable was not found. Some autotests will not be executed.")
+  endif()
 endif()
 
 ########################################################
@@ -369,7 +374,7 @@ set( testXdgShellV6_SRCS
       )
 add_executable(testXdgShellV6 ${testXdgShellV6_SRCS})
 target_link_libraries( testXdgShellV6 Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
-add_test(kwayland-testXdgShellV6 COMMAND testXdgShellV6)
+add_test(NAME kwayland-testXdgShellV6 COMMAND testXdgShellV6)
 ecm_mark_as_test(testXdgShellV6)
 
 ########################################################
@@ -379,6 +384,40 @@ add_executable(testPointerConstraints test_pointer_constraints.cpp)
 target_link_libraries( testPointerConstraints Qt5::Test Qt5::Gui KF5::WaylandServer KF5::WaylandClient Wayland::Client)
 add_test(NAME kwayland-testPointerConstraints COMMAND testPointerConstraints)
 ecm_mark_as_test(testPointerConstraints)
+
+
+########################################################
+# Test Filter
+########################################################
+set( testFilter_SRCS
+        test_wayland_filter.cpp
+    )
+add_executable(testFilter ${testFilter_SRCS})
+target_link_libraries( testFilter Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Server)
+add_test(NAME kwayland-testFilter COMMAND testFilter)
+ecm_mark_as_test(testFilter)
+
+########################################################
+# Test Appmenu
+########################################################
+set( testAppmenu_SRCS
+        test_wayland_appmenu.cpp
+    )
+add_executable(testAppmenu ${testAppmenu_SRCS})
+target_link_libraries( testAppmenu Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(NAME kwayland-testAppmenu COMMAND testAppmenu)
+ecm_mark_as_test(testAppmenu)
+
+########################################################
+# Test Appmenu
+########################################################
+set( testServerSideDecorationPalette_SRCS
+        test_server_side_decoration_palette.cpp
+    )
+add_executable(testServerSideDecorationPalette ${testServerSideDecorationPalette_SRCS})
+target_link_libraries( testServerSideDecorationPalette Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(NAME kwayland-testServerSideDecorationPalette COMMAND testServerSideDecorationPalette)
+ecm_mark_as_test(testServerSideDecorationPalette)
 
 ########################################################
 # Test RemoteAccess

@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fakeinput.h"
 #include "fullscreen_shell.h"
 #include "idle.h"
+#include "idleinhibit.h"
 #include "remote_access.h"
 #include "logging_p.h"
 #include "outputconfiguration.h"
@@ -51,6 +52,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell_p.h"
 #include "wayland_pointer_p.h"
 #include "xdgforeign_v2.h"
+#include "appmenu.h"
+#include "server_decoration_palette.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -59,6 +62,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
+#include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
 #include <wayland-remote-access-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
@@ -77,6 +81,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
+#include <wayland-appmenu-client-protocol.h>
+#include <wayland-server-decoration-palette-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -113,7 +119,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::compositorRemoved
     }},
     {Registry::Interface::DataDeviceManager, {
-        2,
+        3,
         QByteArrayLiteral("wl_data_device_manager"),
         &wl_data_device_manager_interface,
         &Registry::dataDeviceManagerAnnounced,
@@ -314,6 +320,27 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zxdg_shell_v6_interface,
         &Registry::xdgShellUnstableV6Announced,
         &Registry::xdgShellUnstableV6Removed
+    }},
+    {Registry::Interface::IdleInhibitManagerUnstableV1, {
+        1,
+        QByteArrayLiteral("zwp_idle_inhibit_manager_v1"),
+        &zwp_idle_inhibit_manager_v1_interface,
+        &Registry::idleInhibitManagerUnstableV1Announced,
+        &Registry::idleInhibitManagerUnstableV1Removed
+    }},
+    {Registry::Interface::AppMenu, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_appmenu_manager"),
+        &org_kde_kwin_appmenu_manager_interface,
+        &Registry::appMenuAnnounced,
+        &Registry::appMenuRemoved
+    }},
+    {Registry::Interface::ServerSideDecorationPalette, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_server_decoration_palette_manager"),
+        &org_kde_kwin_server_decoration_palette_manager_interface,
+        &Registry::serverSideDecorationPaletteManagerAnnounced,
+        &Registry::serverSideDecorationPaletteManagerRemoved
     }}
 };
 
@@ -618,11 +645,14 @@ BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
 BIND(XdgExporterUnstableV2, zxdg_exporter_v2)
 BIND(XdgImporterUnstableV2, zxdg_importer_v2)
+BIND(IdleInhibitManagerUnstableV1, zwp_idle_inhibit_manager_v1)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
+BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
+BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
 
 #undef BIND
 #undef BIND2
@@ -673,6 +703,8 @@ CREATE(SlideManager)
 CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
 CREATE2(ShmPool, Shm)
+CREATE(AppMenuManager)
+CREATE(ServerSideDecorationPaletteManager)
 
 #undef CREATE
 #undef CREATE2
@@ -738,6 +770,16 @@ PointerConstraints *Registry::createPointerConstraints(quint32 name, quint32 ver
     switch (d->interfaceForName(name)) {
     case Interface::PointerConstraintsUnstableV1:
         return d->create<PointerConstraints>(name, version, parent, &Registry::bindPointerConstraintsUnstableV1);
+    default:
+        return nullptr;
+    }
+}
+
+IdleInhibitManager *Registry::createIdleInhibitManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch (d->interfaceForName(name)) {
+    case Interface::IdleInhibitManagerUnstableV1:
+        return d->create<IdleInhibitManager>(name, version, parent, &Registry::bindIdleInhibitManagerUnstableV1);
     default:
         return nullptr;
     }

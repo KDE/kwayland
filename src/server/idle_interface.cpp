@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTimer>
 
+#include <functional>
 #include <wayland-server.h>
 #include <wayland-idle-server-protocol.h>
 
@@ -37,6 +38,9 @@ class IdleInterface::Private : public Global::Private
 {
 public:
     Private(IdleInterface *q, Display *d);
+
+    int inhibitCount = 0;
+    QVector<IdleTimeoutInterface*> idleTimeouts;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -58,6 +62,8 @@ public:
     Private(SeatInterface *seat, IdleTimeoutInterface *q, IdleInterface *manager, wl_resource *parentResource);
     ~Private();
     void setup(quint32 timeout);
+
+    void simulateUserActivity();
 
     SeatInterface *seat;
     QTimer *timer = nullptr;
@@ -96,6 +102,9 @@ void IdleInterface::Private::getIdleTimeoutCallback(wl_client *client, wl_resour
         delete idleTimeout;
         return;
     }
+    p->idleTimeouts << idleTimeout;
+    QObject::connect(idleTimeout, &IdleTimeoutInterface::aboutToBeUnbound, p->q,
+                     std::bind(&QVector<IdleTimeoutInterface*>::removeOne, p->idleTimeouts, idleTimeout));
     idleTimeout->d_func()->setup(timeout);
 }
 
@@ -123,6 +132,43 @@ IdleInterface::IdleInterface(Display *display, QObject *parent)
 
 IdleInterface::~IdleInterface() = default;
 
+void IdleInterface::inhibit()
+{
+    Q_D();
+    d->inhibitCount++;
+    if (d->inhibitCount == 1) {
+        emit inhibitedChanged();
+    }
+}
+
+void IdleInterface::uninhibit()
+{
+    Q_D();
+    d->inhibitCount--;
+    if (d->inhibitCount == 0) {
+        emit inhibitedChanged();
+    }
+}
+
+bool IdleInterface::isInhibited() const
+{
+    Q_D();
+    return d->inhibitCount > 0;
+}
+
+void IdleInterface::simulateUserActivity()
+{
+    Q_D();
+    for (auto i : qAsConst(d->idleTimeouts)) {
+        i->d_func()->simulateUserActivity();
+    }
+}
+
+IdleInterface::Private *IdleInterface::d_func() const
+{
+    return reinterpret_cast<Private*>(d.data());
+}
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_kwin_idle_timeout_interface IdleTimeoutInterface::Private::s_interface = {
     resourceDestroyedCallback,
@@ -142,14 +188,23 @@ void IdleTimeoutInterface::Private::simulateUserActivityCallback(wl_client *clie
 {
     Q_UNUSED(client);
     Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
-    if (!p->timer) {
+    p->simulateUserActivity();
+}
+
+void IdleTimeoutInterface::Private::simulateUserActivity()
+{
+    if (!timer) {
         // not yet configured
         return;
     }
-    if (!p->timer->isActive() && p->resource) {
-        org_kde_kwin_idle_timeout_send_resumed(p->resource);
+    if (qobject_cast<IdleInterface*>(global)->isInhibited()) {
+        // ignored while inhibited
+        return;
     }
-    p->timer->start();
+    if (!timer->isActive() && resource) {
+        org_kde_kwin_idle_timeout_send_resumed(resource);
+    }
+    timer->start();
 }
 
 void IdleTimeoutInterface::Private::setup(quint32 timeout)
@@ -168,6 +223,10 @@ void IdleTimeoutInterface::Private::setup(quint32 timeout)
             }
         }
     );
+    if (qobject_cast<IdleInterface*>(global)->isInhibited()) {
+        // don't start if inhibited
+        return;
+    }
     timer->start();
 }
 
@@ -177,14 +236,24 @@ IdleTimeoutInterface::IdleTimeoutInterface(SeatInterface *seat, IdleInterface *p
     connect(seat, &SeatInterface::timestampChanged, this,
         [this] {
             Q_D();
+            d->simulateUserActivity();
+        }
+    );
+    connect(parent, &IdleInterface::inhibitedChanged, this,
+        [this] {
+            Q_D();
             if (!d->timer) {
                 // not yet configured
                 return;
             }
-            if (!d->timer->isActive() && d->resource) {
-                org_kde_kwin_idle_timeout_send_resumed(d->resource);
+            if (qobject_cast<IdleInterface*>(d->global)->isInhibited()) {
+                if (!d->timer->isActive() && d->resource) {
+                    org_kde_kwin_idle_timeout_send_resumed(d->resource);
+                }
+                d->timer->stop();
+            } else {
+                d->timer->start();
             }
-            d->timer->start();
         }
     );
 }

@@ -1,4 +1,5 @@
 set(SERVER_LIB_SRCS
+    appmenu_interface.cpp
     buffer_interface.cpp
     clientconnection.cpp
     compositor_interface.cpp
@@ -8,8 +9,11 @@ set(SERVER_LIB_SRCS
     datasource_interface.cpp
     display.cpp
     dpms_interface.cpp
+    filtered_display.cpp
     global.cpp
     idle_interface.cpp
+    idleinhibit_interface.cpp
+    idleinhibit_interface_v1.cpp
     fakeinput_interface.cpp
     keyboard_interface.cpp
     remote_access_interface.cpp
@@ -37,6 +41,7 @@ set(SERVER_LIB_SRCS
     blur_interface.cpp
     contrast_interface.cpp
     server_decoration_interface.cpp
+    server_decoration_palette_interface.cpp
     shell_interface.cpp
     surface_interface.cpp
     subcompositor_interface.cpp
@@ -156,9 +161,75 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/idle-inhibit-unstable-v1.xml
+    BASENAME idle-inhibit-unstable-v1
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/appmenu.xml
+    BASENAME appmenu
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/server-decoration-palette.xml
+    BASENAME server_decoration_palette
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/remote-access.xml
     BASENAME remote-access
 )
+
+set(SERVER_GENERATED_SRCS
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_kwin_outputdevice-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_kwin_outputdevice-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-qt-surface-extension-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-qt-surface-extension-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-fake-input-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-fake-input-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-shadow-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-shadow-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-dpms-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-dpms-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-blur-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-blur-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-contrast-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-contrast-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-relativepointer-unstable-v1-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-relativepointer-unstable-v1-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-slide-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-slide-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server_decoration-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server_decoration-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server_decoration_palette-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server_decoration_palette-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-unstable-v2-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-unstable-v2-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-gestures-unstable-v1-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-gestures-unstable-v1-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-constraints-unstable-v1-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-constraints-unstable-v1-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-foreign-unstable-v2-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-foreign-unstable-v2-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-inhibit-unstable-v1-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-inhibit-unstable-v1-server-protocol.h
+)
+
+set_source_files_properties(${SERVER_GENERATED_SRCS} PROPERTIES SKIP_AUTOMOC ON)
 
 add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
 generate_export_header(KF5WaylandServer
@@ -190,6 +261,7 @@ install(TARGETS KF5WaylandServer EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_
 
 set(SERVER_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Server/kwaylandserver_export.h
+  appmenu_interface.h
   blur_interface.h
   contrast_interface.h
   buffer_interface.h
@@ -201,9 +273,11 @@ set(SERVER_LIB_HEADERS
   datasource_interface.h
   display.h
   dpms_interface.h
+  filtered_display.h
   fakeinput_interface.h
   global.h
   idle_interface.h
+  idleinhibit_interface.h
   keyboard_interface.h
   remote_access_interface.h
   outputdevice_interface.h
@@ -222,6 +296,7 @@ set(SERVER_LIB_HEADERS
   resource.h
   seat_interface.h
   server_decoration_interface.h
+  server_decoration_palette_interface.h
   shadow_interface.h
   shell_interface.h
   slide_interface.h

@@ -24,6 +24,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
+#include "datadevicemanager.h"
+
 struct wl_data_offer;
 
 class QMimeType;
@@ -79,11 +81,54 @@ public:
     void receive(const QMimeType &mimeType, qint32 fd);
     void receive(const QString &mimeType, qint32 fd);
 
+    /**
+     * Notifies the compositor that the drag destination successfully
+     * finished the drag-and-drop operation.
+     *
+     * After this operation it is only allowed to release the DataOffer.
+     *
+     * @since 5.42
+     **/
+    void dragAndDropFinished();
+
+    /**
+     * The actions offered by the DataSource.
+     * @since 5.42
+     * @see sourceDragAndDropActionsChanged
+     **/
+    DataDeviceManager::DnDActions sourceDragAndDropActions() const;
+
+    /**
+     * Sets the @p supported and @p preferred Drag and Drop actions.
+     * @since 5.42
+     **/
+    void setDragAndDropActions(DataDeviceManager::DnDActions supported, DataDeviceManager::DnDAction preferred);
+
+    /**
+     * The currently selected drag and drop action by the compositor.
+     * @see selectedDragAndDropActionChanged
+     * @since 5.42
+     **/
+    DataDeviceManager::DnDAction selectedDragAndDropAction() const;
+
     operator wl_data_offer*();
     operator wl_data_offer*() const;
 
 Q_SIGNALS:
     void mimeTypeOffered(const QString&);
+    /**
+     * Emitted whenever the @link{sourceDragAndDropActions} changed, e.g. on enter or when
+     * the DataSource changes the supported actions.
+     * @see sourceDragAndDropActions
+     * @since 5.42
+     **/
+    void sourceDragAndDropActionsChanged();
+    /**
+     * Emitted whenever the selected drag and drop action changes.
+     * @see selectedDragAndDropAction
+     * @since 5.42
+     **/
+    void selectedDragAndDropActionChanged();
 
 private:
     friend class DataDevice;

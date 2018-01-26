@@ -120,7 +120,7 @@ class RemoteAccessManagerInterface::Private : public Global::Private
 {
 public:
     Private(RemoteAccessManagerInterface *q, Display *d);
-    virtual ~Private();
+    virtual ~Private() override;
 
     /**
      * @brief Send buffer ready notification to all connected clients
@@ -167,7 +167,7 @@ private:
      * Buffers that were sent but still not acked by server
      * Keys are fd numbers as they are unique
      **/
-    QHash<quint32, BufferHolder> sentBuffers;
+    QHash<qint32, BufferHolder> sentBuffers;
 };
 
 const quint32 RemoteAccessManagerInterface::Private::s_version = 1;
@@ -288,7 +288,7 @@ void RemoteAccessManagerInterface::Private::unbind(wl_resource *resource)
 void RemoteAccessManagerInterface::Private::release(wl_resource *resource)
 {
     // all holders should decrement their counter as one client is gone
-    QMutableHashIterator<quint32, BufferHolder> itr(sentBuffers);
+    QMutableHashIterator<qint32, BufferHolder> itr(sentBuffers);
     while (itr.hasNext()) {
         BufferHolder &bh = itr.next().value();
         if (unref(bh)) {

@@ -138,7 +138,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::shmRemoved
     }},
     {Registry::Interface::Seat, {
-        4,
+        5,
         QByteArrayLiteral("wl_seat"),
         &wl_seat_interface,
         &Registry::seatAnnounced,

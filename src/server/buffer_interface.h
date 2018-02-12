@@ -34,6 +34,10 @@ namespace Server
 {
 class SurfaceInterface;
 
+namespace LinuxDmabuf
+{
+    class Buffer;
+}
 
 /**
  * @brief Reference counted representation of a Wayland buffer on Server side.
@@ -104,6 +108,10 @@ public:
      * @returns The native wl_shm_buffer if the BufferInterface represents a shared memory buffer, otherwise @c nullptr.
      **/
     wl_shm_buffer *shmBuffer();
+    /**
+     * Returns a pointer to the LinuxDmabuf::Buffer when the buffer is a dmabuf buffer, and nullptr otherwise.
+     */
+    LinuxDmabuf::Buffer *linuxDmabufBuffer();
     /**
      * @returns the native wl_resource wrapped by this BufferInterface.
      **/

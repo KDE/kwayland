@@ -85,6 +85,7 @@ class PointerConstraintsInterface;
 class XdgForeignInterface;
 class AppMenuManagerInterface;
 class ServerSideDecorationPaletteManagerInterface;
+class LinuxDmabufUnstableV1Interface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -256,6 +257,12 @@ public:
      **/
     ServerSideDecorationPaletteManagerInterface *createServerSideDecorationPaletteManager(QObject *parent = nullptr);
 
+    /**
+     * Creates the LinuxDmabufUnstableV1Interface in interface @p version.
+     *
+     * @returns A pointer to the created interface
+     **/
+    LinuxDmabufUnstableV1Interface *createLinuxDmabufInterface(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

@@ -44,7 +44,7 @@ public:
     ~Private();
     void setup(wl_output *o);
 
-    WaylandPointer<wl_output, wl_output_destroy> output;
+    WaylandPointer<wl_output, wl_output_release> output;
     EventQueue *queue = nullptr;
     QSize physicalSize;
     QPoint globalPosition;

@@ -427,5 +427,5 @@ set( testRemoteAccess_SRCS
     )
 add_executable(testRemoteAccess ${testRemoteAccess_SRCS})
 target_link_libraries( testRemoteAccess Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
-add_test(kwayland-testRemoteAccess testRemoteAccess)
+add_test(NAME kwayland-testRemoteAccess COMMAND testRemoteAccess)
 ecm_mark_as_test(testRemoteAccess)

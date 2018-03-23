@@ -203,8 +203,9 @@ void RemoteAccessManagerInterface::Private::sendBufferReady(const OutputInterfac
         auto boundScreens = output->clientResources(display->getConnection(client));
 
         // clients don't necessarily bind outputs
-        if (boundScreens.isEmpty())
+        if (boundScreens.isEmpty()) {
             return;
+        }
 
         // no reason for client to bind wl_output multiple times, send only to first one
         org_kde_kwin_remote_access_manager_send_buffer_ready(res, buf->fd(), boundScreens[0]);

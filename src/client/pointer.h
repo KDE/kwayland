@@ -170,6 +170,14 @@ Q_SIGNALS:
      **/
     void axisChanged(quint32 time, KWayland::Client::Pointer::Axis axis, qreal delta);
 
+    /**
+     * Indicates the end of a set of events that logically belong together.
+     * A client is expected to accumulate the data in all events within the
+     * frame before proceeding.
+     * @since 5.45
+     **/
+    void frame();
+
 private:
     class Private;
     QScopedPointer<Private> d;

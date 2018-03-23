@@ -50,6 +50,10 @@ private:
     static void buttonCallback(void *data, wl_pointer *pointer, uint32_t serial, uint32_t time,
                                uint32_t button, uint32_t state);
     static void axisCallback(void *data, wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
+    static void frameCallback(void *data, wl_pointer *pointer);
+    static void axisSourceCallback(void *data, wl_pointer *pointer, uint32_t axis_source);
+    static void axisStopCallback(void *data, wl_pointer *pointer, uint32_t time, uint32_t axis);
+    static void axisDiscreteCallback(void *data, wl_pointer *pointer, uint32_t axis, int32_t discrete);
 
     Pointer *q;
     static const wl_pointer_listener s_listener;
@@ -73,7 +77,11 @@ const wl_pointer_listener Pointer::Private::s_listener = {
     leaveCallback,
     motionCallback,
     buttonCallback,
-    axisCallback
+    axisCallback,
+    frameCallback,
+    axisSourceCallback,
+    axisStopCallback,
+    axisDiscreteCallback
 };
 
 Pointer::Pointer(QObject *parent)
@@ -164,6 +172,39 @@ void Pointer::Private::axisCallback(void *data, wl_pointer *pointer, uint32_t ti
         }
     };
     emit p->q->axisChanged(time, toAxis(), wl_fixed_to_double(value));
+}
+
+void Pointer::Private::frameCallback(void *data, wl_pointer *pointer)
+{
+    auto p = reinterpret_cast<Pointer::Private*>(data);
+    Q_ASSERT(p->pointer == pointer);
+    emit p->q->frame();
+}
+
+void Pointer::Private::axisSourceCallback(void *data, wl_pointer *pointer, uint32_t axis_source)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(pointer)
+    Q_UNUSED(axis_source)
+    // TODO: implement
+}
+
+void Pointer::Private::axisStopCallback(void *data, wl_pointer *pointer, uint32_t time, uint32_t axis)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(pointer)
+    Q_UNUSED(time)
+    Q_UNUSED(axis)
+    // TODO: implement
+}
+
+void Pointer::Private::axisDiscreteCallback(void *data, wl_pointer *pointer, uint32_t axis, int32_t discrete)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(pointer)
+    Q_UNUSED(axis)
+    Q_UNUSED(discrete)
+    // TODO: implement
 }
 
 void Pointer::setCursor(Surface *surface, const QPoint &hotspot)

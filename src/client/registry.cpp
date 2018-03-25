@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fullscreen_shell.h"
 #include "idle.h"
 #include "idleinhibit.h"
+#include "remote_access.h"
 #include "logging_p.h"
 #include "outputconfiguration.h"
 #include "outputmanagement.h"
@@ -62,6 +63,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
+#include <wayland-remote-access-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-output-management-client-protocol.h>
@@ -178,6 +180,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_idle_interface,
         &Registry::idleAnnounced,
         &Registry::idleRemoved
+    }},
+    {Registry::Interface::RemoteAccessManager, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_remote_access_manager"),
+        &org_kde_kwin_remote_access_manager_interface,
+        &Registry::remoteAccessManagerAnnounced,
+        &Registry::remoteAccessManagerRemoved
     }},
     {Registry::Interface::FakeInput, {
         2,
@@ -622,6 +631,7 @@ BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
+BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
 BIND(FakeInput, org_kde_kwin_fake_input)
 BIND(OutputManagement, org_kde_kwin_outputmanagement)
 BIND(OutputDevice, org_kde_kwin_outputdevice)
@@ -682,6 +692,7 @@ CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
+CREATE(RemoteAccessManager)
 CREATE(FakeInput)
 CREATE(OutputManagement)
 CREATE(OutputDevice)

@@ -24,6 +24,7 @@ set(CLIENT_LIB_SRCS
     idle.cpp
     idleinhibit.cpp
     keyboard.cpp
+    remote_access.cpp
     outputconfiguration.cpp
     outputmanagement.cpp
     outputdevice.cpp
@@ -193,6 +194,11 @@ set(CLIENT_GENERATED_FILES
 
 set_source_files_properties(${CLIENT_GENERATED_FILES} PROPERTIES SKIP_AUTOMOC ON)
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/remote-access.xml
+    BASENAME remote-access
+)
+
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
 generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -236,6 +242,7 @@ set(CLIENT_LIB_HEADERS
   idle.h
   idleinhibit.h
   keyboard.h
+  remote_access.h
   outputconfiguration.h
   outputmanagement.h
   outputdevice.h

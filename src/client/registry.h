@@ -42,6 +42,7 @@ struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
+struct org_kde_kwin_remote_access_manager;
 struct org_kde_kwin_dpms_manager;
 struct org_kde_kwin_shadow_manager;
 struct org_kde_kwin_blur_manager;
@@ -77,6 +78,7 @@ class OutputManagement;
 class OutputDevice;
 class Idle;
 class IdleInhibitManager;
+class RemoteAccessManager;
 class Output;
 class PlasmaShell;
 class PlasmaWindowManagement;
@@ -169,7 +171,8 @@ public:
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
         AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
-        ServerSideDecorationPalette ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
+        ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
+        RemoteAccessManager ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -404,6 +407,16 @@ public:
      * @since 5.4
      **/
     org_kde_kwin_idle *bindIdle(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_kwin_remote_access_manager with @p name and @p version.
+     * If the @p name does not exist or is not for the idle interface,
+     * @c null will be returned.
+     *
+     * Prefer using createRemoteAccessManager instead.
+     * @see createRemoteAccessManager
+     * @since 5.45
+     **/
+    org_kde_kwin_remote_access_manager *bindRemoteAccessManager(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_fake_input with @p name and @p version.
      * If the @p name does not exist or is not for the fake input interface,
@@ -806,6 +819,22 @@ public:
      **/
     Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
+     * Creates a RemoteAccessManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_kwin_remote_access_manager interface,
+     * the returned RemoteAccessManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_kwin_remote_access_manager interface to bind
+     * @param version The version or the org_kde_kwin_remote_access_manager interface to use
+     * @param parent The parent for RemoteAccessManager
+     *
+     * @returns The created RemoteAccessManager.
+     * @since 5.45
+     **/
+    RemoteAccessManager *createRemoteAccessManager(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
      * Creates a FakeInput and sets it up to manage the interface identified by
      * @p name and @p version.
      *
@@ -1187,6 +1216,13 @@ Q_SIGNALS:
      **/
     void idleAnnounced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a org_kde_kwin_remote_access_manager interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.45
+     **/
+    void remoteAccessManagerAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a org_kde_kwin_fake_input interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1402,6 +1438,12 @@ Q_SIGNALS:
      * @since 5.4
      **/
     void idleRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_kwin_remote_access_manager interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.45
+     **/
+    void remoteAccessManagerRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_kwin_fake_input interface gets removed.
      * @param name The name for the removed interface

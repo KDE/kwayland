@@ -5,22 +5,23 @@
         <description summary="get the org_kde_plasma_virtual_desktop interface for a desktop">
             Given the id of a particular virtual desktop, get the corresponding org_kde_plasma_virtual_desktop which represents only the desktop with that id;
         </description>
-        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+        <arg name="id" type="new_id" interface="org_kde_plasma_virtual_desktop"/>
+        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
     </request>
 
-    <request name="release">
+    <request name="release" type="destructor">
         <description summary="Destroys the manager"></description>
     </request>
 
 
     <event name="added">
         <description summary="Emitted when a new desktop has been added"></description>
-        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
     </event>
 
     <event name="removed">
         <description summary="Emitted when a new desktop has been removed"></description>
-        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
     </event>
 
     <event name="layout">
@@ -44,16 +45,13 @@
 
 
 <interface name="org_kde_plasma_virtual_desktop">
-    <request name="release">
+    <request name="release" type="destructor">
         <description summary="Destroys the desktop">
             Destroys the desktop, the manager will emit removed.
         </description>
     </request>
 
     <request name="activate">
-    </request>
-
-    <request name="deactivate">
     </request>
 
     <event name="id">

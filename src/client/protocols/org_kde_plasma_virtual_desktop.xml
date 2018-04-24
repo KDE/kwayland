@@ -34,7 +34,7 @@
     <event name="done">
         <description summary="sent all information about desktops">
             This event is sent after all other properties has been
-            sent after binding to the desktop object and after any
+            sent after binding to the desktop manager object and after any
             other property changes done after that. This allows
             changes to the org_kde_plasma_virtual_desktop_management properties to be seen as
             atomic, even if they happen via multiple events.
@@ -57,6 +57,8 @@
     </request>
 
     <event name="id">
+        <description summary="The desktop got an id">
+        </description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
 
@@ -79,8 +81,16 @@
     </event>
 
     <event name="done">
+        <description summary="sent all information about desktops">
+            This event is sent after all other properties has been
+            sent after binding to the desktop object and after any
+            other property changes done after that. This allows
+            changes to the org_kde_plasma_virtual_desktop properties to be seen as
+            atomic, even if they happen via multiple events.
+        </description>
     </event>
 
     <event name="removed">
+        <description summary="This desktop has been removed"/>
     </event>
 </interface>

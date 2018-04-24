@@ -1,0 +1,86 @@
+ 
+
+<interface name="org_kde_plasma_virtual_desktop_management" version="1">
+    <request name="get_virtual_desktop">
+        <description summary="get the org_kde_plasma_virtual_desktop interface for a desktop">
+            Given the id of a particular virtual desktop, get the corresponding org_kde_plasma_virtual_desktop which represents only the desktop with that id;
+        </description>
+        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+    </request>
+
+    <request name="release">
+        <description summary="Destroys the manager"></description>
+    </request>
+
+
+    <event name="added">
+        <description summary="Emitted when a new desktop has been added"></description>
+        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+    </event>
+
+    <event name="removed">
+        <description summary="Emitted when a new desktop has been removed"></description>
+        <arg name="id" type="uint" summary="Unique id of the desktop"/>
+    </event>
+
+    <event name="layout">
+        <description summary="Hint for the visual organization of the pager">
+            Metaphorically arrange desktops is a grid, which can be used for the pager or for the animation between desktops, or effects like the desktop grid.
+        </description>
+        <arg name="rows" type="uint"/>
+        <arg name="columns" type="uint"/>
+    </event>
+
+    <event name="done">
+        <description summary="sent all information about desktops">
+            This event is sent after all other properties has been
+            sent after binding to the desktop object and after any
+            other property changes done after that. This allows
+            changes to the org_kde_plasma_virtual_desktop_management properties to be seen as
+            atomic, even if they happen via multiple events.
+        </description>
+    </event>
+</interface>
+
+
+<interface name="org_kde_plasma_virtual_desktop">
+    <request name="release">
+        <description summary="Destroys the desktop">
+            Destroys the desktop, the manager will emit removed.
+        </description>
+    </request>
+
+    <request name="activate">
+    </request>
+
+    <request name="deactivate">
+    </request>
+
+    <event name="id">
+        <arg name="id" type="string" summary="Unique id of the desktop"/>
+    </event>
+
+    <event name="name">
+        <arg name="name" type="string" summary="User readable descriptive name for the desktop"/>
+    </event>
+
+    <event name="layout_position">
+        <description summary="Position for the desktop">
+            Logical position of the visual model of this desktop in terms of rows and columns: there will be only one desktop on a (row, column)
+        </description>
+        <arg name="row" type="uint"/>
+        <arg name="column" type="uint"/>
+    </event>
+
+    <event name="activated">
+    </event>
+
+    <event name="deactivated">
+    </event>
+
+    <event name="done">
+    </event>
+
+    <event name="removed">
+    </event>
+</interface>

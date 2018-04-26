@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputdevice.h"
 #include "output.h"
 #include "plasmashell.h"
+#include "plasmavirtualdesktop.h"
 #include "plasmawindowmanagement.h"
 #include "pointerconstraints.h"
 #include "pointergestures.h"
@@ -60,6 +61,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
+#include <wayland-org_kde_plasma_virtual_desktop-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
@@ -166,6 +168,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_plasma_shell_interface,
         &Registry::plasmaShellAnnounced,
         &Registry::plasmaShellRemoved
+    }},
+    {Registry::Interface::PlasmaVirtualDesktopManagement, {
+        1,
+        QByteArrayLiteral("org_kde_plasma_virtual_desktop_management"),
+        &org_kde_plasma_virtual_desktop_management_interface,
+        &Registry::plasmaVirtualDesktopManagementAnnounced,
+        &Registry::plasmaVirtualDesktopManagementRemoved
     }},
     {Registry::Interface::PlasmaWindowManagement, {
         7,
@@ -629,6 +638,7 @@ BIND(SubCompositor, wl_subcompositor)
 BIND(FullscreenShell, _wl_fullscreen_shell)
 BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
+BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
@@ -690,6 +700,7 @@ CREATE(FullscreenShell)
 CREATE(Output)
 CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
+CREATE(PlasmaVirtualDesktopManagement)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
 CREATE(RemoteAccessManager)

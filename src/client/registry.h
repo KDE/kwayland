@@ -49,6 +49,7 @@ struct org_kde_kwin_blur_manager;
 struct org_kde_kwin_contrast_manager;
 struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
+struct org_kde_plasma_virtual_desktop_management;
 struct org_kde_plasma_window_management;
 struct org_kde_kwin_server_decoration_manager;
 struct org_kde_kwin_server_decoration_palette_manager;
@@ -81,6 +82,7 @@ class IdleInhibitManager;
 class RemoteAccessManager;
 class Output;
 class PlasmaShell;
+class PlasmaVirtualDesktopManagement;
 class PlasmaWindowManagement;
 class PointerConstraints;
 class PointerGestures;
@@ -149,6 +151,7 @@ public:
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
+        PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
@@ -387,6 +390,16 @@ public:
      * @since 5.4
      **/
     org_kde_plasma_shell *bindPlasmaShell(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_plasma_virtual_desktop_management with @p name and @p version.
+     * If the @p name does not exist or is not for the Plasma Virtual desktop interface,
+     * @c null will be returned.
+     *
+     * Prefer using createPlasmaShell instead.
+     * @see createPlasmaShell
+     * @since 5.46
+     **/
+    org_kde_plasma_virtual_desktop_management *bindPlasmaVirtualDesktopManagement(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_plasma_window_management with @p name and @p version.
      * If the @p name does not exist or is not for the Plasma window management interface,
@@ -786,6 +799,22 @@ public:
      * @since 5.4
      **/
     PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a PlasmaVirtualDesktopManagement and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_plasma_virtual_desktop_management interface,
+     * the returned VirtualDesktop will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_plasma_virtual_desktop_management interface to bind
+     * @param version The version or the org_kde_plasma_virtual_desktop_management interface to use
+     * @param parent The parent for PlasmaShell
+     *
+     * @returns The created PlasmaShell.
+     * @since 5.46
+     **/
+    PlasmaVirtualDesktopManagement *createPlasmaVirtualDesktopManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a PlasmaWindowManagement and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1202,6 +1231,13 @@ Q_SIGNALS:
      **/
     void plasmaShellAnnounced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.46
+     **/
+    void plasmaVirtualDesktopManagementAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a org_kde_plasma_window_management interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1426,6 +1462,12 @@ Q_SIGNALS:
      * @since 5.4
      **/
     void plasmaShellRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.46
+     **/
+    void plasmaVirtualDesktopManagementRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_plasma_window_management interface gets removed.
      * @param name The name for the removed interface

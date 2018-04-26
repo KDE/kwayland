@@ -32,6 +32,32 @@ namespace Server
 
 class Display;
 
+class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Global
+{
+    Q_OBJECT
+public:
+    virtual ~PlasmaVirtualDesktopManagementInterface();
+
+private:
+    explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
+    friend class Display;
+    class Private;
+};
+
+class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public Resource
+{
+    Q_OBJECT
+public:
+    virtual ~PlasmaVirtualDesktopInterface();
+
+private:
+    explicit PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent, wl_resource *parentResource);
+    friend class PlasmaVirtualDesktopManagementInterface;
+
+    class Private;
+    Private *d_func() const;
+};
+
 
 }
 }

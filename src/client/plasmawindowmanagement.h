@@ -37,6 +37,7 @@ class EventQueue;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
+class PlasmaVirtualDesktop;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
@@ -475,6 +476,21 @@ public:
      **/
     QRect geometry() const;
 
+    /**
+     * Make the window enter a virtual desktop.
+     * A window can enter more than one virtual desktop.
+     * @since 5.46
+     */
+    void requestEnterVirtualDesktop(PlasmaVirtualDesktop *desktop);
+
+    /**
+     * Make the window exit a virtual desktop.
+     * If it exits all desktops it will be considered on all of them.
+     *
+     * @since 5.46
+     */
+    void requestLeaveVirtualDesktop(PlasmaVirtualDesktop *desktop);
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -610,6 +626,20 @@ Q_SIGNALS:
      **/
     void geometryChanged();
 
+    /**
+     * This event will be sent when the window has entered a new virtual desktop.
+     * The window can be on more than one desktop, or none: then is considered on all of them.
+     * @since 5.46
+     */
+    void virtualDesktopEntered(PlasmaVirtualDesktop *desktop);
+
+    /**
+     * This event will be sent when the window left entered a virtual desktop.
+     * If the window leaves all the desktops it can be considered on all.
+     *
+     * @since 5.46
+     */
+    void virtualDesktopLeft(PlasmaVirtualDesktop *desktop);
 private:
     friend class PlasmaWindowManagement;
     explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);

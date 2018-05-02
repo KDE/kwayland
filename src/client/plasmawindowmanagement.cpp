@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "plasmawindowmanagement.h"
 #include "plasmawindowmodel.h"
+#include "plasmavirtualdesktop.h"
 #include "event_queue.h"
 #include "output.h"
 #include "surface.h"
@@ -107,6 +108,8 @@ private:
     static void parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent);
     static void windowGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height);
     static void iconChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window);
+    static void virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, org_kde_plasma_virtual_desktop *desktop);
+    static void virtualDesktopLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, org_kde_plasma_virtual_desktop *desktop);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -345,7 +348,9 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     parentWindowCallback,
     windowGeometryCallback,
     iconChangedCallback,
-    pidChangedCallback
+    pidChangedCallback,
+    virtualDesktopEnteredCallback,
+    virtualDesktopLeftCallback
 };
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
@@ -454,6 +459,22 @@ void PlasmaWindow::Private::unmappedCallback(void *data, org_kde_plasma_window *
     p->unmapped = true;
     emit p->q->unmapped();
     p->q->deleteLater();
+}
+
+void PlasmaWindow::Private::virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_virtual_desktop *desktop)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+   // emit p->q->virtualDesktopEntered(*desktop);
+    
+}
+
+void PlasmaWindow::Private::virtualDesktopLeftCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_virtual_desktop *desktop)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+   // emit p->q->virtualDesktopEntered(desktop);
+    
 }
 
 void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state)
@@ -991,6 +1012,16 @@ QPointer<PlasmaWindow> PlasmaWindow::parentWindow() const
 QRect PlasmaWindow::geometry() const
 {
     return d->geometry;
+}
+
+void PlasmaWindow::requestEnterVirtualDesktop(PlasmaVirtualDesktop *desktop)
+{
+    org_kde_plasma_window_enter_virtual_desktop(d->window, *desktop);
+}
+
+void PlasmaWindow::requestLeaveVirtualDesktop(PlasmaVirtualDesktop *desktop)
+{
+    org_kde_plasma_window_leave_virtual_desktop(d->window, *desktop);
 }
 
 }

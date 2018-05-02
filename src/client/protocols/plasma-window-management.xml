@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_window_management" version="8">
+  <interface name="org_kde_plasma_window_management" version="9">
     <description summary="application windows management">
       This interface manages application windows.
       It provides requests to show and hide the desktop and emits
@@ -104,6 +104,7 @@
 
     <request name="set_virtual_desktop">
       <description summary="map window on a virtual desktop">
+          Deprecated: use enter_plasma_virtual_desktop
         Maps the window to a different virtual desktop.
 
         To show the window on all virtual desktops, call the
@@ -264,6 +265,38 @@
         This should be set once before the initial_state is sent.
       </description>
       <arg name="pid" type="uint" summary="process id"/>
+    </event>
+
+
+
+
+    <request name="enter_plasma_virtual_desktop" since="9">
+      <description summary="map window on a virtual desktop">
+        Make the window enter a virtual desktop. A window can enter more
+        than one virtual desktop.
+      </description>
+      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+    </request>
+
+    <request name="leave_plasma_virtual_desktop" since="9">
+      <description summary="remove a window from a virtual desktop">
+        Make the window exit a virtual desktop. If it exits all desktops it will be considered on all of them.
+      </description>
+      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+    </request>
+
+    <event name="virtual_desktop_entered" since="9">
+      <description summary="the window entered a new virtual desktop">
+          This event will be sent when the window has entered a new virtual desktop. The window can be on more than one desktop, or none: then is considered on all of them.
+      </description>
+      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+    </event>
+
+    <event name="virtual_desktop_left" since="9">
+      <description summary="the window left a virtual desktop">
+          This event will be sent when the window left entered a virtual desktop. If the window leaves all the desktops it can be considered on all.
+      </description>
+      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop"  summary="desktop object"/>
     </event>
 
   </interface>

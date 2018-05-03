@@ -196,6 +196,12 @@ public:
     operator org_kde_plasma_virtual_desktop*();
     operator org_kde_plasma_virtual_desktop*() const;
 
+Q_SIGNALS:
+    void activated();
+    void deactivated();
+    void done();
+    void removed();
+
 private:
     friend class PlasmaVirtualDesktopManagement;
     explicit PlasmaVirtualDesktop(QObject *parent = nullptr);

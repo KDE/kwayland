@@ -31,7 +31,7 @@ namespace Client
 class PlasmaVirtualDesktopManagement::Private
 {
 public:
-    Private() = default;
+    Private(PlasmaVirtualDesktopManagement *q);
 
     void setup(org_kde_plasma_virtual_desktop_management *arg);
 
@@ -44,6 +44,7 @@ private:
     static void layoutCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows, uint32_t columns);
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management);
 
+    PlasmaVirtualDesktopManagement *q;
     static const org_kde_plasma_virtual_desktop_management_listener s_listener;
 };
 
@@ -58,39 +59,39 @@ void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    Q_UNUSED(id)
-    // TODO: implement
+    emit p->q->desktopAdded(QString::fromUtf8(id));
 }
 
 void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    Q_UNUSED(id)
-    // TODO: implement
+    emit p->q->desktopRemoved(QString::fromUtf8(id));
 }
 
 void PlasmaVirtualDesktopManagement::Private::layoutCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows, uint32_t columns)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    Q_UNUSED(rows)
-    Q_UNUSED(columns)
-    // TODO: implement
+    emit p->q->layout(rows, columns);
 }
 
 void PlasmaVirtualDesktopManagement::Private::doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    // TODO: implement
+    emit p->q->done();
 }
 
 PlasmaVirtualDesktopManagement::PlasmaVirtualDesktopManagement(QObject *parent)
     : QObject(parent)
-    , d(new Private)
+    , d(new Private(this))
 {
 }
+
+PlasmaVirtualDesktopManagement::Private::Private(PlasmaVirtualDesktopManagement *q)
+    : q(q)
+{}
 
 void PlasmaVirtualDesktopManagement::Private::setup(org_kde_plasma_virtual_desktop_management *arg)
 {
@@ -164,6 +165,12 @@ public:
 
     WaylandPointer<org_kde_plasma_virtual_desktop, org_kde_plasma_virtual_desktop_destroy> plasmavirtualdesktop;
 
+    QString id;
+    QString name;
+    quint32 row = 0;
+    quint32 column = 0;
+    bool active = false;
+
 private:
     PlasmaVirtualDesktop *q;
 
@@ -193,53 +200,52 @@ void PlasmaVirtualDesktop::Private::idCallback(void *data, org_kde_plasma_virtua
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    Q_UNUSED(id)
-    // TODO: implement
+    p->id = QString::fromUtf8(id);
 }
 
 void PlasmaVirtualDesktop::Private::nameCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char * name)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    Q_UNUSED(name)
-    // TODO: implement
+    p->name = QString::fromUtf8(name);
 }
 
 void PlasmaVirtualDesktop::Private::layout_positionCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, uint32_t row, uint32_t column)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    Q_UNUSED(row)
-    Q_UNUSED(column)
-    // TODO: implement
+    p->row = row;
+    p->column = column;
 }
 
 void PlasmaVirtualDesktop::Private::activatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    // TODO: implement
+    p->active = true;
+    emit p->q->activated();
 }
 
 void PlasmaVirtualDesktop::Private::deactivatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    // TODO: implement
+    p->active = false;
+    emit p->q->deactivated();
 }
 
 void PlasmaVirtualDesktop::Private::doneCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    // TODO: implement
+    emit p->q->done();
 }
 
 void PlasmaVirtualDesktop::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    // TODO: implement
+    emit p->q->removed();
 }
 
 PlasmaVirtualDesktop::Private::Private(PlasmaVirtualDesktop *q)

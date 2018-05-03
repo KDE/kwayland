@@ -39,8 +39,8 @@ public:
     EventQueue *queue = nullptr;
 
 private:
-    static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t serial);
-    static void removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t serial);
+    static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
+    static void removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
     static void layoutCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows, uint32_t columns);
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management);
 
@@ -54,19 +54,19 @@ const org_kde_plasma_virtual_desktop_management_listener PlasmaVirtualDesktopMan
     doneCallback
 };
 
-void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t serial)
+void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    Q_UNUSED(serial)
+    Q_UNUSED(id)
     // TODO: implement
 }
 
-void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t serial)
+void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    Q_UNUSED(serial)
+    Q_UNUSED(id)
     // TODO: implement
 }
 
@@ -143,11 +143,11 @@ EventQueue *PlasmaVirtualDesktopManagement::eventQueue()
     return d->queue;
 }
 
-PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(quint32 serial, QObject *parent)
+PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QString &id, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto p = new PlasmaVirtualDesktop(parent);
-    auto w = org_kde_plasma_virtual_desktop_management_get_virtual_desktop(d->plasmavirtualdesktopmanagement, serial);
+    auto w = org_kde_plasma_virtual_desktop_management_get_virtual_desktop(d->plasmavirtualdesktopmanagement, id.toUtf8());
     if (d->queue) {
         d->queue->addProxy(w);
     }

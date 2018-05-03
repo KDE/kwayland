@@ -275,28 +275,28 @@
         Make the window enter a virtual desktop. A window can enter more
         than one virtual desktop.
       </description>
-      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+      <arg name="is" type="string" summary="desktop id"/>
     </request>
 
     <request name="leave_virtual_desktop" since="8">
       <description summary="remove a window from a virtual desktop">
         Make the window exit a virtual desktop. If it exits all desktops it will be considered on all of them.
       </description>
-      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+      <arg name="id" type="string" summary="desktop id"/>
     </request>
 
     <event name="virtual_desktop_entered" since="8">
       <description summary="the window entered a new virtual desktop">
           This event will be sent when the window has entered a new virtual desktop. The window can be on more than one desktop, or none: then is considered on all of them.
       </description>
-      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop" summary="desktop object"/>
+      <arg name="id" type="string" summary="desktop id"/>
     </event>
 
     <event name="virtual_desktop_left" since="8">
       <description summary="the window left a virtual desktop">
           This event will be sent when the window left entered a virtual desktop. If the window leaves all the desktops it can be considered on all.
       </description>
-      <arg name="desktop" type="object" interface="org_kde_plasma_virtual_desktop"  summary="desktop object"/>
+      <arg name="is" type="string" summary="desktop id"/>
     </event>
 
   </interface>

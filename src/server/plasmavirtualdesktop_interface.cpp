@@ -43,7 +43,7 @@ private:
         return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
     }
 
-    static void getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t serial);
+    static void getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id);
     static void releaseCallback(wl_client *client, wl_resource *resource);
 
     PlasmaVirtualDesktopManagementInterface *q;
@@ -60,7 +60,7 @@ const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDe
 };
 #endif
 
-void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t serial)
+void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id)
 {
     // TODO: implement
 }

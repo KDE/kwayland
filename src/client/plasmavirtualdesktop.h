@@ -114,20 +114,38 @@ public:
      **/
     EventQueue *eventQueue();
 
-    PlasmaVirtualDesktop *getVirtualDesktop(quint32 serial, QObject *parent = nullptr);
+    PlasmaVirtualDesktop *getVirtualDesktop(const QString &id, QObject *parent = nullptr);
 
     operator org_kde_plasma_virtual_desktop_management*();
     operator org_kde_plasma_virtual_desktop_management*() const;
 
 Q_SIGNALS:
-    /**
-     * The corresponding global for this interface on the Registry got removed.
-     *
-     * This signal gets only emitted if the PlasmaVirtualDesktopManagement got created by
-     * Registry::createPlasmaVirtualDesktopManagement
-     **/
     void removed();
 
+    /**
+     * Emitted when a new desktop has been added
+     */
+    void desktopAdded(const QString &id);
+
+    /**
+     * Emitted when a new desktop has been removed
+     */
+    void desktopRemoved(const QString &id);
+
+    /**
+     * Metaphorically arrange desktops in a grid, which can be used for
+     * the pager or for the animation between desktops, or effects like the desktop grid.
+     */
+    void layout(quint32 row, quint32 column);
+
+    /**
+     * This event is sent after all other properties has been
+     * sent after binding to the desktop manager object and after any
+     * other property changes done after that. This allows
+     * changes to the org_kde_plasma_virtual_desktop_management properties
+     * to be seen as atomic, even if they happen via multiple events.
+     */
+    void done();
 private:
     class Private;
     QScopedPointer<Private> d;

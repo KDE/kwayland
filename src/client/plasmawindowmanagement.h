@@ -481,7 +481,7 @@ public:
      * A window can enter more than one virtual desktop.
      * @since 5.46
      */
-    void requestEnterVirtualDesktop(PlasmaVirtualDesktop *desktop);
+    void requestEnterVirtualDesktop(const QString &id);
 
     /**
      * Make the window exit a virtual desktop.
@@ -489,7 +489,7 @@ public:
      *
      * @since 5.46
      */
-    void requestLeaveVirtualDesktop(PlasmaVirtualDesktop *desktop);
+    void requestLeaveVirtualDesktop(const QString &id);
 
 Q_SIGNALS:
     /**
@@ -631,7 +631,7 @@ Q_SIGNALS:
      * The window can be on more than one desktop, or none: then is considered on all of them.
      * @since 5.46
      */
-    void virtualDesktopEntered(PlasmaVirtualDesktop *desktop);
+    void virtualDesktopEntered(const QString &id);
 
     /**
      * This event will be sent when the window left entered a virtual desktop.
@@ -639,7 +639,7 @@ Q_SIGNALS:
      *
      * @since 5.46
      */
-    void virtualDesktopLeft(PlasmaVirtualDesktop *desktop);
+    void virtualDesktopLeft(const QString &id);
 private:
     friend class PlasmaWindowManagement;
     explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);

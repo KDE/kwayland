@@ -23,8 +23,8 @@
         <description summary="get the org_kde_plasma_virtual_desktop interface for a desktop">
             Given the id of a particular virtual desktop, get the corresponding org_kde_plasma_virtual_desktop which represents only the desktop with that id;
         </description>
-        <arg name="id" type="new_id" interface="org_kde_plasma_virtual_desktop"/>
-        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
+        <arg name="desktop" type="new_id" interface="org_kde_plasma_virtual_desktop"/>
+        <arg name="id" type="string" summary="Unique id of the desktop"/>
     </request>
 
     <request name="release" type="destructor">
@@ -32,19 +32,19 @@
     </request>
 
 
-    <event name="added">
+    <event name="desktop_added">
         <description summary="Emitted when a new desktop has been added"></description>
-        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
+        <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
 
-    <event name="removed">
+    <event name="desktop_removed">
         <description summary="Emitted when a new desktop has been removed"></description>
-        <arg name="serial" type="uint" summary="Unique id of the desktop"/>
+        <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
 
     <event name="layout">
         <description summary="Hint for the visual organization of the pager">
-            Metaphorically arrange desktops is a grid, which can be used for the pager or for the animation between desktops, or effects like the desktop grid.
+            Metaphorically arrange desktops in a grid, which can be used for the pager or for the animation between desktops, or effects like the desktop grid.
         </description>
         <arg name="rows" type="uint"/>
         <arg name="columns" type="uint"/>

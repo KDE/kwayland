@@ -191,7 +191,16 @@ public:
      **/
     void destroy();
 
-    void activate();
+    /**
+     * Requests this desktop to be activated
+     */
+    void requestActivate();
+
+    QString id() const;
+    QString name() const;
+    quint32 row() const;
+    quint32 column() const;
+    bool active() const;
 
     operator org_kde_plasma_virtual_desktop*();
     operator org_kde_plasma_virtual_desktop*() const;

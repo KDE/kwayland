@@ -300,12 +300,36 @@ bool PlasmaVirtualDesktop::isValid() const
     return d->plasmavirtualdesktop.isValid();
 }
 
-void PlasmaVirtualDesktop::activate()
+void PlasmaVirtualDesktop::requestActivate()
 {
     Q_ASSERT(isValid());
-    org_kde_plasma_virtual_desktop_activate(d->plasmavirtualdesktop);
+    org_kde_plasma_virtual_desktop_request_activate(d->plasmavirtualdesktop);
 }
 
+QString PlasmaVirtualDesktop::id() const
+{
+    return d->id;
+}
+
+QString PlasmaVirtualDesktop::name() const
+{
+    return d->name;
+}
+
+quint32 PlasmaVirtualDesktop::row() const
+{
+    return d->row;
+}
+
+quint32 PlasmaVirtualDesktop::column() const
+{
+    return d->column;
+}
+
+bool PlasmaVirtualDesktop::active() const
+{
+    return d->active;
+}
 
 }
 }

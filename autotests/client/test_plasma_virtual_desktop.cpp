@@ -155,14 +155,63 @@ void TestVirtualDesktop::cleanup()
 void TestVirtualDesktop::testCreate()
 {
     QSignalSpy desktopAddedSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::desktopAdded);
-    m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-1"));
-    desktopAddedSpy.wait();
-//QTest::qSleep(1000);
-    QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 1);
-    QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().first()->id(), QStringLiteral("0-1"));
+    QSignalSpy managementDoneSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::done);
 
-    qWarning()<<"desktops"<<m_plasmaVirtualDesktopManagement->desktops();
+    //on this createDesktop bind() isn't called already, the desktopadded signals will be sent after bind happened
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-1"));
+    desktop1Int->setName("Desktop 1");
+
+    desktopAddedSpy.wait();
+    m_plasmaVirtualDesktopManagementInterface->sendDone();
+    managementDoneSpy.wait();
+
+
+    QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 1);
+
+    KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
+    QSignalSpy desktop1DoneSpy(desktop1, &PlasmaVirtualDesktop::done);
+    desktop1Int->sendDone();
+    desktop1DoneSpy.wait();
     
+    QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
+    QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
+
+
+    //on those createDesktop the bind will already be done
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-2"));
+    desktop2Int->setName("Desktop 2");
+    desktopAddedSpy.wait();
+    QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 2);
+
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-3"));
+    desktop3Int->setName("Desktop 3");
+    desktopAddedSpy.wait();
+    QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 3);
+
+    m_plasmaVirtualDesktopManagementInterface->sendDone();
+    managementDoneSpy.wait();
+
+
+    //get the clients
+    KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[1];
+    QSignalSpy desktop2DoneSpy(desktop2, &PlasmaVirtualDesktop::done);
+    desktop2Int->sendDone();
+    desktop2DoneSpy.wait();
+
+    KWayland::Client::PlasmaVirtualDesktop *desktop3 = m_plasmaVirtualDesktopManagement->desktops()[2];
+    QSignalSpy desktop3DoneSpy(desktop3, &PlasmaVirtualDesktop::done);
+    desktop3Int->sendDone();
+    desktop3DoneSpy.wait();
+
+
+    QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
+    QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
+
+    QCOMPARE(desktop2->id(), QStringLiteral("0-2"));
+    QCOMPARE(desktop2->name(), QStringLiteral("Desktop 2"));
+
+    QCOMPARE(desktop3->id(), QStringLiteral("0-3"));
+    QCOMPARE(desktop3->name(), QStringLiteral("Desktop 3"));
 }
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)

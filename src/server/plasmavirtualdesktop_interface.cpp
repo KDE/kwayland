@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "resource_p.h"
 
 #include <QDebug>
+#include <QTimer>
 
 #include <wayland-server.h>
 #include <wayland-org_kde_plasma_virtual_desktop-server-protocol.h>
@@ -44,6 +45,9 @@ public:
 
     QVector<wl_resource*> resources;
     QString id;
+    QString name;
+    quint32 row = 0;
+    quint32 column = 0;
 
 private:
     static void unbind(wl_resource *resource);
@@ -144,8 +148,12 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
 
     for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().data());
+        org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().constData());
     }
+  /*  c->flush();
+    if (!desktops.isEmpty()) {
+        QTimer::singleShot(10, q, [this, resource]() {org_kde_plasma_virtual_desktop_management_send_done(resource);});
+    }*/
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::unbind(wl_resource *resource)
@@ -187,12 +195,19 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     );
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().data());
+        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().constData());
     }
 
     return desktop;
 }
 
+void PlasmaVirtualDesktopManagementInterface::sendDone()
+{
+    Q_D();
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_management_send_done(*it);
+    }
+}
 
 
 
@@ -258,12 +273,12 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
     resources << resource;
 
-    org_kde_plasma_virtual_desktop_send_id(resource, id.toUtf8().data());
-    /*TODO:name if (!m_appId.isEmpty()) {
-        org_kde_plasma_window_send_app_id_changed(resource, m_appId.toUtf8().constData());
-    }*/
+    org_kde_plasma_virtual_desktop_send_id(resource, id.toUtf8().constData());
+    if (!name.isEmpty()) {
+        org_kde_plasma_virtual_desktop_send_name(resource, name.toUtf8().constData());
+    }
+    org_kde_plasma_virtual_desktop_send_layout_position(resource, row, column);
     
-    org_kde_plasma_virtual_desktop_send_done(resource);
     c->flush();
 }
 
@@ -278,15 +293,43 @@ PlasmaVirtualDesktopInterface::~PlasmaVirtualDesktopInterface()
 
 void PlasmaVirtualDesktopInterface::setId(const QString &id)
 {
+    if (d->id == id) {
+        return;
+    }
+
     d->id = id;
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().data());
+        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().constData());
     }
 }
 
 QString PlasmaVirtualDesktopInterface::id() const
 {
     return d->id;
+}
+
+void PlasmaVirtualDesktopInterface::setName(const QString &name)
+{
+    if (d->name == name) {
+        return;
+    }
+
+    d->name = name;
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_name(*it, name.toUtf8().constData());
+    }
+}
+
+QString PlasmaVirtualDesktopInterface::name() const
+{
+    return d->name;
+}
+
+void PlasmaVirtualDesktopInterface::sendDone()
+{
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_done(*it);
+    }
 }
 
 }

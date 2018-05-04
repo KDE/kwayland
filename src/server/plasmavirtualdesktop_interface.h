@@ -40,6 +40,7 @@ public:
     virtual ~PlasmaVirtualDesktopManagementInterface();
 
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+    void sendDone();
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
@@ -56,6 +57,11 @@ public:
 
     void setId(const QString &id);
     QString id() const;
+
+    void setName(const QString &name);
+    QString name() const;
+
+    void sendDone();
 
 Q_SIGNALS:
     void activateRequested();

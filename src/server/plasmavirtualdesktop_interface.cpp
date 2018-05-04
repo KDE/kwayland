@@ -257,7 +257,7 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
     }
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
     resources << resource;
-qWarning()<<"POLLAME";
+
     org_kde_plasma_virtual_desktop_send_id(resource, id.toUtf8().data());
     /*TODO:name if (!m_appId.isEmpty()) {
         org_kde_plasma_window_send_app_id_changed(resource, m_appId.toUtf8().constData());

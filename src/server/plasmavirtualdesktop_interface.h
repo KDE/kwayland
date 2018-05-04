@@ -44,7 +44,12 @@ public:
     quint32 columns();
 
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+    QList <PlasmaVirtualDesktopInterface *> desktops() const;
+
     void sendDone();
+
+    //active desktops are mutually exclusive
+    void setActiveDesktop(const QString &id);
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
@@ -69,9 +74,12 @@ public:
     quint32 row() const;
     quint32 column() const;
 
+    bool active() const;
+
     void sendDone();
 
 Q_SIGNALS:
+    void releaseRequested();
     void activateRequested();
 
 private:

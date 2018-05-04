@@ -45,6 +45,8 @@ private Q_SLOTS:
     void cleanup();
 
     void testCreate();
+    void testDestroy();
+    void testActivate();
 
 private:
     KWayland::Server::Display *m_display;
@@ -180,7 +182,7 @@ void TestVirtualDesktop::testCreate()
     QSignalSpy desktop1DoneSpy(desktop1, &PlasmaVirtualDesktop::done);
     desktop1Int->sendDone();
     desktop1DoneSpy.wait();
-    
+
     QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
     QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
     QCOMPARE(desktop1->row(), 0);
@@ -230,6 +232,43 @@ void TestVirtualDesktop::testCreate()
     QCOMPARE(desktop3->name(), QStringLiteral("Desktop 3"));
     QCOMPARE(desktop3->row(), 1);
     QCOMPARE(desktop3->column(), 0);
+}
+
+void TestVirtualDesktop::testDestroy()
+{
+    
+}
+
+void TestVirtualDesktop::testActivate()
+{
+    //rebuild some desktops
+    testCreate();
+
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->desktops().first();
+    KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
+    QVERIFY(desktop1Int->active());
+
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->desktops()[1];
+    KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[1];
+    QVERIFY(!desktop2Int->active());
+
+    QSignalSpy requestActivateSpy(desktop2Int, &KWayland::Server::PlasmaVirtualDesktopInterface::activateRequested);
+    QSignalSpy activatedSpy(desktop2, &KWayland::Client::PlasmaVirtualDesktop::activated);
+
+    desktop2->requestActivate();
+    requestActivateSpy.wait();
+
+    //activate the desktop that was requested active
+    m_plasmaVirtualDesktopManagementInterface->setActiveDesktop(desktop2->id());
+    activatedSpy.wait();
+    //TODO: test the deactivated signal as well?
+
+    //correct state in the server
+    QVERIFY(desktop2Int->active());
+    QVERIFY(!desktop1Int->active());
+    //correct state in the client
+    QVERIFY(desktop2Int->active());
+    QVERIFY(!desktop1Int->active());
 }
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)

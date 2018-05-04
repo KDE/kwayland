@@ -48,17 +48,18 @@ public:
     QString name;
     quint32 row = 0;
     quint32 column = 0;
+    bool active = false;
 
 private:
     static void unbind(wl_resource *resource);
-    static void activateCallback(wl_client *client, wl_resource *resource);
-    static void deactivateCallback(wl_client *client, wl_resource *resource);
-    static void destroyCallback(wl_client *, wl_resource *r);
+    static void requestActivateCallback(wl_client *client, wl_resource *resource);
+    static void requestReleaseCallback(wl_client *client, wl_resource *resource);
 
     static Private *cast(wl_resource *resource) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
     }
 
+    wl_listener listener;
     static const struct org_kde_plasma_virtual_desktop_interface s_interface;
 };
 
@@ -200,11 +201,18 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
 
     PlasmaVirtualDesktopInterface *desktop = new PlasmaVirtualDesktopInterface(this);
     desktop->setId(id);
+
+    //activate the first desktop TODO: to be done here?
+    if (d->desktops.isEmpty()) {
+        desktop->d->active = true;
+    }
+
     d->desktops[id] = desktop;
     connect(desktop, &QObject::destroyed, this,
         [this, id] {
             Q_D();
             d->desktops.remove(id);
+            //TODO: activate another desktop?
         }
     );
 
@@ -215,6 +223,12 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     return desktop;
 }
 
+QList <PlasmaVirtualDesktopInterface *> PlasmaVirtualDesktopManagementInterface::desktops() const
+{
+    Q_D();
+    return d->desktops.values();
+}
+
 void PlasmaVirtualDesktopManagementInterface::sendDone()
 {
     Q_D();
@@ -223,6 +237,26 @@ void PlasmaVirtualDesktopManagementInterface::sendDone()
     }
 }
 
+void PlasmaVirtualDesktopManagementInterface::setActiveDesktop(const QString &id)
+{
+    Q_D();
+    for (auto it = d->desktops.constBegin(); it != d->desktops.constEnd(); ++it) {
+        auto desktop = *it;
+        if (desktop->id() == id) {
+            desktop->d->active = true;
+            for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
+                org_kde_plasma_virtual_desktop_send_activated(*it);
+            }
+        } else {
+            if (desktop->d->active) {
+                desktop->d->active = false;
+                for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
+                    org_kde_plasma_virtual_desktop_send_deactivated(*it);
+                }
+            }
+        }
+    }
+}
 
 
 
@@ -230,12 +264,21 @@ void PlasmaVirtualDesktopManagementInterface::sendDone()
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_plasma_virtual_desktop_interface PlasmaVirtualDesktopInterface::Private::s_interface = {
-    activateCallback
+    requestReleaseCallback,
+    requestActivateCallback
 };
 #endif
 
-void PlasmaVirtualDesktopInterface::Private::activateCallback(wl_client *client, wl_resource *resource)
+void PlasmaVirtualDesktopInterface::Private::requestReleaseCallback(wl_client *client, wl_resource *resource)
 {
+    Q_UNUSED(client)
+    auto s = cast(resource);
+    emit s->q->releaseRequested();
+}
+
+void PlasmaVirtualDesktopInterface::Private::requestActivateCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client)
     auto s = cast(resource);
     emit s->q->activateRequested();
 }
@@ -255,16 +298,6 @@ PlasmaVirtualDesktopInterface::Private::~Private()
         org_kde_plasma_virtual_desktop_send_removed(r);
         wl_resource_destroy(r);
         wl_client_flush(client);
-    }
-}
-
-void PlasmaVirtualDesktopInterface::Private::destroyCallback(wl_client *, wl_resource *r)
-{
-    Private *p = cast(r);
-    p->resources.removeAll(r);
-    wl_resource_destroy(r);
-    if (p->resources.isEmpty()) {
-        p->q->deleteLater();
     }
 }
 
@@ -361,6 +394,11 @@ quint32 PlasmaVirtualDesktopInterface::row() const
 quint32 PlasmaVirtualDesktopInterface::column() const
 {
     return d->column;
+}
+
+bool PlasmaVirtualDesktopInterface::active() const
+{
+    return d->active;
 }
 
 void PlasmaVirtualDesktopInterface::sendDone()

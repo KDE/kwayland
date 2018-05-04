@@ -63,7 +63,7 @@
 
 
 <interface name="org_kde_plasma_virtual_desktop"  version="1">
-    <request name="release" type="destructor">
+    <request name="request_release" type="destructor">
         <description summary="Destroys the desktop">
             Destroys the desktop, the manager will emit removed.
         </description>

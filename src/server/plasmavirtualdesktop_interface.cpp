@@ -70,6 +70,8 @@ public:
 
     QVector<wl_resource*> resources;
     QMap<QString, PlasmaVirtualDesktopInterface*> desktops;
+    quint32 rows = 0;
+    quint32 columns = 0;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -99,7 +101,7 @@ const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDe
 
 void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id)
 {
-    qWarning()<<"THIS SHOULD GET CALLED";
+    Q_UNUSED(client)
     auto s = cast(resource);
 
     auto i = s->desktops.constFind(QString::fromUtf8(id));
@@ -108,18 +110,6 @@ void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback
     }
 
     (*i)->d->createResource(resource, serial);
-    /*
-    desktop->create(display->getConnection(client), wl_resource_get_version(resource), serial);
-    if (!desktop->resource()) {
-        wl_resource_post_no_memory(resource);
-        delete desktop;
-        return;
-    }
-
-    s->desktops[id] = desktop;
-    connect(desktop, &QObject::destroyed, [this, id] {
-        s->desktops.remove(id);
-    });*/
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
@@ -150,10 +140,7 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
     for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().constData());
     }
-  /*  c->flush();
-    if (!desktops.isEmpty()) {
-        QTimer::singleShot(10, q, [this, resource]() {org_kde_plasma_virtual_desktop_management_send_done(resource);});
-    }*/
+    org_kde_plasma_virtual_desktop_management_send_layout(resource, rows, columns);
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::unbind(wl_resource *resource)
@@ -173,6 +160,33 @@ PlasmaVirtualDesktopManagementInterface::~PlasmaVirtualDesktopManagementInterfac
 PlasmaVirtualDesktopManagementInterface::Private *PlasmaVirtualDesktopManagementInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
+}
+
+void PlasmaVirtualDesktopManagementInterface::setLayout(quint32 rows, quint32 columns)
+{
+    Q_D();
+    if (d->rows == rows && d->columns == columns) {
+        return;
+    }
+
+    d->rows = rows;
+    d->columns = columns;
+
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_management_send_layout(*it, rows, columns);
+    }
+}
+
+quint32 PlasmaVirtualDesktopManagementInterface::rows()
+{
+    Q_D();
+    return d->rows;
+}
+
+quint32 PlasmaVirtualDesktopManagementInterface::columns()
+{
+    Q_D();
+    return d->columns;
 }
 
 PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id)
@@ -323,6 +337,30 @@ void PlasmaVirtualDesktopInterface::setName(const QString &name)
 QString PlasmaVirtualDesktopInterface::name() const
 {
     return d->name;
+}
+
+void PlasmaVirtualDesktopInterface::setLayoutPosition(quint32 row, quint32 column)
+{
+    if (d->row == row && d->column == column) {
+        return;
+    }
+
+    d->row = row;
+    d->column = column;
+
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_layout_position(*it, row, column);
+    }
+}
+
+quint32 PlasmaVirtualDesktopInterface::row() const
+{
+    return d->row;
+}
+
+quint32 PlasmaVirtualDesktopInterface::column() const
+{
+    return d->column;
 }
 
 void PlasmaVirtualDesktopInterface::sendDone()

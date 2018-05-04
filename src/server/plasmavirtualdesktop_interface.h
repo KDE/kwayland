@@ -39,6 +39,10 @@ class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Glo
 public:
     virtual ~PlasmaVirtualDesktopManagementInterface();
 
+    void setLayout(quint32 rows, quint32 columns);
+    quint32 rows();
+    quint32 columns();
+
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
     void sendDone();
 
@@ -60,6 +64,10 @@ public:
 
     void setName(const QString &name);
     QString name() const;
+
+    void setLayoutPosition(quint32 row, quint32 column);
+    quint32 row() const;
+    quint32 column() const;
 
     void sendDone();
 

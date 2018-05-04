@@ -157,9 +157,17 @@ void TestVirtualDesktop::testCreate()
     QSignalSpy desktopAddedSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::desktopAdded);
     QSignalSpy managementDoneSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::done);
 
+
+    QSignalSpy layoutSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::layout);
+    m_plasmaVirtualDesktopManagementInterface->setLayout(2, 2);
+    layoutSpy.wait();
+    QCOMPARE(m_plasmaVirtualDesktopManagement->rows(), 2);
+    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 2);
+
     //on this createDesktop bind() isn't called already, the desktopadded signals will be sent after bind happened
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-1"));
     desktop1Int->setName("Desktop 1");
+    desktop1Int->setLayoutPosition(0, 0);
 
     desktopAddedSpy.wait();
     m_plasmaVirtualDesktopManagementInterface->sendDone();
@@ -175,16 +183,20 @@ void TestVirtualDesktop::testCreate()
     
     QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
     QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
+    QCOMPARE(desktop1->row(), 0);
+    QCOMPARE(desktop1->column(), 0);
 
 
     //on those createDesktop the bind will already be done
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-2"));
     desktop2Int->setName("Desktop 2");
+    desktop2Int->setLayoutPosition(0, 1);
     desktopAddedSpy.wait();
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 2);
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-3"));
     desktop3Int->setName("Desktop 3");
+    desktop3Int->setLayoutPosition(1, 0);
     desktopAddedSpy.wait();
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 3);
 
@@ -206,12 +218,18 @@ void TestVirtualDesktop::testCreate()
 
     QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
     QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
+    QCOMPARE(desktop1->row(), 0);
+    QCOMPARE(desktop1->column(), 0);
 
     QCOMPARE(desktop2->id(), QStringLiteral("0-2"));
     QCOMPARE(desktop2->name(), QStringLiteral("Desktop 2"));
+    QCOMPARE(desktop2->row(), 0);
+    QCOMPARE(desktop2->column(), 1);
 
     QCOMPARE(desktop3->id(), QStringLiteral("0-3"));
     QCOMPARE(desktop3->name(), QStringLiteral("Desktop 3"));
+    QCOMPARE(desktop3->row(), 1);
+    QCOMPARE(desktop3->column(), 0);
 }
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)

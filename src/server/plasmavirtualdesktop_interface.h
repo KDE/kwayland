@@ -31,6 +31,7 @@ namespace Server
 {
 
 class Display;
+class PlasmaVirtualDesktopInterface;
 
 class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Global
 {
@@ -38,26 +39,34 @@ class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Glo
 public:
     virtual ~PlasmaVirtualDesktopManagementInterface();
 
+    PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
+    Private *d_func() const;
 };
 
-class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public Resource
+class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public QObject
 {
     Q_OBJECT
 public:
     virtual ~PlasmaVirtualDesktopInterface();
 
+    void setId(const QString &id);
+    QString id() const;
+
+Q_SIGNALS:
+    void activateRequested();
+
 private:
-    explicit PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent, wl_resource *parentResource);
+    explicit PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent);
     friend class PlasmaVirtualDesktopManagementInterface;
 
     class Private;
-    Private *d_func() const;
+    const QScopedPointer<Private> d;
 };
-
 
 }
 }

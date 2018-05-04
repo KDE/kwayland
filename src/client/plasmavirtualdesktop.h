@@ -109,12 +109,18 @@ public:
      * Sets the @p queue to use for creating objects with this PlasmaVirtualDesktopManagement.
      **/
     void setEventQueue(EventQueue *queue);
+
     /**
      * @returns The event queue to use for creating objects with this PlasmaVirtualDesktopManagement.
      **/
     EventQueue *eventQueue();
 
     PlasmaVirtualDesktop *getVirtualDesktop(const QString &id, QObject *parent = nullptr);
+
+    //FIXME: is this necessary? libtaskmanager can build a model out of it even without acces to this list
+    QList <PlasmaVirtualDesktop *> desktops() const;
+    quint32 rows() const;
+    quint32 columns() const;
 
     operator org_kde_plasma_virtual_desktop_management*();
     operator org_kde_plasma_virtual_desktop_management*() const;

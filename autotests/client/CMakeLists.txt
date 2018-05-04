@@ -429,3 +429,14 @@ add_executable(testRemoteAccess ${testRemoteAccess_SRCS})
 target_link_libraries( testRemoteAccess Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
 add_test(NAME kwayland-testRemoteAccess COMMAND testRemoteAccess)
 ecm_mark_as_test(testRemoteAccess)
+
+########################################################
+# Test VirtualDesktop
+########################################################
+set( testPlasmaVirtualDesktop_SRCS
+        test_plasma_virtual_desktop.cpp
+    )
+add_executable(testPlasmaVirtualDesktop ${testPlasmaVirtualDesktop_SRCS})
+target_link_libraries( testPlasmaVirtualDesktop Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(NAME kwayland-testPlasmaVirtualDesktop COMMAND testPlasmaVirtualDesktop)
+ecm_mark_as_test(testPlasmaVirtualDesktop)

@@ -640,6 +640,7 @@ Q_SIGNALS:
      * @since 5.46
      */
     void virtualDesktopLeft(const QString &id);
+
 private:
     friend class PlasmaWindowManagement;
     explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);

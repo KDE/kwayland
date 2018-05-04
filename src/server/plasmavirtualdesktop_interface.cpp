@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "global_p.h"
 #include "resource_p.h"
 
+#include <QDebug>
+
 #include <wayland-server.h>
 #include <wayland-org_kde_plasma_virtual_desktop-server-protocol.h>
 
@@ -30,10 +32,40 @@ namespace KWayland
 namespace Server
 {
 
+class PlasmaVirtualDesktopInterface::Private
+{
+public:
+    Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c);
+    ~Private();
+    void createResource(wl_resource *parent, quint32 serial);
+
+    PlasmaVirtualDesktopInterface *q;
+    PlasmaVirtualDesktopManagementInterface *vdm;
+
+    QVector<wl_resource*> resources;
+    QString id;
+
+private:
+    static void unbind(wl_resource *resource);
+    static void activateCallback(wl_client *client, wl_resource *resource);
+    static void deactivateCallback(wl_client *client, wl_resource *resource);
+    static void destroyCallback(wl_client *, wl_resource *r);
+
+    static Private *cast(wl_resource *resource) {
+        return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    }
+
+    static const struct org_kde_plasma_virtual_desktop_interface s_interface;
+};
+
+
 class PlasmaVirtualDesktopManagementInterface::Private : public Global::Private
 {
 public:
     Private(PlasmaVirtualDesktopManagementInterface *q, Display *d);
+
+    QVector<wl_resource*> resources;
+    QMap<QString, PlasmaVirtualDesktopInterface*> desktops;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -47,6 +79,7 @@ private:
     static void releaseCallback(wl_client *client, wl_resource *resource);
 
     PlasmaVirtualDesktopManagementInterface *q;
+
     static const struct org_kde_plasma_virtual_desktop_management_interface s_interface;
     static const quint32 s_version;
 };
@@ -62,7 +95,27 @@ const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDe
 
 void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id)
 {
-    // TODO: implement
+    qWarning()<<"THIS SHOULD GET CALLED";
+    auto s = cast(resource);
+
+    auto i = s->desktops.constFind(QString::fromUtf8(id));
+    if (i == s->desktops.constEnd()) {
+        return;
+    }
+
+    (*i)->d->createResource(resource, serial);
+    /*
+    desktop->create(display->getConnection(client), wl_resource_get_version(resource), serial);
+    if (!desktop->resource()) {
+        wl_resource_post_no_memory(resource);
+        delete desktop;
+        return;
+    }
+
+    s->desktops[id] = desktop;
+    connect(desktop, &QObject::destroyed, [this, id] {
+        s->desktops.remove(id);
+    });*/
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
@@ -81,18 +134,24 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
 {
     auto c = display->getConnection(client);
     wl_resource *resource = c->createResource(&org_kde_plasma_virtual_desktop_management_interface, qMin(version, s_version), id);
+
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
     }
+    resources << resource;
+
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
-    // TODO: should we track?
+
+    for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().data());
+    }
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::unbind(wl_resource *resource)
 {
-    Q_UNUSED(resource)
-    // TODO: implement?
+    auto dm = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    dm->resources.removeAll(resource);
 }
 
 PlasmaVirtualDesktopManagementInterface::PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent)
@@ -103,57 +162,132 @@ PlasmaVirtualDesktopManagementInterface::PlasmaVirtualDesktopManagementInterface
 PlasmaVirtualDesktopManagementInterface::~PlasmaVirtualDesktopManagementInterface()
 {}
 
-
-
-
-class PlasmaVirtualDesktopInterface::Private : public Resource::Private
+PlasmaVirtualDesktopManagementInterface::Private *PlasmaVirtualDesktopManagementInterface::d_func() const
 {
-public:
-    Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c, wl_resource *parentResource);
-    ~Private();
+    return reinterpret_cast<Private*>(d.data());
+}
 
-private:
-    static void activateCallback(wl_client *client, wl_resource *resource);
-
-    PlasmaVirtualDesktopInterface *q_func() {
-        return reinterpret_cast<PlasmaVirtualDesktopInterface *>(q);
+PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id)
+{
+    Q_D();
+    
+    auto i = d->desktops.constFind(id);
+    if (i != d->desktops.constEnd()) {
+        return *i;
     }
 
-    static const struct org_kde_plasma_virtual_desktop_interface s_interface;
-};
+    PlasmaVirtualDesktopInterface *desktop = new PlasmaVirtualDesktopInterface(this);
+    desktop->setId(id);
+    d->desktops[id] = desktop;
+    connect(desktop, &QObject::destroyed, this,
+        [this, id] {
+            Q_D();
+            d->desktops.remove(id);
+        }
+    );
+
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().data());
+    }
+
+    return desktop;
+}
+
+
+
+
+
+//// PlasmaVirtualDesktopInterface
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_plasma_virtual_desktop_interface PlasmaVirtualDesktopInterface::Private::s_interface = {
-    resourceDestroyedCallback,
     activateCallback
 };
 #endif
 
 void PlasmaVirtualDesktopInterface::Private::activateCallback(wl_client *client, wl_resource *resource)
 {
-    // TODO: implement
+    auto s = cast(resource);
+    emit s->q->activateRequested();
 }
 
-PlasmaVirtualDesktopInterface::Private::Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c, wl_resource *parentResource)
-    : Resource::Private(q, c, parentResource, &org_kde_plasma_virtual_desktop_interface, &s_interface)
+PlasmaVirtualDesktopInterface::Private::Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c)
+    : q(q),
+      vdm(c)
 {
 }
 
 PlasmaVirtualDesktopInterface::Private::~Private()
 {
-    if (resource) {
-        wl_resource_destroy(resource);
-        resource = nullptr;
+   // need to copy, as destroy goes through the destroy listener and modifies the list as we iterate
+    const auto c = resources;
+    for (const auto &r : c) {
+        auto client = wl_resource_get_client(r);
+        org_kde_plasma_virtual_desktop_send_removed(r);
+        wl_resource_destroy(r);
+        wl_client_flush(client);
     }
 }
 
-PlasmaVirtualDesktopInterface::PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent, wl_resource *parentResource)
-    : Resource(new Private(this, parent, parentResource))
+void PlasmaVirtualDesktopInterface::Private::destroyCallback(wl_client *, wl_resource *r)
+{
+    Private *p = cast(r);
+    p->resources.removeAll(r);
+    wl_resource_destroy(r);
+    if (p->resources.isEmpty()) {
+        p->q->deleteLater();
+    }
+}
+
+void PlasmaVirtualDesktopInterface::Private::unbind(wl_resource *resource)
+{
+    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    p->resources.removeAll(resource);
+    if (p->resources.isEmpty()) {
+        p->q->deleteLater();
+    }
+}
+
+void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent, quint32 serial)
+{
+    ClientConnection *c = vdm->display()->getConnection(wl_resource_get_client(parent));
+    wl_resource *resource = c->createResource(&org_kde_plasma_virtual_desktop_interface, wl_resource_get_version(parent), serial);
+    if (!resource) {
+        return;
+    }
+    wl_resource_set_implementation(resource, &s_interface, this, unbind);
+    resources << resource;
+qWarning()<<"POLLAME";
+    org_kde_plasma_virtual_desktop_send_id(resource, id.toUtf8().data());
+    /*TODO:name if (!m_appId.isEmpty()) {
+        org_kde_plasma_window_send_app_id_changed(resource, m_appId.toUtf8().constData());
+    }*/
+    
+    org_kde_plasma_virtual_desktop_send_done(resource);
+    c->flush();
+}
+
+PlasmaVirtualDesktopInterface::PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent)
+    : QObject(parent),
+      d(new Private(this, parent))
 {
 }
 
 PlasmaVirtualDesktopInterface::~PlasmaVirtualDesktopInterface()
 {}
+
+void PlasmaVirtualDesktopInterface::setId(const QString &id)
+{
+    d->id = id;
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().data());
+    }
+}
+
+QString PlasmaVirtualDesktopInterface::id() const
+{
+    return d->id;
+}
 
 }
 }

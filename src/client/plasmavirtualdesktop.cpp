@@ -21,6 +21,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
 
+#include <QMap>
+#include <QDebug>
+
 #include <wayland-org_kde_plasma_virtual_desktop-client-protocol.h>
 
 namespace KWayland
@@ -38,6 +41,11 @@ public:
     WaylandPointer<org_kde_plasma_virtual_desktop_management, org_kde_plasma_virtual_desktop_management_destroy> plasmavirtualdesktopmanagement;
     EventQueue *queue = nullptr;
 
+    //is a map to have desktops() return a list always with the same order
+    QMap<QString, PlasmaVirtualDesktop *> desktops;
+    quint32 rows;
+    quint32 columns;
+
 private:
     static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
     static void removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
@@ -45,6 +53,7 @@ private:
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management);
 
     PlasmaVirtualDesktopManagement *q;
+
     static const org_kde_plasma_virtual_desktop_management_listener s_listener;
 };
 
@@ -59,20 +68,31 @@ void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    emit p->q->desktopAdded(QString::fromUtf8(id));
+    const QString stringId = QString::fromUtf8(id);
+    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId, p->q);
+    Q_ASSERT(vd);
+
+    emit p->q->desktopAdded(stringId);
 }
 
 void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
-    emit p->q->desktopRemoved(QString::fromUtf8(id));
+    const QString stringId = QString::fromUtf8(id);
+    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId, p->q);
+    Q_ASSERT(vd);
+    vd->release();
+    vd->destroy();
+    emit p->q->desktopRemoved(stringId);
 }
 
 void PlasmaVirtualDesktopManagement::Private::layoutCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows, uint32_t columns)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
+    p->rows = rows;
+    p->columns = columns;
     emit p->q->layout(rows, columns);
 }
 
@@ -147,14 +167,42 @@ EventQueue *PlasmaVirtualDesktopManagement::eventQueue()
 PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QString &id, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto p = new PlasmaVirtualDesktop(parent);
+    auto i = d->desktops.constFind(id);
+    if (i != d->desktops.constEnd()) {
+        return *i;
+    }
+
     auto w = org_kde_plasma_virtual_desktop_management_get_virtual_desktop(d->plasmavirtualdesktopmanagement, id.toUtf8());
+
+    if (!w) {
+        return nullptr;
+    }
+
     if (d->queue) {
         d->queue->addProxy(w);
     }
+
+    auto p = new PlasmaVirtualDesktop(parent);
     p->setup(w);
+    d->desktops[id] = p;
     return p;
 }
+
+QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
+{
+    return d->desktops.values();
+}
+
+quint32 PlasmaVirtualDesktopManagement::rows() const
+{
+    return d->rows;
+}
+
+quint32 PlasmaVirtualDesktopManagement::columns() const
+{
+    return d->columns;
+}
+
 
 class PlasmaVirtualDesktop::Private
 {

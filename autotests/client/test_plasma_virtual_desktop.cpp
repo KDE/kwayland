@@ -172,6 +172,7 @@ void TestVirtualDesktop::testCreate()
     desktop1Int->setLayoutPosition(0, 0);
 
     desktopAddedSpy.wait();
+    QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-1"));
     m_plasmaVirtualDesktopManagementInterface->sendDone();
     managementDoneSpy.wait();
 
@@ -194,12 +195,14 @@ void TestVirtualDesktop::testCreate()
     desktop2Int->setName("Desktop 2");
     desktop2Int->setLayoutPosition(0, 1);
     desktopAddedSpy.wait();
+    QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-2"));
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 2);
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-3"));
     desktop3Int->setName("Desktop 3");
     desktop3Int->setLayoutPosition(1, 0);
     desktopAddedSpy.wait();
+    QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-3"));
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 3);
 
     m_plasmaVirtualDesktopManagementInterface->sendDone();
@@ -236,7 +239,28 @@ void TestVirtualDesktop::testCreate()
 
 void TestVirtualDesktop::testDestroy()
 {
+    //rebuild some desktops
+    testCreate();
+
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->desktops().first();
+    KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
+
     
+    QSignalSpy desktop1IntDestroyedSpy(desktop1Int, &QObject::destroyed);
+    QSignalSpy desktop1DestroyedSpy(desktop1, &QObject::destroyed);
+    QSignalSpy desktop1RemovedSpy(desktop1, &KWayland::Client::PlasmaVirtualDesktop::removed);
+    m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-1"));
+
+    //test that both server and client desktoip interfaces go away
+    desktop1IntDestroyedSpy.wait();
+    desktop1RemovedSpy.wait();
+    desktop1DestroyedSpy.wait();
+
+    //Test the desktopRemoved signal of the manager, remove another desktop as the signals can't be tested at the same time
+    QSignalSpy desktopManagerRemovedSpy(m_plasmaVirtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopRemoved);
+    m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-2"));
+    desktopManagerRemovedSpy.wait();
+    QCOMPARE(desktopManagerRemovedSpy.takeFirst().at(0).toString(), QStringLiteral("0-2"));
 }
 
 void TestVirtualDesktop::testActivate()
@@ -246,6 +270,7 @@ void TestVirtualDesktop::testActivate()
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->desktops().first();
     KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
+    QVERIFY(desktop1->active());
     QVERIFY(desktop1Int->active());
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->desktops()[1];
@@ -261,7 +286,6 @@ void TestVirtualDesktop::testActivate()
     //activate the desktop that was requested active
     m_plasmaVirtualDesktopManagementInterface->setActiveDesktop(desktop2->id());
     activatedSpy.wait();
-    //TODO: test the deactivated signal as well?
 
     //correct state in the server
     QVERIFY(desktop2Int->active());
@@ -269,6 +293,11 @@ void TestVirtualDesktop::testActivate()
     //correct state in the client
     QVERIFY(desktop2Int->active());
     QVERIFY(!desktop1Int->active());
+
+    //Test the deactivated signal
+    QSignalSpy deactivatedSpy(desktop2, &KWayland::Client::PlasmaVirtualDesktop::deactivated);
+    m_plasmaVirtualDesktopManagementInterface->setActiveDesktop(desktop1->id());
+    deactivatedSpy.wait();
 }
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)

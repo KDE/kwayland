@@ -53,7 +53,6 @@ public:
 private:
     static void unbind(wl_resource *resource);
     static void requestActivateCallback(wl_client *client, wl_resource *resource);
-    static void requestReleaseCallback(wl_client *client, wl_resource *resource);
 
     static Private *cast(wl_resource *resource) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
@@ -223,6 +222,26 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     return desktop;
 }
 
+void PlasmaVirtualDesktopManagementInterface::removeDesktop(const QString &id)
+{
+    Q_D();
+    
+    auto deskIt = d->desktops.constFind(id);
+    if (deskIt == d->desktops.constEnd()) {
+        return;
+    }
+
+    for (auto it = (*deskIt)->d->resources.constBegin(); it != (*deskIt)->d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_removed(*it);
+    }
+
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
+    }
+
+    (*deskIt)->deleteLater();
+}
+
 QList <PlasmaVirtualDesktopInterface *> PlasmaVirtualDesktopManagementInterface::desktops() const
 {
     Q_D();
@@ -264,17 +283,9 @@ void PlasmaVirtualDesktopManagementInterface::setActiveDesktop(const QString &id
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_plasma_virtual_desktop_interface PlasmaVirtualDesktopInterface::Private::s_interface = {
-    requestReleaseCallback,
     requestActivateCallback
 };
 #endif
-
-void PlasmaVirtualDesktopInterface::Private::requestReleaseCallback(wl_client *client, wl_resource *resource)
-{
-    Q_UNUSED(client)
-    auto s = cast(resource);
-    emit s->q->releaseRequested();
-}
 
 void PlasmaVirtualDesktopInterface::Private::requestActivateCallback(wl_client *client, wl_resource *resource)
 {
@@ -325,7 +336,11 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
         org_kde_plasma_virtual_desktop_send_name(resource, name.toUtf8().constData());
     }
     org_kde_plasma_virtual_desktop_send_layout_position(resource, row, column);
-    
+
+    if (active) {
+        org_kde_plasma_virtual_desktop_send_activated(resource);
+    }
+
     c->flush();
 }
 

@@ -69,7 +69,7 @@ void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
     const QString stringId = QString::fromUtf8(id);
-    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId, p->q);
+    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
     Q_ASSERT(vd);
 
     emit p->q->desktopAdded(stringId);
@@ -80,10 +80,11 @@ void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kd
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
     const QString stringId = QString::fromUtf8(id);
-    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId, p->q);
+    PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
     Q_ASSERT(vd);
     vd->release();
     vd->destroy();
+    vd->deleteLater();
     emit p->q->desktopRemoved(stringId);
 }
 
@@ -164,7 +165,7 @@ EventQueue *PlasmaVirtualDesktopManagement::eventQueue()
     return d->queue;
 }
 
-PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QString &id, QObject *parent)
+PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QString &id)
 {
     Q_ASSERT(isValid());
     auto i = d->desktops.constFind(id);
@@ -182,10 +183,15 @@ PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QS
         d->queue->addProxy(w);
     }
 
-    auto p = new PlasmaVirtualDesktop(parent);
-    p->setup(w);
-    d->desktops[id] = p;
-    return p;
+    auto desktop = new PlasmaVirtualDesktop(this);
+    desktop->setup(w);
+    d->desktops[id] = desktop;
+    connect(desktop, &QObject::destroyed, this,
+        [this, id] {
+            d->desktops.remove(id);
+        }
+    );
+    return desktop;
 }
 
 QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const

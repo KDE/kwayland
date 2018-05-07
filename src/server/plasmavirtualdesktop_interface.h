@@ -44,6 +44,8 @@ public:
     quint32 columns();
 
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+    void removeDesktop(const QString &id);
+
     QList <PlasmaVirtualDesktopInterface *> desktops() const;
 
     void sendDone();
@@ -79,7 +81,6 @@ public:
     void sendDone();
 
 Q_SIGNALS:
-    void releaseRequested();
     void activateRequested();
 
 private:

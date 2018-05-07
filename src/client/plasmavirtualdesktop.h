@@ -112,10 +112,11 @@ public:
 
     /**
      * @returns The event queue to use for creating objects with this PlasmaVirtualDesktopManagement.
+     * The object is owned by the manager and the caller should not delete it.
      **/
     EventQueue *eventQueue();
 
-    PlasmaVirtualDesktop *getVirtualDesktop(const QString &id, QObject *parent = nullptr);
+    PlasmaVirtualDesktop *getVirtualDesktop(const QString &id);
 
     //FIXME: is this necessary? libtaskmanager can build a model out of it even without acces to this list
     QList <PlasmaVirtualDesktop *> desktops() const;

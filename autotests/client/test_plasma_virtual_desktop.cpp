@@ -344,6 +344,11 @@ void TestVirtualDesktop::testEnterDesktop()
     enterRequestedSpy.wait();
 
     QCOMPARE(enterRequestedSpy.takeFirst().at(0).toString(), QStringLiteral("0-1"));
+
+    //agree to the request
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("0-1"));
+    QCOMPARE(m_windowInterface->plasmaVirtualDesktops().length(), 1);
+    QCOMPARE(m_windowInterface->plasmaVirtualDesktops().first(), QStringLiteral("0-1"));
 }
 
 void TestVirtualDesktop::testLeaveDesktop()

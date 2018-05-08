@@ -104,6 +104,8 @@ private:
     static void unsetMinimizedGeometryCallback(wl_client *client, wl_resource *resource, wl_resource *panel);
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void getIconCallback(wl_client *client, wl_resource *resource, int32_t fd);
+    static void requestEnterVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
+    static void requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
     static Private *cast(wl_resource *resource) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
     }
@@ -120,7 +122,7 @@ private:
     static const struct org_kde_plasma_window_interface s_interface;
 };
 
-const quint32 PlasmaWindowManagementInterface::Private::s_version = 7;
+const quint32 PlasmaWindowManagementInterface::Private::s_version = 8;
 
 PlasmaWindowManagementInterface::Private::Private(PlasmaWindowManagementInterface *q, Display *d)
     : Global::Private(d, &org_kde_plasma_window_management_interface, s_version)
@@ -277,7 +279,9 @@ const struct org_kde_plasma_window_interface PlasmaWindowInterface::Private::s_i
     requestMoveCallback,
     requestResizeCallback,
     destroyCallback,
-    getIconCallback
+    getIconCallback,
+    requestEnterVirtualDesktopCallback,
+    requestLeaveVirtualDesktopCallback
 };
 #endif
 
@@ -424,6 +428,20 @@ void PlasmaWindowInterface::Private::getIconCallback(wl_client *client, wl_resou
             file.close();
         }, p->m_icon
     );
+}
+
+void PlasmaWindowInterface::Private::requestEnterVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
+{
+    Q_UNUSED(client)
+    Private *p = cast(resource);
+    emit p->q->enterPlasmaVirtualDesktopRequested(QString::fromUtf8(id));
+}
+
+void PlasmaWindowInterface::Private::requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
+{
+    Q_UNUSED(client)
+    Private *p = cast(resource);
+    emit p->q->leavePlasmaVirtualDesktopRequested(QString::fromUtf8(id));
 }
 
 void PlasmaWindowInterface::Private::setTitle(const QString &title)

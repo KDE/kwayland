@@ -275,7 +275,7 @@
         Make the window enter a virtual desktop. A window can enter more
         than one virtual desktop.
       </description>
-      <arg name="is" type="string" summary="desktop id"/>
+      <arg name="id" type="string" summary="desktop id"/>
     </request>
 
     <request name="leave_virtual_desktop" since="8">

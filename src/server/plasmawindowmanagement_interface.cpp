@@ -90,6 +90,7 @@ public:
     bool unmapped = false;
     PlasmaWindowInterface *parentWindow = nullptr;
     QMetaObject::Connection parentWindowDestroyConnection;
+    QStringList plasmaVirtualDesktops;
     QRect geometry;
 
 private:
@@ -771,6 +772,21 @@ void PlasmaWindowInterface::setThemedIconName(const QString &iconName)
 void PlasmaWindowInterface::setIcon(const QIcon &icon)
 {
     d->setIcon(icon);
+}
+
+void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
+{
+    d->plasmaVirtualDesktops << id;
+}
+
+void PlasmaWindowInterface::removePlasmaVirtualDesktop(const QString &id)
+{
+    d->plasmaVirtualDesktops.removeAll(id);
+}
+
+QStringList PlasmaWindowInterface::plasmaVirtualDesktops() const
+{
+    return d->plasmaVirtualDesktops;
 }
 
 void PlasmaWindowInterface::setShadeable(bool set)

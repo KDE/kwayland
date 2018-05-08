@@ -81,6 +81,7 @@ void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kd
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
     const QString stringId = QString::fromUtf8(id);
     PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
+    p->desktops.remove(stringId);
     Q_ASSERT(vd);
     vd->release();
     vd->destroy();

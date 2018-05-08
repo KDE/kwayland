@@ -181,6 +181,13 @@ public:
      **/
     void setIcon(const QIcon &icon);
 
+    /**
+     * @since 5.46
+     */
+    void addPlasmaVirtualDesktop(const QString &id);
+    void removePlasmaVirtualDesktop(const QString &id);
+    QStringList plasmaVirtualDesktops() const;
+
 Q_SIGNALS:
     void closeRequested();
     /**
@@ -225,6 +232,16 @@ Q_SIGNALS:
      * @since 5.22
      */
     void virtualDesktopChangeableRequested(bool set);
+
+    /**
+     * @since 5.46
+     */
+    void enterPlasmaVirtualDesktopRequested(const QString &desktop);
+
+    /**
+     * @since 5.46
+     */
+    void leavePlasmaVirtualDesktopRequested(const QString &desktop);
 
 private:
     friend class PlasmaWindowManagementInterface;

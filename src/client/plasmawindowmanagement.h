@@ -491,6 +491,14 @@ public:
      */
     void requestLeaveVirtualDesktop(const QString &id);
 
+    /**
+     * return all the virtual desktop ids this window is associated to.
+     * If this list is empty, assume it's on all desktops
+     *
+     * @since 5.46
+     */
+    QStringList plasmaVirtualDesktops() const;
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -631,7 +639,7 @@ Q_SIGNALS:
      * The window can be on more than one desktop, or none: then is considered on all of them.
      * @since 5.46
      */
-    void virtualDesktopEntered(const QString &id);
+    void plasmaVirtualDesktopEntered(const QString &id);
 
     /**
      * This event will be sent when the window left entered a virtual desktop.
@@ -639,7 +647,7 @@ Q_SIGNALS:
      *
      * @since 5.46
      */
-    void virtualDesktopLeft(const QString &id);
+    void plasmaVirtualDesktopLeft(const QString &id);
 
 private:
     friend class PlasmaWindowManagement;

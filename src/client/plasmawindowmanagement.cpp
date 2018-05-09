@@ -93,6 +93,7 @@ public:
     bool unmapped = false;
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
+    QStringList plasmaVirtualDesktops;
     QRect geometry;
     quint32 pid = 0;
 
@@ -465,14 +466,18 @@ void PlasmaWindow::Private::virtualDesktopEnteredCallback(void *data, org_kde_pl
 {
     auto p = cast(data);
     Q_UNUSED(window);
-    emit p->q->virtualDesktopEntered(QString::fromUtf8(id));
+    const QString stringId(QString::fromUtf8(id));
+    p->plasmaVirtualDesktops << stringId;
+    emit p->q->plasmaVirtualDesktopEntered(stringId);
 }
 
 void PlasmaWindow::Private::virtualDesktopLeftCallback(void *data, org_kde_plasma_window *window, const char *id)
 {
     auto p = cast(data);
     Q_UNUSED(window);
-    emit p->q->virtualDesktopLeft(QString::fromUtf8(id));
+    const QString stringId(QString::fromUtf8(id));
+    p->plasmaVirtualDesktops.removeAll(stringId);
+    emit p->q->plasmaVirtualDesktopLeft(stringId);
 }
 
 void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state)
@@ -1020,6 +1025,11 @@ void PlasmaWindow::requestEnterVirtualDesktop(const QString &id)
 void PlasmaWindow::requestLeaveVirtualDesktop(const QString &id)
 {
     org_kde_plasma_window_request_leave_virtual_desktop(d->window, id.toUtf8());
+}
+
+QStringList PlasmaWindow::plasmaVirtualDesktops() const
+{
+    return d->plasmaVirtualDesktops;
 }
 
 }

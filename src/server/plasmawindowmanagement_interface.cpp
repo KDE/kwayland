@@ -794,12 +794,27 @@ void PlasmaWindowInterface::setIcon(const QIcon &icon)
 
 void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
 {
+    if (d->plasmaVirtualDesktops.contains(id)) {
+        return;
+    }
+
     d->plasmaVirtualDesktops << id;
+
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_window_send_virtual_desktop_entered(*it, id.toUtf8().constData());
+    }
 }
 
 void PlasmaWindowInterface::removePlasmaVirtualDesktop(const QString &id)
 {
+    if (!d->plasmaVirtualDesktops.contains(id)) {
+        return;
+    }
+
     d->plasmaVirtualDesktops.removeAll(id);
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_window_send_virtual_desktop_left(*it, id.toUtf8().constData());
+    }
 }
 
 QStringList PlasmaWindowInterface::plasmaVirtualDesktops() const

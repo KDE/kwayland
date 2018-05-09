@@ -37,6 +37,7 @@ namespace Server
 class Display;
 class PlasmaWindowInterface;
 class SurfaceInterface;
+class PlasmaVirtualDesktopManagementInterface;
 
 /**
  * @todo Add documentation
@@ -71,6 +72,9 @@ public:
      * @since 5.23
      **/
     void unmapWindow(PlasmaWindowInterface *window);
+
+    void setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager);
+    PlasmaVirtualDesktopManagementInterface *plasmaVirtualDesktopManagementInterface() const;
 
 Q_SIGNALS:
     void requestChangeShowingDesktop(ShowingDesktopState requestedState);

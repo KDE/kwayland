@@ -189,6 +189,17 @@ quint32 PlasmaVirtualDesktopManagementInterface::columns()
     return d->columns;
 }
 
+PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::desktop(const QString &id)
+{
+    Q_D();
+    
+    auto i = d->desktops.constFind(id);
+    if (i != d->desktops.constEnd()) {
+        return *i;
+    }
+    return nullptr;
+}
+
 PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id)
 {
     Q_D();

@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "resource_p.h"
 #include "display.h"
 #include "surface_interface.h"
+#include "plasmavirtualdesktop_interface.h"
 
 #include <QtConcurrentRun>
 #include <QFile>
@@ -48,6 +49,7 @@ public:
     ShowingDesktopState state = ShowingDesktopState::Disabled;
     QVector<wl_resource*> resources;
     QList<PlasmaWindowInterface*> windows;
+    QPointer<PlasmaVirtualDesktopManagementInterface> plasmaVirtualDesktopManagementInterface = nullptr;
     quint32 windowIdCounter = 0;
 
 private:
@@ -267,6 +269,21 @@ void PlasmaWindowManagementInterface::unmapWindow(PlasmaWindowInterface *window)
     d->windows.removeOne(window);
     Q_ASSERT(!d->windows.contains(window));
     window->d->unmap();
+}
+
+void PlasmaWindowManagementInterface::setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager)
+{
+    Q_D();
+    if (d->plasmaVirtualDesktopManagementInterface == manager) {
+        return;
+    }
+    d->plasmaVirtualDesktopManagementInterface = manager;
+}
+
+PlasmaVirtualDesktopManagementInterface *PlasmaWindowManagementInterface::plasmaVirtualDesktopManagementInterface() const
+{
+    Q_D();
+    return d->plasmaVirtualDesktopManagementInterface;
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -794,11 +811,22 @@ void PlasmaWindowInterface::setIcon(const QIcon &icon)
 
 void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
 {
-    if (d->plasmaVirtualDesktops.contains(id)) {
+    //don't add a desktop we're not sure it exists
+    if (!d->wm->plasmaVirtualDesktopManagementInterface() || d->plasmaVirtualDesktops.contains(id)) {
+        return;
+    }
+
+    PlasmaVirtualDesktopInterface *desktop = d->wm->plasmaVirtualDesktopManagementInterface()->desktop(id);
+
+    if (!desktop) {
         return;
     }
 
     d->plasmaVirtualDesktops << id;
+
+    //if the desktop dies, remove it from or list
+    connect(desktop, &QObject::destroyed,
+            this, [this, id](){removePlasmaVirtualDesktop(id);});
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_window_send_virtual_desktop_entered(*it, id.toUtf8().constData());

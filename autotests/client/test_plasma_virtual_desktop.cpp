@@ -143,6 +143,7 @@ void TestVirtualDesktop::init()
     m_windowManagementInterface = m_display->createPlasmaWindowManagement(m_display);
     m_windowManagementInterface->create();
     QVERIFY(m_windowManagementInterface->isValid());
+    m_windowManagementInterface->setPlasmaVirtualDesktopManagementInterface(m_plasmaVirtualDesktopManagementInterface);
 
     QVERIFY(windowManagementSpy.wait());
     m_windowManagement = registry.createPlasmaWindowManagement(windowManagementSpy.first().first().value<quint32>(), windowManagementSpy.first().last().value<quint32>(), this);
@@ -366,6 +367,10 @@ void TestVirtualDesktop::testEnterLeaveDesktop()
 
 
 
+    //try to add an invalid desktop
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("invalid"));
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 2);
+
     //remove a desktop
     QSignalSpy leaveRequestedSpy(m_windowInterface, &KWayland::Server::PlasmaWindowInterface::leavePlasmaVirtualDesktopRequested);
     m_window->requestLeaveVirtualDesktop(QStringLiteral("0-1"));
@@ -385,6 +390,14 @@ void TestVirtualDesktop::testEnterLeaveDesktop()
     QCOMPARE(virtualDesktopLeftSpy.takeFirst().at(0).toString(), QStringLiteral("0-1"));
     QCOMPARE(m_window->plasmaVirtualDesktops().length(), 1);
     QCOMPARE(m_window->plasmaVirtualDesktops().first(), QStringLiteral("0-3"));
+
+
+    //Destroy desktop 1
+    m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-3"));
+    //the window should receive a left signal from the destroyed desktop
+    virtualDesktopLeftSpy.wait();
+
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 0);
 }
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)

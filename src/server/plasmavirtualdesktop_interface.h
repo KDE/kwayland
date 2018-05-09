@@ -43,6 +43,7 @@ public:
     quint32 rows();
     quint32 columns();
 
+    PlasmaVirtualDesktopInterface *desktop(const QString &id);
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
     void removeDesktop(const QString &id);
 

@@ -48,6 +48,7 @@ private Q_SLOTS:
 
     void testCreate();
     void testDestroy();
+    void testReorder();
     void testActivate();
 
     void testEnterLeaveDesktop();
@@ -192,15 +193,14 @@ void TestVirtualDesktop::testCreate()
 
 
     QSignalSpy layoutSpy(m_plasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::layout);
-    m_plasmaVirtualDesktopManagementInterface->setLayout(2, 2);
+    m_plasmaVirtualDesktopManagementInterface->setRows(2);
     layoutSpy.wait();
     QCOMPARE(m_plasmaVirtualDesktopManagement->rows(), 2);
-    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 2);
+    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 0);
 
     //on this createDesktop bind() isn't called already, the desktopadded signals will be sent after bind happened
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-1"));
     desktop1Int->setName("Desktop 1");
-    desktop1Int->setLayoutPosition(0, 0);
 
     desktopAddedSpy.wait();
     QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-1"));
@@ -211,6 +211,10 @@ void TestVirtualDesktop::testCreate()
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 1);
 
     KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
+
+    //Now there is one column
+    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 1);
+
     QSignalSpy desktop1DoneSpy(desktop1, &PlasmaVirtualDesktop::done);
     desktop1Int->sendDone();
     desktop1DoneSpy.wait();
@@ -224,14 +228,17 @@ void TestVirtualDesktop::testCreate()
     //on those createDesktop the bind will already be done
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-2"));
     desktop2Int->setName("Desktop 2");
-    desktop2Int->setLayoutPosition(0, 1);
     desktopAddedSpy.wait();
     QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-2"));
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 2);
 
+    //Still one column
+    m_plasmaVirtualDesktopManagementInterface->sendDone();
+    managementDoneSpy.wait();
+    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 1);
+
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-3"));
     desktop3Int->setName("Desktop 3");
-    desktop3Int->setLayoutPosition(1, 0);
     desktopAddedSpy.wait();
     QCOMPARE(desktopAddedSpy.takeFirst().at(0).toString(), QStringLiteral("0-3"));
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 3);
@@ -239,6 +246,8 @@ void TestVirtualDesktop::testCreate()
     m_plasmaVirtualDesktopManagementInterface->sendDone();
     managementDoneSpy.wait();
 
+    //Now there are 2 columns
+    QCOMPARE(m_plasmaVirtualDesktopManagement->columns(), 2);
 
     //get the clients
     KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[1];
@@ -280,12 +289,26 @@ void TestVirtualDesktop::testDestroy()
     QSignalSpy desktop1IntDestroyedSpy(desktop1Int, &QObject::destroyed);
     QSignalSpy desktop1DestroyedSpy(desktop1, &QObject::destroyed);
     QSignalSpy desktop1RemovedSpy(desktop1, &KWayland::Client::PlasmaVirtualDesktop::removed);
+
     m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-1"));
 
     //test that both server and client desktoip interfaces go away
     desktop1IntDestroyedSpy.wait();
     desktop1RemovedSpy.wait();
     desktop1DestroyedSpy.wait();
+
+    KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[0];
+    KWayland::Client::PlasmaVirtualDesktop *desktop3 = m_plasmaVirtualDesktopManagement->desktops()[1];
+    QCOMPARE(desktop2->id(), QStringLiteral("0-2"));
+    QCOMPARE(desktop2->name(), QStringLiteral("Desktop 2"));
+    QCOMPARE(desktop2->row(), 0);
+    QCOMPARE(desktop2->column(), 0);
+
+    QCOMPARE(desktop3->id(), QStringLiteral("0-3"));
+    QCOMPARE(desktop3->name(), QStringLiteral("Desktop 3"));
+    QCOMPARE(desktop3->row(), 1);
+    QCOMPARE(desktop3->column(), 0);
+
 
     //Test the desktopRemoved signal of the manager, remove another desktop as the signals can't be tested at the same time
     QSignalSpy desktopManagerRemovedSpy(m_plasmaVirtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopRemoved);
@@ -295,6 +318,37 @@ void TestVirtualDesktop::testDestroy()
 
     QCOMPARE(m_plasmaVirtualDesktopManagementInterface->desktops().length(), 1);
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 1);
+}
+
+void TestVirtualDesktop::testReorder()
+{
+    //rebuild some desktops
+    testCreate();
+
+    KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->desktops()[2];
+    KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops()[0];
+    KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[1];
+    KWayland::Client::PlasmaVirtualDesktop *desktop3 = m_plasmaVirtualDesktopManagement->desktops()[2];
+
+    QSignalSpy desktop3DoneSpy(desktop3, &PlasmaVirtualDesktop::done);
+    desktop3Int->setLayoutPosition(0, 0);
+    desktop3Int->sendDone();
+    desktop3DoneSpy.wait();
+
+    QCOMPARE(desktop1->id(), QStringLiteral("0-1"));
+    QCOMPARE(desktop1->name(), QStringLiteral("Desktop 1"));
+    QCOMPARE(desktop1->row(), 0);
+    QCOMPARE(desktop1->column(), 1);
+
+    QCOMPARE(desktop2->id(), QStringLiteral("0-2"));
+    QCOMPARE(desktop2->name(), QStringLiteral("Desktop 2"));
+    QCOMPARE(desktop2->row(), 1);
+    QCOMPARE(desktop2->column(), 0);
+
+    QCOMPARE(desktop3->id(), QStringLiteral("0-3"));
+    QCOMPARE(desktop3->name(), QStringLiteral("Desktop 3"));
+    QCOMPARE(desktop3->row(), 0);
+    QCOMPARE(desktop3->column(), 0);
 }
 
 void TestVirtualDesktop::testActivate()

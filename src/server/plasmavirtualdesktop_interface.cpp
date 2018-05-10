@@ -40,6 +40,8 @@ public:
     ~Private();
     void createResource(wl_resource *parent, quint32 serial);
 
+    void setLayoutPosition(quint32 row, quint32 column);
+
     PlasmaVirtualDesktopInterface *q;
     PlasmaVirtualDesktopManagementInterface *vdm;
 
@@ -68,9 +70,19 @@ class PlasmaVirtualDesktopManagementInterface::Private : public Global::Private
 public:
     Private(PlasmaVirtualDesktopManagementInterface *q, Display *d);
 
+    /**
+     * holeRow and holeColumn are used to leave an empty spot in
+     * the desktop numeration
+     * use -1 to not leave any hole
+     */
+    void sortDesktops(quint32 holeRow, quint32 holeColumn);
+    void updateColumns();
+
     QVector<wl_resource*> resources;
-    QMap<QString, PlasmaVirtualDesktopInterface*> desktops;
-    quint32 rows = 0;
+    QMap<QString, PlasmaVirtualDesktopInterface *> desktops;
+    QList<PlasmaVirtualDesktopInterface *> orderedDesktops;
+    //can't be less than 1 row
+    quint32 rows = 1;
     quint32 columns = 0;
 
 private:
@@ -118,6 +130,50 @@ void PlasmaVirtualDesktopManagementInterface::Private::releaseCallback(wl_client
     wl_resource_destroy(resource);
 }
 
+void PlasmaVirtualDesktopManagementInterface::Private::sortDesktops(quint32 holeRow, quint32 holeColumn)
+{
+    qSort(orderedDesktops.begin(), orderedDesktops.end(), [](PlasmaVirtualDesktopInterface *d1, PlasmaVirtualDesktopInterface *d2) {
+            if (d2->row() > d1->row()) {
+                return true;
+            } else if (d2->row() == d1->row()) {
+                return d2->column() > d1->column();
+            } else {
+                return false;
+            }
+        });
+
+        const quint32 usedColumns = qMax(1.0, ceil((qreal)desktops.count() / (qreal)rows));
+        int i = 0;
+        for (const auto desktop : orderedDesktops) {
+            quint32 newRow = floor(i / usedColumns);
+            quint32 newColumn = (i % usedColumns);
+            //skip a cell if we're asked to
+            if (newRow == holeRow && newColumn == holeColumn) {
+                ++i;
+                newRow = floor(i / usedColumns);
+                newColumn = (i % usedColumns);
+            }
+
+            desktop->d->setLayoutPosition(newRow, newColumn);
+
+            ++i;
+        }
+}
+
+void PlasmaVirtualDesktopManagementInterface::Private::updateColumns()
+{
+    const quint32 newColumns = ceil((qreal)desktops.count() / (qreal)rows);
+
+    if (columns != newColumns) {
+        columns = newColumns;
+
+        for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+            org_kde_plasma_virtual_desktop_management_send_layout(*it, rows, columns);
+        }
+        sortDesktops(-1, -1);
+    }
+}
+
 PlasmaVirtualDesktopManagementInterface::Private::Private(PlasmaVirtualDesktopManagementInterface *q, Display *d)
     : Global::Private(d, &org_kde_plasma_virtual_desktop_management_interface, s_version)
     , q(q)
@@ -162,18 +218,18 @@ PlasmaVirtualDesktopManagementInterface::Private *PlasmaVirtualDesktopManagement
     return reinterpret_cast<Private*>(d.data());
 }
 
-void PlasmaVirtualDesktopManagementInterface::setLayout(quint32 rows, quint32 columns)
+void PlasmaVirtualDesktopManagementInterface::setRows(quint32 rows)
 {
     Q_D();
-    if (d->rows == rows && d->columns == columns) {
+    if (rows == 0 || d->rows == rows) {
         return;
     }
 
     d->rows = rows;
-    d->columns = columns;
+    d->columns = ceil((qreal)d->desktops.count() / (qreal)rows);
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_layout(*it, rows, columns);
+        org_kde_plasma_virtual_desktop_management_send_layout(*it, d->rows, d->columns);
     }
 }
 
@@ -220,18 +276,29 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
         desktop->d->active = true;
     }
 
+    //decide default positioning
+    const quint32 columns = qMax(1.0, ceil(d->desktops.count() / d->rows));
+    desktop->d->row = floor(d->desktops.count() / columns);
+    desktop->d->column = d->desktops.count() % columns;
+
     d->desktops[id] = desktop;
+    d->orderedDesktops << desktop;
+
     connect(desktop, &QObject::destroyed, this,
         [this, id] {
             Q_D();
             d->desktops.remove(id);
             //TODO: activate another desktop?
+            d->updateColumns();
+            d->sortDesktops(-1, -1);
         }
     );
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().constData());
     }
+
+    d->updateColumns();
 
     return desktop;
 }
@@ -252,6 +319,8 @@ void PlasmaVirtualDesktopManagementInterface::removeDesktop(const QString &id)
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
     }
+
+    d->orderedDesktops.removeAll(*deskIt);
 
     (*deskIt)->deleteLater();
 }
@@ -358,6 +427,20 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
     c->flush();
 }
 
+void PlasmaVirtualDesktopInterface::Private::setLayoutPosition(quint32 newRow, quint32 newColumn)
+{
+    if (row == newRow && column == newColumn) {
+        return;
+    }
+
+    row = newRow;
+    column = newColumn;
+
+    for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_layout_position(*it, row, column);
+    }
+}
+
 PlasmaVirtualDesktopInterface::PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent)
     : QObject(parent),
       d(new Private(this, parent))
@@ -395,12 +478,13 @@ void PlasmaVirtualDesktopInterface::setLayoutPosition(quint32 row, quint32 colum
         return;
     }
 
-    d->row = row;
-    d->column = column;
-
-    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_send_layout_position(*it, row, column);
-    }
+    //make sure this desktop will be the last
+    d->row = d->vdm->rows();
+    d->column = d->vdm->columns();
+    //sort desktops with this new position as an "hole"
+    d->vdm->d_func()->sortDesktops(row, column);
+    //finally put this desktop in the desired position
+    d->setLayoutPosition(row, column);
 }
 
 quint32 PlasmaVirtualDesktopInterface::row() const

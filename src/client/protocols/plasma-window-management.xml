@@ -294,7 +294,7 @@
 
     <event name="virtual_desktop_left" since="8">
       <description summary="the window left a virtual desktop">
-          This event will be sent when the window left entered a virtual desktop. If the window leaves all the desktops it can be considered on all.
+          This event will be sent when the window left a virtual desktop. If the window leaves all desktops, it can be considered on all.
       </description>
       <arg name="is" type="string" summary="desktop id"/>
     </event>

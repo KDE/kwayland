@@ -273,6 +273,8 @@ public:
      **/
     QString appId() const;
     /**
+     * DEPRECATED: use plasmaVirtualDesktops instead
+     * @see plasmaVirtualDesktops
      * @returns the id of the virtual desktop this PlasmaWindow is on
      * @see virtualDesktopChanged
      **/
@@ -308,6 +310,8 @@ public:
      **/
     bool isMaximized() const;
     /**
+     * DEPRECATED
+     * TODO: make this work with plasmaVirtualDesktops instead?
      * @returns Whether the window is shown on all desktops.
      * @see virtualDesktop
      * @see onAllDesktopsChanged
@@ -374,6 +378,7 @@ public:
      */
     bool isResizable() const;
     /**
+     * DEPRECATED
      * @returns Whether the virtual desktop can be changed.
      * @see virtualDesktopChangeableChanged
      * @since 5.22
@@ -405,6 +410,7 @@ public:
      */
     void requestResize();
     /**
+     * DEPRECATED: use requestEnterVirtualDesktop instead
      * Requests to send the window to virtual @p desktop.
      **/
     void requestVirtualDesktop(quint32 desktop);
@@ -477,14 +483,17 @@ public:
     QRect geometry() const;
 
     /**
-     * Make the window enter a virtual desktop.
+     * Ask the server to make the window enter a virtual desktop.
+     * The server may or may not consent.
      * A window can enter more than one virtual desktop.
+     *
      * @since 5.46
      */
     void requestEnterVirtualDesktop(const QString &id);
 
     /**
-     * Make the window exit a virtual desktop.
+     * Ask the server to make the window the window exit a virtual desktop.
+     * The server may or may not consent.
      * If it exits all desktops it will be considered on all of them.
      *
      * @since 5.46
@@ -492,8 +501,9 @@ public:
     void requestLeaveVirtualDesktop(const QString &id);
 
     /**
-     * return all the virtual desktop ids this window is associated to.
-     * If this list is empty, assume it's on all desktops
+     * Return all the virtual desktop ids this window is associated to.
+     * When a desktop gets deleted, it will be automatically removed from this list.
+     * If this list is empty, assume it's on all desktops.
      *
      * @since 5.46
      */
@@ -511,6 +521,7 @@ Q_SIGNALS:
      **/
     void appIdChanged();
     /**
+     * DEPRECATED
      * The virtual desktop changed.
      * @see virtualDesktop
      **/
@@ -610,6 +621,7 @@ Q_SIGNALS:
      */
     void resizableChanged();
     /**
+     * DEPRECATED
      * The virtual desktop changeable state changed.
      * @see virtualDesktopChangeable
      * @since 5.22
@@ -635,15 +647,15 @@ Q_SIGNALS:
     void geometryChanged();
 
     /**
-     * This event will be sent when the window has entered a new virtual desktop.
+     * This signal is emitted when the window has entered a new virtual desktop.
      * The window can be on more than one desktop, or none: then is considered on all of them.
      * @since 5.46
      */
     void plasmaVirtualDesktopEntered(const QString &id);
 
     /**
-     * This event will be sent when the window left entered a virtual desktop.
-     * If the window leaves all the desktops it can be considered on all.
+     * This signal is emitted when the window left a virtual desktop.
+     * If the window leaves all desktops, it can be considered on all.
      *
      * @since 5.46
      */

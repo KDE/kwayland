@@ -33,25 +33,66 @@ namespace Server
 class Display;
 class PlasmaVirtualDesktopInterface;
 
+/**
+ * @short Wrapper for the org_kde_plasma_virtual_desktop_management interface.
+ *
+ * This class provides a convenient wrapper for the org_kde_plasma_virtual_desktop_management interface.
+ * @since 5.46
+ */
 class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Global
 {
     Q_OBJECT
 public:
     virtual ~PlasmaVirtualDesktopManagementInterface();
 
+    /**
+     * Sets a new layout for this desktop grid.
+     */
     void setLayout(quint32 rows, quint32 columns);
+
+    /**
+     * @returns How many rows this layout has
+     */
     quint32 rows();
+
+    /**
+     * @returns How many columns this layout has
+     */
     quint32 columns();
 
+    /**
+     * @returns A desktop identified uniquely by this id.
+     * If not found, nullptr will be returned.
+     * @see createDesktop
+     */
     PlasmaVirtualDesktopInterface *desktop(const QString &id);
+
+    /**
+     * @returns A desktop identified uniquely by this id, if not found
+     * a new desktop will be created for this id.
+     */
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+
+    /**
+     * Removed and destroys the desktop identified by id, if present
+     */
     void removeDesktop(const QString &id);
 
+    /**
+     * @returns All tghe desktops present.
+     */
     QList <PlasmaVirtualDesktopInterface *> desktops() const;
 
+    /**
+     * Inform the clients that all the properties have been sent, and
+     * their client-side representation is complete.
+     */
     void sendDone();
 
-    //active desktops are mutually exclusive
+    /**
+     * Sets the desktop identified by id to be the active one.
+     * active desktops are mutually exclusive
+     */
     void setActiveDesktop(const QString &id);
 
 private:
@@ -67,21 +108,43 @@ class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public QObject
 public:
     virtual ~PlasmaVirtualDesktopInterface();
 
-    void setId(const QString &id);
+    /**
+     * @returns the unique id for this desktop.
+     * ids are set at creation time by PlasmaVirtualDesktopManagementInterface::createDesktop
+     * and can't be changed at runtime.
+     */
     QString id() const;
 
+    /**
+     * Sets a new name for this desktop
+     */
     void setName(const QString &name);
+
+    /**
+     * @returns the name for this desktop
+     */
     QString name() const;
 
     void setLayoutPosition(quint32 row, quint32 column);
     quint32 row() const;
     quint32 column() const;
 
+    /**
+     * @returns true if this desktop is active. Only one at a time will be.
+     */
     bool active() const;
 
+    /**
+     * Inform the clients that all the properties have been sent, and
+     * their client-side representation is complete.
+     */
     void sendDone();
 
 Q_SIGNALS:
+    /**
+     * Emitted when the client asked to activate this desktop:
+     * it's the decision of the server whether to perform the activation or not.
+     */
     void activateRequested();
 
 private:

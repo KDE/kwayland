@@ -73,7 +73,18 @@ public:
      **/
     void unmapWindow(PlasmaWindowInterface *window);
 
+    /**
+     * Associate a PlasmaVirtualDesktopManagementInterface to this window management.
+     * It's necessary to associate one in orderto use the plasma virtual desktop features
+     * of PlasmaWindowInterface, as a window must know what are the deasktops available
+     * @since 5.46
+     */
     void setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager);
+
+    /**
+     * @returns the PlasmaVirtualDesktopManagementInterface associated to this PlasmaWindowManagementInterface
+     * @since 5.46
+     */
     PlasmaVirtualDesktopManagementInterface *plasmaVirtualDesktopManagementInterface() const;
 
 Q_SIGNALS:
@@ -98,6 +109,10 @@ public:
     void setTitle(const QString &title);
     void setAppId(const QString &appId);
     void setPid(quint32 pid);
+    /**
+     * DEPRECATED
+     * @see addPlasmaVirtualDesktop
+     */
     void setVirtualDesktop(quint32 desktop);
     void setActive(bool set);
     void setMinimized(bool set);
@@ -136,6 +151,8 @@ public:
      */
     void setResizable(bool set);
     /**
+     * DEPRECATED
+     * @see addPlasmaVirtualDesktop
      * @since 5.22
      */
     void setVirtualDesktopChangeable(bool set);
@@ -186,10 +203,27 @@ public:
     void setIcon(const QIcon &icon);
 
     /**
+     * Adds a new desktop to this window: a window can be on
+     * an arbitrary subset of virtual desktops.
+     * If it's on none it will be considered on all desktops.
+     *
      * @since 5.46
      */
     void addPlasmaVirtualDesktop(const QString &id);
+
+    /**
+     * Removes a visrtual desktop from a window
+     *
+     * @since 5.46
+     */
     void removePlasmaVirtualDesktop(const QString &id);
+
+    /**
+     * The ids of all the desktops currently associated with this window.
+     * When a desktop is deleted it will be automatically removed from this list
+     *
+     * @since 5.46
+     */
     QStringList plasmaVirtualDesktops() const;
 
 Q_SIGNALS:
@@ -202,6 +236,10 @@ Q_SIGNALS:
      * @since 5.22
      */
     void resizeRequested();
+    /**
+     * DEPRECATED
+     * @see enterPlasmaVirtualDesktopRequested
+     */
     void virtualDesktopRequested(quint32 desktop);
     void activeRequested(bool set);
     void minimizedRequested(bool set);
@@ -233,16 +271,21 @@ Q_SIGNALS:
      */
     void resizableRequested(bool set);
     /**
+     * DEPRECATED
      * @since 5.22
      */
     void virtualDesktopChangeableRequested(bool set);
 
     /**
+     * Emitted when the client wishes this window to enter in a new virtual desktop.
+     * The server will decide whether to consent this request
      * @since 5.46
      */
     void enterPlasmaVirtualDesktopRequested(const QString &desktop);
 
     /**
+     * Emitted when the client wishes to remove this window from a virtual desktop.
+     * The server will decide whether to consent this request
      * @since 5.46
      */
     void leavePlasmaVirtualDesktopRequested(const QString &desktop);

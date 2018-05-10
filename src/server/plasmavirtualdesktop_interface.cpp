@@ -210,7 +210,10 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     }
 
     PlasmaVirtualDesktopInterface *desktop = new PlasmaVirtualDesktopInterface(this);
-    desktop->setId(id);
+    desktop->d->id = id;
+    for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().constData());
+    }
 
     //activate the first desktop TODO: to be done here?
     if (d->desktops.isEmpty()) {
@@ -363,18 +366,6 @@ PlasmaVirtualDesktopInterface::PlasmaVirtualDesktopInterface(PlasmaVirtualDeskto
 
 PlasmaVirtualDesktopInterface::~PlasmaVirtualDesktopInterface()
 {}
-
-void PlasmaVirtualDesktopInterface::setId(const QString &id)
-{
-    if (d->id == id) {
-        return;
-    }
-
-    d->id = id;
-    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().constData());
-    }
-}
 
 QString PlasmaVirtualDesktopInterface::id() const
 {

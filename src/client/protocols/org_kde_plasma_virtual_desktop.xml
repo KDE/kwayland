@@ -38,7 +38,7 @@
     </event>
 
     <event name="desktop_removed">
-        <description summary="Emitted when a new desktop has been removed"></description>
+        <description summary="Emitted when a desktop has been removed"></description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
 
@@ -69,6 +69,7 @@
 
     <event name="id">
         <description summary="The desktop got an id">
+            The format of the id is decided by the compositor implementation.
         </description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
@@ -102,7 +103,10 @@
     </event>
 
     <event name="removed">
-        <description summary="This desktop has been removed"/>
+        <description summary="This desktop has been removed">
+            This virtual desktop has just been removed by the server:
+            All windows will lose the association to this desktop.
+        </description>
     </event>
 </interface>
 

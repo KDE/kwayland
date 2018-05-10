@@ -55,6 +55,7 @@ class PlasmaVirtualDesktop;
  *
  * The PlasmaVirtualDesktopManagement can be used as a drop-in replacement for any org_kde_plasma_virtual_desktop_management
  * pointer as it provides matching cast operators.
+ * @since 5.46
  *
  * @see Registry
  **/
@@ -118,9 +119,19 @@ public:
 
     PlasmaVirtualDesktop *getVirtualDesktop(const QString &id);
 
-    //FIXME: is this necessary? libtaskmanager can build a model out of it even without acces to this list
+    /**
+     * @returns All the existent virtual desktops
+     */
     QList <PlasmaVirtualDesktop *> desktops() const;
+
+    /**
+     * @returns How many rows the visual representation should have
+     */
     quint32 rows() const;
+
+    /**
+     * @returns How many columns the visual representation should have
+     */
     quint32 columns() const;
 
     operator org_kde_plasma_virtual_desktop_management*();
@@ -135,13 +146,14 @@ Q_SIGNALS:
     void desktopAdded(const QString &id);
 
     /**
-     * Emitted when a new desktop has been removed
+     * Emitted when a desktop has been removed
      */
     void desktopRemoved(const QString &id);
 
     /**
      * Metaphorically arrange desktops in a grid, which can be used for
      * the pager or for the animation between desktops, or effects like the desktop grid.
+     * Emitted when the server decided a new layout.
      */
     void layout(quint32 row, quint32 column);
 
@@ -153,6 +165,7 @@ Q_SIGNALS:
      * to be seen as atomic, even if they happen via multiple events.
      */
     void done();
+
 private:
     class Private;
     QScopedPointer<Private> d;
@@ -170,16 +183,19 @@ public:
      * method.
      **/
     void setup(org_kde_plasma_virtual_desktop *plasmavirtualdesktop);
+
     /**
      * @returns @c true if managing a org_kde_plasma_virtual_desktop.
      **/
     bool isValid() const;
+
     /**
      * Releases the org_kde_plasma_virtual_desktop interface.
      * After the interface has been released the PlasmaVirtualDesktop instance is no
      * longer valid and can be setup with another org_kde_plasma_virtual_desktop interface.
      **/
     void release();
+
     /**
      * Destroys the data held by this PlasmaVirtualDesktop.
      * This method is supposed to be used when the connection to the Wayland
@@ -199,23 +215,69 @@ public:
     void destroy();
 
     /**
-     * Requests this desktop to be activated
+     * Requests this desktop to be activated.
+     * The server may or may not decide to consent to the request.
      */
     void requestActivate();
 
+    /**
+     * @returns The unique id of this desktop. The format of the id is decided by the compositor
+     */
     QString id() const;
+
+
+    /**
+     * @returns User readable name for the desktop.
+     */
     QString name() const;
+
+    /**
+     * @returns The row position of this desktop in the layout
+     */
     quint32 row() const;
+
+    /**
+     * @returns The column position of this desktop in the layout.
+     */
     quint32 column() const;
+
+    /**
+     * @returns True if the desktop is the active one.
+     * when this property changes, activated or deactivated will be emitted.
+     * @see activated
+     * @see deactivated
+     */
     bool active() const;
 
     operator org_kde_plasma_virtual_desktop*();
     operator org_kde_plasma_virtual_desktop*() const;
 
 Q_SIGNALS:
+    /**
+     * TODO: activeChanged(bool)?
+     * Emitted when this desktop has been activated by the server
+     */
     void activated();
+
+    /**
+     * Emitted when this desktop has been activated by the server
+     */
     void deactivated();
+
+    /**
+     * This event is sent after all other properties has been
+     * sent after binding to the desktop manager object and after any
+     * other property changes done after that. This allows
+     * changes to the org_kde_plasma_virtual_desktop properties
+     * to be seen as atomic, even if they happen via multiple events.
+     */
     void done();
+
+    /**
+     * This virtual desktop has just been removed by the server:
+     * This object itself is about to be deleted. All windows will
+     * lose the association to this desktop.
+     */
     void removed();
 
 private:

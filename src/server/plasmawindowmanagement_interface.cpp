@@ -260,6 +260,12 @@ PlasmaWindowInterface *PlasmaWindowManagementInterface::createWindow(QObject *pa
     return window;
 }
 
+QList<PlasmaWindowInterface*> PlasmaWindowManagementInterface::windows() const
+{
+    Q_D();
+    return d->windows;
+}
+
 void PlasmaWindowManagementInterface::unmapWindow(PlasmaWindowInterface *window)
 {
     if (!window) {

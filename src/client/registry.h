@@ -60,6 +60,7 @@ struct zwp_pointer_constraints_v1;
 struct zxdg_exporter_v2;
 struct zxdg_importer_v2;
 struct zwp_idle_inhibit_manager_v1;
+struct zxdg_output_manager_v1;
 
 namespace KWayland
 {
@@ -103,6 +104,7 @@ class XdgExporterUnstableV2;
 class XdgImporterUnstableV2;
 class XdgExporter;
 class XdgImporter;
+class XdgOutputManager;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -172,7 +174,8 @@ public:
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
         AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
         ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
-        RemoteAccessManager ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
+        RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
+        XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.XDGOUTPUTVERSION
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -607,10 +610,22 @@ public:
      * @c null will be returned.
      *
      * Prefer using createServerSideDecorationPaletteManager instead.
-     * @see createAppMenuManager
+     * @see createServerSideDecorationPaletteManager
      * @since 5.42
      **/
     org_kde_kwin_server_decoration_palette_manager *bindServerSideDecorationPaletteManager(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the zxdg_output_v1 with @p name and @p version.
+     * If the @p name does not exist,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgOutputManager instead.
+     * @see createXdgOutputManager
+     * @since 5.XDGOUTPUTVERSION
+     **/
+    zxdg_output_manager_v1 *bindXdgOutputUnstableV1(uint32_t name, uint32_t version) const;
+
     ///@}
 
     /**
@@ -1116,6 +1131,24 @@ public:
      * @since 5.42
      **/
     ServerSideDecorationPaletteManager *createServerSideDecorationPaletteManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
+     * Creates an XdgOutputManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the zxdg_output_manager_v1 interface,
+     * the returned XdgOutputManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the zxdg_output_manager_v1 interface to bind
+     * @param version The version or the zxdg_output_manager_v1 interface to use
+     * @param parent The parent for XdgOuptutManager
+     *
+     * @returns The created XdgOuptutManager.
+     * @since 5.XDGOUTPUTVERSION
+     **/
+    XdgOutputManager *createXdgOutputManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
     ///@}
 
 
@@ -1362,6 +1395,14 @@ Q_SIGNALS:
      */
     void serverSideDecorationPaletteManagerAnnounced(quint32 name, quint32 version);
 
+    /**
+     * Emitted whenever a zxdg_output_v1 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.XDGOUTPUTVERSION
+     */
+    void xdgOutputAnnounced(quint32 name, quint32 version);
+
     ///@}
 
     /**
@@ -1563,6 +1604,13 @@ Q_SIGNALS:
      * @since 5.42
      **/
     void serverSideDecorationPaletteManagerRemoved(quint32 name);
+
+    /**
+     * Emitted whenever a zxdg_output_v1 gets removed.
+     * @param name The name of the removed interface
+     * @since 5.XDGOUTPUTVERSION
+     **/
+    void xdgOutputRemoved(quint32 name);
 
     ///@}
     /**

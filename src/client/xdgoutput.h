@@ -62,7 +62,7 @@ class Output;
  * The XdgOutputManager can be used as a drop-in replacement for any zxdg_output_manager_v1
  * pointer as it provides matching cast operators.
  *
- * @since 5.XDGOUTPUTVERSION
+ * @since 5.47
  *
  * @see Registry
  **/

@@ -130,7 +130,7 @@
     -->
   </interface>
 
-  <interface name="org_kde_plasma_surface" version="4">
+  <interface name="org_kde_plasma_surface" version="5">
     <description summary="metadata interface">
       An interface that may be implemented by a wl_surface, for
       implementations that provide the shell user interface.
@@ -332,7 +332,7 @@
       <description summary="make the window skip the taskbar">
         Setting this bit to the window, will make it say it prefers to not be listed in the taskbar. Taskbar implementations may or may not follow this hint.
       </description>
-      <arg name="skip" type="uint" summary="Boolean value that sets wther to skip the taskbar"/>
+      <arg name="skip" type="uint" summary="Boolean value that sets whether to skip the taskbar"/>
     </request>
 
     <enum name="error" since="4">
@@ -384,5 +384,14 @@
             An auto-hiding panel got shown by the compositor.
         </description>
     </event>
+
+    <!-- Skip switcher -->
+    <request name="set_skip_switcher" since="5">
+        <description summary="make the window not appear in a switcher">
+          Setting this bit will indicate that the window prefers not to be listed in a switcher.
+        </description>
+        <arg name="skip" type="uint" summary="Boolean value that sets whether to skip the window switcher."/>
+     </request>
+
   </interface>
 </protocol>

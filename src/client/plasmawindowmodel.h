@@ -105,7 +105,11 @@ public:
         /**
          * @since 5.35
          */
-        Pid
+        Pid,
+        /**
+         * @since 5.45
+         */
+        SkipSwitcher,
     };
     Q_ENUM(AdditionalRoles)
 

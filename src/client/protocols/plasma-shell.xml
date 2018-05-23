@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_shell" version="4">
+  <interface name="org_kde_plasma_shell" version="5">
     <description summary="create shell windows and helpers">
       This interface is used by KF5 powered Wayland shells to communicate with
       the compositor and can only be bound one time.

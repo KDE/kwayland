@@ -47,11 +47,8 @@ public:
 
     /**
      * Sets a new layout for this desktop grid.
-     * The client will be sent a new layout with
-     * this number of rows and a number of columns dependent on the desktop
-     * number. setting this will relayout desktops if needed
      */
-    void setRows(quint32 rows);
+    void setLayout(quint32 rows, quint32 columns);
 
     /**
      * @returns How many rows this layout has
@@ -100,7 +97,6 @@ public:
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
-    friend class PlasmaVirtualDesktopInterface;
     friend class Display;
     class Private;
     Private *d_func() const;
@@ -129,28 +125,8 @@ public:
      */
     QString name() const;
 
-    /**
-     * Move this desktop in a new position.
-     * The other desktops will be reshuffled if needed
-     * @param row the new row: if not outside layouts boundaries
-     *            the openration will not be performed.
-     * @param column the new column: if not outside layouts boundaries
-     *            the openration will not be performed.
-     */
     void setLayoutPosition(quint32 row, quint32 column);
-
-    /**
-     * @returns the desktop row position.
-     * The default value depends from the order of creation, but it can be moved by setLayoutPosition.
-     * @see setLayoutPosition
-     */
     quint32 row() const;
-
-    /**
-     * @returns the desktop column position
-     * The default value depends from the order of creation, but it can be moved by setLayoutPosition.
-     * @see setLayoutPosition
-     */
     quint32 column() const;
 
     /**

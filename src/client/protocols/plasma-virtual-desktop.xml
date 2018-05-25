@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="org_kde_plasma_virtual_desktop">
   <copyright><![CDATA[
-    Copyright (C) 2015 Martin Gräßlin
-    Copyright (C) 2015 Marco Martin
+    Copyright (C) 2018 Marco Martin
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by

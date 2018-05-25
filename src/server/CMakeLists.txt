@@ -73,8 +73,8 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/org_kde_plasma_virtual_desktop.xml
-    BASENAME org_kde_plasma_virtual_desktop
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
+    BASENAME plasma-virtual-desktop
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -194,8 +194,8 @@ set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_plasma_virtual_desktop-server-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_plasma_virtual_desktop-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-qt-surface-extension-client-protocol.h

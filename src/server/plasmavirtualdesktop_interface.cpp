@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 
 #include <wayland-server.h>
-#include <wayland-org_kde_plasma_virtual_desktop-server-protocol.h>
+#include <wayland-plasma-virtual-desktop-server-protocol.h>
 
 namespace KWayland
 {

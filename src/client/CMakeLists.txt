@@ -81,8 +81,8 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/org_kde_plasma_virtual_desktop.xml
-    BASENAME org_kde_plasma_virtual_desktop
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
+    BASENAME plasma-virtual-desktop
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS

@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMap>
 #include <QDebug>
 
-#include <wayland-org_kde_plasma_virtual_desktop-client-protocol.h>
+#include <wayland-plasma-virtual-desktop-client-protocol.h>
 
 namespace KWayland
 {

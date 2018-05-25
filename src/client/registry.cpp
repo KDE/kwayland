@@ -61,7 +61,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
-#include <wayland-org_kde_plasma_virtual_desktop-client-protocol.h>
+#include <wayland-plasma-virtual-desktop-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>

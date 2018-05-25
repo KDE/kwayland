@@ -46,8 +46,10 @@ public:
     QVector<wl_resource*> resources;
     QString id;
     QString name;
-    quint32 row = 0;
-    quint32 column = 0;
+    QString topNeighbour;
+    QString leftNeighbour;
+    QString rightNeighbour;
+    QString bottomNeighbour;
     bool active = false;
 
 private:
@@ -140,7 +142,6 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
     for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().constData());
     }
-    org_kde_plasma_virtual_desktop_management_send_layout(resource, rows, columns);
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::unbind(wl_resource *resource)
@@ -160,33 +161,6 @@ PlasmaVirtualDesktopManagementInterface::~PlasmaVirtualDesktopManagementInterfac
 PlasmaVirtualDesktopManagementInterface::Private *PlasmaVirtualDesktopManagementInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
-}
-
-void PlasmaVirtualDesktopManagementInterface::setLayout(quint32 rows, quint32 columns)
-{
-    Q_D();
-    if (d->rows == rows && d->columns == columns) {
-        return;
-    }
-
-    d->rows = rows;
-    d->columns = columns;
-
-    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_layout(*it, rows, columns);
-    }
-}
-
-quint32 PlasmaVirtualDesktopManagementInterface::rows()
-{
-    Q_D();
-    return d->rows;
-}
-
-quint32 PlasmaVirtualDesktopManagementInterface::columns()
-{
-    Q_D();
-    return d->columns;
 }
 
 PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::desktop(const QString &id)
@@ -349,11 +323,15 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
     if (!name.isEmpty()) {
         org_kde_plasma_virtual_desktop_send_name(resource, name.toUtf8().constData());
     }
-    org_kde_plasma_virtual_desktop_send_layout_position(resource, row, column);
 
     if (active) {
         org_kde_plasma_virtual_desktop_send_activated(resource);
     }
+
+    org_kde_plasma_virtual_desktop_send_left_neighbour(resource, leftNeighbour.toUtf8().constData());
+    org_kde_plasma_virtual_desktop_send_top_neighbour(resource, topNeighbour.toUtf8().constData());
+    org_kde_plasma_virtual_desktop_send_right_neighbour(resource, rightNeighbour.toUtf8().constData());
+    org_kde_plasma_virtual_desktop_send_bottom_neighbour(resource, bottomNeighbour.toUtf8().constData());
 
     c->flush();
 }
@@ -389,28 +367,73 @@ QString PlasmaVirtualDesktopInterface::name() const
     return d->name;
 }
 
-void PlasmaVirtualDesktopInterface::setLayoutPosition(quint32 row, quint32 column)
+void PlasmaVirtualDesktopInterface::setTopNeighbour(const QString &id)
 {
-    if (d->row == row && d->column == column) {
+    if (d->topNeighbour == id) {
         return;
     }
 
-    d->row = row;
-    d->column = column;
-
+    d->topNeighbour = id;
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_send_layout_position(*it, row, column);
+        org_kde_plasma_virtual_desktop_send_top_neighbour(*it, id.toUtf8().constData());
     }
 }
 
-quint32 PlasmaVirtualDesktopInterface::row() const
+QString PlasmaVirtualDesktopInterface::topNeighbour() const
 {
-    return d->row;
+    return d->topNeighbour;
 }
 
-quint32 PlasmaVirtualDesktopInterface::column() const
+
+void PlasmaVirtualDesktopInterface::setLeftNeighbour(const QString &id)
 {
-    return d->column;
+    if (d->leftNeighbour == id) {
+        return;
+    }
+
+    d->leftNeighbour = id;
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_left_neighbour(*it, id.toUtf8().constData());
+    }
+}
+
+QString PlasmaVirtualDesktopInterface::leftNeighbour() const
+{
+    return d->leftNeighbour;
+}
+
+void PlasmaVirtualDesktopInterface::setRightNeighbour(const QString &id)
+{
+    if (d->rightNeighbour == id) {
+        return;
+    }
+
+    d->rightNeighbour = id;
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_right_neighbour(*it, id.toUtf8().constData());
+    }
+}
+
+QString PlasmaVirtualDesktopInterface::rightNeighbour() const
+{
+    return d->rightNeighbour;
+}
+
+void PlasmaVirtualDesktopInterface::setBottomNeighbour(const QString &id)
+{
+    if (d->bottomNeighbour == id) {
+        return;
+    }
+
+    d->bottomNeighbour = id;
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_virtual_desktop_send_bottom_neighbour(*it, id.toUtf8().constData());
+    }
+}
+
+QString PlasmaVirtualDesktopInterface::bottomNeighbour() const
+{
+    return d->bottomNeighbour;
 }
 
 bool PlasmaVirtualDesktopInterface::active() const

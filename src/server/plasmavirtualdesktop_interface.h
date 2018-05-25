@@ -51,16 +51,6 @@ public:
     void setLayout(quint32 rows, quint32 columns);
 
     /**
-     * @returns How many rows this layout has
-     */
-    quint32 rows();
-
-    /**
-     * @returns How many columns this layout has
-     */
-    quint32 columns();
-
-    /**
      * @returns A desktop identified uniquely by this id.
      * If not found, nullptr will be returned.
      * @see createDesktop
@@ -125,9 +115,17 @@ public:
      */
     QString name() const;
 
-    void setLayoutPosition(quint32 row, quint32 column);
-    quint32 row() const;
-    quint32 column() const;
+    void setTopNeighbour(const QString &id);
+    QString topNeighbour() const;
+
+    void setLeftNeighbour(const QString &id);
+    QString leftNeighbour() const;
+
+    void setRightNeighbour(const QString &id);
+    QString rightNeighbour() const;
+
+    void setBottomNeighbour(const QString &id);
+    QString bottomNeighbour() const;
 
     /**
      * @returns true if this desktop is active. Only one at a time will be.

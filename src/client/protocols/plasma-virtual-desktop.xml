@@ -41,14 +41,6 @@
         <arg name="id" type="string" summary="Unique id of the desktop"/>
     </event>
 
-    <event name="layout">
-        <description summary="Hint for the visual organization of the pager">
-            Metaphorically arrange desktops in a grid, which can be used for the pager or for the animation between desktops, or effects like the desktop grid.
-        </description>
-        <arg name="rows" type="uint"/>
-        <arg name="columns" type="uint"/>
-    </event>
-
     <event name="done">
         <description summary="sent all information about desktops">
             This event is sent after all other properties has been
@@ -77,12 +69,21 @@
         <arg name="name" type="string" summary="User readable descriptive name for the desktop"/>
     </event>
 
-    <event name="layout_position">
-        <description summary="Position for the desktop">
-            Logical position of the visual model of this desktop in terms of rows and columns: there will be only one desktop on a (row, column)
-        </description>
-        <arg name="row" type="uint"/>
-        <arg name="column" type="uint"/>
+    <event name="top_neighbour">
+        <description summary="the desktop positioned on top of this one, if any"/>
+        <arg name="id" type="string"/>
+    </event>
+    <event name="left_neighbour">
+        <description summary="the desktop positioned on the left of this one, if any"/>
+        <arg name="id" type="string"/>
+    </event>
+    <event name="right_neighbour">
+        <description summary="the desktop positioned on the right of this one, if any"/>
+        <arg name="id" type="string"/>
+    </event>
+    <event name="bottom_neighbour">
+        <description summary="the desktop positioned on bottom of this one, if any"/>
+        <arg name="id" type="string"/>
     </event>
 
     <event name="activated">

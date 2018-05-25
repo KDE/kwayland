@@ -124,16 +124,6 @@ public:
      */
     QList <PlasmaVirtualDesktop *> desktops() const;
 
-    /**
-     * @returns How many rows the visual representation should have
-     */
-    quint32 rows() const;
-
-    /**
-     * @returns How many columns the visual representation should have
-     */
-    quint32 columns() const;
-
     operator org_kde_plasma_virtual_desktop_management*();
     operator org_kde_plasma_virtual_desktop_management*() const;
 
@@ -149,13 +139,6 @@ Q_SIGNALS:
      * Emitted when a desktop has been removed
      */
     void desktopRemoved(const QString &id);
-
-    /**
-     * Metaphorically arrange desktops in a grid, which can be used for
-     * the pager or for the animation between desktops, or effects like the desktop grid.
-     * Emitted when the server decided a new layout.
-     */
-    void layout(quint32 row, quint32 column);
 
     /**
      * This event is sent after all other properties has been
@@ -231,16 +214,11 @@ public:
      */
     QString name() const;
 
-    /**
-     * @returns The row position of this desktop in the layout
-     */
-    quint32 row() const;
-
-    /**
-     * @returns The column position of this desktop in the layout.
-     */
-    quint32 column() const;
-
+    QString topNeighbour() const;
+    QString leftNeighbour() const;
+    QString rightNeighbour() const;
+    QString bottomNeighbour() const;
+    
     /**
      * @returns True if the desktop is the active one.
      * when this property changes, activated or deactivated will be emitted.
@@ -279,6 +257,11 @@ Q_SIGNALS:
      * lose the association to this desktop.
      */
     void removed();
+
+    void topNeighbourChanged(const QString &id);
+    void leftNeighbourChanged(const QString &id);
+    void rightNeighbourChanged(const QString &id);
+    void bottomNeighbourChanged(const QString &id);
 
 private:
     friend class PlasmaVirtualDesktopManagement;

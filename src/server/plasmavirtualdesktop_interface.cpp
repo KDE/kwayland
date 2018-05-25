@@ -33,7 +33,7 @@ namespace KWayland
 namespace Server
 {
 
-class PlasmaVirtualDesktopInterface::Private
+class Q_DECL_HIDDEN PlasmaVirtualDesktopInterface::Private
 {
 public:
     Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c);
@@ -65,7 +65,7 @@ private:
 };
 
 
-class PlasmaVirtualDesktopManagementInterface::Private : public Global::Private
+class Q_DECL_HIDDEN PlasmaVirtualDesktopManagementInterface::Private : public Global::Private
 {
 public:
     Private(PlasmaVirtualDesktopManagementInterface *q, Display *d);

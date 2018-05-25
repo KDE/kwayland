@@ -1,6 +1,5 @@
 /********************************************************************
-Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
-Copyright 2018  Msrco Martin <mart@kde.org>
+Copyright 2018  Marco Martin <mart@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

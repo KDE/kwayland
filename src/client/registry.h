@@ -151,7 +151,6 @@ public:
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
-        PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
         Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
@@ -175,7 +174,8 @@ public:
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
         AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
         ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
-        RemoteAccessManager ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
+        RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
+        PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.46
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();

@@ -31,7 +31,7 @@ namespace KWayland
 namespace Client
 {
 
-class PlasmaVirtualDesktopManagement::Private
+class Q_DECL_HIDDEN PlasmaVirtualDesktopManagement::Private
 {
 public:
     Private(PlasmaVirtualDesktopManagement *q);
@@ -187,7 +187,7 @@ QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
     return d->desktops.values();
 }
 
-class PlasmaVirtualDesktop::Private
+class Q_DECL_HIDDEN PlasmaVirtualDesktop::Private
 {
 public:
     Private(PlasmaVirtualDesktop *q);

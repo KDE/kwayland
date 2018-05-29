@@ -116,15 +116,15 @@ public:
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);
     virtual ~PlasmaWindowModel();
 
-    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    QHash<int, QByteArray> roleNames() const override;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     /**
      * Returns an index with internalPointer() pointing to a PlasmaWindow instance.
      **/
-    QModelIndex	index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QModelIndex	index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
 
 
     /**

@@ -23,7 +23,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "surface.h"
 #include "output.h"
-#include <wayland-xdg-shell-v5-client-protocol.h>
 
 namespace KWayland
 {
@@ -45,7 +44,7 @@ XdgShell::~XdgShell()
 
 void XdgShell::setup(xdg_shell *xdgshellv5)
 {
-    d->setupV5(xdgshellv5);
+//    d->setupV5(xdgshellv5);
 }
 
 void XdgShell::setup(zxdg_shell_v6 *xdgshellv6)
@@ -135,7 +134,7 @@ XdgShellSurface::~XdgShellSurface()
 
 void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
 {
-    d->setupV5(xdgsurfacev5);
+    return;
 }
 
 void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *xdgtoplevelv6)
@@ -295,7 +294,7 @@ XdgShellPopup::~XdgShellPopup()
 
 void XdgShellPopup::setup(xdg_popup *xdgpopupv5)
 {
-    d->setupV5(xdgpopupv5);
+    return;
 }
 
 void XdgShellPopup::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopupv6)

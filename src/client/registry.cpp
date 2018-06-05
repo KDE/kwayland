@@ -76,7 +76,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-server-decoration-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
-#include <wayland-xdg-shell-v5-client-protocol.h>
 #include <wayland-xdg-shell-v6-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
@@ -273,13 +272,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zwp_text_input_manager_v2_interface,
         &Registry::textInputManagerUnstableV2Announced,
         &Registry::textInputManagerUnstableV2Removed
-    }},
-    {Registry::Interface::XdgShellUnstableV5, {
-        1,
-        QByteArrayLiteral("xdg_shell"),
-        &xdg_shell_interface,
-        &Registry::xdgShellUnstableV5Announced,
-        &Registry::xdgShellUnstableV5Removed
     }},
     {Registry::Interface::RelativePointerManagerUnstableV1, {
         1,
@@ -747,7 +739,8 @@ XdgShell *Registry::createXdgShell(quint32 name, quint32 version, QObject *paren
 {
     switch (d->interfaceForName(name)) {
     case Interface::XdgShellUnstableV5:
-        return d->create<XdgShellUnstableV5>(name, version, parent, &Registry::bindXdgShellUnstableV5);
+        qFatal("XDG Shell V5 is no longer supported");
+        return nullptr;
     case Interface::XdgShellUnstableV6:
         return d->create<XdgShellUnstableV6>(name, version, parent, &Registry::bindXdgShellUnstableV6);
     default:

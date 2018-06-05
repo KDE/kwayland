@@ -93,17 +93,6 @@ protected:
     Private() = default;
 };
 
-class XdgShellUnstableV5 : public XdgShell
-{
-    Q_OBJECT
-public:
-    explicit XdgShellUnstableV5(QObject *parent = nullptr);
-    virtual ~XdgShellUnstableV5();
-
-private:
-    class Private;
-};
-
 class XdgShellUnstableV6 : public XdgShell
 {
     Q_OBJECT
@@ -112,18 +101,6 @@ public:
     virtual ~XdgShellUnstableV6();
 
 private:
-    class Private;
-};
-
-class XdgShellSurfaceUnstableV5 : public XdgShellSurface
-{
-    Q_OBJECT
-public:
-    virtual ~XdgShellSurfaceUnstableV5();
-
-private:
-    explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
-    friend class XdgShellUnstableV5;
     class Private;
 };
 
@@ -253,18 +230,6 @@ public:
     Qt::Edges anchorEdge;
     XdgPositioner::Constraints constraints;
     QPoint anchorOffset;
-};
-
-
-class XdgShellPopupUnstableV5 : public XdgShellPopup
-{
-public:
-    virtual ~XdgShellPopupUnstableV5();
-
-private:
-    explicit XdgShellPopupUnstableV5(QObject *parent = nullptr);
-    friend class XdgShellUnstableV5;
-    class Private;
 };
 
 class XdgShellPopupUnstableV6 : public XdgShellPopup

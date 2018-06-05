@@ -45,7 +45,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "shell_interface.h"
 #include "subcompositor_interface.h"
 #include "textinput_interface_p.h"
-#include "xdgshell_v5_interface_p.h"
 #include "xdgforeign_interface.h"
 #include "xdgshell_v6_interface_p.h"
 #include "appmenu_interface.h"
@@ -379,7 +378,8 @@ XdgShellInterface *Display::createXdgShell(const XdgShellInterfaceVersion &versi
     XdgShellInterface *x = nullptr;
     switch (version) {
     case XdgShellInterfaceVersion::UnstableV5:
-        x = new XdgShellV5Interface(this, parent);
+        Q_ASSERT(false);
+        return nullptr;
         break;
     case XdgShellInterfaceVersion::UnstableV6:
         x = new XdgShellV6Interface(this, parent);

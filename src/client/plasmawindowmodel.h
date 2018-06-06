@@ -107,7 +107,7 @@ public:
          */
         Pid,
         /**
-         * @since 5.45
+         * @since 5.47
          */
         SkipSwitcher,
     };

@@ -290,7 +290,7 @@ public:
     /**
      * Setting this bit on a window will indicate it does not prefer
      * to be included in a window switcher.
-     * @since 5.45
+     * @since 5.47
      */
     void setSkipSwitcher(bool skip);
 

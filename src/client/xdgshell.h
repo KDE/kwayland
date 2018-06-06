@@ -462,7 +462,8 @@ public:
 
     operator xdg_surface*();
     operator xdg_surface*() const;
-
+    operator xdg_toplevel*();
+    operator xdg_toplevel*() const;
     operator zxdg_surface_v6*();
     operator zxdg_surface_v6*() const;
     operator zxdg_toplevel_v6*();
@@ -567,7 +568,8 @@ public:
      */
     void requestGrab(Seat *seat, quint32 serial);
 
-
+    operator xdg_surface*();
+    operator xdg_surface*() const;
     operator xdg_popup*();
     operator xdg_popup*() const;
     operator zxdg_surface_v6*();

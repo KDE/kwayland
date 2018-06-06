@@ -170,6 +170,14 @@ XdgShellSurface::operator xdg_surface*() const {
     return *(d.data());
 }
 
+XdgShellSurface::operator xdg_toplevel*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator xdg_toplevel*() const {
+    return *(d.data());
+}
+
 XdgShellSurface::operator zxdg_surface_v6*() {
     return *(d.data());
 }
@@ -325,6 +333,14 @@ EventQueue *XdgShellPopup::eventQueue()
 void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
 {
     d->requestGrab(seat, serial);
+}
+
+XdgShellPopup::operator xdg_surface*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator xdg_surface*() const {
+    return *(d.data());
 }
 
 XdgShellPopup::operator xdg_popup*() {

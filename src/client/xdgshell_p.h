@@ -104,6 +104,17 @@ private:
     class Private;
 };
 
+class XdgShellStable : public XdgShell
+{
+    Q_OBJECT
+public:
+    explicit XdgShellStable(QObject *parent = nullptr);
+    virtual ~XdgShellStable();
+
+private:
+    class Private;
+};
+
 class XdgTopLevelUnstableV6 : public XdgShellSurface
 {
     Q_OBJECT
@@ -113,6 +124,18 @@ public:
 private:
     explicit XdgTopLevelUnstableV6(QObject *parent = nullptr);
     friend class XdgShellUnstableV6;
+    class Private;
+};
+
+class XdgTopLevelStable : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgTopLevelStable();
+
+private:
+    explicit XdgTopLevelStable(QObject *parent = nullptr);
+    friend class XdgShellStable;
     class Private;
 };
 
@@ -243,7 +266,16 @@ private:
     class Private;
 };
 
+class XdgShellPopupStable : public XdgShellPopup
+{
+public:
+    virtual ~XdgShellPopupStable();
 
+private:
+    explicit XdgShellPopupStable(QObject *parent = nullptr);
+    friend class XdgShellStable;
+    class Private;
+};
 
 }
 }

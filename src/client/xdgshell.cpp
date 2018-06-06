@@ -44,7 +44,7 @@ XdgShell::~XdgShell()
 
 void XdgShell::setup(xdg_shell *xdgshellv5)
 {
-//    d->setupV5(xdgshellv5);
+    Q_UNUSED(xdgshellv5)
 }
 
 void XdgShell::setup(zxdg_shell_v6 *xdgshellv6)
@@ -134,6 +134,7 @@ XdgShellSurface::~XdgShellSurface()
 
 void XdgShellSurface::setup(xdg_surface *xdgsurfacev5)
 {
+    Q_UNUSED(xdgsurfacev5);
     return;
 }
 

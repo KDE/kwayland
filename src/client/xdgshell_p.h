@@ -157,6 +157,11 @@ public:
         Q_UNUSED(toplevel)
         Q_UNUSED(surface)
     }
+    virtual void setup(xdg_surface *surface, xdg_toplevel *toplevel)
+    {
+        Q_UNUSED(surface)
+        Q_UNUSED(toplevel)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;

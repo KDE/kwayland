@@ -515,6 +515,8 @@ public:
      * Setup this XdgShellPopup to manage the @p xdgpopupv5.
      * When using XdgShell::createXdgShellPopup there is no need to call this
      * method.
+     *
+     * This was for XDGShellV5, this is now deprecated
      **/
     void setup(xdg_popup *xdgpopupv5);
 
@@ -525,6 +527,14 @@ public:
      * @since 5.39
      **/
     void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopup6);
+
+    /**
+     * Setup this XdgShellPopup to manage the @p xdgpopupv on associated @p xdgsurface
+     * When using XdgShell::createXdgShellPopup there is no need to call this
+     * method.
+     * @since 5.XDGSTABLE
+     **/
+    void setup(xdg_surface *xdgsurface, xdg_popup *xdgpopup);
 
     /**
      * @returns @c true if managing an xdg_popup.

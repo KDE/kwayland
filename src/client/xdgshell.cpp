@@ -142,6 +142,12 @@ void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *xdg
     d->setupV6(xdgsurfacev6, xdgtoplevelv6);
 }
 
+void XdgShellSurface::setup(xdg_surface *xdgsurface, xdg_toplevel *xdgtoplevel)
+{
+    d->setup(xdgsurface, xdgtoplevel);
+}
+
+
 void XdgShellSurface::release()
 {
     d->release();
@@ -302,12 +308,18 @@ XdgShellPopup::~XdgShellPopup()
 
 void XdgShellPopup::setup(xdg_popup *xdgpopupv5)
 {
+    Q_UNUSED(xdgpopupv5);
     return;
 }
 
 void XdgShellPopup::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopupv6)
 {
     d->setupV6(xdgsurfacev6, xdgpopupv6);
+}
+
+void XdgShellPopup::setup(xdg_surface *surface, xdg_popup *popup)
+{
+    d->setup(surface, popup);
 }
 
 void XdgShellPopup::release()

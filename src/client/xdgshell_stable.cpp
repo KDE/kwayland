@@ -230,7 +230,7 @@ public:
     WaylandPointer<xdg_toplevel, xdg_toplevel_destroy> xdgtoplevel;
     WaylandPointer<xdg_surface, xdg_surface_destroy> xdgsurface;
 
-    void setupStable(xdg_surface *surface, xdg_toplevel *toplevel) override;
+    void setup(xdg_surface *surface, xdg_toplevel *toplevel) override;
     void release() override;
     void destroy() override;
     bool isValid() const override;
@@ -335,7 +335,7 @@ XdgTopLevelStable::Private::Private(XdgShellSurface *q)
 {
 }
 
-void XdgTopLevelStable::Private::setupStable(xdg_surface *surface, xdg_toplevel *topLevel)
+void XdgTopLevelStable::Private::setup(xdg_surface *surface, xdg_toplevel *topLevel)
 {
     Q_ASSERT(surface);
     Q_ASSERT(!xdgtoplevel);

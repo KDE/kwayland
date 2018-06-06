@@ -25,9 +25,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QRect>
 #include <KWayland/Client/kwaylandclient_export.h>
 
+//This is a mix of structs for both xdgshell unstable v5 AND xdg wm base stable
+struct xdg_wm_base;
 struct xdg_shell;
 struct xdg_surface;
 struct xdg_popup;
+struct xdg_toplevel;
 
 struct zxdg_shell_v6;
 struct zxdg_toplevel_v6;
@@ -239,11 +242,12 @@ public:
      **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
+    operator xdg_wm_base*();
+    operator xdg_wm_base*() const;
     operator xdg_shell*();
     operator xdg_shell*() const;
     operator zxdg_shell_v6*();
     operator zxdg_shell_v6*() const;
-
 
 Q_SIGNALS:
     /**
@@ -313,6 +317,13 @@ public:
      * method.
      **/
     void setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *toplevel);
+
+    /**
+     * Setup this XdgShellSurface to manage the @p toplevel on the relevant @p xdgsurface
+     * When using XdgShell::createXdgShellSurface there is no need to call this
+     * method.
+     **/
+    void setup(xdg_surface *xdgsurface, xdg_toplevel *toplevel);
 
     /**
      * @returns @c true if managing a xdg_surface.

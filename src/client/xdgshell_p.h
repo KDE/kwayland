@@ -40,6 +40,9 @@ public:
     virtual void setupV6(zxdg_shell_v6 *xdgshellv6) {
         Q_UNUSED(xdgshellv6)
     }
+    virtual void setup(xdg_wm_base *xdgshell) {
+        Q_UNUSED(xdgshell);
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -163,6 +166,12 @@ public:
     virtual operator xdg_surface*() const {
         return nullptr;
     }
+    virtual operator xdg_toplevel*() {
+        return nullptr;
+    }
+    virtual operator xdg_toplevel*() const {
+        return nullptr;
+    }
     virtual operator zxdg_surface_v6*() {
         return nullptr;
     }
@@ -212,6 +221,10 @@ public:
         Q_UNUSED(s)
         Q_UNUSED(p)
     }
+    virtual void setup(xdg_surface *s, xdg_popup *p) {
+        Q_UNUSED(s)
+        Q_UNUSED(p)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -219,6 +232,12 @@ public:
         Q_UNUSED(seat);
         Q_UNUSED(serial);
     };
+    virtual operator xdg_surface*() {
+        return nullptr;
+    }
+    virtual operator xdg_surface*() const {
+        return nullptr;
+    }
     virtual operator xdg_popup*() {
         return nullptr;
     }

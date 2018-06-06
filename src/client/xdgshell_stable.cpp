@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
-#include <wayland-xdg-shell-v6-client-protocol.h>
+#include <wayland-xdg-shell-client-protocol.h>
 
 #include <QDebug>
 
@@ -35,7 +35,7 @@ namespace Client
 class XdgShellStable::Private : public XdgShell::Private
 {
 public:
-    void setupV6(zxdg_shell_v6 *shell) override;
+    void setup(xdg_wm_base *shell) /*override*/;
     void release() override;
     void destroy() override;
     bool isValid() const override;
@@ -44,65 +44,65 @@ public:
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
 
-    operator zxdg_shell_v6*() override {
-        return xdgshellv6;
+    operator xdg_wm_base*() /*override*/ {
+        return xdg_shell_base;
     }
-    operator zxdg_shell_v6*() const override {
-        return xdgshellv6;
+    operator xdg_wm_base*() const /*override*/ {
+        return xdg_shell_base;
     }
 
 private:
-    XdgShellPopup *internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, QObject *parent);
-    static void pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial);
+    XdgShellPopup *internalGetXdgPopup(Surface *surface, xdg_surface *parentSurface, const XdgPositioner &positioner, QObject *parent);
+    static void pingCallback(void *data, struct xdg_wm_base *shell, uint32_t serial);
 
-    WaylandPointer<zxdg_shell_v6, zxdg_shell_v6_destroy> xdgshellv6;
-    static const struct zxdg_shell_v6_listener s_shellListener;
+    WaylandPointer<xdg_wm_base, xdg_wm_base_destroy> xdg_shell_base;
+    static const struct xdg_wm_base_listener s_shellListener;
 };
 
-const struct zxdg_shell_v6_listener XdgShellStable::Private::s_shellListener = {
+const struct xdg_wm_base_listener XdgShellStable::Private::s_shellListener = {
     pingCallback,
 };
 
-void XdgShellStable::Private::pingCallback(void *data, struct zxdg_shell_v6 *shell, uint32_t serial)
+void XdgShellStable::Private::pingCallback(void *data, struct xdg_wm_base *shell, uint32_t serial)
 {
     Q_UNUSED(data)
-    zxdg_shell_v6_pong(shell, serial);
+    xdg_wm_base_pong(shell, serial);
 }
 
-void XdgShellStable::Private::setupV6(zxdg_shell_v6 *shell)
+void XdgShellStable::Private::setup(xdg_wm_base *shell)
 {
     Q_ASSERT(shell);
-    Q_ASSERT(!xdgshellv6);
-    xdgshellv6.setup(shell);
-    zxdg_shell_v6_add_listener(shell, &s_shellListener, this);
+    Q_ASSERT(!xdg_shell_base);
+    xdg_shell_base.setup(shell);
+    xdg_wm_base_add_listener(shell, &s_shellListener, this);
 }
 
 void XdgShellStable::Private::release()
 {
-    xdgshellv6.release();
+    xdg_shell_base.release();
 }
 
 void XdgShellStable::Private::destroy()
 {
-    xdgshellv6.destroy();
+    xdg_shell_base.destroy();
 }
 
 bool XdgShellStable::Private::isValid() const
 {
-    return xdgshellv6.isValid();
+    return xdg_shell_base.isValid();
 }
 
 XdgShellSurface *XdgShellStable::Private::getXdgSurface(Surface *surface, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
+    auto ss = xdg_wm_base_get_xdg_surface(xdg_shell_base, *surface);
 
     if (!ss) {
         return nullptr;
     }
 
     auto s = new XdgTopLevelStable(parent);
-    auto toplevel = zxdg_surface_v6_get_toplevel(ss);
+    auto toplevel = xdg_surface_get_toplevel(ss);
     if (queue) {
         queue->addProxy(ss);
         queue->addProxy(toplevel);
@@ -121,87 +121,87 @@ XdgShellPopup *XdgShellStable::Private::getXdgPopup(Surface *surface, XdgShellPo
     return internalGetXdgPopup(surface, *parentSurface, positioner, parent);
 }
 
-XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, zxdg_surface_v6 *parentSurface, const XdgPositioner &positioner, QObject *parent)
+XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xdg_surface *parentSurface, const XdgPositioner &positioner, QObject *parent)
 {
     Q_ASSERT(isValid());
-    auto ss = zxdg_shell_v6_get_xdg_surface(xdgshellv6, *surface);
+    auto ss = xdg_shell_get_xdg_surface(xdg_shell_base, *surface);
     if (!ss) {
         return nullptr;
     }
 
-    auto p = zxdg_shell_v6_create_positioner(xdgshellv6);
+    auto p = xdg_shell_create_positioner(xdg_shell_base);
 
     auto anchorRect = positioner.anchorRect();
-    zxdg_positioner_v6_set_anchor_rect(p, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
+    xdg_positioner_set_anchor_rect(p, anchorRect.x(), anchorRect.y(), anchorRect.width(), anchorRect.height());
 
     QSize initialSize = positioner.initialSize();
-    zxdg_positioner_v6_set_size(p, initialSize.width(), initialSize.height());
+    xdg_positioner_set_size(p, initialSize.width(), initialSize.height());
 
     QPoint anchorOffset = positioner.anchorOffset();
     if (!anchorOffset.isNull()) {
-        zxdg_positioner_v6_set_offset(p, anchorOffset.x(), anchorOffset.y());
+        xdg_positioner_set_offset(p, anchorOffset.x(), anchorOffset.y());
     }
 
     uint32_t anchor = 0;
     if (positioner.anchorEdge().testFlag(Qt::LeftEdge)) {
-        anchor |= ZXDG_POSITIONER_V6_ANCHOR_LEFT;
+        anchor |= XDG_POSITIONER_ANCHOR_LEFT;
     }
     if (positioner.anchorEdge().testFlag(Qt::TopEdge)) {
-        anchor |= ZXDG_POSITIONER_V6_ANCHOR_TOP;
+        anchor |= XDG_POSITIONER_ANCHOR_TOP;
     }
     if (positioner.anchorEdge().testFlag(Qt::RightEdge)) {
-        anchor |= ZXDG_POSITIONER_V6_ANCHOR_RIGHT;
+        anchor |= XDG_POSITIONER_ANCHOR_RIGHT;
     }
     if (positioner.anchorEdge().testFlag(Qt::BottomEdge)) {
-        anchor |= ZXDG_POSITIONER_V6_ANCHOR_BOTTOM;
+        anchor |= XDG_POSITIONER_ANCHOR_BOTTOM;
     }
     if (anchor != 0) {
-        zxdg_positioner_v6_set_anchor(p, anchor);
+        xdg_positioner_set_anchor(p, anchor);
     }
 
     uint32_t gravity = 0;
     if (positioner.anchorEdge().testFlag(Qt::LeftEdge)) {
-        gravity |= ZXDG_POSITIONER_V6_GRAVITY_LEFT;
+        gravity |= XDG_POSITIONER_GRAVITY_LEFT;
     }
     if (positioner.anchorEdge().testFlag(Qt::TopEdge)) {
-        gravity |= ZXDG_POSITIONER_V6_GRAVITY_TOP;
+        gravity |= XDG_POSITIONER_GRAVITY_TOP;
     }
     if (positioner.anchorEdge().testFlag(Qt::RightEdge)) {
-        gravity |= ZXDG_POSITIONER_V6_GRAVITY_RIGHT;
+        gravity |= XDG_POSITIONER_GRAVITY_RIGHT;
     }
     if (positioner.anchorEdge().testFlag(Qt::BottomEdge)) {
-        gravity |= ZXDG_POSITIONER_V6_GRAVITY_BOTTOM;
+        gravity |= XDG_POSITIONER_GRAVITY_BOTTOM;
     }
-    zxdg_positioner_v6_set_anchor(p, anchor);
+    xdg_positioner_set_anchor(p, anchor);
     if (gravity != 0) {
-        zxdg_positioner_v6_set_gravity(p, gravity);
+        xdg_positioner_set_gravity(p, gravity);
     }
 
     uint32_t constraint = 0;
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::SlideX)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::SlideY)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::FlipX)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::FlipY)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeX)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeY)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
+        constraint |= XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
     }
     if (constraint != 0) {
-        zxdg_positioner_v6_set_constraint_adjustment(p, constraint);
+        xdg_positioner_set_constraint_adjustment(p, constraint);
     }
 
     XdgShellPopup *s = new XdgShellPopupStable(parent);
-    auto popup = zxdg_surface_v6_get_popup(ss, parentSurface, p);
+    auto popup = xdg_surface_get_popup(ss, parentSurface, p);
     if (queue) {
         //deliberately not adding the positioner because the positioner has no events sent to it
         queue->addProxy(ss);
@@ -209,7 +209,7 @@ XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, zx
     }
     s->setup(ss, popup);
 
-    zxdg_positioner_v6_destroy(p);
+    xdg_positioner_destroy(p);
 
     return s;
 }
@@ -227,24 +227,24 @@ class XdgTopLevelStable::Private : public XdgShellSurface::Private
 {
 public:
     Private(XdgShellSurface *q);
-    WaylandPointer<zxdg_toplevel_v6, zxdg_toplevel_v6_destroy> xdgtoplevelv6;
-    WaylandPointer<zxdg_surface_v6, zxdg_surface_v6_destroy> xdgsurfacev6;
+    WaylandPointer<xdg_toplevel_v6, zxdg_toplevel_destroy> xdgtoplevelv6;
+    WaylandPointer<xdg_surface_v6, zxdg_surface_destroy> xdgsurfacev6;
 
-    void setupV6(zxdg_surface_v6 *surface, zxdg_toplevel_v6 *toplevel) override;
+    void setupV6(xdg_surface_v6 *surface, zxdg_toplevel *toplevel) override;
     void release() override;
     void destroy() override;
     bool isValid() const override;
 
-    operator zxdg_surface_v6*() override {
+    operator xdg_surface*() override {
         return xdgsurfacev6;
     }
-    operator zxdg_surface_v6*() const override {
+    operator xdg_surface*() const override {
         return xdgsurfacev6;
     }
-    operator zxdg_toplevel_v6*() override {
+    operator xdg_toplevel*() override {
         return xdgtoplevelv6;
     }
-    operator zxdg_toplevel_v6*() const override {
+    operator xdg_toplevel*() const override {
         return xdgtoplevelv6;
     }
 
@@ -267,24 +267,24 @@ private:
     QSize pendingSize;
     States pendingState;
 
-    static void configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state);
-    static void closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel);
-    static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
+    static void configureCallback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state);
+    static void closeCallback(void *data, xdg_toplevel *xdg_toplevel);
+    static void surfaceConfigureCallback(void *data, xdg_surface *xdg_surface, uint32_t serial);
 
-    static const struct zxdg_toplevel_v6_listener s_toplevelListener;
-    static const struct zxdg_surface_v6_listener s_surfaceListener;
+    static const struct xdg_toplevel_listener s_toplevelListener;
+    static const struct xdg_surface_listener s_surfaceListener;
 };
 
-const struct zxdg_toplevel_v6_listener XdgTopLevelStable::Private::s_toplevelListener = {
+const struct xdg_toplevel_listener XdgTopLevelStable::Private::s_toplevelListener = {
     configureCallback,
     closeCallback
 };
 
-const struct zxdg_surface_v6_listener XdgTopLevelStable::Private::s_surfaceListener = {
+const struct xdg_surface_listener XdgTopLevelStable::Private::s_surfaceListener = {
     surfaceConfigureCallback
 };
 
-void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct zxdg_surface_v6 *surface, uint32_t serial)
+void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct xdg_surface *surface, uint32_t serial)
 {
     Q_UNUSED(surface)
     auto s = reinterpret_cast<Private*>(data);
@@ -296,7 +296,7 @@ void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct zxd
     s->pendingState = 0;
 }
 
-void XdgTopLevelStable::Private::configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)
+void XdgTopLevelStable::Private::configureCallback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)
 {
     Q_UNUSED(xdg_toplevel)
     auto s = reinterpret_cast<Private*>(data);
@@ -305,16 +305,16 @@ void XdgTopLevelStable::Private::configureCallback(void *data, struct zxdg_tople
     uint32_t *statePtr = reinterpret_cast<uint32_t *>(state->data);
     for (size_t i = 0; i < state->size / sizeof(uint32_t); i++) {
         switch (statePtr[i]) {
-        case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
+        case XDG_TOPLEVEL_STATE_MAXIMIZED:
             states = states | XdgShellSurface::State::Maximized;
             break;
-        case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
+        case XDG_TOPLEVEL_STATE_FULLSCREEN:
             states = states | XdgShellSurface::State::Fullscreen;
             break;
-        case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
+        case XDG_TOPLEVEL_STATE_RESIZING:
             states = states | XdgShellSurface::State::Resizing;
             break;
-        case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
+        case XDG_TOPLEVEL_STATE_ACTIVATED:
             states = states | XdgShellSurface::State::Activated;
             break;
         }
@@ -323,7 +323,7 @@ void XdgTopLevelStable::Private::configureCallback(void *data, struct zxdg_tople
     s->pendingState = states;
 }
 
-void XdgTopLevelStable::Private::closeCallback(void *data, zxdg_toplevel_v6 *xdg_toplevel)
+void XdgTopLevelStable::Private::closeCallback(void *data, xdg_toplevel *xdg_toplevel)
 {
     auto s = reinterpret_cast<XdgTopLevelStable::Private*>(data);
     Q_ASSERT(s->xdgtoplevelv6 == xdg_toplevel);
@@ -335,14 +335,14 @@ XdgTopLevelStable::Private::Private(XdgShellSurface *q)
 {
 }
 
-void XdgTopLevelStable::Private::setupV6(zxdg_surface_v6 *surface, zxdg_toplevel_v6 *topLevel)
+void XdgTopLevelStable::Private::setupV6(xdg_surface_v6 *surface, zxdg_toplevel *topLevel)
 {
     Q_ASSERT(surface);
     Q_ASSERT(!xdgtoplevelv6);
     xdgsurfacev6.setup(surface);
     xdgtoplevelv6.setup(topLevel);
-    zxdg_surface_v6_add_listener(xdgsurfacev6, &s_surfaceListener, this);
-    zxdg_toplevel_v6_add_listener(xdgtoplevelv6, &s_toplevelListener, this);
+    xdg_surface_add_listener(xdgsurfacev6, &s_surfaceListener, this);
+    xdg_toplevel_add_listener(xdgtoplevelv6, &s_toplevelListener, this);
 }
 
 void XdgTopLevelStable::Private::release()
@@ -364,73 +364,73 @@ bool XdgTopLevelStable::Private::isValid() const
 
 void XdgTopLevelStable::Private::setTransientFor(XdgShellSurface *parent)
 {
-    zxdg_toplevel_v6 *parentSurface = nullptr;
+    xdg_toplevel *parentSurface = nullptr;
     if (parent) {
         parentSurface = *parent;
     }
-    zxdg_toplevel_v6_set_parent(xdgtoplevelv6, parentSurface);
+    xdg_toplevel_set_parent(xdgtoplevelv6, parentSurface);
 }
 
 void XdgTopLevelStable::Private::setTitle(const QString & title)
 {
-    zxdg_toplevel_v6_set_title(xdgtoplevelv6, title.toUtf8().constData());
+    xdg_toplevel_set_title(xdgtoplevelv6, title.toUtf8().constData());
 }
 
 void XdgTopLevelStable::Private::setAppId(const QByteArray & appId)
 {
-    zxdg_toplevel_v6_set_app_id(xdgtoplevelv6, appId.constData());
+    xdg_toplevel_set_app_id(xdgtoplevelv6, appId.constData());
 }
 
 void XdgTopLevelStable::Private::showWindowMenu(Seat *seat, quint32 serial, qint32 x, qint32 y)
 {
-    zxdg_toplevel_v6_show_window_menu(xdgtoplevelv6, *seat, serial, x, y);
+    xdg_toplevel_show_window_menu(xdgtoplevelv6, *seat, serial, x, y);
 }
 
 void XdgTopLevelStable::Private::move(Seat *seat, quint32 serial)
 {
-    zxdg_toplevel_v6_move(xdgtoplevelv6, *seat, serial);
+    xdg_toplevel_move(xdgtoplevelv6, *seat, serial);
 }
 
 void XdgTopLevelStable::Private::resize(Seat *seat, quint32 serial, Qt::Edges edges)
 {
-    uint wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_NONE;
+    uint wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
     if (edges.testFlag(Qt::TopEdge)) {
         if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::TopEdge)) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_LEFT;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
         } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::TopEdge)) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_RIGHT;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
         } else if ((edges & ~Qt::TopEdge) == Qt::Edges()) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_TOP;
         }
     } else if (edges.testFlag(Qt::BottomEdge)) {
         if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::BottomEdge)) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_LEFT;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
         } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::BottomEdge)) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_RIGHT;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
         } else if ((edges & ~Qt::BottomEdge) == Qt::Edges()) {
-            wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM;
+            wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
         }
     } else if (edges.testFlag(Qt::RightEdge) && ((edges & ~Qt::RightEdge) == Qt::Edges())) {
-        wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_RIGHT;
+        wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
     } else if (edges.testFlag(Qt::LeftEdge) && ((edges & ~Qt::LeftEdge) == Qt::Edges())) {
-        wlEdge = ZXDG_TOPLEVEL_V6_RESIZE_EDGE_LEFT;
+        wlEdge = XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
     }
-    zxdg_toplevel_v6_resize(xdgtoplevelv6, *seat, serial, wlEdge);
+    xdg_toplevel_resize(xdgtoplevelv6, *seat, serial, wlEdge);
 }
 
 void XdgTopLevelStable::Private::ackConfigure(quint32 serial)
 {
-    zxdg_surface_v6_ack_configure(xdgsurfacev6, serial);
+    xdg_surface_ack_configure(xdgsurfacev6, serial);
 }
 
 void XdgTopLevelStable::Private::setMaximized()
 {
-    zxdg_toplevel_v6_set_maximized(xdgtoplevelv6);
+    xdg_toplevel_set_maximized(xdgtoplevelv6);
 }
 
 void XdgTopLevelStable::Private::unsetMaximized()
 {
-    zxdg_toplevel_v6_unset_maximized(xdgtoplevelv6);
+    xdg_toplevel_unset_maximized(xdgtoplevelv6);
 }
 
 void XdgTopLevelStable::Private::setFullscreen(Output *output)
@@ -439,27 +439,27 @@ void XdgTopLevelStable::Private::setFullscreen(Output *output)
     if (output) {
         o = *output;
     }
-    zxdg_toplevel_v6_set_fullscreen(xdgtoplevelv6, o);
+    xdg_toplevel_set_fullscreen(xdgtoplevelv6, o);
 }
 
 void XdgTopLevelStable::Private::unsetFullscreen()
 {
-    zxdg_toplevel_v6_unset_fullscreen(xdgtoplevelv6);
+    xdg_toplevel_unset_fullscreen(xdgtoplevelv6);
 }
 
 void XdgTopLevelStable::Private::setMinimized()
 {
-    zxdg_toplevel_v6_set_minimized(xdgtoplevelv6);
+    xdg_toplevel_set_minimized(xdgtoplevelv6);
 }
 
 void XdgTopLevelStable::Private::setMaxSize(const QSize &size)
 {
-    zxdg_toplevel_v6_set_max_size(xdgtoplevelv6, size.width(), size.height());
+    xdg_toplevel_set_max_size(xdgtoplevelv6, size.width(), size.height());
 }
 
 void XdgTopLevelStable::Private::setMinSize(const QSize &size)
 {
-    zxdg_toplevel_v6_set_min_size(xdgtoplevelv6, size.width(), size.height());
+    xdg_toplevel_set_min_size(xdgtoplevelv6, size.width(), size.height());
 }
 
 XdgTopLevelStable::XdgTopLevelStable(QObject *parent)
@@ -474,54 +474,54 @@ class XdgShellPopupStable::Private : public XdgShellPopup::Private
 public:
     Private(XdgShellPopup *q);
 
-    void setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p) override;
+    void setupV6(xdg_surface_v6 *s, zxdg_popup *p) override;
     void release() override;
     void destroy() override;
     bool isValid() const override;
     void requestGrab(Seat *seat, quint32 serial) override;
-    operator zxdg_surface_v6*() override {
+    operator xdg_surface*() override {
         return xdgsurfacev6;
     }
-    operator zxdg_surface_v6*() const override {
+    operator xdg_surface*() const override {
         return xdgsurfacev6;
     }
-    operator zxdg_popup_v6*() override {
+    operator xdg_popup*() override {
         return xdgpopupv6;
     }
-    operator zxdg_popup_v6*() const override {
+    operator xdg_popup*() const override {
         return xdgpopupv6;
     }
-    WaylandPointer<zxdg_surface_v6, zxdg_surface_v6_destroy> xdgsurfacev6;
-    WaylandPointer<zxdg_popup_v6, zxdg_popup_v6_destroy> xdgpopupv6;
+    WaylandPointer<xdg_surface_v6, zxdg_surface_destroy> xdgsurfacev6;
+    WaylandPointer<xdg_popup_v6, zxdg_popup_destroy> xdgpopupv6;
 
     QRect pendingRect;
 
 private:
-    static void configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height);
-    static void popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup);
-    static void surfaceConfigureCallback(void *data, zxdg_surface_v6 *xdg_surface, uint32_t serial);
+    static void configureCallback(void *data, xdg_popup *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height);
+    static void popupDoneCallback(void *data, xdg_popup *xdg_popup);
+    static void surfaceConfigureCallback(void *data, xdg_surface *xdg_surface, uint32_t serial);
 
-    static const struct zxdg_popup_v6_listener s_popupListener;
-    static const struct zxdg_surface_v6_listener s_surfaceListener;
+    static const struct xdg_popup_listener s_popupListener;
+    static const struct xdg_surface_listener s_surfaceListener;
 };
 
-const struct zxdg_popup_v6_listener XdgShellPopupStable::Private::s_popupListener = {
+const struct xdg_popup_listener XdgShellPopupStable::Private::s_popupListener = {
     configureCallback,
     popupDoneCallback
 };
 
-const struct zxdg_surface_v6_listener XdgShellPopupStable::Private::s_surfaceListener = {
+const struct xdg_surface_listener XdgShellPopupStable::Private::s_surfaceListener = {
     surfaceConfigureCallback,
 };
 
-void XdgShellPopupStable::Private::configureCallback(void *data, zxdg_popup_v6 *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
+void XdgShellPopupStable::Private::configureCallback(void *data, xdg_popup *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     Q_UNUSED(xdg_popup);
     auto s = reinterpret_cast<Private*>(data);
     s->pendingRect = QRect(x, y, width, height);
 }
 
-void XdgShellPopupStable::Private::surfaceConfigureCallback(void *data, struct zxdg_surface_v6 *surface, uint32_t serial)
+void XdgShellPopupStable::Private::surfaceConfigureCallback(void *data, struct xdg_surface *surface, uint32_t serial)
 {
     Q_UNUSED(surface);
     auto s = reinterpret_cast<Private*>(data);
@@ -529,7 +529,7 @@ void XdgShellPopupStable::Private::surfaceConfigureCallback(void *data, struct z
     s->pendingRect = QRect();
 }
 
-void XdgShellPopupStable::Private::popupDoneCallback(void *data, zxdg_popup_v6 *xdg_popup)
+void XdgShellPopupStable::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
 {
     auto s = reinterpret_cast<XdgShellPopupStable::Private*>(data);
     Q_ASSERT(s->xdgpopupv6 == xdg_popup);
@@ -541,7 +541,7 @@ XdgShellPopupStable::Private::Private(XdgShellPopup *q)
 {
 }
 
-void XdgShellPopupStable::Private::setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p)
+void XdgShellPopupStable::Private::setupV6(xdg_surface_v6 *s, zxdg_popup *p)
 {
     Q_ASSERT(p);
     Q_ASSERT(!xdgsurfacev6);
@@ -549,8 +549,8 @@ void XdgShellPopupStable::Private::setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p)
 
     xdgsurfacev6.setup(s);
     xdgpopupv6.setup(p);
-    zxdg_surface_v6_add_listener(xdgsurfacev6, &s_surfaceListener, this);
-    zxdg_popup_v6_add_listener(xdgpopupv6, &s_popupListener, this);
+    xdg_surface_add_listener(xdgsurfacev6, &s_surfaceListener, this);
+    xdg_popup_add_listener(xdgpopupv6, &s_popupListener, this);
 }
 
 void XdgShellPopupStable::Private::release()
@@ -570,7 +570,7 @@ bool XdgShellPopupStable::Private::isValid() const
 
 void XdgShellPopupStable::Private::requestGrab(Seat *seat, quint32 serial)
 {
-    zxdg_popup_v6_grab(xdgpopupv6, *seat, serial);
+    xdg_popup_grab(xdgpopupv6, *seat, serial);
 }
 
 

@@ -54,6 +54,7 @@ set(SERVER_LIB_SRCS
     xdgforeign_interface.cpp
     xdgshell_v6_interface.cpp
     xdgoutput_interface.cpp
+    xdgshell_stable_interface.cpp
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -180,6 +181,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     BASENAME xdg-output
 )
 
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell.xml
+    BASENAME xdg-shell
+)
+
 set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-server-protocol.h
@@ -227,6 +233,8 @@ set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-inhibit-unstable-v1-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-unstable-v1-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-server-protocol.h
 )
 
 set_source_files_properties(${SERVER_GENERATED_SRCS} PROPERTIES SKIP_AUTOMOC ON)

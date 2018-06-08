@@ -39,7 +39,7 @@ class SeatInterface;
 class SurfaceInterface;
 class XdgTopLevelV6Interface;
 class XdgPopupV6Interface;
-class XdgPositionerStableInterface;
+class XdgPositionerV6Interface;
 class XdgSurfaceV6Interface;
 template <typename T>
 class GenericShellSurface;
@@ -57,7 +57,7 @@ public:
     //DAVE we want to rename this, as it's bloody confusing. But XdgShellInterface::getSurface exists and expects that
     //also use a less terrible argument name than native. It's obvious it's native from the type
 
-    XdgPositionerStableInterface *getPositioner(wl_resource *native);
+    XdgPositionerV6Interface *getPositioner(wl_resource *native);
 
     XdgSurfaceV6Interface *realGetSurface(wl_resource *native);
 
@@ -125,7 +125,7 @@ private:
  * This is a private internal class that keeps track of sent data
  * At the time of PopupCreation these values are copied to the popup
  */
-class XdgPositionerStableInterface: public KWayland::Server::Resource
+class XdgPositionerV6Interface: public KWayland::Server::Resource
 {
 public:
     QSize initialSize() const;
@@ -135,7 +135,7 @@ public:
     PositionerConstraints constraintAdjustments() const;
     QPoint anchorOffset() const;
 private:
-    explicit XdgPositionerStableInterface(XdgShellV6Interface *parent, wl_resource *parentResource);
+    explicit XdgPositionerV6Interface(XdgShellV6Interface *parent, wl_resource *parentResource);
     friend class XdgShellV6Interface;
 
     class Private;

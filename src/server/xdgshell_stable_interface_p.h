@@ -37,85 +37,85 @@ class Display;
 class OutputInterface;
 class SeatInterface;
 class SurfaceInterface;
-class XdgTopLevelV6Interface;
-class XdgPopupV6Interface;
+class XdgTopLevelStableInterface;
+class XdgPopupStableInterface;
 class XdgPositionerStableInterface;
-class XdgSurfaceV6Interface;
+class XdgSurfaceStableInterface;
 template <typename T>
 class GenericShellSurface;
 
-class XdgShellV6Interface : public XdgShellInterface
+class XdgShellStableInterface : public XdgShellInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellV6Interface();
+    virtual ~XdgShellStableInterface();
 
     /**
      * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
-    XdgTopLevelV6Interface *getSurface(wl_resource *native);
+    XdgTopLevelStableInterface *getSurface(wl_resource *native);
     //DAVE we want to rename this, as it's bloody confusing. But XdgShellInterface::getSurface exists and expects that
     //also use a less terrible argument name than native. It's obvious it's native from the type
 
     XdgPositionerStableInterface *getPositioner(wl_resource *native);
 
-    XdgSurfaceV6Interface *realGetSurface(wl_resource *native);
+    XdgSurfaceStableInterface *realGetSurface(wl_resource *native);
 
     Display *display() const;
 
     void ping(XdgShellSurfaceInterface * surface);
 
 private:
-    explicit XdgShellV6Interface(Display *display, QObject *parent = nullptr);
+    explicit XdgShellStableInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;
 };
 
-class XdgSurfaceV6Interface : public KWayland::Server::Resource
+class XdgSurfaceStableInterface : public KWayland::Server::Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgSurfaceV6Interface();
+    virtual ~XdgSurfaceStableInterface();
     SurfaceInterface* surface() const;
-    XdgTopLevelV6Interface* topLevel() const;
-    XdgPopupV6Interface *popup() const;
+    XdgTopLevelStableInterface* topLevel() const;
+    XdgPopupStableInterface *popup() const;
 
 private:
-    explicit XdgSurfaceV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
-    friend class XdgShellV6Interface;
+    explicit XdgSurfaceStableInterface(XdgShellStableInterface *parent, SurfaceInterface *surface, wl_resource *parentResource);
+    friend class XdgShellStableInterface;
 
     class Private;
     Private *d_func() const;
 };
 
-class XdgTopLevelV6Interface : public
+class XdgTopLevelStableInterface : public
 XdgShellSurfaceInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgTopLevelV6Interface();
+    virtual ~XdgTopLevelStableInterface();
 
 private:
-    explicit XdgTopLevelV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
-    friend class XdgShellV6Interface;
-    friend class XdgSurfaceV6Interface;
+    explicit XdgTopLevelStableInterface(XdgShellStableInterface *parent, SurfaceInterface *surface, wl_resource *parentResource);
+    friend class XdgShellStableInterface;
+    friend class XdgSurfaceStableInterface;
 
     class Private;
     Private *d_func() const;
 };
 
-class XdgPopupV6Interface : public XdgShellPopupInterface
+class XdgPopupStableInterface : public XdgShellPopupInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgPopupV6Interface();
+    virtual ~XdgPopupStableInterface();
 
 private:
-    explicit XdgPopupV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
-    friend class XdgShellV6Interface;
-    friend class XdgSurfaceV6Interface;
-    friend class GenericShellSurface<XdgPopupV6Interface>;
+    explicit XdgPopupStableInterface(XdgShellStableInterface *parent, SurfaceInterface *surface, wl_resource *parentResource);
+    friend class XdgShellStableInterface;
+    friend class XdgSurfaceStableInterface;
+    friend class GenericShellSurface<XdgPopupStableInterface>;
 
     class Private;
     Private *d_func() const;
@@ -135,8 +135,8 @@ public:
     PositionerConstraints constraintAdjustments() const;
     QPoint anchorOffset() const;
 private:
-    explicit XdgPositionerStableInterface(XdgShellV6Interface *parent, wl_resource *parentResource);
-    friend class XdgShellV6Interface;
+    explicit XdgPositionerStableInterface(XdgShellStableInterface *parent, wl_resource *parentResource);
+    friend class XdgShellStableInterface;
 
     class Private;
     Private *d_func() const;

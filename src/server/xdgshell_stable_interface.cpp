@@ -17,7 +17,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
-#include "xdgshell_v6_interface_p.h"
+#include "xdgshell_stable_interface_p.h"
 #include "xdgshell_interface_p.h"
 #include "generic_shell_surface_p.h"
 #include "display.h"
@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat_interface.h"
 #include "surface_interface.h"
 
-#include <wayland-xdg-shell-v6-server-protocol.h>
+#include <wayland-xdg-shell-server-protocol.h>
 
 namespace KWayland
 {
@@ -41,7 +41,7 @@ public:
     Private(XdgShellStableInterface *q, Display *d);
 
     QVector<XdgSurfaceStableInterface*> surfaces;
-    QVector<XdgPositionerV6Interface*> positioners;
+    QVector<XdgPositionerStableInterface*> positioners;
 
 private:
 
@@ -63,7 +63,7 @@ private:
     static void pongCallback(wl_client *client, wl_resource *resource, uint32_t serial);
 
     XdgShellStableInterface *q;
-    static const struct zxdg_shell_v6_interface s_interface;
+    static const struct xdg_shell_interface s_interface;
     static const quint32 s_version;
     QHash<wl_client *, wl_resource*> resources;
 };
@@ -97,7 +97,7 @@ public:
 private:
     static void grabCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial);
 
-    static const struct zxdg_popup_v6_interface s_interface;
+    static const struct xdg_popup_interface s_interface;
 };
 
 class XdgSurfaceStableInterface::Private : public KWayland::Server::Resource::Private
@@ -127,7 +127,7 @@ private:
     static void getPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *parent, wl_resource *positioner);
     static void ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial);
     static void setWindowGeometryCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    static const struct zxdg_surface_v6_interface s_interface;
+    static const struct xdg_surface_interface s_interface;
 };
 
 class XdgTopLevelStableInterface::Private : public XdgShellSurfaceInterface::Private
@@ -161,24 +161,24 @@ public:
         wl_array_init(&state);
         if (states.testFlag(State::Maximized)) {
             uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-            *s = ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED;
+            *s = XDG_TOPLEVEL_STATE_MAXIMIZED;
         }
         if (states.testFlag(State::Fullscreen)) {
             uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-            *s = ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN;
+            *s = XDG_TOPLEVEL_STATE_FULLSCREEN;
         }
         if (states.testFlag(State::Resizing)) {
             uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-            *s = ZXDG_TOPLEVEL_V6_STATE_RESIZING;
+            *s = XDG_TOPLEVEL_STATE_RESIZING;
         }
         if (states.testFlag(State::Activated)) {
             uint32_t *s = reinterpret_cast<uint32_t*>(wl_array_add(&state, sizeof(uint32_t)));
-            *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+            *s = XDG_TOPLEVEL_STATE_ACTIVATED;
         }
         configureSerials << serial;
-        zxdg_toplevel_v6_send_configure(resource, size.width(), size.height(), &state);
+        xdg_toplevel_send_configure(resource, size.width(), size.height(), &state);
 
-        zxdg_surface_v6_send_configure(parentResource, serial);
+        xdg_surface_send_configure(parentResource, serial);
 
         client->flush();
         wl_array_release(&state);
@@ -201,14 +201,14 @@ private:
     static void unsetFullscreenCallback(wl_client *client, wl_resource *resource);
     static void setMinimizedCallback(wl_client *client, wl_resource *resource);
 
-    static const struct zxdg_toplevel_v6_interface s_interface;
+    static const struct xdg_toplevel_interface s_interface;
 };
 
 
 const quint32 XdgShellStableInterface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_shell_v6_interface XdgShellStableInterface::Private::s_interface = {
+const struct xdg_shell_interface XdgShellStableInterface::Private::s_interface = {
     destroyCallback,
     createPositionerCallback,
     getXdgSurfaceCallback,
@@ -244,7 +244,7 @@ void XdgShellStableInterface::Private::createSurface(wl_client *client, uint32_t
         }
     );
     if (it != surfaces.constEnd()) {
-        wl_resource_post_error(surface->resource(), ZXDG_SHELL_V6_ERROR_ROLE, "ShellSurface already created");
+        wl_resource_post_error(surface->resource(), XDG_SHELL_ERROR_ROLE, "ShellSurface already created");
         return;
     }
     XdgSurfaceStableInterface *shellSurface = new XdgSurfaceStableInterface(q, surface, parentResource);
@@ -262,7 +262,7 @@ void XdgShellStableInterface::Private::createPositioner(wl_client *client, uint3
 {
     Q_UNUSED(client)
 
-    XdgPositionerV6Interface *positioner = new XdgPositionerV6Interface(q, parentResource);
+    XdgPositionerStableInterface *positioner = new XdgPositionerStableInterface(q, parentResource);
     positioners << positioner;
     QObject::connect(positioner, &Resource::destroyed, q,
         [this, positioner] {
@@ -285,7 +285,7 @@ void XdgShellStableInterface::Private::pongCallback(wl_client *client, wl_resour
 }
 
 XdgShellStableInterface::Private::Private(XdgShellStableInterface *q, Display *d)
-    : XdgShellInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, d, &zxdg_shell_v6_interface, 1)
+    : XdgShellInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, d, &xdg_shell_interface, 1)
     , q(q)
 {
 }
@@ -293,7 +293,7 @@ XdgShellStableInterface::Private::Private(XdgShellStableInterface *q, Display *d
 void XdgShellStableInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
-    auto resource = c->createResource(&zxdg_shell_v6_interface, qMin(version, s_version), id);
+    auto resource = c->createResource(&xdg_shell_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -340,7 +340,7 @@ XdgSurfaceStableInterface *XdgShellStableInterface::realGetSurface(wl_resource *
     return nullptr;
 }
 
-XdgPositionerV6Interface *XdgShellStableInterface::getPositioner(wl_resource *resource)
+XdgPositionerStableInterface *XdgShellStableInterface::getPositioner(wl_resource *resource)
 {
     if (!resource) {
         return nullptr;
@@ -365,7 +365,7 @@ quint32 XdgShellStableInterface::Private::ping(XdgShellSurfaceInterface *surface
     }
 
     const quint32 pingSerial = display->nextSerial();
-    zxdg_shell_v6_send_ping(clientXdgShellResource, pingSerial);
+    xdg_shell_send_ping(clientXdgShellResource, pingSerial);
 
     setupTimer(pingSerial);
     return pingSerial;
@@ -378,35 +378,35 @@ XdgShellStableInterface::Private *XdgShellStableInterface::d_func() const
 
 namespace {
 template <>
-Qt::Edges edgesToQtEdges(zxdg_toplevel_v6_resize_edge edges)
+Qt::Edges edgesToQtEdges(xdg_toplevel_resize_edge edges)
 {
     Qt::Edges qtEdges;
     switch (edges) {
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP:
+    case XDG_TOPLEVEL_RESIZE_EDGE_TOP:
         qtEdges = Qt::TopEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM:
+    case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM:
         qtEdges = Qt::BottomEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_LEFT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_LEFT:
         qtEdges = Qt::LeftEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_LEFT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT:
         qtEdges = Qt::TopEdge | Qt::LeftEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_LEFT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT:
         qtEdges = Qt::BottomEdge | Qt::LeftEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_RIGHT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_RIGHT:
         qtEdges = Qt::RightEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_TOP_RIGHT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT:
         qtEdges = Qt::TopEdge | Qt::RightEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_BOTTOM_RIGHT:
+    case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT:
         qtEdges = Qt::BottomEdge | Qt::RightEdge;
         break;
-    case ZXDG_TOPLEVEL_V6_RESIZE_EDGE_NONE:
+    case XDG_TOPLEVEL_RESIZE_EDGE_NONE:
         break;
     default:
         Q_UNREACHABLE();
@@ -417,7 +417,7 @@ Qt::Edges edgesToQtEdges(zxdg_toplevel_v6_resize_edge edges)
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_surface_v6_interface XdgSurfaceStableInterface::Private::s_interface = {
+const struct xdg_surface_interface XdgSurfaceStableInterface::Private::s_interface = {
     destroyCallback,
     getTopLevelCallback,
     getPopupCallback,
@@ -442,11 +442,11 @@ void XdgSurfaceStableInterface::Private::getTopLevelCallback(wl_client *client, 
 void XdgSurfaceStableInterface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     if (m_topLevel) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Toplevel already created on this surface");
         return;
     }
     if (m_popup) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup already created on this surface");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Popup already created on this surface");
         return;
     }
     m_topLevel = new XdgTopLevelStableInterface (m_shell, m_surface, parentResource);
@@ -466,17 +466,17 @@ void XdgSurfaceStableInterface::Private::createPopup(wl_client *client, uint32_t
 {
 
     if (m_topLevel) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Toplevel already created on this surface");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Toplevel already created on this surface");
         return;
     }
     if (m_popup) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_ROLE, "Popup already created on this surface");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Popup already created on this surface");
         return;
     }
 
     auto xdgPositioner = m_shell->getPositioner(positioner);
     if (!xdgPositioner) {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_INVALID_POSITIONER, "Invalid positioner");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_INVALID_POSITIONER, "Invalid positioner");
         return;
     }
     m_popup = new XdgPopupStableInterface(m_shell, m_surface, parentResource);
@@ -488,7 +488,7 @@ void XdgSurfaceStableInterface::Private::createPopup(wl_client *client, uint32_t
     if (parentXdgSurface) {
         pd->parent = parentXdgSurface->surface();
     } else {
-        wl_resource_post_error(parentResource, ZXDG_SHELL_V6_ERROR_INVALID_POPUP_PARENT, "Invalid popup parent");
+        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_INVALID_POPUP_PARENT, "Invalid popup parent");
         return;
     }
 
@@ -527,7 +527,7 @@ void XdgSurfaceStableInterface::Private::setWindowGeometryCallback(wl_client *cl
 }
 
 XdgSurfaceStableInterface::Private::Private(XdgSurfaceStableInterface *q, XdgShellStableInterface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : KWayland::Server::Resource::Private(q, c, parentResource, &zxdg_surface_v6_interface, &s_interface),
+    : KWayland::Server::Resource::Private(q, c, parentResource, &xdg_surface_interface, &s_interface),
     m_shell(c),
     m_surface(surface)
 {
@@ -536,10 +536,10 @@ XdgSurfaceStableInterface::Private::Private(XdgSurfaceStableInterface *q, XdgShe
 XdgSurfaceV6Interface::Private::~Private() = default;
 
 
-class XdgPositionerV6Interface::Private : public KWayland::Server::Resource::Private
+class XdgPositionerStableInterface::Private : public KWayland::Server::Resource::Private
 {
 public:
-    Private(XdgPositionerV6Interface *q,  XdgShellStableInterface *c, wl_resource* parentResource);
+    Private(XdgPositionerStableInterface *q,  XdgShellStableInterface *c, wl_resource* parentResource);
 
     QSize initialSize;
     QRect anchorRect;
@@ -556,16 +556,16 @@ private:
     static void setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment);
     static void setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y);
 
-    static const struct zxdg_positioner_v6_interface s_interface;
+    static const struct xdg_positioner_interface s_interface;
 };
 
-XdgPositionerV6Interface::Private::Private(XdgPositionerV6Interface *q, XdgShellStableInterface *c, wl_resource *parentResource)
-    : KWayland::Server::Resource::Private(q, c, parentResource, &zxdg_positioner_v6_interface, &s_interface)
+XdgPositionerStableInterface::Private::Private(XdgPositionerStableInterface *q, XdgShellStableInterface *c, wl_resource *parentResource)
+    : KWayland::Server::Resource::Private(q, c, parentResource, &xdg_positioner_interface, &s_interface)
 {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_interface = {
+const struct xdg_positioner_interface XdgPositionerStableInterface::Private::s_interface = {
     resourceDestroyedCallback,
     setSizeCallback,
     setAnchorRectCallback,
@@ -577,109 +577,109 @@ const struct zxdg_positioner_v6_interface XdgPositionerV6Interface::Private::s_i
 #endif
 
 
-void XdgPositionerV6Interface::Private::setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {
+void XdgPositionerStableInterface::Private::setSizeCallback(wl_client *client, wl_resource *resource, int32_t width, int32_t height) {
     Q_UNUSED(client)
     auto s = cast<Private>(resource);
     s->initialSize = QSize(width, height);
 }
 
-void XdgPositionerV6Interface::Private::setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
+void XdgPositionerStableInterface::Private::setAnchorRectCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     Q_UNUSED(client)
     auto s = cast<Private>(resource);
     s->anchorRect = QRect(x, y, width, height);
 }
 
-void XdgPositionerV6Interface::Private::setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {
+void XdgPositionerStableInterface::Private::setAnchorCallback(wl_client *client, wl_resource *resource, uint32_t anchor) {
     Q_UNUSED(client)
 
     auto s = cast<Private>(resource);
     //Note - see David E's email to wayland-devel about this being bad API
-    if ((anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) &&
-        (anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+    if ((anchor & XDG_POSITIONER_ANCHOR_LEFT) &&
+        (anchor & XDG_POSITIONER_ANCHOR_RIGHT)) {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
-    if ((anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP) &&
-        (anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+    if ((anchor & XDG_POSITIONER_ANCHOR_TOP) &&
+        (anchor & XDG_POSITIONER_ANCHOR_BOTTOM)) {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
 
     Qt::Edges edges;
-    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT) {
+    if (anchor & XDG_POSITIONER_ANCHOR_LEFT) {
         edges |= Qt::LeftEdge;
     }
-    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP) {
+    if (anchor & XDG_POSITIONER_ANCHOR_TOP) {
         edges |= Qt::TopEdge;
     }
-    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT) {
+    if (anchor & XDG_POSITIONER_ANCHOR_RIGHT) {
         edges |= Qt::RightEdge;
     }
-    if (anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM) {
+    if (anchor & XDG_POSITIONER_ANCHOR_BOTTOM) {
         edges |= Qt::BottomEdge;
     }
 
     s->anchorEdge = edges;
 }
 
-void XdgPositionerV6Interface::Private::setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {
+void XdgPositionerStableInterface::Private::setGravityCallback(wl_client *client, wl_resource *resource, uint32_t gravity) {
     Q_UNUSED(client)
     auto s = cast<Private>(resource);
-    if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT) &&
-        (gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+    if ((gravity & XDG_POSITIONER_GRAVITY_LEFT) &&
+        (gravity & XDG_POSITIONER_GRAVITY_RIGHT)) {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
-    if ((gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP) &&
-        (gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)) {
-        wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid arguments");
+    if ((gravity & XDG_POSITIONER_GRAVITY_TOP) &&
+        (gravity & XDG_POSITIONER_GRAVITY_BOTTOM)) {
+        wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid arguments");
         return;
     }
 
     Qt::Edges edges;
-    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_LEFT) {
+    if (gravity & XDG_POSITIONER_ANCHOR_LEFT) {
         edges |= Qt::LeftEdge;
     }
-    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_TOP) {
+    if (gravity & XDG_POSITIONER_ANCHOR_TOP) {
         edges |= Qt::TopEdge;
     }
-    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_RIGHT) {
+    if (gravity & XDG_POSITIONER_ANCHOR_RIGHT) {
         edges |= Qt::RightEdge;
     }
-    if (gravity & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM) {
+    if (gravity & XDG_POSITIONER_ANCHOR_BOTTOM) {
         edges |= Qt::BottomEdge;
     }
 
     s->gravity = edges;
 }
 
-void XdgPositionerV6Interface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {
+void XdgPositionerStableInterface::Private::setConstraintAdjustmentCallback(wl_client *client, wl_resource *resource, uint32_t constraint_adjustment) {
     Q_UNUSED(client)
     auto s = cast<Private>(resource);
     PositionerConstraints constraints;
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X) {
         constraints |= PositionerConstraint::SlideX;
     }
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y) {
         constraints |= PositionerConstraint::SlideY;
     }
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X) {
         constraints |= PositionerConstraint::FlipX;
     }
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y) {
         constraints |= PositionerConstraint::FlipY;
     }
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_X) {
         constraints |= PositionerConstraint::ResizeX;
     }
-    if (constraint_adjustment & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) {
+    if (constraint_adjustment & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y) {
         constraints |= PositionerConstraint::ResizeY;
     }
     s->constraintAdjustments = constraints;
 }
 
-void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y)
+void XdgPositionerStableInterface::Private::setOffsetCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y)
 {
     Q_UNUSED(client)
     auto s = cast<Private>(resource);
@@ -688,7 +688,7 @@ void XdgPositionerV6Interface::Private::setOffsetCallback(wl_client *client, wl_
 
 void XdgTopLevelStableInterface::Private::close()
 {
-    zxdg_toplevel_v6_send_close(resource);
+    xdg_toplevel_send_close(resource);
     client->flush();
 }
 
@@ -706,14 +706,14 @@ void XdgTopLevelStableInterface::Private::setMinSizeCallback(wl_client *client, 
     s->q_func()->minSizeChanged(QSize(width, height));
 }
 
-const struct zxdg_toplevel_v6_interface XdgTopLevelStableInterface::Private::s_interface = {
+const struct xdg_toplevel_interface XdgTopLevelStableInterface::Private::s_interface = {
     destroyCallback,
     setParentCallback,
     setTitleCallback,
     setAppIdCallback,
     showWindowMenuCallback,
     moveCallback,
-    resizeCallback<zxdg_toplevel_v6_resize_edge>,
+    resizeCallback<xdg_toplevel_resize_edge>,
     setMaxSizeCallback,
     setMinSizeCallback,
     setMaximizedCallback,
@@ -754,7 +754,7 @@ void XdgTopLevelStableInterface::Private::showWindowMenuCallback(wl_client *clie
 }
 
 XdgTopLevelStableInterface::Private::Private(XdgTopLevelStableInterface *q, XdgShellStableInterface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_toplevel_v6_interface, &s_interface)
+    : XdgShellSurfaceInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &xdg_toplevel_interface, &s_interface)
 {
 }
 
@@ -800,14 +800,14 @@ void XdgTopLevelStableInterface::Private::setMinimizedCallback(wl_client *client
 XdgTopLevelV6Interface::Private::~Private() = default;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct zxdg_popup_v6_interface XdgPopupStableInterface::Private::s_interface = {
+const struct xdg_popup_interface XdgPopupStableInterface::Private::s_interface = {
     resourceDestroyedCallback,
     grabCallback
 };
 #endif
 
 XdgPopupStableInterface::Private::Private(XdgPopupStableInterface *q, XdgShellStableInterface *c, SurfaceInterface *surface, wl_resource *parentResource)
-    : XdgShellPopupInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &zxdg_popup_v6_interface, &s_interface)
+    : XdgShellPopupInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, c, surface, parentResource, &xdg_popup_interface, &s_interface)
 {
 }
 
@@ -828,8 +828,8 @@ quint32 XdgPopupStableInterface::Private::configure(const QRect &rect)
     }
     const quint32 serial = global->display()->nextSerial();
     configureSerials << serial;
-    zxdg_popup_v6_send_configure(resource, rect.x(), rect.y(), rect.width(), rect.height());
-    zxdg_surface_v6_send_configure(parentResource, serial);
+    xdg_popup_send_configure(resource, rect.x(), rect.y(), rect.width(), rect.height());
+    xdg_surface_send_configure(parentResource, serial);
     client->flush();
 
     return serial;
@@ -841,7 +841,7 @@ void XdgPopupStableInterface::Private::popupDone()
         return;
     }
     // TODO: dismiss all child popups
-    zxdg_popup_v6_send_popup_done(resource);
+    xdg_popup_send_popup_done(resource);
     client->flush();
 }
 
@@ -870,49 +870,49 @@ SurfaceInterface* XdgSurfaceStableInterface::surface() const
     return d->m_surface;
 }
 
-XdgPositionerV6Interface::XdgPositionerV6Interface(XdgShellStableInterface *parent, wl_resource *parentResource)
+XdgPositionerStableInterface::XdgPositionerStableInterface(XdgShellStableInterface *parent, wl_resource *parentResource)
     : KWayland::Server::Resource(new Private(this, parent, parentResource))
 {
 }
 
-QSize XdgPositionerV6Interface::initialSize() const
+QSize XdgPositionerStableInterface::initialSize() const
 {
     Q_D();
     return d->initialSize;
 }
 
-QRect XdgPositionerV6Interface::anchorRect() const
+QRect XdgPositionerStableInterface::anchorRect() const
 {
     Q_D();
     return d->anchorRect;
 }
 
-Qt::Edges XdgPositionerV6Interface::anchorEdge() const
+Qt::Edges XdgPositionerStableInterface::anchorEdge() const
 {
     Q_D();
     return d->anchorEdge;
 }
 
-Qt::Edges XdgPositionerV6Interface::gravity() const
+Qt::Edges XdgPositionerStableInterface::gravity() const
 {
     Q_D();
     return d->gravity;
 }
 
-PositionerConstraints XdgPositionerV6Interface::constraintAdjustments() const
+PositionerConstraints XdgPositionerStableInterface::constraintAdjustments() const
 {
     Q_D();
     return d->constraintAdjustments;
 }
 
-QPoint XdgPositionerV6Interface::anchorOffset() const
+QPoint XdgPositionerStableInterface::anchorOffset() const
 {
     Q_D();
     return d->anchorOffset;
 }
 
 
-XdgPositionerV6Interface::Private *XdgPositionerV6Interface::d_func() const
+XdgPositionerStableInterface::Private *XdgPositionerStableInterface::d_func() const
 {
     return reinterpret_cast<Private*>(d.data());
 }

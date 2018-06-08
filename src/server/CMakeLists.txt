@@ -50,11 +50,12 @@ set(SERVER_LIB_SRCS
     textinput_interface_v0.cpp
     textinput_interface_v2.cpp
     xdgshell_interface.cpp
+    xdgshell_v5_interface.cpp
     xdgforeign_v2_interface.cpp
     xdgforeign_interface.cpp
     xdgshell_v6_interface.cpp
-    xdgoutput_interface.cpp
     xdgshell_stable_interface.cpp
+    xdgoutput_interface.cpp
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -134,6 +135,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/text-input-unstable-v2.xml
     BASENAME text-input-unstable-v2
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v5.xml
+    BASENAME xdg-shell-v5
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -221,8 +227,12 @@ set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-unstable-v2-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-unstable-v2-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-gestures-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-gestures-unstable-v1-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-constraints-unstable-v1-client-protocol.h
@@ -233,8 +243,6 @@ set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-inhibit-unstable-v1-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-unstable-v1-server-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-server-protocol.h
 )
 
 set_source_files_properties(${SERVER_GENERATED_SRCS} PROPERTIES SKIP_AUTOMOC ON)

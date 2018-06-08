@@ -63,7 +63,7 @@ private:
     static void pongCallback(wl_client *client, wl_resource *resource, uint32_t serial);
 
     XdgShellStableInterface *q;
-    static const struct xdg_shell_interface s_interface;
+    static const struct xdg_wm_base_interface s_interface;
     static const quint32 s_version;
     QHash<wl_client *, wl_resource*> resources;
 };
@@ -208,7 +208,7 @@ private:
 const quint32 XdgShellStableInterface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-const struct xdg_shell_interface XdgShellStableInterface::Private::s_interface = {
+const struct xdg_wm_base_interface XdgShellStableInterface::Private::s_interface = {
     destroyCallback,
     createPositionerCallback,
     getXdgSurfaceCallback,
@@ -244,7 +244,7 @@ void XdgShellStableInterface::Private::createSurface(wl_client *client, uint32_t
         }
     );
     if (it != surfaces.constEnd()) {
-        wl_resource_post_error(surface->resource(), XDG_SHELL_ERROR_ROLE, "ShellSurface already created");
+        wl_resource_post_error(surface->resource(), XDG_WM_BASE_ERROR_ROLE, "ShellSurface already created");
         return;
     }
     XdgSurfaceStableInterface *shellSurface = new XdgSurfaceStableInterface(q, surface, parentResource);
@@ -285,7 +285,7 @@ void XdgShellStableInterface::Private::pongCallback(wl_client *client, wl_resour
 }
 
 XdgShellStableInterface::Private::Private(XdgShellStableInterface *q, Display *d)
-    : XdgShellInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, d, &xdg_shell_interface, 1)
+    : XdgShellInterface::Private(XdgShellInterfaceVersion::UnstableV6, q, d, &xdg_wm_base_interface, 1)
     , q(q)
 {
 }
@@ -293,7 +293,7 @@ XdgShellStableInterface::Private::Private(XdgShellStableInterface *q, Display *d
 void XdgShellStableInterface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
 {
     auto c = display->getConnection(client);
-    auto resource = c->createResource(&xdg_shell_interface, qMin(version, s_version), id);
+    auto resource = c->createResource(&xdg_wm_base_interface, qMin(version, s_version), id);
     if (!resource) {
         wl_client_post_no_memory(client);
         return;
@@ -365,7 +365,7 @@ quint32 XdgShellStableInterface::Private::ping(XdgShellSurfaceInterface *surface
     }
 
     const quint32 pingSerial = display->nextSerial();
-    xdg_shell_send_ping(clientXdgShellResource, pingSerial);
+    xdg_wm_base_send_ping(clientXdgShellResource, pingSerial);
 
     setupTimer(pingSerial);
     return pingSerial;
@@ -442,11 +442,11 @@ void XdgSurfaceStableInterface::Private::getTopLevelCallback(wl_client *client, 
 void XdgSurfaceStableInterface::Private::createTopLevel(wl_client *client, uint32_t version, uint32_t id, wl_resource *parentResource)
 {
     if (m_topLevel) {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Toplevel already created on this surface");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_ROLE, "Toplevel already created on this surface");
         return;
     }
     if (m_popup) {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Popup already created on this surface");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_ROLE, "Popup already created on this surface");
         return;
     }
     m_topLevel = new XdgTopLevelStableInterface (m_shell, m_surface, parentResource);
@@ -466,17 +466,17 @@ void XdgSurfaceStableInterface::Private::createPopup(wl_client *client, uint32_t
 {
 
     if (m_topLevel) {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Toplevel already created on this surface");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_ROLE, "Toplevel already created on this surface");
         return;
     }
     if (m_popup) {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_ROLE, "Popup already created on this surface");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_ROLE, "Popup already created on this surface");
         return;
     }
 
     auto xdgPositioner = m_shell->getPositioner(positioner);
     if (!xdgPositioner) {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_INVALID_POSITIONER, "Invalid positioner");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_INVALID_POSITIONER, "Invalid positioner");
         return;
     }
     m_popup = new XdgPopupStableInterface(m_shell, m_surface, parentResource);
@@ -488,7 +488,7 @@ void XdgSurfaceStableInterface::Private::createPopup(wl_client *client, uint32_t
     if (parentXdgSurface) {
         pd->parent = parentXdgSurface->surface();
     } else {
-        wl_resource_post_error(parentResource, XDG_SHELL_ERROR_INVALID_POPUP_PARENT, "Invalid popup parent");
+        wl_resource_post_error(parentResource, XDG_WM_BASE_ERROR_INVALID_POPUP_PARENT, "Invalid popup parent");
         return;
     }
 
@@ -533,7 +533,7 @@ XdgSurfaceStableInterface::Private::Private(XdgSurfaceStableInterface *q, XdgShe
 {
 }
 
-XdgSurfaceV6Interface::Private::~Private() = default;
+XdgSurfaceStableInterface::Private::~Private() = default;
 
 
 class XdgPositionerStableInterface::Private : public KWayland::Server::Resource::Private
@@ -797,7 +797,7 @@ void XdgTopLevelStableInterface::Private::setMinimizedCallback(wl_client *client
     s->q_func()->minimizeRequested();
 }
 
-XdgTopLevelV6Interface::Private::~Private() = default;
+XdgTopLevelStableInterface::Private::~Private() = default;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct xdg_popup_interface XdgPopupStableInterface::Private::s_interface = {
@@ -819,7 +819,7 @@ void XdgPopupStableInterface::Private::grabCallback(wl_client *client, wl_resour
     s->q_func()->grabRequested(seatInterface, serial);
 }
 
-XdgPopupV6Interface::Private::~Private() = default;
+XdgPopupStableInterface::Private::~Private() = default;
 
 quint32 XdgPopupStableInterface::Private::configure(const QRect &rect)
 {
@@ -855,14 +855,14 @@ Display* XdgShellStableInterface::display() const
     return d->display;
 }
 
-XdgShellV6Interface::~XdgShellV6Interface() = default;
+XdgShellStableInterface::~XdgShellStableInterface() = default;
 
 XdgSurfaceStableInterface::XdgSurfaceStableInterface(XdgShellStableInterface *parent, SurfaceInterface *surface, wl_resource *parentResource)
     : KWayland::Server::Resource(new Private(this, parent, surface, parentResource))
 {
 }
 
-XdgSurfaceV6Interface::~XdgSurfaceV6Interface() = default;
+XdgSurfaceStableInterface::~XdgSurfaceStableInterface() = default;
 
 SurfaceInterface* XdgSurfaceStableInterface::surface() const
 {
@@ -941,7 +941,7 @@ XdgTopLevelStableInterface::XdgTopLevelStableInterface(XdgShellStableInterface *
 {
 }
 
-XdgTopLevelV6Interface::~XdgTopLevelV6Interface() = default;
+XdgTopLevelStableInterface::~XdgTopLevelStableInterface() = default;
 
 XdgTopLevelStableInterface::Private *XdgTopLevelStableInterface::d_func() const
 {
@@ -953,7 +953,7 @@ XdgPopupStableInterface::XdgPopupStableInterface(XdgShellStableInterface *parent
 {
 }
 
-XdgPopupV6Interface::~XdgPopupV6Interface() = default;
+XdgPopupStableInterface::~XdgPopupStableInterface() = default;
 
 XdgPopupStableInterface::Private *XdgPopupStableInterface::d_func() const
 {

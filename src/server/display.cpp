@@ -47,6 +47,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "textinput_interface_p.h"
 #include "xdgforeign_interface.h"
 #include "xdgshell_v6_interface_p.h"
+#include "xdgshell_stable_interface_p.h"
 #include "appmenu_interface.h"
 #include "server_decoration_palette_interface.h"
 #include "xdgoutput_interface.h"
@@ -378,11 +379,14 @@ XdgShellInterface *Display::createXdgShell(const XdgShellInterfaceVersion &versi
     XdgShellInterface *x = nullptr;
     switch (version) {
     case XdgShellInterfaceVersion::UnstableV5:
-        Q_ASSERT(false);
+//        Q_ASSERT(false);
         return nullptr;
         break;
     case XdgShellInterfaceVersion::UnstableV6:
         x = new XdgShellV6Interface(this, parent);
+        break;
+    case XdgShellInterfaceVersion::Stable:
+        x = new XdgShellStableInterface(this, parent);
         break;
     }
     connect(this, &Display::aboutToTerminate, x, [x] { delete x; });

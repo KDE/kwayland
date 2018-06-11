@@ -58,6 +58,13 @@ public:
     virtual operator zxdg_shell_v6*() const {
         return nullptr;
     }
+    virtual operator xdg_wm_base*() {
+        return nullptr;
+    }
+    virtual operator xdg_wm_base*() const {
+        return nullptr;
+    }
+
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
 
     virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {

@@ -44,10 +44,10 @@ public:
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
 
-    operator xdg_wm_base*() /*override*/ {
+    operator xdg_wm_base*() override {
         return xdg_shell_base;
     }
-    operator xdg_wm_base*() const /*override*/ {
+    operator xdg_wm_base*() const override {
         return xdg_shell_base;
     }
 

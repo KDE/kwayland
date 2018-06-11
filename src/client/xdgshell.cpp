@@ -89,6 +89,15 @@ XdgShell::operator zxdg_shell_v6*() const {
     return *(d.data());
 }
 
+XdgShell::operator xdg_wm_base*() {
+    return *(d.data());
+}
+
+XdgShell::operator xdg_wm_base*() const {
+    return *(d.data());
+}
+
+
 bool XdgShell::isValid() const
 {
     return d->isValid();

@@ -67,11 +67,12 @@ public:
     Private(PlasmaVirtualDesktopManagementInterface *q, Display *d);
 
     QVector<wl_resource*> resources;
-    QMap<QString, PlasmaVirtualDesktopInterface*> desktops;
-    QList<PlasmaVirtualDesktopInterface*> desktopsOrder;
+    QList<PlasmaVirtualDesktopInterface*> desktops;
     quint32 rows = 0;
     quint32 columns = 0;
 
+    inline QList<PlasmaVirtualDesktopInterface*>::const_iterator constFindDesktop(const QString &id);
+    inline QList<PlasmaVirtualDesktopInterface*>::iterator findDesktop(const QString &id);
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
@@ -98,12 +99,26 @@ const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDe
 };
 #endif
 
+inline QList<PlasmaVirtualDesktopInterface*>::const_iterator PlasmaVirtualDesktopManagementInterface::Private::constFindDesktop(const QString &id)
+{
+    return std::find_if( desktops.constBegin(),
+                         desktops.constEnd(),
+                         [id]( const PlasmaVirtualDesktopInterface *desk ){ return desk->id() == id; } );
+}
+
+inline QList<PlasmaVirtualDesktopInterface*>::iterator PlasmaVirtualDesktopManagementInterface::Private::findDesktop(const QString &id)
+{
+    return std::find_if( desktops.begin(),
+                         desktops.end(),
+                         [id]( const PlasmaVirtualDesktopInterface *desk ){ return desk->id() == id; } );
+}
+
 void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id)
 {
     Q_UNUSED(client)
     auto s = cast(resource);
 
-    auto i = s->desktops.constFind(QString::fromUtf8(id));
+    auto i = s->constFindDesktop(QString::fromUtf8(id));
     if (i == s->desktops.constEnd()) {
         return;
     }
@@ -164,8 +179,7 @@ PlasmaVirtualDesktopManagementInterface::Private *PlasmaVirtualDesktopManagement
 PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::desktop(const QString &id)
 {
     Q_D();
-    
-    auto i = d->desktops.constFind(id);
+    auto i = d->constFindDesktop(id);
     if (i != d->desktops.constEnd()) {
         return *i;
     }
@@ -175,8 +189,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::desktop(
 PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id)
 {
     Q_D();
-    
-    auto i = d->desktops.constFind(id);
+    auto i = d->constFindDesktop(id);
     if (i != d->desktops.constEnd()) {
         return *i;
     }
@@ -192,18 +205,23 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
         desktop->d->active = true;
     }
 
-    d->desktops[id] = desktop;
-    d->desktopsOrder << desktop;
+    d->desktops << desktop;
     connect(desktop, &QObject::destroyed, this,
         [this, id] {
             Q_D();
-            d->desktops.remove(id);
+            auto i = d->findDesktop(id);
+            if (i != d->desktops.end()) {
+                for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+                    org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
+                }
+                d->desktops.erase(i);
+            }
             //TODO: activate another desktop?
         }
     );
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().constData(), d->desktopsOrder.length()-1);
+        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().constData(), d->desktops.length()-1);
     }
 
     return desktop;
@@ -212,9 +230,8 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
 void PlasmaVirtualDesktopManagementInterface::removeDesktop(const QString &id)
 {
     Q_D();
-    
-    auto deskIt = d->desktops.constFind(id);
-    if (deskIt == d->desktops.constEnd()) {
+    auto deskIt = d->findDesktop(id);
+    if (deskIt == d->desktops.end()) {
         return;
     }
 
@@ -226,14 +243,14 @@ void PlasmaVirtualDesktopManagementInterface::removeDesktop(const QString &id)
         org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
     }
 
-    d->desktopsOrder.removeAll(*deskIt);
+    d->desktops.erase(deskIt);
     (*deskIt)->deleteLater();
 }
 
 QList <PlasmaVirtualDesktopInterface *> PlasmaVirtualDesktopManagementInterface::desktops() const
 {
     Q_D();
-    return d->desktopsOrder;
+    return d->desktops;
 }
 
 void PlasmaVirtualDesktopManagementInterface::sendDone()

@@ -41,9 +41,10 @@ public:
     WaylandPointer<org_kde_plasma_virtual_desktop_management, org_kde_plasma_virtual_desktop_management_destroy> plasmavirtualdesktopmanagement;
     EventQueue *queue = nullptr;
 
-    //is a map to have desktops() return a list always with the same order
-    QMap<QString, PlasmaVirtualDesktop *> desktops;
-    QList<PlasmaVirtualDesktop *> desktopsOrder;
+    QList<PlasmaVirtualDesktop *> desktops;
+
+    inline QList<PlasmaVirtualDesktop*>::const_iterator constFindDesktop(const QString &id);
+    inline QList<PlasmaVirtualDesktop*>::iterator findDesktop(const QString &id);
 
 private:
     static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id, uint32_t position);
@@ -54,6 +55,20 @@ private:
 
     static const org_kde_plasma_virtual_desktop_management_listener s_listener;
 };
+
+inline QList<PlasmaVirtualDesktop*>::const_iterator PlasmaVirtualDesktopManagement::Private::constFindDesktop(const QString &id)
+{
+    return std::find_if( desktops.constBegin(),
+                         desktops.constEnd(),
+                         [id]( const PlasmaVirtualDesktop *desk ){ return desk->id() == id; } );
+}
+
+inline QList<PlasmaVirtualDesktop*>::iterator PlasmaVirtualDesktopManagement::Private::findDesktop(const QString &id)
+{
+    return std::find_if( desktops.begin(),
+                         desktops.end(),
+                         [id]( const PlasmaVirtualDesktop *desk ){ return desk->id() == id; } );
+}
 
 const org_kde_plasma_virtual_desktop_management_listener PlasmaVirtualDesktopManagement::Private::s_listener = {
     addedCallback,
@@ -69,7 +84,7 @@ void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_
     PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
     Q_ASSERT(vd);
 
-    p->desktopsOrder.insert(position, vd);
+    p->desktops.insert(position, vd);
     //TODO: emit a lot of desktopMoved?
 
     emit p->q->desktopAdded(stringId, position);
@@ -81,10 +96,10 @@ void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kd
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
     const QString stringId = QString::fromUtf8(id);
     PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
-    p->desktops.remove(stringId);
-    p->desktopsOrder.removeAll(vd);
     //TODO: emit a lot of desktopMoved?
     Q_ASSERT(vd);
+    auto i = p->findDesktop(stringId);
+    p->desktops.erase(i);
     vd->release();
     vd->destroy();
     vd->deleteLater();
@@ -162,7 +177,8 @@ EventQueue *PlasmaVirtualDesktopManagement::eventQueue()
 PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QString &id)
 {
     Q_ASSERT(isValid());
-    auto i = d->desktops.constFind(id);
+
+    auto i = d->constFindDesktop(id);
     if (i != d->desktops.constEnd()) {
         return *i;
     }
@@ -179,18 +195,13 @@ PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QS
 
     auto desktop = new PlasmaVirtualDesktop(this);
     desktop->setup(w);
-    d->desktops[id] = desktop;
-    connect(desktop, &QObject::destroyed, this,
-        [this, id] {
-            d->desktops.remove(id);
-        }
-    );
+
     return desktop;
 }
 
 QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
 {
-    return d->desktopsOrder;
+    return d->desktops;
 }
 
 class Q_DECL_HIDDEN PlasmaVirtualDesktop::Private

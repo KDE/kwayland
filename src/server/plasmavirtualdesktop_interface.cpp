@@ -206,6 +206,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     }
 
     d->desktops << desktop;
+    //NOTE: this in case the desktop has been deleted but not trough removedesktop
     connect(desktop, &QObject::destroyed, this,
         [this, id] {
             Q_D();
@@ -214,9 +215,16 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
                 for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
                     org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
                 }
+                //Activate another desktop
+                if (d->desktops.length() > 0 && (*i)->active()) {
+                    if (i == d->desktops.begin()) {
+                        setActiveDesktop((*(i + 1))->id());
+                    } else {
+                        setActiveDesktop((*(i - 1))->id());
+                    }
+                }
                 d->desktops.erase(i);
             }
-            //TODO: activate another desktop?
         }
     );
 
@@ -241,6 +249,15 @@ void PlasmaVirtualDesktopManagementInterface::removeDesktop(const QString &id)
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_removed(*it, id.toUtf8().constData());
+    }
+
+    //Activate another desktop
+    if (d->desktops.length() > 0 && (*deskIt)->active()) {
+        if (deskIt == d->desktops.begin()) {
+            setActiveDesktop((*(deskIt + 1))->id());
+        } else {
+            setActiveDesktop((*(deskIt - 1))->id());
+        }
     }
 
     d->desktops.erase(deskIt);

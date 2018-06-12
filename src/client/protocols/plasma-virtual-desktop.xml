@@ -34,8 +34,10 @@
     <event name="desktop_added">
         <description summary="Emitted when a new desktop has been added"></description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>
+        <arg name="position" type="uint" summary="Position of this desktop, to ensure the client and the server will see desktops in the same order"/>
     </event>
 
+    <!--TODO: maybe the removed signal of the desktop object is enough?-->
     <event name="desktop_removed">
         <description summary="Emitted when a desktop has been removed"></description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>
@@ -67,23 +69,6 @@
 
     <event name="name">
         <arg name="name" type="string" summary="User readable descriptive name for the desktop"/>
-    </event>
-
-    <event name="top_neighbour">
-        <description summary="the desktop positioned on top of this one, if any"/>
-        <arg name="id" type="string"/>
-    </event>
-    <event name="left_neighbour">
-        <description summary="the desktop positioned on the left of this one, if any"/>
-        <arg name="id" type="string"/>
-    </event>
-    <event name="right_neighbour">
-        <description summary="the desktop positioned on the right of this one, if any"/>
-        <arg name="id" type="string"/>
-    </event>
-    <event name="bottom_neighbour">
-        <description summary="the desktop positioned on bottom of this one, if any"/>
-        <arg name="id" type="string"/>
     </event>
 
     <event name="activated">

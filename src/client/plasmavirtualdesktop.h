@@ -133,7 +133,7 @@ Q_SIGNALS:
     /**
      * Emitted when a new desktop has been added
      */
-    void desktopAdded(const QString &id);
+    void desktopAdded(const QString &id, quint32 position);
 
     /**
      * Emitted when a desktop has been removed
@@ -214,11 +214,6 @@ public:
      */
     QString name() const;
 
-    QString topNeighbour() const;
-    QString leftNeighbour() const;
-    QString rightNeighbour() const;
-    QString bottomNeighbour() const;
-    
     /**
      * @returns True if the desktop is the active one.
      * when this property changes, activated or deactivated will be emitted.
@@ -257,11 +252,6 @@ Q_SIGNALS:
      * lose the association to this desktop.
      */
     void removed();
-
-    void topNeighbourChanged(const QString &id);
-    void leftNeighbourChanged(const QString &id);
-    void rightNeighbourChanged(const QString &id);
-    void bottomNeighbourChanged(const QString &id);
 
 private:
     friend class PlasmaVirtualDesktopManagement;

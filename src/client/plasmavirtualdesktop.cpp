@@ -43,9 +43,10 @@ public:
 
     //is a map to have desktops() return a list always with the same order
     QMap<QString, PlasmaVirtualDesktop *> desktops;
+    QList<PlasmaVirtualDesktop *> desktopsOrder;
 
 private:
-    static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
+    static void addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id, uint32_t position);
     static void removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management);
 
@@ -60,7 +61,7 @@ const org_kde_plasma_virtual_desktop_management_listener PlasmaVirtualDesktopMan
     doneCallback
 };
 
-void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
+void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id, uint32_t position)
 {
     auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
@@ -68,7 +69,10 @@ void PlasmaVirtualDesktopManagement::Private::addedCallback(void *data, org_kde_
     PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
     Q_ASSERT(vd);
 
-    emit p->q->desktopAdded(stringId);
+    p->desktopsOrder.insert(position, vd);
+    //TODO: emit a lot of desktopMoved?
+
+    emit p->q->desktopAdded(stringId, position);
 }
 
 void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id)
@@ -78,6 +82,8 @@ void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kd
     const QString stringId = QString::fromUtf8(id);
     PlasmaVirtualDesktop *vd = p->q->getVirtualDesktop(stringId);
     p->desktops.remove(stringId);
+    p->desktopsOrder.removeAll(vd);
+    //TODO: emit a lot of desktopMoved?
     Q_ASSERT(vd);
     vd->release();
     vd->destroy();
@@ -184,7 +190,7 @@ PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QS
 
 QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
 {
-    return d->desktops.values();
+    return d->desktopsOrder;
 }
 
 class Q_DECL_HIDDEN PlasmaVirtualDesktop::Private
@@ -198,10 +204,6 @@ public:
 
     QString id;
     QString name;
-    QString topNeighbour;
-    QString leftNeighbour;
-    QString rightNeighbour;
-    QString bottomNeighbour;
     bool active = false;
 
 private:
@@ -210,10 +212,6 @@ private:
 private:
     static void idCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char * id);
     static void nameCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char * name);
-    static void topNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id);
-    static void leftNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id);
-    static void rightNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id);
-    static void bottomNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id);
 
     static void activatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop);
     static void deactivatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop);
@@ -226,10 +224,6 @@ private:
 const org_kde_plasma_virtual_desktop_listener PlasmaVirtualDesktop::Private::s_listener = {
     idCallback,
     nameCallback,
-    topNeighbourCallback,
-    leftNeighbourCallback,
-    rightNeighbourCallback,
-    bottomNeighbourCallback,
     activatedCallback,
     deactivatedCallback,
     doneCallback,
@@ -248,50 +242,6 @@ void PlasmaVirtualDesktop::Private::nameCallback(void *data, org_kde_plasma_virt
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
     p->name = QString::fromUtf8(name);
-}
-
-void PlasmaVirtualDesktop::Private::topNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id)
-{
-    auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
-    Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    const QString stringId = QString::fromUtf8(id);
-    if (stringId != p->topNeighbour) {
-        p->topNeighbour = stringId;
-        emit p->q->topNeighbourChanged(stringId);
-    }
-}
-
-void PlasmaVirtualDesktop::Private::leftNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id)
-{
-    auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
-    Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    const QString stringId = QString::fromUtf8(id);
-    if (stringId != p->leftNeighbour) {
-        p->leftNeighbour = stringId;
-        emit p->q->leftNeighbourChanged(stringId);
-    }
-}
-
-void PlasmaVirtualDesktop::Private::rightNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id)
-{
-    auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
-    Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    const QString stringId = QString::fromUtf8(id);
-    if (stringId != p->rightNeighbour) {
-        p->rightNeighbour = stringId;
-        emit p->q->rightNeighbourChanged(stringId);
-    }
-}
-
-void PlasmaVirtualDesktop::Private::bottomNeighbourCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id)
-{
-    auto p = reinterpret_cast<PlasmaVirtualDesktop::Private*>(data);
-    Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
-    const QString stringId = QString::fromUtf8(id);
-    if (stringId != p->bottomNeighbour) {
-        p->bottomNeighbour = stringId;
-        emit p->q->bottomNeighbourChanged(stringId);
-    }
 }
 
 void PlasmaVirtualDesktop::Private::activatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop)
@@ -390,26 +340,6 @@ QString PlasmaVirtualDesktop::id() const
 QString PlasmaVirtualDesktop::name() const
 {
     return d->name;
-}
-
-QString PlasmaVirtualDesktop::topNeighbour() const
-{
-    return d->topNeighbour;
-}
-
-QString PlasmaVirtualDesktop::leftNeighbour() const
-{
-    return d->leftNeighbour;
-}
-
-QString PlasmaVirtualDesktop::rightNeighbour() const
-{
-    return d->rightNeighbour;
-}
-
-QString PlasmaVirtualDesktop::bottomNeighbour() const
-{
-    return d->bottomNeighbour;
 }
 
 bool PlasmaVirtualDesktop::active() const

@@ -115,18 +115,6 @@ public:
      */
     QString name() const;
 
-    void setTopNeighbour(const QString &id);
-    QString topNeighbour() const;
-
-    void setLeftNeighbour(const QString &id);
-    QString leftNeighbour() const;
-
-    void setRightNeighbour(const QString &id);
-    QString rightNeighbour() const;
-
-    void setBottomNeighbour(const QString &id);
-    QString bottomNeighbour() const;
-
     /**
      * @returns true if this desktop is active. Only one at a time will be.
      */

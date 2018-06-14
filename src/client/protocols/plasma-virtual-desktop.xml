@@ -26,11 +26,6 @@
         <arg name="id" type="string" summary="Unique id of the desktop"/>
     </request>
 
-    <request name="release" type="destructor">
-        <description summary="Destroys the manager"></description>
-    </request>
-
-
     <event name="desktop_added">
         <description summary="Emitted when a new desktop has been added"></description>
         <arg name="id" type="string" summary="Unique id of the desktop"/>

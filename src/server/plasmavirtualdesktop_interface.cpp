@@ -82,7 +82,6 @@ private:
     }
 
     static void getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id);
-    static void releaseCallback(wl_client *client, wl_resource *resource);
 
     PlasmaVirtualDesktopManagementInterface *q;
 
@@ -94,8 +93,7 @@ const quint32 PlasmaVirtualDesktopManagementInterface::Private::s_version = 1;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDesktopManagementInterface::Private::s_interface = {
-    getVirtualDesktopCallback,
-    releaseCallback
+    getVirtualDesktopCallback
 };
 #endif
 
@@ -124,12 +122,6 @@ void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback
     }
 
     (*i)->d->createResource(resource, serial);
-}
-
-void PlasmaVirtualDesktopManagementInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
-{
-    Q_UNUSED(client)
-    wl_resource_destroy(resource);
 }
 
 PlasmaVirtualDesktopManagementInterface::Private::Private(PlasmaVirtualDesktopManagementInterface *q, Display *d)

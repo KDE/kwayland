@@ -22,20 +22,20 @@
         <description summary="get the org_kde_plasma_virtual_desktop interface for a desktop">
             Given the id of a particular virtual desktop, get the corresponding org_kde_plasma_virtual_desktop which represents only the desktop with that id;
         </description>
-        <arg name="desktop" type="new_id" interface="org_kde_plasma_virtual_desktop"/>
-        <arg name="id" type="string" summary="Unique id of the desktop"/>
+        <arg name="id" type="new_id" interface="org_kde_plasma_virtual_desktop"/>
+        <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </request>
 
     <event name="desktop_added">
         <description summary="Emitted when a new desktop has been added"></description>
-        <arg name="id" type="string" summary="Unique id of the desktop"/>
+        <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
         <arg name="position" type="uint" summary="Position of this desktop, to ensure the client and the server will see desktops in the same order"/>
     </event>
 
     <!--TODO: maybe the removed signal of the desktop object is enough?-->
     <event name="desktop_removed">
         <description summary="Emitted when a desktop has been removed"></description>
-        <arg name="id" type="string" summary="Unique id of the desktop"/>
+        <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </event>
 
     <event name="done">
@@ -55,11 +55,11 @@
         <description summary="Requests this desktop to be activated"/>
     </request>
 
-    <event name="id">
+    <event name="desktop_id">
         <description summary="The desktop got an id">
             The format of the id is decided by the compositor implementation.
         </description>
-        <arg name="id" type="string" summary="Unique id of the desktop"/>
+        <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </event>
 
     <event name="name">

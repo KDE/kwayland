@@ -189,7 +189,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     PlasmaVirtualDesktopInterface *desktop = new PlasmaVirtualDesktopInterface(this);
     desktop->d->id = id;
     for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_send_id(*it, id.toUtf8().constData());
+        org_kde_plasma_virtual_desktop_send_desktop_id(*it, id.toUtf8().constData());
     }
 
     //activate the first desktop TODO: to be done here?
@@ -345,7 +345,7 @@ void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent,
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
     resources << resource;
 
-    org_kde_plasma_virtual_desktop_send_id(resource, id.toUtf8().constData());
+    org_kde_plasma_virtual_desktop_send_desktop_id(resource, id.toUtf8().constData());
     if (!name.isEmpty()) {
         org_kde_plasma_virtual_desktop_send_name(resource, name.toUtf8().constData());
     }

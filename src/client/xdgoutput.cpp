@@ -172,8 +172,8 @@ void XdgOutput::Private::doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1
     }
 }
 
-XdgOutput::Private::Private(XdgOutput *q)
-    : q(q)
+XdgOutput::Private::Private(XdgOutput *qptr)
+    : q(qptr)
 {
 }
 

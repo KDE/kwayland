@@ -62,7 +62,7 @@
 	its own cursor and set wl_pointer.cursor(NULL).
       </description>
       <entry name="arbitrary_modes" value="1" summary="compositor is capable of almost any output mode"/>
-      <entry name="cursor_plane" value="2" summary="compositor has a seperate cursor plane"/>
+      <entry name="cursor_plane" value="2" summary="compositor has a separate cursor plane"/>
     </enum>
 
     <event name="capability">
@@ -74,7 +74,7 @@
 	the wl_fullscreen_shell.capability enum.  If clients want to take
 	advantage of any of these capabilities, they sould use a
 	wl_display.sync request immediatly after binding to ensure that they
-	recieve all the capability events.
+	receive all the capability events.
       </description>
       <arg name="capabilty" type="uint"/>
     </event>

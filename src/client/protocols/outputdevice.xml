@@ -223,7 +223,7 @@
         <description summary="A unique id for this outputdevice">
             The uuid can be used to identify the output. It's controlled by
             the server entirely. The server should make sure the uuid is
-            persistant across restarts. An empty uuid is considered invalid.
+            persistent across restarts. An empty uuid is considered invalid.
         </description>
         <arg name="uuid" type="string" summary="output devices ID"/>
     </event>

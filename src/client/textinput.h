@@ -342,7 +342,7 @@ public:
         quint32 afterLength;
     };
     /**
-     * @returns The lenght in bytes which should be deleted around the cursor position
+     * @returns The length in bytes which should be deleted around the cursor position
      * @see committed
      **/
     DeleteSurroundingText deleteSurroundingText() const;

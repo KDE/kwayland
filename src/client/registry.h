@@ -224,7 +224,7 @@ public:
      *
      * The EventQueue should be set before the Registry gets setup.
      * The EventQueue gets automatically added to all interfaces created by
-     * this Registry. So that all objects are in teh same EventQueue.
+     * this Registry. So that all objects are in the same EventQueue.
      *
      * @param queue The event queue to use for this Registry.
      **/

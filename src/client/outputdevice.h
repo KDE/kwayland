@@ -182,6 +182,15 @@ public:
      * applications rendering at the native resolution would be too small to be legible.
      **/
     int scale() const;
+
+    /**
+     * Scaling factor of this output.
+     *
+     * A scale larger than 1 means that the compositor will automatically scale surface buffers
+     * by this amount when rendering. This is used for very high resolution displays where
+     * applications rendering at the native resolution would be too small to be legible.
+     **/
+    qreal scaleF() const;
     /**
      * Subpixel orientation of this OutputDevice.
      **/

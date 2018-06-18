@@ -54,7 +54,7 @@ public:
     QPoint globalPosition;
     QString manufacturer = QStringLiteral("org.kde.kwin");
     QString model = QStringLiteral("none");
-    int scale = 1;
+    qreal scale = 1;
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
     QList<Mode> modes;
@@ -402,7 +402,8 @@ void OutputDeviceInterface::Private::sendGeometry(wl_resource *resource)
 
 void OutputDeviceInterface::Private::sendScale(const ResourceData &data)
 {
-    org_kde_kwin_outputdevice_send_scale(data.resource, scale);
+    org_kde_kwin_outputdevice_send_scale(data.resource, qRound(scale));
+    org_kde_kwin_outputdevice_send_scalef(data.resource, wl_fixed_from_double(scale));
 }
 
 void OutputDeviceInterface::Private::sendDone(const ResourceData &data)
@@ -442,6 +443,7 @@ SETTER(setGlobalPosition, const QPoint&, globalPosition)
 SETTER(setManufacturer, const QString&, manufacturer)
 SETTER(setModel, const QString&, model)
 SETTER(setScale, int, scale)
+SETTER(setScaleF, qreal, scale)
 SETTER(setSubPixel, SubPixel, subPixel)
 SETTER(setTransform, Transform, transform)
 
@@ -474,8 +476,15 @@ QString OutputDeviceInterface::model() const
 int OutputDeviceInterface::scale() const
 {
     Q_D();
+    return qRound(d->scale);
+}
+
+qreal OutputDeviceInterface::scaleF() const
+{
+    Q_D();
     return d->scale;
 }
+
 
 OutputDeviceInterface::SubPixel OutputDeviceInterface::subPixel() const
 {

@@ -28,7 +28,7 @@
         THIS SOFTWARE.
         ]]></copyright>
 
-<interface name="org_kde_kwin_outputmanagement" version="1">
+<interface name="org_kde_kwin_outputmanagement" version="2">
     <description summary="configuration of server outputs through clients">
     This interface enables clients to set properties of output devices for screen
     configuration purposes via the server. To this end output devices are referenced
@@ -80,7 +80,7 @@
 
 </interface>
 
-<interface name="org_kde_kwin_outputconfiguration" version="1">
+<interface name="org_kde_kwin_outputconfiguration" version="2">
     <description summary="configure single output devices">
         outputconfiguration is a client-specific resource that can be used to ask
         the server to apply changes to available output devices.
@@ -162,6 +162,15 @@
             Sent if the server rejects the changes or failed to apply them.
         </description>
     </event>
+
+    <request name="scalef" since="2">
+        <description summary="set scaling factor of this output">
+            Sets the scaling factor for this output device.
+            Sending both scale and scalef is undefined
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
+        <arg name="scale" type="fixed" summary="scaling factor"/>
+    </request>
 
 </interface>
 

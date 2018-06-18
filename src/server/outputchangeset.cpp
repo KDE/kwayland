@@ -108,6 +108,12 @@ bool OutputChangeSet::scaleChanged() const
 int OutputChangeSet::scale() const
 {
     Q_D();
+    return qRound(d->scale);
+}
+
+qreal OutputChangeSet::scaleF() const
+{
+    Q_D();
     return d->scale;
 }
 

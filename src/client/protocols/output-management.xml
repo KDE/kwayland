@@ -166,7 +166,7 @@
     <request name="scalef" since="2">
         <description summary="set scaling factor of this output">
             Sets the scaling factor for this output device.
-            Sending both scale and scalef is undefined
+            Sending both scale and scalef is undefined.
         </description>
         <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice this mode change applies to"/>
         <arg name="scale" type="fixed" summary="scaling factor"/>

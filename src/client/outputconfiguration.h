@@ -206,7 +206,7 @@ public:
      * @param scale the scaling factor for this output device.
      * @param outputdevice the OutputDevice this change applies to.
      */
-    void setScale(OutputDevice *outputdevice, qreal scale);
+    void setScaleF(OutputDevice *outputdevice, qreal scale);
 
     /**
      * Ask the compositor to apply the changes.

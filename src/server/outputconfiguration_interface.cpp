@@ -200,6 +200,8 @@ void OutputConfigurationInterface::Private::scaleFCallback(wl_client *client, wl
     OutputDeviceInterface *o = OutputDeviceInterface::get(outputdevice);
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
+
+    qDebug() << "FOO" << scale;
     s->pendingChanges(o)->d_func()->scale = scale;
 }
 

@@ -60,6 +60,7 @@ private Q_SLOTS:
     void testFailed();
 
     void testExampleConfig();
+    void testScale();
 
     void testRemoval();
 
@@ -470,6 +471,35 @@ void TestWaylandOutputManagement::testExampleConfig()
     m_outputConfigurationInterface->setApplied();
     QVERIFY(configAppliedSpy.isValid());
     QVERIFY(configAppliedSpy.wait(200));
+}
+
+void TestWaylandOutputManagement::testScale()
+{
+    createConfig();
+
+    auto config = m_outputConfiguration;
+    KWayland::Client::OutputDevice *output = m_clientOutputs.first();
+
+    config->setScaleF(output, 2.3);
+    config->apply();
+
+    QSignalSpy configAppliedSpy(config, &OutputConfiguration::applied);
+    m_outputConfigurationInterface->setApplied();
+    QVERIFY(configAppliedSpy.isValid());
+    QVERIFY(configAppliedSpy.wait(200));
+
+    QCOMPARE(output->scale(), 2); //backwards compat
+    QCOMPARE(output->scaleF(), 2.3);
+
+    config->setScale(output, 3);
+    config->apply();
+
+    m_outputConfigurationInterface->setApplied();
+    QVERIFY(configAppliedSpy.isValid());
+    QVERIFY(configAppliedSpy.wait(200));
+
+    QCOMPARE(output->scale(), 3);
+    QCOMPARE(output->scaleF(), 3.0); //fowards compat test;
 }
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)

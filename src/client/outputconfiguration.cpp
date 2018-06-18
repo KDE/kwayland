@@ -168,11 +168,11 @@ void OutputConfiguration::setScale(OutputDevice *outputdevice, qint32 scale)
     org_kde_kwin_outputconfiguration_scale(d->outputconfiguration, od, scale);
 }
 
-void OutputConfiguration::setScale(OutputDevice *outputdevice, qreal scale)
+void OutputConfiguration::setScaleF(OutputDevice *outputdevice, qreal scale)
 {
     //DAVE - check version
     org_kde_kwin_outputdevice *od = outputdevice->output();
-    org_kde_kwin_outputconfiguration_scale(d->outputconfiguration, od, wl_fixed_from_double(scale));
+    org_kde_kwin_outputconfiguration_scalef(d->outputconfiguration, od, wl_fixed_from_double(scale));
 }
 
 void OutputConfiguration::apply()

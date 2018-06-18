@@ -77,7 +77,7 @@ private:
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
     void setModel(const QString &model);
-    void setScale(int scale);
+    void setScale(qreal scale);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
     void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
@@ -336,7 +336,7 @@ void OutputDevice::Private::setPhysicalSize(const QSize &size)
     physicalSize = size;
 }
 
-void OutputDevice::Private::setScale(int s)
+void OutputDevice::Private::setScale(qreal s)
 {
     scale = s;
 }
@@ -402,8 +402,14 @@ int OutputDevice::refreshRate() const
 
 int OutputDevice::scale() const
 {
+    return qRound(d->scale);
+}
+
+qreal OutputDevice::scaleF() const
+{
     return d->scale;
 }
+
 
 bool OutputDevice::isValid() const
 {

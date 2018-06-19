@@ -29,7 +29,7 @@
         ]]></copyright>
 
 
-<interface name="org_kde_kwin_outputdevice" version="1">
+<interface name="org_kde_kwin_outputdevice" version="2">
     <description summary="output configuration representation">
         An outputdevice describes a display device available to the compositor.
         outputdevice is similar to wl_output, but focuses on output
@@ -228,7 +228,7 @@
         <arg name="uuid" type="string" summary="output devices ID"/>
     </event>
 
-    <event name="scalef">
+    <event name="scalef" since="2">
         <description summary="output scaling properties">
             This event contains scaling geometry information
             that is not in the geometry event. It may be sent after

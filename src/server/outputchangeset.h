@@ -82,7 +82,9 @@ public:
      @deprecated see scaleF
      */
     int scale() const;
-    /** The new value for scale. */
+    /** The new value for scale.
+     * @since 5.XX
+     */
     qreal scaleF() const;
 
 private:

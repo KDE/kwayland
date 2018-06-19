@@ -53,7 +53,7 @@ class KWAYLANDSERVER_EXPORT OutputDeviceInterface : public Global
     Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QSize pixelSize READ pixelSize NOTIFY pixelSizeChanged)
     Q_PROPERTY(int refreshRate READ refreshRate NOTIFY refreshRateChanged)
-    Q_PROPERTY(qreal scale READ scaleF WRITE setScale NOTIFY scaleFChanged) //<--- DAVE what are API rules about changing this?
+    Q_PROPERTY(qreal scale READ scaleF WRITE setScaleF NOTIFY scaleFChanged)
     Q_PROPERTY(QByteArray edid READ edid WRITE setEdid NOTIFY edidChanged)
     Q_PROPERTY(OutputDeviceInterface::Enablement enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(QByteArray uuid READ uuid WRITE setUuid NOTIFY uuidChanged)

@@ -180,6 +180,7 @@ public:
      * A scale larger than 1 means that the compositor will automatically scale surface buffers
      * by this amount when rendering. This is used for very high resolution displays where
      * applications rendering at the native resolution would be too small to be legible.
+     * @deprecated see scaleF
      **/
     int scale() const;
 
@@ -189,6 +190,7 @@ public:
      * A scale larger than 1 means that the compositor will automatically scale surface buffers
      * by this amount when rendering. This is used for very high resolution displays where
      * applications rendering at the native resolution would be too small to be legible.
+     * @since 5.XXX
      **/
     qreal scaleF() const;
     /**

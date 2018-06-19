@@ -102,7 +102,7 @@ QPoint OutputChangeSet::position() const
 bool OutputChangeSet::scaleChanged() const
 {
     Q_D();
-    return d->scale != d->o->scale();
+    return !qFuzzyCompare(d->scale, d->o->scale());
 }
 
 int OutputChangeSet::scale() const

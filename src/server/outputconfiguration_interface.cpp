@@ -55,7 +55,7 @@ public:
     OutputManagementInterface *outputManagement;
     QHash<OutputDeviceInterface*, OutputChangeSet*> changes;
 
-    static const quint32 s_version = 1;
+    static const quint32 s_version = 2;
 
 private:
     static void enableCallback(wl_client *client, wl_resource *resource,
@@ -201,7 +201,6 @@ void OutputConfigurationInterface::Private::scaleFCallback(wl_client *client, wl
     auto s = cast<Private>(resource);
     Q_ASSERT(s);
 
-    qDebug() << "FOO" << scale;
     s->pendingChanges(o)->d_func()->scale = scale;
 }
 

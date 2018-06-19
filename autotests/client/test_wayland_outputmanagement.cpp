@@ -230,7 +230,7 @@ void TestWaylandOutputManagement::applyPendingChanges()
             outputdevice->setGlobalPosition(c->position());
         }
         if (c->scaleChanged()) {
-            outputdevice->setScale(c->scale());
+            outputdevice->setScaleF(c->scaleF());
         }
     }
 }
@@ -488,8 +488,8 @@ void TestWaylandOutputManagement::testScale()
     QVERIFY(configAppliedSpy.isValid());
     QVERIFY(configAppliedSpy.wait(200));
 
-    QCOMPARE(output->scale(), 2); //backwards compat
-    QCOMPARE(output->scaleF(), 2.3);
+    QCOMPARE(output->scale(), 2); //test backwards compatibility
+    QCOMPARE(wl_fixed_from_double(output->scaleF()), wl_fixed_from_double(2.3));
 
     config->setScale(output, 3);
     config->apply();
@@ -499,7 +499,7 @@ void TestWaylandOutputManagement::testScale()
     QVERIFY(configAppliedSpy.wait(200));
 
     QCOMPARE(output->scale(), 3);
-    QCOMPARE(output->scaleF(), 3.0); //fowards compat test;
+    QCOMPARE(output->scaleF(), 3.0); //test fowards compatibility
 }
 
 QTEST_GUILESS_MAIN(TestWaylandOutputManagement)

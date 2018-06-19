@@ -191,7 +191,7 @@ public:
      * Scale rendering of this output.
      * The changes done in this call will be recorded in the
      * OutputDevice and only applied after apply() has been called.
-     * @deprecated see setScale(qreal)
+     * @deprecated see setScaleF(qreal)
      *
      * @param scale the scaling factor for this output device.
      * @param outputdevice the OutputDevice this change applies to.
@@ -205,6 +205,7 @@ public:
      *
      * @param scale the scaling factor for this output device.
      * @param outputdevice the OutputDevice this change applies to.
+     * @since 5.XXX
      */
     void setScaleF(OutputDevice *outputdevice, qreal scale);
 

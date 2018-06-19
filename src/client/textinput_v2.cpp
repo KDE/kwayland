@@ -461,6 +461,7 @@ public:
     bool isValid() override;
     void setupV2(zwp_text_input_manager_v2 *ti) override;
     TextInput *createTextInput(Seat *seat, QObject *parent = nullptr) override;
+    using TextInputManager::Private::operator wl_text_input_manager*;
     operator zwp_text_input_manager_v2*() override {
         return textinputmanagerunstablev2;
     }

@@ -160,24 +160,24 @@ XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface
     }
 
     uint32_t gravity = 0;
-    if (positioner.anchorEdge().testFlag(Qt::LeftEdge)) {
+    if (positioner.gravity().testFlag(Qt::LeftEdge)) {
         gravity |= ZXDG_POSITIONER_V6_GRAVITY_LEFT;
     }
-    if (positioner.anchorEdge().testFlag(Qt::TopEdge)) {
+    if (positioner.gravity().testFlag(Qt::TopEdge)) {
         gravity |= ZXDG_POSITIONER_V6_GRAVITY_TOP;
     }
-    if (positioner.anchorEdge().testFlag(Qt::RightEdge)) {
+    if (positioner.gravity().testFlag(Qt::RightEdge)) {
         gravity |= ZXDG_POSITIONER_V6_GRAVITY_RIGHT;
     }
-    if (positioner.anchorEdge().testFlag(Qt::BottomEdge)) {
+    if (positioner.gravity().testFlag(Qt::BottomEdge)) {
         gravity |= ZXDG_POSITIONER_V6_GRAVITY_BOTTOM;
     }
-    zxdg_positioner_v6_set_anchor(p, anchor);
     if (gravity != 0) {
         zxdg_positioner_v6_set_gravity(p, gravity);
     }
 
     uint32_t constraint = 0;
+
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::SlideX)) {
         constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X;
     }
@@ -191,7 +191,7 @@ XdgShellPopup *XdgShellUnstableV6::Private::internalGetXdgPopup(Surface *surface
         constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeX)) {
-        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;
+        constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X;
     }
     if (positioner.constraints().testFlag(XdgPositioner::Constraint::ResizeY)) {
         constraint |= ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y;

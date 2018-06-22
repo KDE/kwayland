@@ -51,6 +51,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "appmenu_interface.h"
 #include "server_decoration_palette_interface.h"
 #include "plasmavirtualdesktop_interface.h"
+#include "xdgoutput_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -458,9 +459,17 @@ ServerSideDecorationPaletteManagerInterface *Display::createServerSideDecoration
     return b;
 }
 
+
 PlasmaVirtualDesktopManagementInterface *Display::createPlasmaVirtualDesktopManagement(QObject *parent)
 {
     auto b = new PlasmaVirtualDesktopManagementInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
+    return b;
+}
+
+XdgOutputManagerInterface *Display::createXdgOutputManager(QObject *parent)
+{
+    auto b = new XdgOutputManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
     return b;
 }

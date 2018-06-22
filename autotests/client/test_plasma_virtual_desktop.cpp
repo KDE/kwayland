@@ -197,7 +197,7 @@ void TestVirtualDesktop::testCreate()
     desktopAddedSpy.wait();
     QList<QVariant> arguments = desktopAddedSpy.takeFirst();
     QCOMPARE(arguments.at(0).toString(), QStringLiteral("0-1"));
-    QCOMPARE(arguments.at(1).toUInt(), 0);
+    QCOMPARE(arguments.at(1).toUInt(), (quint32)0);
     m_plasmaVirtualDesktopManagementInterface->sendDone();
     managementDoneSpy.wait();
 
@@ -219,7 +219,7 @@ void TestVirtualDesktop::testCreate()
     desktopAddedSpy.wait();
     arguments = desktopAddedSpy.takeFirst();
     QCOMPARE(arguments.at(0).toString(), QStringLiteral("0-2"));
-    QCOMPARE(arguments.at(1).toUInt(), 1);
+    QCOMPARE(arguments.at(1).toUInt(), (quint32)1);
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 2);
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop3Int = m_plasmaVirtualDesktopManagementInterface->createDesktop(QStringLiteral("0-3"));

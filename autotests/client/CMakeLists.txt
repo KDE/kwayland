@@ -440,3 +440,15 @@ add_executable(testPlasmaVirtualDesktop ${testPlasmaVirtualDesktop_SRCS})
 target_link_libraries( testPlasmaVirtualDesktop Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
 add_test(NAME kwayland-testPlasmaVirtualDesktop COMMAND testPlasmaVirtualDesktop)
 ecm_mark_as_test(testPlasmaVirtualDesktop)
+
+########################################################
+# Test XDG Output
+########################################################
+set( testXdgOutput_SRCS
+        test_xdg_output.cpp
+    )
+add_executable(testXdgOutput ${testXdgOutput_SRCS})
+target_link_libraries( testXdgOutput Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
+add_test(NAME kwayland-testXdgOutput COMMAND testXdgOutput)
+ecm_mark_as_test(testXdgOutput)
+

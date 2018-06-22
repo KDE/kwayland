@@ -58,6 +58,7 @@ set(CLIENT_LIB_SRCS
     xdgforeign_v2.cpp
     xdgforeign.cpp
     xdgshell_v6.cpp
+    xdgoutput.cpp
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -173,6 +174,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME server-decoration-palette
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-output-unstable-v1.xml
+    BASENAME xdg-output-unstable-v1
+)
+
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-client-protocol.h
@@ -198,6 +204,7 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-constraints-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-foreign-unstable-v2-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-inhibit-unstable-v1-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-output-unstable-v1-client-protocol.h
 )
 
 set_source_files_properties(${CLIENT_GENERATED_FILES} PROPERTIES SKIP_AUTOMOC ON)
@@ -279,6 +286,7 @@ set(CLIENT_LIB_HEADERS
   textinput.h
   xdgshell.h
   xdgforeign_v2.h
+  xdgoutput.h
 )
 
 install(FILES

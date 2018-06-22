@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocol name="org_kde_kwin_outputdevice">
   <copyright><![CDATA[
-        Copyright © 2015 Sebastian Kügler <sebas@kde.org>
         Copyright © 2008-2011 Kristian Høgsberg
         Copyright © 2010-2011 Intel Corporation
         Copyright © 2012-2013 Collabora, Ltd.
+        Copyright © 2015 Sebastian Kügler <sebas@kde.org>
 
         Permission to use, copy, modify, distribute, and sell this
         software and its documentation for any purpose is hereby granted
@@ -30,23 +30,29 @@
 
 
 <interface name="org_kde_kwin_outputdevice" version="1">
-    <description summary="compositor output region">
-        An outputdevice describes a physical monitor connected to the system.
-        outputdevice is similar to wl_output, but focuses on screen
-        management. The screen configuration client uses outputdevices to
-        enlist connected devices, even those that may currently not be used
-        by the compositor as wl_output. It sends configuration changes to the
-        compositor through the outputconfiguration interface, which applies the
-        settings to the hardware and signals changes the outputdevices
+    <description summary="output configuration representation">
+        An outputdevice describes a display device available to the compositor.
+        outputdevice is similar to wl_output, but focuses on output
+        configuration management.
+
+        A client can query all global outputdevice objects to enlist all
+        available display devices, even those that may currently not be
+        represented by the compositor as a wl_output.
+
+        The client sends configuration changes to the server through the
+        outputconfiguration interface, and the server applies the configuration
+        changes to the hardware and signals changes to the outputdevices
         accordingly.
-        This object is published as global during start up, or when a monitor
-        is hotplugged.
+
+        This object is published as global during start up for every available
+        display devcies, or when one later becomes available, for example by
+        being hotplugged via a physical connector.
     </description>
 
     <enum name="subpixel">
         <description summary="subpixel geometry information">
-            This enumeration describes how the physical
-            pixels on an output are laid out.
+            This enumeration describes how the physical pixels on an output are
+            laid out.
         </description>
         <entry name="unknown" value="0"/>
         <entry name="none" value="1"/>
@@ -58,17 +64,16 @@
 
     <enum name="transform">
         <description summary="transform from framebuffer to output">
-            This describes the transform that a compositor will apply to a
+            This describes the transform, that a compositor will apply to a
             surface to compensate for the rotation or mirroring of an
             output device.
 
             The flipped values correspond to an initial flip around a
             vertical axis followed by rotation.
 
-            The purpose is mainly to allow clients render accordingly and
+            The purpose is mainly to allow clients to render accordingly and
             tell the compositor, so that for fullscreen surfaces, the
-            compositor will still be able to scan out directly from client
-            surfaces.
+            compositor is still able to scan out directly client surfaces.
         </description>
 
         <entry name="normal" value="0"/>
@@ -82,7 +87,7 @@
     </enum>
 
     <event name="geometry">
-        <description summary="properties of the output">
+        <description summary="geometric properties of the output">
             The geometry event describes geometric properties of the output.
             The event is sent when binding to the output object and whenever
             any of the properties change.
@@ -107,8 +112,8 @@
 
     <enum name="mode">
         <description summary="mode information">
-            These flags describe properties of an output mode.
-            They are used in the flags bitfield of the mode event.
+            These flags describe properties of an output mode. They are
+            used in the flags bitfield of the mode event.
         </description>
         <entry name="current" value="0x1"
                 summary="indicates this is the current mode"/>
@@ -117,23 +122,28 @@
     </enum>
 
     <event name="mode">
-        <description summary="advertise available modes for the output">
+        <description summary="advertise available output modes and current one">
             The mode event describes an available mode for the output.
 
-            The event is sent when binding to the output object and there
-            will always be one mode, the current mode.  The event is sent
-            again if an output changes mode, for the mode that is now
-            current.  In other words, the current mode is always the last
-            mode that was received with the current flag set.
+            When the client binds to the outputdevice object, the server sends this
+            event once for every available mode the outputdevice can be operated by.
 
-            The size of a mode is given in physical hardware units of
-            the output device. This is not necessarily the same as
-            the output size in the global compositor space. For instance,
-            the output may be scaled, as described in org_kde_kwin_outputdevice.scale,
-            or transformed , as described in org_kde_kwin_outputdevice.transform.
+            There will always be at least one event sent out on initial binding,
+            which represents the current mode.
 
-            The id can be used to refer to a mode when calling
-            set_mode on a org_kde_kwin_outputonfiguration.
+            Later on if an output changes its mode the event is sent again, whereby
+            this event represents the mode that has now become current. In other
+            words, the current mode is always represented by the latest event sent
+            with the current flag set.
+
+            The size of a mode is given in physical hardware units of the output device.
+            This is not necessarily the same as the output size in the global compositor
+            space. For instance, the output may be scaled, as described in
+            org_kde_kwin_outputdevice.scale, or transformed, as described in
+            org_kde_kwin_outputdevice.transform.
+
+            The id can be used to refer to a mode when calling set_mode on an
+            org_kde_kwin_outputconfiguration object.
         </description>
         <arg name="flags" type="uint" summary="bitfield of mode flags"/>
         <arg name="width" type="int" summary="width of the mode in hardware units"/>
@@ -144,11 +154,11 @@
 
     <event name="done">
         <description summary="sent all information about output">
-            This event is sent after all other properties has been
-            sent after binding to the output object and after any
-            other property changes done after that. This allows
-            changes to the output properties to be seen as
-            atomic, even if they happen via multiple events.
+            This event is sent after all other properties have been
+            sent on binding to the output object as well as after any
+            other output property change have been applied later on.
+            This allows to see changes to the output properties as atomic,
+            even if multiple events successively announce them.
         </description>
     </event>
 
@@ -162,7 +172,7 @@
 
             A scale larger than 1 means that the compositor will
             automatically scale surface buffers by this amount
-            when rendering. This is used for very high resolution
+            when rendering. This is used for high resolution
             displays where applications rendering at the native
             resolution would be too small to be legible.
 
@@ -181,7 +191,7 @@
             The edid event encapsulates the EDID data for the outputdevice.
 
             The event is sent when binding to the output object. The EDID
-            data may be empty, in which case this event is fired, anyway.
+            data may be empty, in which case this event is sent anyway.
             If the EDID information is empty, you can fall back to the name
             et al. properties of the outputdevice.
         </description>
@@ -189,7 +199,7 @@
     </event>
 
     <enum name="enablement">
-        <description summary="device is used to display content by the compositor">
+        <description summary="describes enabled state">
             Describes whether a device is enabled, i.e. device is used to
             display content by the compositor. This wraps a boolean around
             an int to avoid a boolean trap.
@@ -199,22 +209,23 @@
     </enum>
 
     <event name="enabled">
-        <description summary="advertise available modes for the output">
+        <description summary="output is enabled or disabled">
             The enabled event notifies whether this output is currently
-            enabled and used for displaying content the wayland server.
-            The event is sent when binding to the output object, and when
-            an output is enabled or disabled.
+            enabled and used for displaying content by the server.
+            The event is sent when binding to the output object and
+            whenever later on an output changes its state by becoming
+            enabled or disabled.
         </description>
-        <arg name="enabled" type="int" summary="output is enabled in the wayland server"/>
+        <arg name="enabled" type="int" summary="output enabled state"/>
     </event>
 
     <event name="uuid">
         <description summary="A unique id for this outputdevice">
-            The uuid can be used to identify the output. It's controlled by the server entirely.
-            The compositor should make sure the uuid is persistant across restarts.
-            An empty uuid is considered invalid.
+            The uuid can be used to identify the output. It's controlled by
+            the server entirely. The server should make sure the uuid is
+            persistent across restarts. An empty uuid is considered invalid.
         </description>
-        <arg name="uuid" type="string" summary="Output devices ID"/>
+        <arg name="uuid" type="string" summary="output devices ID"/>
     </event>
 
 

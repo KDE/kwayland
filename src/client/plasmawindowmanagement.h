@@ -348,6 +348,11 @@ public:
      **/
     bool skipTaskbar() const;
     /**
+      * @returns Whether the window should be ignored by a switcher.
+      * @see skipSwitcherChanged
+     **/
+    bool skipSwitcher() const;
+    /**
      * @returns The icon of the window.
      * @see iconChanged
      **/
@@ -591,6 +596,11 @@ Q_SIGNALS:
      * @see skipTaskbar
      **/
     void skipTaskbarChanged();
+    /**
+     * The skip switcher state changed.
+     * @see skipSwitcher
+     **/
+    void skipSwitcherChanged();
     /**
      * The window icon changed.
      * @see icon

@@ -437,6 +437,7 @@ public:
     bool isValid() override;
     void setupV0(wl_text_input_manager *ti) override;
     TextInput *createTextInput(Seat *seat, QObject *parent = nullptr) override;
+    using TextInputManager::Private::operator zwp_text_input_manager_v2*;     //overriding only one overload results in a compiler warning. This tells GCC we're doing it deliberately
     operator wl_text_input_manager*() override {
         return textinputmanagerunstablev0;
     }

@@ -83,6 +83,7 @@ public:
     bool maximizeable = false;
     bool fullscreenable = false;
     bool skipTaskbar = false;
+    bool skipSwitcher = false;
     bool shadeable = false;
     bool shaded = false;
     bool movable = false;
@@ -124,6 +125,7 @@ private:
     void setMaximizeable(bool set);
     void setFullscreenable(bool set);
     void setSkipTaskbar(bool skip);
+    void setSkipSwitcher(bool skip);
     void setShadeable(bool set);
     void setShaded(bool set);
     void setMovable(bool set);
@@ -497,6 +499,7 @@ void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_wind
     p->setMaximizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     p->setMinimizeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
     p->setSkipTaskbar(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
+    p->setSkipSwitcher(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPSWITCHER);
     p->setShadeable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE);
     p->setShaded(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
     p->setMovable(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE);
@@ -695,6 +698,15 @@ void PlasmaWindow::Private::setSkipTaskbar(bool skip)
     emit q->skipTaskbarChanged();
 }
 
+void PlasmaWindow::Private::setSkipSwitcher(bool skip)
+{
+    if (skipSwitcher == skip) {
+        return;
+    }
+    skipSwitcher = skip;
+    emit q->skipSwitcherChanged();
+}
+
 void PlasmaWindow::Private::setShadeable(bool set)
 {
     if (shadeable == set) {
@@ -869,6 +881,10 @@ bool PlasmaWindow::skipTaskbar() const
     return d->skipTaskbar;
 }
 
+bool PlasmaWindow::skipSwitcher() const
+{
+    return d->skipSwitcher;
+}
 
 QIcon PlasmaWindow::icon() const
 {

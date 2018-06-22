@@ -127,6 +127,7 @@ public:
     void setMaximizeable(bool set);
     void setFullscreenable(bool set);
     void setSkipTaskbar(bool skip);
+    void setSkipSwitcher(bool skip);
     /**
      * @deprecated since 5.28 use setIcon
      * @see setIcon
@@ -253,6 +254,7 @@ Q_SIGNALS:
     void maximizeableRequested(bool set);
     void fullscreenableRequested(bool set);
     void skipTaskbarRequested(bool set);
+    void skipSwitcherRequested(bool set);
     QRect minimizedGeometriesChanged();
     /**
      * @since 5.22

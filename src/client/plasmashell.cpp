@@ -322,6 +322,11 @@ void PlasmaShellSurface::setSkipTaskbar(bool skip)
     org_kde_plasma_surface_set_skip_taskbar(d->surface, skip);
 }
 
+void PlasmaShellSurface::setSkipSwitcher(bool skip)
+{
+    org_kde_plasma_surface_set_skip_switcher(d->surface, skip);
+}
+
 void PlasmaShellSurface::requestHideAutoHidingPanel()
 {
     org_kde_plasma_surface_panel_auto_hide_hide(d->surface);

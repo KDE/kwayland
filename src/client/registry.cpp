@@ -55,6 +55,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgforeign_v2.h"
 #include "appmenu.h"
 #include "server_decoration_palette.h"
+#include "xdgoutput.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -85,6 +86,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 #include <wayland-appmenu-client-protocol.h>
 #include <wayland-server-decoration-palette-client-protocol.h>
+#include <wayland-xdg-output-unstable-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -163,7 +165,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::subCompositorRemoved
     }},
     {Registry::Interface::PlasmaShell, {
-        4,
+        5,
         QByteArrayLiteral("org_kde_plasma_shell"),
         &org_kde_plasma_shell_interface,
         &Registry::plasmaShellAnnounced,
@@ -177,7 +179,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::plasmaVirtualDesktopManagementRemoved
     }},
     {Registry::Interface::PlasmaWindowManagement, {
-        8,
+        9,
         QByteArrayLiteral("org_kde_plasma_window_management"),
         &org_kde_plasma_window_management_interface,
         &Registry::plasmaWindowManagementAnnounced,
@@ -350,6 +352,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_server_decoration_palette_manager_interface,
         &Registry::serverSideDecorationPaletteManagerAnnounced,
         &Registry::serverSideDecorationPaletteManagerRemoved
+    }},
+    {Registry::Interface::XdgOutputUnstableV1, {
+        1,
+        QByteArrayLiteral("zxdg_output_manager_v1"),
+        &zxdg_output_manager_v1_interface,
+        &Registry::xdgOutputAnnounced,
+        &Registry::xdgOutputRemoved
     }}
 };
 
@@ -663,6 +672,7 @@ BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
 BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
 BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
+BIND(XdgOutputUnstableV1, zxdg_output_manager_v1)
 
 #undef BIND
 #undef BIND2
@@ -791,6 +801,16 @@ IdleInhibitManager *Registry::createIdleInhibitManager(quint32 name, quint32 ver
     switch (d->interfaceForName(name)) {
     case Interface::IdleInhibitManagerUnstableV1:
         return d->create<IdleInhibitManager>(name, version, parent, &Registry::bindIdleInhibitManagerUnstableV1);
+    default:
+        return nullptr;
+    }
+}
+
+XdgOutputManager *Registry::createXdgOutputManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch(d->interfaceForName(name)) {
+    case Interface::XdgOutputUnstableV1:
+        return d->create<XdgOutputManager>(name, version, parent, &Registry::bindXdgOutputUnstableV1);
     default:
         return nullptr;
     }

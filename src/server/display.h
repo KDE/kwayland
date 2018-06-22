@@ -87,6 +87,7 @@ class XdgForeignInterface;
 class AppMenuManagerInterface;
 class ServerSideDecorationPaletteManagerInterface;
 class PlasmaVirtualDesktopManagementInterface;
+class XdgOutputManagerInterface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -258,6 +259,14 @@ public:
      * @since 5.42
      **/
     ServerSideDecorationPaletteManagerInterface *createServerSideDecorationPaletteManager(QObject *parent = nullptr);
+
+    /**
+     * Creates the XdgOutputManagerInterface
+     *
+     * @return the created manager
+     * @since 5.47
+     */
+    XdgOutputManagerInterface *createXdgOutputManager(QObject *parent = nullptr);
 
 
     /**

@@ -288,6 +288,13 @@ public:
     void setSkipTaskbar(bool skip);
 
     /**
+     * Setting this bit on a window will indicate it does not prefer
+     * to be included in a window switcher.
+     * @since 5.47
+     */
+    void setSkipSwitcher(bool skip);
+
+    /**
      * Requests to hide a surface with Role Panel and PanelBahvior AutoHide.
      *
      * Once the compositor has hidden the panel the signal {@link autoHidePanelHidden} gets

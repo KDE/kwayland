@@ -80,10 +80,14 @@ public:
     void sendDone();
 
     /**
+     * FIXME: RFC this assumes there is only one desktop active at once, may need to be removed if we ever want to support per-screen desktops, or, a second string param could be added as a context for active: that could be the name of an output, or whatever else needed
      * Sets the desktop identified by id to be the active one.
      * active desktops are mutually exclusive
      */
     void setActiveDesktop(const QString &id);
+
+Q_SIGNALS:
+    void desktopActivated(const QString &id);
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);

@@ -410,7 +410,7 @@ public:
      *
      * Prefer using createPlasmaWindowManagement instead.
      * @see createPlasmaWindowManagement
-     * @since 5.4
+     * @since 5.46
      **/
     org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
     /**

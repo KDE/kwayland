@@ -277,6 +277,7 @@ void PlasmaVirtualDesktopManagementInterface::setActiveDesktop(const QString &id
         auto desktop = *it;
         if (desktop->id() == id) {
             desktop->d->active = true;
+            emit desktopActivated(id);
             for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
                 org_kde_plasma_virtual_desktop_send_activated(*it);
             }

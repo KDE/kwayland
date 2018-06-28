@@ -773,7 +773,33 @@ void PlasmaWindowInterface::setMinimized(bool set)
 
 void PlasmaWindowInterface::setOnAllDesktops(bool set)
 {
+    //the deprecated vd management
     d->setState(ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS, set);
+
+    if (!d->wm->plasmaVirtualDesktopManagementInterface()) {
+        return;
+    }
+
+    //the current vd management
+    if (set) {
+        d->plasmaVirtualDesktops.clear();
+        //leaving everything means on all desktops
+        for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
+            for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+                org_kde_plasma_window_send_virtual_desktop_left(*it, desk->id().toUtf8().constData());
+            }
+        }
+    } else {
+        //enters the desktops which are active (usually only one  but not a given)
+        for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
+            if (desk->active()) {
+                d->plasmaVirtualDesktops << desk->id();
+                for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+                    org_kde_plasma_window_send_virtual_desktop_entered(*it, desk->id().toUtf8().constData());
+                }
+            }
+        }
+    }
 }
 
 void PlasmaWindowInterface::setDemandsAttention(bool set)
@@ -833,6 +859,12 @@ void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
     PlasmaVirtualDesktopInterface *desktop = d->wm->plasmaVirtualDesktopManagementInterface()->desktop(id);
 
     if (!desktop) {
+        return;
+    }
+
+    //full? lets set it on all desktops, the plasmaVirtualDesktops list will get empty, which means it's on all desktops
+    if (d->wm->plasmaVirtualDesktopManagementInterface()->desktops().count() == d->plasmaVirtualDesktops.count() + 1) {
+        setOnAllDesktops(true);
         return;
     }
 

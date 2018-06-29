@@ -178,6 +178,10 @@ PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QS
 {
     Q_ASSERT(isValid());
 
+    if (id.isEmpty()) {
+        return nullptr;
+    }
+
     auto i = d->constFindDesktop(id);
     if (i != d->desktops.constEnd()) {
         return *i;

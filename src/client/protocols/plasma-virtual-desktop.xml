@@ -52,12 +52,14 @@
 
 <interface name="org_kde_plasma_virtual_desktop"  version="1">
     <request name="request_activate">
-        <description summary="Requests this desktop to be activated"/>
+        <description summary="Requests this desktop to be activated">
+            Request the server to set the status of this desktop to active: The server is free to consent or deny the request. This will be the new "current" virtual desktop of the system.
+        </description>
     </request>
 
     <event name="desktop_id">
         <description summary="The desktop got an id">
-            The format of the id is decided by the compositor implementation.
+            The format of the id is decided by the compositor implementation. A desktop id univocally identifies a virtual desktop and must be guaranteed to never exist two desktops with the same id. The format of the string id is up to the server implementation.
         </description>
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </event>
@@ -67,9 +69,16 @@
     </event>
 
     <event name="activated">
+        <description summary="The desktop has been activated">
+            The desktop will be the new "current" desktop of the system. The server may support either one virtual desktop active at a time, or other combinations such as one virtual desktop active per screen.
+            Windows associated to this virtual desktop will be shown.
+        </description>
     </event>
 
     <event name="deactivated">
+        <description summary="This desktop is no longer active">
+            Windows that were associated only to this desktop will be hidden.
+        </description>
     </event>
 
     <event name="done">

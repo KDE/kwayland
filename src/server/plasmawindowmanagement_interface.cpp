@@ -782,13 +782,13 @@ void PlasmaWindowInterface::setOnAllDesktops(bool set)
 
     //the current vd management
     if (set) {
-        d->plasmaVirtualDesktops.clear();
         //leaving everything means on all desktops
-        for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
+        for (auto desk : plasmaVirtualDesktops()) {
             for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-                org_kde_plasma_window_send_virtual_desktop_left(*it, desk->id().toUtf8().constData());
+                org_kde_plasma_window_send_virtual_desktop_left(*it, desk.toUtf8().constData());
             }
         }
+        d->plasmaVirtualDesktops.clear();
     } else {
         //enters the desktops which are active (usually only one  but not a given)
         for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {

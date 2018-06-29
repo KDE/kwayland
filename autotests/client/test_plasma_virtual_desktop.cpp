@@ -50,6 +50,7 @@ private Q_SLOTS:
     void testActivate();
 
     void testEnterLeaveDesktop();
+    void testAllDesktops();
 
 private:
     KWayland::Server::Display *m_display;
@@ -402,14 +403,57 @@ void TestVirtualDesktop::testEnterLeaveDesktop()
     QCOMPARE(m_window->plasmaVirtualDesktops().length(), 1);
     QCOMPARE(m_window->plasmaVirtualDesktops().first(), QStringLiteral("0-3"));
 
-
-    //Destroy desktop 1
+    //Destroy desktop 2
     m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-3"));
     //the window should receive a left signal from the destroyed desktop
     virtualDesktopLeftSpy.wait();
 
     QCOMPARE(m_window->plasmaVirtualDesktops().length(), 0);
 }
+
+void TestVirtualDesktop::testAllDesktops()
+{
+    testCreate();
+    QSignalSpy virtualDesktopEnteredSpy(m_window, &KWayland::Client::PlasmaWindow::plasmaVirtualDesktopEntered);
+    QSignalSpy virtualDesktopLeftSpy(m_window, &KWayland::Client::PlasmaWindow::plasmaVirtualDesktopLeft);
+
+    //in the beginning the window is on desktop 1 and desktop 3
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("0-1"));
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("0-3"));
+    virtualDesktopEnteredSpy.wait();
+
+    //setting on all desktops
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 2);
+    m_windowInterface->setOnAllDesktops(true);
+    //setting on all desktops, the window will leave every desktop
+
+    virtualDesktopLeftSpy.wait();
+    QCOMPARE(virtualDesktopLeftSpy.count(), 2);
+
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 0);
+
+    //return to the active desktop (0-1)
+    m_windowInterface->setOnAllDesktops(false);
+    virtualDesktopEnteredSpy.wait();
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 1);
+    QCOMPARE(m_windowInterface->plasmaVirtualDesktops().first(), QStringLiteral("0-1"));
+
+    //try setting on virtual desktops again but by setting every desktop by hand
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("0-3"));
+    virtualDesktopEnteredSpy.wait();
+
+    virtualDesktopEnteredSpy.clear();
+    virtualDesktopLeftSpy.clear();
+
+    m_windowInterface->addPlasmaVirtualDesktop(QStringLiteral("0-2"));
+    virtualDesktopLeftSpy.wait();
+    QCOMPARE(virtualDesktopLeftSpy.count(), 2);
+    //note that virtualDesktopEntered should *not* have been emitted for 0-2
+    QCOMPARE(virtualDesktopEnteredSpy.count(), 0);
+
+    QCOMPARE(m_window->plasmaVirtualDesktops().length(), 0);
+}
+
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)
 #include "test_plasma_virtual_desktop.moc"

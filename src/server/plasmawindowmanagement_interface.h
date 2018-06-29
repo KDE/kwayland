@@ -109,11 +109,12 @@ public:
     void setTitle(const QString &title);
     void setAppId(const QString &appId);
     void setPid(quint32 pid);
+#ifndef KWAYLANDSERVER_NO_DEPRECATED
     /**
-     * DEPRECATED
-     * @see addPlasmaVirtualDesktop
+     * @deprecated use addPlasmaVirtualDesktop and removePlasmaVirtualDesktop
      */
-    void setVirtualDesktop(quint32 desktop);
+    void KWAYLANDSERVER_DEPRECATED setVirtualDesktop(quint32 desktop);
+#endif
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -152,8 +153,7 @@ public:
      */
     void setResizable(bool set);
     /**
-     * DEPRECATED
-     * @see addPlasmaVirtualDesktop
+     * FIXME: still relevant with new desktops?
      * @since 5.22
      */
     void setVirtualDesktopChangeable(bool set);
@@ -237,11 +237,12 @@ Q_SIGNALS:
      * @since 5.22
      */
     void resizeRequested();
+#ifndef KWAYLANDSERVER_NO_DEPRECATED
     /**
-     * DEPRECATED
-     * @see enterPlasmaVirtualDesktopRequested
+     * @deprecated use enterPlasmaVirtualDesktopRequested and leavePlasmaVirtualDesktopRequested instead
      */
-    void virtualDesktopRequested(quint32 desktop);
+    void KWAYLANDSERVER_DEPRECATED virtualDesktopRequested(quint32 desktop);
+#endif
     void activeRequested(bool set);
     void minimizedRequested(bool set);
     void maximizedRequested(bool set);
@@ -273,7 +274,7 @@ Q_SIGNALS:
      */
     void resizableRequested(bool set);
     /**
-     * DEPRECATED
+     * FIXME: still relevant with new virtual desktops?
      * @since 5.22
      */
     void virtualDesktopChangeableRequested(bool set);

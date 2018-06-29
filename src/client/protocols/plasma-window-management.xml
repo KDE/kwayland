@@ -200,6 +200,7 @@
 
     <event name="virtual_desktop_changed">
       <description summary="window was moved to another workspace">
+          DEPRECATED: use virtual_desktop_entered and virtual_desktop_left instead
         This event will be sent when a window is moved to another
         virtual desktop.
 
@@ -296,6 +297,7 @@
     <event name="virtual_desktop_left" since="8">
       <description summary="the window left a virtual desktop">
           This event will be sent when the window left a virtual desktop. If the window leaves all desktops, it can be considered on all.
+          If the window gets manually added on all desktops, the server has to send virtual_desktop_left for every previous desktop it was in for the window to be really considered on all desktops.
       </description>
       <arg name="is" type="string" summary="desktop id"/>
     </event>

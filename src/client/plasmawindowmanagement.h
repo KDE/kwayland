@@ -273,7 +273,7 @@ public:
      **/
     QString appId() const;
     /**
-     * DEPRECATED: use plasmaVirtualDesktops instead
+     * @deprecated: use plasmaVirtualDesktops instead
      * @see plasmaVirtualDesktops
      * @returns the id of the virtual desktop this PlasmaWindow is on
      * @see virtualDesktopChanged
@@ -310,8 +310,6 @@ public:
      **/
     bool isMaximized() const;
     /**
-     * DEPRECATED
-     * TODO: make this work with plasmaVirtualDesktops instead?
      * @returns Whether the window is shown on all desktops.
      * @see virtualDesktop
      * @see onAllDesktopsChanged
@@ -383,7 +381,6 @@ public:
      */
     bool isResizable() const;
     /**
-     * DEPRECATED
      * @returns Whether the virtual desktop can be changed.
      * @see virtualDesktopChangeableChanged
      * @since 5.22
@@ -415,7 +412,7 @@ public:
      */
     void requestResize();
     /**
-     * DEPRECATED: use requestEnterVirtualDesktop instead
+     * @deprecated: use requestEnterVirtualDesktop instead
      * Requests to send the window to virtual @p desktop.
      **/
     void requestVirtualDesktop(quint32 desktop);
@@ -526,9 +523,8 @@ Q_SIGNALS:
      **/
     void appIdChanged();
     /**
-     * DEPRECATED
+     * @deprecated use plasmaVirtualDesktopEntered and plasmaVirtualDesktopLeft instead
      * The virtual desktop changed.
-     * @see virtualDesktop
      **/
     void virtualDesktopChanged();
     /**
@@ -631,7 +627,6 @@ Q_SIGNALS:
      */
     void resizableChanged();
     /**
-     * DEPRECATED
      * The virtual desktop changeable state changed.
      * @see virtualDesktopChangeable
      * @since 5.22

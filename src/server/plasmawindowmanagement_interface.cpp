@@ -726,10 +726,12 @@ void PlasmaWindowInterface::setTitle(const QString &title)
     d->setTitle(title);
 }
 
+#ifndef KWAYLANDSERVER_NO_DEPRECATED
 void PlasmaWindowInterface::setVirtualDesktop(quint32 desktop)
 {
     d->setVirtualDesktop(desktop);
 }
+#endif
 
 void PlasmaWindowInterface::unmap()
 {
@@ -888,6 +890,11 @@ void PlasmaWindowInterface::removePlasmaVirtualDesktop(const QString &id)
     d->plasmaVirtualDesktops.removeAll(id);
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_window_send_virtual_desktop_left(*it, id.toUtf8().constData());
+    }
+
+    //we went on all desktops
+    if (d->plasmaVirtualDesktops.isEmpty()) {
+        setOnAllDesktops(true);
     }
 }
 

@@ -848,7 +848,13 @@ bool PlasmaWindow::isMinimized() const
 
 bool PlasmaWindow::isOnAllDesktops() const
 {
-    return d->onAllDesktops;
+    //from protocol version 8 virtual desktops are managed by plasmaVirtualDesktops
+    if (org_kde_plasma_window_get_version(d->window) < 8) {
+        return d->onAllDesktops;
+    } else {
+        return d->plasmaVirtualDesktops.isEmpty();
+    }
+    
 }
 
 bool PlasmaWindow::isDemandingAttention() const

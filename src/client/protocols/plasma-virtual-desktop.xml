@@ -26,6 +26,13 @@
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </request>
 
+    <request name="request_remove_virtual_desktop">
+        <description summary="ask for a desktop removal identified by id">
+            Ask the server to get rid of a virtual desktop, the server may or may not acconsent to the request.
+        </description>
+        <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
+    </request>
+
     <event name="desktop_added">
         <description summary="Emitted when a new desktop has been added"></description>
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>

@@ -275,9 +275,16 @@
     <request name="request_enter_virtual_desktop" since="8">
       <description summary="map window on a virtual desktop">
         Make the window enter a virtual desktop. A window can enter more
-        than one virtual desktop.
+        than one virtual desktop. if the id is empty or invalid, no action will be performed.
       </description>
       <arg name="id" type="string" summary="desktop id"/>
+    </request>
+
+    <request name="request_enter_new_virtual_desktop" since="8">
+      <description summary="map window on a virtual desktop">RFC: do this with an empty id to request_enter_virtual_desktop?
+        Make the window enter a new virtual desktop. If the server consents the request,
+        it will create a new virtual desktop and assign the window to it.
+      </description>
     </request>
 
     <request name="request_leave_virtual_desktop" since="8">

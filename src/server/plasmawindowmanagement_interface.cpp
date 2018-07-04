@@ -107,6 +107,7 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void getIconCallback(wl_client *client, wl_resource *resource, int32_t fd);
     static void requestEnterVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
+    static void requestEnterNewVirtualDesktopCallback(wl_client *client, wl_resource *resource);
     static void requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
     static Private *cast(wl_resource *resource) {
         return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
@@ -304,6 +305,7 @@ const struct org_kde_plasma_window_interface PlasmaWindowInterface::Private::s_i
     destroyCallback,
     getIconCallback,
     requestEnterVirtualDesktopCallback,
+    requestEnterNewVirtualDesktopCallback,
     requestLeaveVirtualDesktopCallback
 };
 #endif
@@ -458,6 +460,13 @@ void PlasmaWindowInterface::Private::requestEnterVirtualDesktopCallback(wl_clien
     Q_UNUSED(client)
     Private *p = cast(resource);
     emit p->q->enterPlasmaVirtualDesktopRequested(QString::fromUtf8(id));
+}
+
+void PlasmaWindowInterface::Private::requestEnterNewVirtualDesktopCallback(wl_client *client, wl_resource *resource)
+{
+    Q_UNUSED(client)
+    Private *p = cast(resource);
+    emit p->q->enterNewPlasmaVirtualDesktopRequested();
 }
 
 void PlasmaWindowInterface::Private::requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)

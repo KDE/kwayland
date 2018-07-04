@@ -1044,6 +1044,11 @@ void PlasmaWindow::requestEnterVirtualDesktop(const QString &id)
     org_kde_plasma_window_request_enter_virtual_desktop(d->window, id.toUtf8());
 }
 
+void PlasmaWindow::requestEnterNewVirtualDesktop()
+{
+    org_kde_plasma_window_request_enter_new_virtual_desktop(d->window);
+}
+
 void PlasmaWindow::requestLeaveVirtualDesktop(const QString &id)
 {
     org_kde_plasma_window_request_leave_virtual_desktop(d->window, id.toUtf8());

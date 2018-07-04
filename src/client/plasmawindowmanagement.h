@@ -494,6 +494,13 @@ public:
     void requestEnterVirtualDesktop(const QString &id);
 
     /**
+     * RFC: do this with an empty id to request_enter_virtual_desktop?
+     * Make the window enter a new virtual desktop. If the server consents the request,
+     * it will create a new virtual desktop and assign the window to it.
+     */
+    void requestEnterNewVirtualDesktop();
+
+    /**
      * Ask the server to make the window the window exit a virtual desktop.
      * The server may or may not consent.
      * If it exits all desktops it will be considered on all of them.

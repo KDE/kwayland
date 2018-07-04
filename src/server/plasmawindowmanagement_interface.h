@@ -77,13 +77,13 @@ public:
      * Associate a PlasmaVirtualDesktopManagementInterface to this window management.
      * It's necessary to associate one in orderto use the plasma virtual desktop features
      * of PlasmaWindowInterface, as a window must know what are the deasktops available
-     * @since 5.46
+     * @since 5.48
      */
     void setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager);
 
     /**
      * @returns the PlasmaVirtualDesktopManagementInterface associated to this PlasmaWindowManagementInterface
-     * @since 5.46
+     * @since 5.48
      */
     PlasmaVirtualDesktopManagementInterface *plasmaVirtualDesktopManagementInterface() const;
 
@@ -208,14 +208,14 @@ public:
      * an arbitrary subset of virtual desktops.
      * If it's on none it will be considered on all desktops.
      *
-     * @since 5.46
+     * @since 5.48
      */
     void addPlasmaVirtualDesktop(const QString &id);
 
     /**
      * Removes a visrtual desktop from a window
      *
-     * @since 5.46
+     * @since 5.48
      */
     void removePlasmaVirtualDesktop(const QString &id);
 
@@ -223,7 +223,7 @@ public:
      * The ids of all the desktops currently associated with this window.
      * When a desktop is deleted it will be automatically removed from this list
      *
-     * @since 5.46
+     * @since 5.48
      */
     QStringList plasmaVirtualDesktops() const;
 
@@ -282,14 +282,22 @@ Q_SIGNALS:
     /**
      * Emitted when the client wishes this window to enter in a new virtual desktop.
      * The server will decide whether to consent this request
-     * @since 5.46
+     * @since 5.48
      */
     void enterPlasmaVirtualDesktopRequested(const QString &desktop);
 
     /**
+     * Emitted when the client wishes this window to enter in
+     * a new virtual desktop to be created for it.
+     * The server will decide whether to consent this request
+     * @since 5.48
+     */
+    void enterNewPlasmaVirtualDesktopRequested();
+
+    /**
      * Emitted when the client wishes to remove this window from a virtual desktop.
      * The server will decide whether to consent this request
-     * @since 5.46
+     * @since 5.48
      */
     void leavePlasmaVirtualDesktopRequested(const QString &desktop);
 

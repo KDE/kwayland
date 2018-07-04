@@ -293,10 +293,6 @@ void TestVirtualDesktop::testDestroy()
         QCOMPARE(m_plasmaVirtualDesktopManagementInterface->desktops().at(i)->id(), m_plasmaVirtualDesktopManagement->desktops().at(i)->id());
     }
 
-    //Test 0-2 is active
-    QVERIFY(m_plasmaVirtualDesktopManagement->desktops().first()->active());
-    QVERIFY(m_plasmaVirtualDesktopManagementInterface->desktops().first()->active());
-
     //Test the desktopRemoved signal of the manager, remove another desktop as the signals can't be tested at the same time
     QSignalSpy desktopManagerRemovedSpy(m_plasmaVirtualDesktopManagement, &KWayland::Client::PlasmaVirtualDesktopManagement::desktopRemoved);
     m_plasmaVirtualDesktopManagementInterface->removeDesktop(QStringLiteral("0-2"));
@@ -305,10 +301,6 @@ void TestVirtualDesktop::testDestroy()
 
     QCOMPARE(m_plasmaVirtualDesktopManagementInterface->desktops().length(), 1);
     QCOMPARE(m_plasmaVirtualDesktopManagement->desktops().length(), 1);
-
-    //Test 0-3 is active
-    QVERIFY(m_plasmaVirtualDesktopManagement->desktops().first()->active());
-    QVERIFY(m_plasmaVirtualDesktopManagementInterface->desktops().first()->active());
 }
 
 void TestVirtualDesktop::testActivate()

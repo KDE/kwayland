@@ -62,7 +62,8 @@ public:
      * a new desktop will be created for this id at a given position.
      * @param id the id for the desktop
      * @param position the position the desktop will be in, if not provided,
-     *                 it will be appended at the end.
+     *                 it will be appended at the end. If the desktop was already
+     *                 existing, position is ignored.
      */
     PlasmaVirtualDesktopInterface *createDesktop(const QString &id, quint32 position = std::numeric_limits<uint32_t>::max());
 
@@ -86,6 +87,7 @@ public:
      * FIXME: RFC this assumes there is only one desktop active at once, may need to be removed if we ever want to support per-screen desktops, or, a second string param could be added as a context for active: that could be the name of an output, or whatever else needed
      * Sets the desktop identified by id to be the active one.
      * active desktops are mutually exclusive
+     * Or alternatively, only setActive in PlasmaVirtualDesktopInterface and no check whatsoever for activie uniqueness: would be kwin's responsibility
      */
     void setActiveDesktop(const QString &id);
 

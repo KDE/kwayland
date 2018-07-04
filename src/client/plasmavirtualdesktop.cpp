@@ -374,7 +374,7 @@ QString PlasmaVirtualDesktop::name() const
     return d->name;
 }
 
-bool PlasmaVirtualDesktop::active() const
+bool PlasmaVirtualDesktop::isActive() const
 {
     return d->active;
 }

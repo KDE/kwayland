@@ -310,12 +310,12 @@ void TestVirtualDesktop::testActivate()
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop1Int = m_plasmaVirtualDesktopManagementInterface->desktops().first();
     KWayland::Client::PlasmaVirtualDesktop *desktop1 = m_plasmaVirtualDesktopManagement->desktops().first();
-    QVERIFY(desktop1->active());
-    QVERIFY(desktop1Int->active());
+    QVERIFY(desktop1->isActive());
+    QVERIFY(desktop1Int->isActive());
 
     KWayland::Server::PlasmaVirtualDesktopInterface *desktop2Int = m_plasmaVirtualDesktopManagementInterface->desktops()[1];
     KWayland::Client::PlasmaVirtualDesktop *desktop2 = m_plasmaVirtualDesktopManagement->desktops()[1];
-    QVERIFY(!desktop2Int->active());
+    QVERIFY(!desktop2Int->isActive());
 
     QSignalSpy requestActivateSpy(desktop2Int, &KWayland::Server::PlasmaVirtualDesktopInterface::activateRequested);
     QSignalSpy activatedSpy(desktop2, &KWayland::Client::PlasmaVirtualDesktop::activated);
@@ -328,11 +328,11 @@ void TestVirtualDesktop::testActivate()
     activatedSpy.wait();
 
     //correct state in the server
-    QVERIFY(desktop2Int->active());
-    QVERIFY(!desktop1Int->active());
+    QVERIFY(desktop2Int->isActive());
+    QVERIFY(!desktop1Int->isActive());
     //correct state in the client
-    QVERIFY(desktop2Int->active());
-    QVERIFY(!desktop1Int->active());
+    QVERIFY(desktop2Int->isActive());
+    QVERIFY(!desktop1Int->isActive());
 
     //Test the deactivated signal
     QSignalSpy deactivatedSpy(desktop2, &KWayland::Client::PlasmaVirtualDesktop::deactivated);

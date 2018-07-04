@@ -794,7 +794,7 @@ void PlasmaWindowInterface::setOnAllDesktops(bool set)
     } else {
         //enters the desktops which are active (usually only one  but not a given)
         for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
-            if (desk->active()) {
+            if (desk->isActive()) {
                 d->plasmaVirtualDesktops << desk->id();
                 for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
                     org_kde_plasma_window_send_virtual_desktop_entered(*it, desk->id().toUtf8().constData());

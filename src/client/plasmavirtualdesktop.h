@@ -239,7 +239,7 @@ public:
      * @see activated
      * @see deactivated
      */
-    bool active() const;
+    bool isActive() const;
 
     operator org_kde_plasma_virtual_desktop*();
     operator org_kde_plasma_virtual_desktop*() const;

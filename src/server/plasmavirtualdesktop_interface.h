@@ -144,7 +144,7 @@ public:
     /**
      * @returns true if this desktop is active. Only one at a time will be.
      */
-    bool active() const;
+    bool isActive() const;
 
     /**
      * Inform the clients that all the properties have been sent, and

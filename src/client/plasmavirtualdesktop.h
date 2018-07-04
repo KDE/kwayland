@@ -130,6 +130,15 @@ public:
     void requestRemoveVirtualDesktop(const QString &id);
 
     /**
+     * Ask the server to create a new virtual desktop, and position it at a specified position. 
+     * If the position is zero or less, it will be positioned at the beginning,
+     * if the cosition is the count or more, it will be positioned at the end.
+     * @param name The name we want for the desktop
+     * @param position The position for the desktop to be created
+     */
+    void requestCreateVirtualDesktop(const QString &name, quint32 position = std::numeric_limits<uint32_t>::max());
+
+    /**
      * @returns All the existent virtual desktops
      */
     QList <PlasmaVirtualDesktop *> desktops() const;
@@ -143,7 +152,7 @@ Q_SIGNALS:
     /**
      * Emitted when a new desktop has been added
      */
-    void desktopAdded(const QString &id, quint32 position);
+    void desktopCreated(const QString &id, quint32 position);
 
     /**
      * Emitted when a desktop has been removed

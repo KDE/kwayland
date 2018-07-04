@@ -26,6 +26,14 @@
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </request>
 
+    <request name="request_create_virtual_desktop">
+        <description summary="ask for the creation of a new desktop at a specified position">
+            Ask the server to create a new virtual desktop, and position it at a specified position. If the position is zero or less, it will be positioned at the beginning, if the cosition is the count or more, it will be positioned at the end.
+        </description>
+        <arg name="name" type="string" summary="The user readable name we want for the desktop"/>
+        <arg name="position" type="uint" summary="The position we want for the desktop"/>
+    </request>
+
     <request name="request_remove_virtual_desktop">
         <description summary="ask for a desktop removal identified by id">
             Ask the server to get rid of a virtual desktop, the server may or may not acconsent to the request.
@@ -33,8 +41,8 @@
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
     </request>
 
-    <event name="desktop_added">
-        <description summary="Emitted when a new desktop has been added"></description>
+    <event name="desktop_created">
+        <description summary="Emitted when a new desktop has been created"></description>
         <arg name="desktop_id" type="string" summary="Unique id of the desktop"/>
         <arg name="position" type="uint" summary="Position of this desktop, to ensure the client and the server will see desktops in the same order"/>
     </event>

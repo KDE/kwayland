@@ -59,9 +59,12 @@ public:
 
     /**
      * @returns A desktop identified uniquely by this id, if not found
-     * a new desktop will be created for this id.
+     * a new desktop will be created for this id at a given position.
+     * @param id the id for the desktop
+     * @param position the position the desktop will be in, if not provided,
+     *                 it will be appended at the end.
      */
-    PlasmaVirtualDesktopInterface *createDesktop(const QString &id);
+    PlasmaVirtualDesktopInterface *createDesktop(const QString &id, quint32 position = std::numeric_limits<uint32_t>::max());
 
     /**
      * Removed and destroys the desktop identified by id, if present
@@ -97,6 +100,14 @@ Q_SIGNALS:
      * deciding whether to remove it or not.
      */
     void desktopRemoveRequested(const QString &id);
+
+    /**
+     * The client asked to create a desktop, It's responsibility of the server
+     * deciding whether to create it or not.
+     * @param name The desired user readable name
+     * @param position The desired position. Normalized, guaranteed to be in the range 0-count
+     */
+    void desktopCreateRequested(const QString &name, quint32 position);
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);

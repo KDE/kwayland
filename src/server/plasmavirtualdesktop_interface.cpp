@@ -82,6 +82,7 @@ private:
     }
 
     static void getVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t serial, const char *id);
+    static void requestCreateVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *name, uint32_t position);
     static void requestRemoveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
 
     PlasmaVirtualDesktopManagementInterface *q;
@@ -95,6 +96,7 @@ const quint32 PlasmaVirtualDesktopManagementInterface::Private::s_version = 1;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const struct org_kde_plasma_virtual_desktop_management_interface PlasmaVirtualDesktopManagementInterface::Private::s_interface = {
     getVirtualDesktopCallback,
+    requestCreateVirtualDesktopCallback,
     requestRemoveVirtualDesktopCallback
 };
 #endif
@@ -126,6 +128,13 @@ void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback
     (*i)->d->createResource(resource, serial);
 }
 
+void PlasmaVirtualDesktopManagementInterface::Private::requestCreateVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *name, uint32_t position)
+{
+    Q_UNUSED(client)
+    auto s = cast(resource);
+    emit s->q->desktopCreateRequested(QString::fromUtf8(name), qBound<quint32>(0, position, (quint32)s->desktops.count()));
+}
+
 void PlasmaVirtualDesktopManagementInterface::Private::requestRemoveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
 {
     Q_UNUSED(client)
@@ -154,7 +163,7 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
 
     quint32 i = 0;
     for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_desktop_added(resource, (*it)->id().toUtf8().constData(), i++);
+        org_kde_plasma_virtual_desktop_management_send_desktop_created(resource, (*it)->id().toUtf8().constData(), i++);
     }
 }
 
@@ -187,7 +196,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::desktop(
     return nullptr;
 }
 
-PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id)
+PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDesktop(const QString &id, quint32 position)
 {
     Q_D();
     auto i = d->constFindDesktop(id);
@@ -195,6 +204,8 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
         return *i;
     }
 
+    const quint32 actualPosition = qMin(position, (quint32)d->desktops.count());
+ 
     PlasmaVirtualDesktopInterface *desktop = new PlasmaVirtualDesktopInterface(this);
     desktop->d->id = id;
     for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
@@ -206,7 +217,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
         desktop->d->active = true;
     }
 
-    d->desktops << desktop;
+    d->desktops.insert(actualPosition, desktop);
     //NOTE: this in case the desktop has been deleted but not trough removedesktop
     connect(desktop, &QObject::destroyed, this,
         [this, id] {
@@ -230,7 +241,7 @@ PlasmaVirtualDesktopInterface *PlasmaVirtualDesktopManagementInterface::createDe
     );
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_virtual_desktop_management_send_desktop_added(*it, id.toUtf8().constData(), d->desktops.length()-1);
+        org_kde_plasma_virtual_desktop_management_send_desktop_created(*it, id.toUtf8().constData(), actualPosition);
     }
 
     return desktop;

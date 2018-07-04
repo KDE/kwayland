@@ -117,7 +117,17 @@ public:
      **/
     EventQueue *eventQueue();
 
+    /**
+     * @returns the PlasmaVirtualDesktop representing the desktop id.
+     * The PlasmaVirtualDesktop instance is guaranteed to be unique for each id.
+     */
     PlasmaVirtualDesktop *getVirtualDesktop(const QString &id);
+
+    /**
+     * Requests for the desktop identified by id to be removed.
+     * The server may or may not acconsent to the request.
+     */
+    void requestRemoveVirtualDesktop(const QString &id);
 
     /**
      * @returns All the existent virtual desktops

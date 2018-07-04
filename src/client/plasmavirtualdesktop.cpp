@@ -203,6 +203,13 @@ PlasmaVirtualDesktop *PlasmaVirtualDesktopManagement::getVirtualDesktop(const QS
     return desktop;
 }
 
+void PlasmaVirtualDesktopManagement::requestRemoveVirtualDesktop(const QString &id)
+{
+    Q_ASSERT(isValid());
+
+    org_kde_plasma_virtual_desktop_management_request_remove_virtual_desktop(d->plasmavirtualdesktopmanagement, id.toUtf8());
+}
+
 QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
 {
     return d->desktops;

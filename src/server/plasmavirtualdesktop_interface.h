@@ -87,7 +87,16 @@ public:
     void setActiveDesktop(const QString &id);
 
 Q_SIGNALS:
+    /**
+     * A desktop has been activated
+     */
     void desktopActivated(const QString &id);
+
+    /**
+     * The client asked to remove a desktop, It's responsibility of the server
+     * deciding whether to remove it or not.
+     */
+    void desktopRemoveRequested(const QString &id);
 
 private:
     explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);

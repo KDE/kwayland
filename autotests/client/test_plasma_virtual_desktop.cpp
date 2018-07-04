@@ -51,6 +51,7 @@ private Q_SLOTS:
 
     void testEnterLeaveDesktop();
     void testAllDesktops();
+    void testRemoveFromClient();
 
 private:
     KWayland::Server::Display *m_display;
@@ -455,6 +456,19 @@ void TestVirtualDesktop::testAllDesktops()
 
     QCOMPARE(m_window->plasmaVirtualDesktops().length(), 0);
     QVERIFY(m_window->isOnAllDesktops());
+}
+
+void TestVirtualDesktop::testRemoveFromClient()
+{
+    //rebuild some desktops
+    testCreate();
+
+    QSignalSpy desktopRemoveRequestedSpy(m_plasmaVirtualDesktopManagementInterface, &KWayland::Server::PlasmaVirtualDesktopManagementInterface::desktopRemoveRequested);
+
+    //request a remove, just check the request arrived, ignore the request.
+    m_plasmaVirtualDesktopManagement->requestRemoveVirtualDesktop(QStringLiteral("0-1"));
+    desktopRemoveRequestedSpy.wait();
+    desktopRemoveRequestedSpy.first().first().toString(), QStringLiteral("0-1");
 }
 
 

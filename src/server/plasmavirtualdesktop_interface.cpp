@@ -128,7 +128,9 @@ void PlasmaVirtualDesktopManagementInterface::Private::getVirtualDesktopCallback
 
 void PlasmaVirtualDesktopManagementInterface::Private::requestRemoveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
 {
-    //TODO
+    Q_UNUSED(client)
+    auto s = cast(resource);
+    emit s->q->desktopRemoveRequested(QString::fromUtf8(id));
 }
 
 PlasmaVirtualDesktopManagementInterface::Private::Private(PlasmaVirtualDesktopManagementInterface *q, Display *d)

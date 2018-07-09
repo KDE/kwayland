@@ -358,6 +358,9 @@ void PlasmaWindowInterface::Private::createResource(wl_resource *parent, uint32_
     resources << resource;
 
     org_kde_plasma_window_send_virtual_desktop_changed(resource, m_virtualDesktop);
+    for (const auto &desk : plasmaVirtualDesktops) {
+        org_kde_plasma_window_send_virtual_desktop_entered(resource, desk.toUtf8().constData());
+    }
     if (!m_appId.isEmpty()) {
         org_kde_plasma_window_send_app_id_changed(resource, m_appId.toUtf8().constData());
     }

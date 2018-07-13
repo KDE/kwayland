@@ -40,6 +40,9 @@ public:
     virtual void setupV6(zxdg_shell_v6 *xdgshellv6) {
         Q_UNUSED(xdgshellv6)
     }
+    virtual void setup(xdg_wm_base *xdgshell) {
+        Q_UNUSED(xdgshell);
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -55,6 +58,13 @@ public:
     virtual operator zxdg_shell_v6*() const {
         return nullptr;
     }
+    virtual operator xdg_wm_base*() {
+        return nullptr;
+    }
+    virtual operator xdg_wm_base*() const {
+        return nullptr;
+    }
+
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
 
     virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
@@ -115,6 +125,18 @@ private:
     class Private;
 };
 
+class XdgShellStable : public XdgShell
+{
+    Q_OBJECT
+public:
+    explicit XdgShellStable(QObject *parent = nullptr);
+    virtual ~XdgShellStable();
+
+private:
+    class Private;
+
+};
+
 class XdgShellSurfaceUnstableV5 : public XdgShellSurface
 {
     Q_OBJECT
@@ -139,6 +161,18 @@ private:
     class Private;
 };
 
+class XdgTopLevelStable : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    virtual ~XdgTopLevelStable();
+
+private:
+    explicit XdgTopLevelStable(QObject *parent = nullptr);
+    friend class XdgShellStable;
+    class Private;
+};
+
 class Q_DECL_HIDDEN XdgShellSurface::Private
 {
 public:
@@ -154,6 +188,11 @@ public:
         Q_UNUSED(toplevel)
         Q_UNUSED(surface)
     }
+    virtual void setup(xdg_surface *surface, xdg_toplevel *toplevel)
+    {
+        Q_UNUSED(surface)
+        Q_UNUSED(toplevel)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -161,6 +200,12 @@ public:
         return nullptr;
     }
     virtual operator xdg_surface*() const {
+        return nullptr;
+    }
+    virtual operator xdg_toplevel*() {
+        return nullptr;
+    }
+    virtual operator xdg_toplevel*() const {
         return nullptr;
     }
     virtual operator zxdg_surface_v6*() {
@@ -212,6 +257,10 @@ public:
         Q_UNUSED(s)
         Q_UNUSED(p)
     }
+    virtual void setup(xdg_surface *s, xdg_popup *p) {
+        Q_UNUSED(s)
+        Q_UNUSED(p)
+    }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
@@ -219,6 +268,12 @@ public:
         Q_UNUSED(seat);
         Q_UNUSED(serial);
     };
+    virtual operator xdg_surface*() {
+        return nullptr;
+    }
+    virtual operator xdg_surface*() const {
+        return nullptr;
+    }
     virtual operator xdg_popup*() {
         return nullptr;
     }
@@ -278,7 +333,16 @@ private:
     class Private;
 };
 
+class XdgShellPopupStable : public XdgShellPopup
+{
+public:
+    virtual ~XdgShellPopupStable();
 
+private:
+    explicit XdgShellPopupStable(QObject *parent = nullptr);
+    friend class XdgShellStable;
+    class Private;
+};
 
 }
 }

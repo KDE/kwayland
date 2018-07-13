@@ -57,6 +57,7 @@ set(CLIENT_LIB_SRCS
     xdgforeign.cpp
     xdgshell_v5.cpp
     xdgshell_v6.cpp
+    xdgshell_stable.cpp
     xdgoutput.cpp
     ../compat/wayland-xdg-shell-v5-protocol.c
 )
@@ -168,6 +169,12 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-output-unstable-v1.xml
     BASENAME xdg-output-unstable-v1
 )
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell.xml
+    BASENAME xdg-shell
+)
+
 
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h

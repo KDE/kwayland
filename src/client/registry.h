@@ -54,6 +54,7 @@ struct org_kde_kwin_server_decoration_manager;
 struct org_kde_kwin_server_decoration_palette_manager;
 struct xdg_shell;
 struct zxdg_shell_v6;
+struct xdg_wm_base;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
@@ -176,6 +177,7 @@ public:
         ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
         RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
         XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
+        XdgShellStable ///refers to xdg_wm_base @since 5.XDGSHELL_VERSION
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -530,6 +532,16 @@ public:
      * @since 5.39
      **/
     zxdg_shell_v6 *bindXdgShellUnstableV6(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the zxdg_shell_v6 (unstable version 6) with @p name and @p version.
+     * If the @p name does not exist or is not for the xdg shell interface in unstable version 5,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgShell instead.
+     * @see createXdgShell
+     * @since 5.39
+     **/
+    xdg_wm_base *bindXdgShellStable(uint32_t name, uint32_t version) const;
     /**
      * Binds the zwp_relative_pointer_manager_v1 with @p name and @p version.
      * If the @p name does not exist or is not for the relative pointer interface in unstable version 1,
@@ -1403,6 +1415,15 @@ Q_SIGNALS:
      */
     void xdgOutputAnnounced(quint32 name, quint32 version);
 
+    /**
+     * Emitted whenever a xdg_wm_base (stable xdg shell) interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.XDGSHELL_VERSION
+     **/
+    void xdgShellStableAnnounced(quint32 name, quint32 version);
+
+
     ///@}
 
     /**
@@ -1611,6 +1632,12 @@ Q_SIGNALS:
      * @since 5.47
      **/
     void xdgOutputRemoved(quint32 name);
+    /**
+     * Emitted whenever an xdg_wm_base (stable xdgshell) interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.XDGSHELL_VERSION
+     **/
+    void xdgShellStableRemoved(quint32 name);
 
     ///@}
     /**

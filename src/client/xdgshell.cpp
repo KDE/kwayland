@@ -53,6 +53,10 @@ void XdgShell::setup(zxdg_shell_v6 *xdgshellv6)
     d->setupV6(xdgshellv6);
 }
 
+void XdgShell::setup(xdg_wm_base *xdg_wm_base)
+{
+    d->setup(xdg_wm_base);
+}
 
 void XdgShell::release()
 {
@@ -89,6 +93,15 @@ XdgShell::operator zxdg_shell_v6*() {
 XdgShell::operator zxdg_shell_v6*() const {
     return *(d.data());
 }
+
+XdgShell::operator xdg_wm_base*() {
+    return *(d.data());
+}
+
+XdgShell::operator xdg_wm_base*() const {
+    return *(d.data());
+}
+
 
 bool XdgShell::isValid() const
 {
@@ -143,6 +156,12 @@ void XdgShellSurface::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_toplevel_v6 *xdg
     d->setupV6(xdgsurfacev6, xdgtoplevelv6);
 }
 
+void XdgShellSurface::setup(xdg_surface *xdgsurface, xdg_toplevel *xdgtoplevel)
+{
+    d->setup(xdgsurface, xdgtoplevel);
+}
+
+
 void XdgShellSurface::release()
 {
     d->release();
@@ -168,6 +187,14 @@ XdgShellSurface::operator xdg_surface*() {
 }
 
 XdgShellSurface::operator xdg_surface*() const {
+    return *(d.data());
+}
+
+XdgShellSurface::operator xdg_toplevel*() {
+    return *(d.data());
+}
+
+XdgShellSurface::operator xdg_toplevel*() const {
     return *(d.data());
 }
 
@@ -303,6 +330,11 @@ void XdgShellPopup::setup(zxdg_surface_v6 *xdgsurfacev6, zxdg_popup_v6 *xdgpopup
     d->setupV6(xdgsurfacev6, xdgpopupv6);
 }
 
+void XdgShellPopup::setup(xdg_surface *surface, xdg_popup *popup)
+{
+    d->setup(surface, popup);
+}
+
 void XdgShellPopup::release()
 {
     d->release();
@@ -326,6 +358,14 @@ EventQueue *XdgShellPopup::eventQueue()
 void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
 {
     d->requestGrab(seat, serial);
+}
+
+XdgShellPopup::operator xdg_surface*() {
+    return *(d.data());
+}
+
+XdgShellPopup::operator xdg_surface*() const {
+    return *(d.data());
 }
 
 XdgShellPopup::operator xdg_popup*() {

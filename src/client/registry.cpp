@@ -78,6 +78,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-text-input-v2-client-protocol.h>
 #include "../compat/wayland-xdg-shell-v5-client-protocol.h"
 #include <wayland-xdg-shell-v6-client-protocol.h>
+#include <wayland-xdg-shell-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
@@ -350,6 +351,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zxdg_output_manager_v1_interface,
         &Registry::xdgOutputAnnounced,
         &Registry::xdgOutputRemoved
+    }},
+    {Registry::Interface::XdgShellStable, {
+        1,
+        QByteArrayLiteral("xdg_wm_base"),
+        &xdg_wm_base_interface,
+        &Registry::xdgShellStableAnnounced,
+        &Registry::xdgShellStableRemoved
     }}
 };
 
@@ -649,6 +657,7 @@ BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND(XdgShellUnstableV5, xdg_shell)
 BIND(XdgShellUnstableV6, zxdg_shell_v6)
+BIND(XdgShellStable, xdg_wm_base)
 BIND(RelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1)
 BIND(PointerGesturesUnstableV1, zwp_pointer_gestures_v1)
 BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
@@ -750,6 +759,8 @@ XdgShell *Registry::createXdgShell(quint32 name, quint32 version, QObject *paren
         return d->create<XdgShellUnstableV5>(name, version, parent, &Registry::bindXdgShellUnstableV5);
     case Interface::XdgShellUnstableV6:
         return d->create<XdgShellUnstableV6>(name, version, parent, &Registry::bindXdgShellUnstableV6);
+    case Interface::XdgShellStable:
+        return d->create<XdgShellStable>(name, version, parent, &Registry::bindXdgShellStable);
     default:
         return nullptr;
     }

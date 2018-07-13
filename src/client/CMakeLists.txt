@@ -53,11 +53,12 @@ set(CLIENT_LIB_SRCS
     textinput_v0.cpp
     textinput_v2.cpp
     xdgshell.cpp
-    xdgshell_v5.cpp
     xdgforeign_v2.cpp
     xdgforeign.cpp
+    xdgshell_v5.cpp
     xdgshell_v6.cpp
     xdgoutput.cpp
+    ../compat/wayland-xdg-shell-v5-protocol.c
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -131,10 +132,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME text-input-v2
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v5.xml
-    BASENAME xdg-shell-v5
-)
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/xdg-shell-unstable-v6.xml
     BASENAME xdg-shell-v6
 )
@@ -189,7 +186,6 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-server-decoration-palette-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v0-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v2-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v5-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-relativepointer-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-pointer-gestures-unstable-v1-client-protocol.h

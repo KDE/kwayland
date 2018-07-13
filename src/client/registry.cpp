@@ -76,7 +76,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-server-decoration-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
-#include <wayland-xdg-shell-v5-client-protocol.h>
+#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
 #include <wayland-xdg-shell-v6-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
@@ -277,7 +277,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
     {Registry::Interface::XdgShellUnstableV5, {
         1,
         QByteArrayLiteral("xdg_shell"),
-        &xdg_shell_interface,
+        &zxdg_shell_v5_interface,
         &Registry::xdgShellUnstableV5Announced,
         &Registry::xdgShellUnstableV5Removed
     }},

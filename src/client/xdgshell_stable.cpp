@@ -42,6 +42,8 @@ public:
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
 
+    using XdgShell::Private::operator xdg_shell*;
+    using XdgShell::Private::operator zxdg_shell_v6*;
     operator xdg_wm_base*() override {
         return xdg_shell_base;
     }
@@ -250,6 +252,8 @@ public:
     void destroy() override;
     bool isValid() const override;
 
+    using XdgShellSurface::Private::operator zxdg_toplevel_v6*;
+    using XdgShellSurface::Private::operator zxdg_surface_v6*;
     operator xdg_surface*() override {
         return xdgsurface;
     }
@@ -494,6 +498,9 @@ public:
     void destroy() override;
     bool isValid() const override;
     void requestGrab(Seat *seat, quint32 serial) override;
+
+    using XdgShellPopup::Private::operator zxdg_popup_v6*;
+    using XdgShellPopup::Private::operator zxdg_surface_v6*;
     operator xdg_surface*() override {
         return xdgsurfacev6;
     }

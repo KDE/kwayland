@@ -39,6 +39,9 @@ public:
     bool isValid() const override;
     XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
+
+    using XdgShell::Private::operator xdg_wm_base*;
+    using XdgShell::Private::operator zxdg_shell_v6*;
     operator xdg_shell*() override {
         return xdgshellv5;
     }
@@ -127,6 +130,10 @@ public:
     void release() override;
     void destroy() override;
     bool isValid() const override;
+
+    using XdgShellSurface::Private::operator zxdg_surface_v6*;
+    using XdgShellSurface::Private::operator zxdg_toplevel_v6*;
+    using XdgShellSurface::Private::operator xdg_toplevel*;
     operator xdg_surface*() override {
         return xdgsurfacev5;
     }
@@ -345,6 +352,10 @@ public:
     void release() override;
     void destroy() override;
     bool isValid() const override;
+
+    using XdgShellPopup::Private::operator xdg_surface*;
+    using XdgShellPopup::Private::operator zxdg_popup_v6*;
+    using XdgShellPopup::Private::operator zxdg_surface_v6*;
     operator xdg_popup*() override {
         return xdgpopupv5;
     }

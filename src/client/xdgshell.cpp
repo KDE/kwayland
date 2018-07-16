@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat.h"
 #include "surface.h"
 #include "output.h"
-#include <wayland-xdg-shell-v5-client-protocol.h>
+#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
 
 namespace KWayland
 {

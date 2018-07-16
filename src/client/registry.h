@@ -177,7 +177,7 @@ public:
         ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
         RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
         XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
-        XdgShellStable ///refers to xdg_wm_base @since 5.XDGSHELL_VERSION
+        XdgShellStable ///refers to xdg_wm_base @since 5.48
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -1419,7 +1419,7 @@ Q_SIGNALS:
      * Emitted whenever a xdg_wm_base (stable xdg shell) interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
-     * @since 5.XDGSHELL_VERSION
+     * @since 5.48
      **/
     void xdgShellStableAnnounced(quint32 name, quint32 version);
 
@@ -1635,7 +1635,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever an xdg_wm_base (stable xdgshell) interface gets removed.
      * @param name The name for the removed interface
-     * @since 5.XDGSHELL_VERSION
+     * @since 5.48
      **/
     void xdgShellStableRemoved(quint32 name);
 

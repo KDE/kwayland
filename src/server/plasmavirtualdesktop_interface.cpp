@@ -165,6 +165,7 @@ void PlasmaVirtualDesktopManagementInterface::Private::bind(wl_client *client, u
     for (auto it = desktops.constBegin(); it != desktops.constEnd(); ++it) {
         org_kde_plasma_virtual_desktop_management_send_desktop_created(resource, (*it)->id().toUtf8().constData(), i++);
     }
+    org_kde_plasma_virtual_desktop_management_send_done(resource);
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::unbind(wl_resource *resource)

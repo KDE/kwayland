@@ -46,6 +46,7 @@ private Q_SLOTS:
     void cleanup();
 
     void testCreate();
+    void testConnectNewClient();
     void testDestroy();
     void testActivate();
 
@@ -264,6 +265,32 @@ void TestVirtualDesktop::testCreate()
     for (int i = 0; i < m_plasmaVirtualDesktopManagement->desktops().length(); ++i) {
         QCOMPARE(m_plasmaVirtualDesktopManagementInterface->desktops().at(i)->id(), m_plasmaVirtualDesktopManagement->desktops().at(i)->id());
     }
+}
+
+void TestVirtualDesktop::testConnectNewClient()
+{
+    //rebuild some desktops
+    testCreate();
+
+    Registry registry;
+    QVERIFY(!registry.eventQueue());
+    registry.setEventQueue(m_queue);
+    QCOMPARE(registry.eventQueue(), m_queue);
+    registry.create(m_connection->display());
+    QVERIFY(registry.isValid());
+    registry.setup();
+
+    QSignalSpy plasmaVirtualDesktopManagementSpy(&registry, &Registry::plasmaVirtualDesktopManagementAnnounced);
+    QVERIFY(plasmaVirtualDesktopManagementSpy.isValid());
+
+    QVERIFY(plasmaVirtualDesktopManagementSpy.wait());
+
+    KWayland::Client::PlasmaVirtualDesktopManagement *otherPlasmaVirtualDesktopManagement = registry.createPlasmaVirtualDesktopManagement(plasmaVirtualDesktopManagementSpy.first().first().value<quint32>(), plasmaVirtualDesktopManagementSpy.first().last().value<quint32>(), this);
+
+    QSignalSpy managementDoneSpy(otherPlasmaVirtualDesktopManagement, &PlasmaVirtualDesktopManagement::done);
+
+    managementDoneSpy.wait();
+    QCOMPARE(otherPlasmaVirtualDesktopManagement->desktops().length(), 3);
 }
 
 void TestVirtualDesktop::testDestroy()
@@ -500,7 +527,6 @@ void TestVirtualDesktop::testRemoveRequested()
     desktopRemoveRequestedSpy.wait();
     QCOMPARE(desktopRemoveRequestedSpy.first().first().toString(), QStringLiteral("0-1"));
 }
-
 
 QTEST_GUILESS_MAIN(TestVirtualDesktop)
 #include "test_plasma_virtual_desktop.moc"

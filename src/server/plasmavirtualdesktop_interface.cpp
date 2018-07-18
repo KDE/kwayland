@@ -275,30 +275,6 @@ void PlasmaVirtualDesktopManagementInterface::sendDone()
     }
 }
 
-void PlasmaVirtualDesktopManagementInterface::setActiveDesktop(const QString &id)
-{
-    Q_D();
-    for (auto it = d->desktops.constBegin(); it != d->desktops.constEnd(); ++it) {
-        auto desktop = *it;
-        if (desktop->id() == id) {
-            desktop->d->active = true;
-            emit desktopActivated(id);
-            for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
-                org_kde_plasma_virtual_desktop_send_activated(*it);
-            }
-        } else {
-            if (desktop->d->active) {
-                desktop->d->active = false;
-                for (auto it = desktop->d->resources.constBegin(); it != desktop->d->resources.constEnd(); ++it) {
-                    org_kde_plasma_virtual_desktop_send_deactivated(*it);
-                }
-            }
-        }
-    }
-}
-
-
-
 //// PlasmaVirtualDesktopInterface
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -389,6 +365,24 @@ void PlasmaVirtualDesktopInterface::setName(const QString &name)
 QString PlasmaVirtualDesktopInterface::name() const
 {
     return d->name;
+}
+
+void PlasmaVirtualDesktopInterface::setActive(bool active)
+{
+    if (d->active == active) {
+        return;
+    }
+
+    d->active = active;
+    if (active) {
+        for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+            org_kde_plasma_virtual_desktop_send_activated(*it);
+        }
+    } else {
+        for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+            org_kde_plasma_virtual_desktop_send_deactivated(*it);
+        }
+    }
 }
 
 bool PlasmaVirtualDesktopInterface::isActive() const

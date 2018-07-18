@@ -83,14 +83,6 @@ public:
      */
     void sendDone();
 
-    /**
-     * FIXME: RFC this assumes there is only one desktop active at once, may need to be removed if we ever want to support per-screen desktops, or, a second string param could be added as a context for active: that could be the name of an output, or whatever else needed
-     * Sets the desktop identified by id to be the active one.
-     * active desktops are mutually exclusive
-     * Or alternatively, only setActive in PlasmaVirtualDesktopInterface and no check whatsoever for activie uniqueness: would be kwin's responsibility
-     */
-    void setActiveDesktop(const QString &id);
-
 Q_SIGNALS:
     /**
      * A desktop has been activated
@@ -140,6 +132,12 @@ public:
      * @returns the name for this desktop
      */
     QString name() const;
+
+    /**
+     * Set this desktop as active or not.
+     * It's the compositor responsibility to manage the mutual exclusivity of active desktops.
+     */
+    void setActive(bool active);
 
     /**
      * @returns true if this desktop is active. Only one at a time will be.

@@ -352,8 +352,14 @@ void TestVirtualDesktop::testActivate()
     desktop2->requestActivate();
     requestActivateSpy.wait();
 
-    //activate the desktop that was requested active
-    m_plasmaVirtualDesktopManagementInterface->setActiveDesktop(desktop2->id());
+    //This simulates a compositor which supports only one active desktop at a time
+    for (auto *deskInt : m_plasmaVirtualDesktopManagementInterface->desktops()) {
+        if (deskInt->id() == desktop2->id()) {
+            deskInt->setActive(true);
+        } else {
+            deskInt->setActive(false);
+        }
+    }
     activatedSpy.wait();
 
     //correct state in the server
@@ -365,7 +371,14 @@ void TestVirtualDesktop::testActivate()
 
     //Test the deactivated signal
     QSignalSpy deactivatedSpy(desktop2, &KWayland::Client::PlasmaVirtualDesktop::deactivated);
-    m_plasmaVirtualDesktopManagementInterface->setActiveDesktop(desktop1->id());
+
+    for (auto *deskInt : m_plasmaVirtualDesktopManagementInterface->desktops()) {
+        if (deskInt->id() == desktop1->id()) {
+            deskInt->setActive(true);
+        } else {
+            deskInt->setActive(false);
+        }
+    }
     deactivatedSpy.wait();
 }
 

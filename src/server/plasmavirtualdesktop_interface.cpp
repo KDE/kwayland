@@ -336,9 +336,6 @@ void PlasmaVirtualDesktopInterface::Private::unbind(wl_resource *resource)
 {
     Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
     p->resources.removeAll(resource);
-    if (p->resources.isEmpty()) {
-        p->q->deleteLater();
-    }
 }
 
 void PlasmaVirtualDesktopInterface::Private::createResource(wl_resource *parent, quint32 serial)

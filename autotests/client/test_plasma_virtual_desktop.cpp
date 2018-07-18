@@ -291,6 +291,8 @@ void TestVirtualDesktop::testConnectNewClient()
 
     managementDoneSpy.wait();
     QCOMPARE(otherPlasmaVirtualDesktopManagement->desktops().length(), 3);
+
+    delete otherPlasmaVirtualDesktopManagement;
 }
 
 void TestVirtualDesktop::testDestroy()

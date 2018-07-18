@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "outputdevice.h"
 #include "output.h"
 #include "plasmashell.h"
-#include "plasmavirtualdesktop.h"
+#include "plasmavirtualdesktop_unstable_v1.h"
 #include "plasmawindowmanagement.h"
 #include "pointerconstraints.h"
 #include "pointergestures.h"
@@ -62,7 +62,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
-#include <wayland-plasma-virtual-desktop-client-protocol.h>
+#include <wayland-plasma-virtual-desktop-unstable-v1-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
 #include <wayland-idle-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
@@ -171,12 +171,12 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::plasmaShellAnnounced,
         &Registry::plasmaShellRemoved
     }},
-    {Registry::Interface::PlasmaVirtualDesktopManagement, {
+    {Registry::Interface::PlasmaVirtualDesktopManagementUnstableV1, {
         1,
-        QByteArrayLiteral("org_kde_plasma_virtual_desktop_management"),
-        &org_kde_plasma_virtual_desktop_management_interface,
-        &Registry::plasmaVirtualDesktopManagementAnnounced,
-        &Registry::plasmaVirtualDesktopManagementRemoved
+        QByteArrayLiteral("org_kde_plasma_virtual_desktop_management_v1"),
+        &org_kde_plasma_virtual_desktop_management_v1_interface,
+        &Registry::plasmaVirtualDesktopManagementUnstableV1Announced,
+        &Registry::plasmaVirtualDesktopManagementUnstableV1Removed
     }},
     {Registry::Interface::PlasmaWindowManagement, {
         9,
@@ -647,7 +647,7 @@ BIND(SubCompositor, wl_subcompositor)
 BIND(FullscreenShell, _wl_fullscreen_shell)
 BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
-BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
+BIND(PlasmaVirtualDesktopManagementUnstableV1, org_kde_plasma_virtual_desktop_management_v1)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
@@ -710,7 +710,7 @@ CREATE(FullscreenShell)
 CREATE(Output)
 CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
-CREATE(PlasmaVirtualDesktopManagement)
+CREATE(PlasmaVirtualDesktopManagementUnstableV1)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
 CREATE(RemoteAccessManager)

@@ -25,7 +25,7 @@ set(SERVER_LIB_SRCS
     output_interface.cpp
     pointer_interface.cpp
     plasmashell_interface.cpp
-    plasmavirtualdesktop_interface.cpp
+    plasmavirtualdesktop_interface_unstable_v1.cpp
     plasmawindowmanagement_interface.cpp
     pointerconstraints_interface.cpp
     pointerconstraints_interface_v1.cpp
@@ -74,8 +74,8 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
-    BASENAME plasma-virtual-desktop
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop-unstable-v1.xml
+    BASENAME plasma-virtual-desktop-unstable-v1
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
@@ -200,8 +200,8 @@ set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-server-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-unstable-v1-server-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-virtual-desktop-unstable-v1-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-server-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-qt-surface-extension-client-protocol.h
@@ -306,7 +306,7 @@ set(SERVER_LIB_HEADERS
   pointerconstraints_interface.h
   pointergestures_interface.h
   plasmashell_interface.h
-  plasmavirtualdesktop_interface.h
+  plasmavirtualdesktop_interface_unstable_v1.h
   plasmawindowmanagement_interface.h
   qtsurfaceextension_interface.h
   region_interface.h

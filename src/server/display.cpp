@@ -50,7 +50,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgshell_v6_interface_p.h"
 #include "appmenu_interface.h"
 #include "server_decoration_palette_interface.h"
-#include "plasmavirtualdesktop_interface.h"
+#include "plasmavirtualdesktop_interface_unstable_v1.h"
 #include "xdgoutput_interface.h"
 
 #include <QCoreApplication>
@@ -460,9 +460,9 @@ ServerSideDecorationPaletteManagerInterface *Display::createServerSideDecoration
 }
 
 
-PlasmaVirtualDesktopManagementInterface *Display::createPlasmaVirtualDesktopManagement(QObject *parent)
+PlasmaVirtualDesktopManagementV1Interface *Display::createPlasmaVirtualDesktopManagement(QObject *parent)
 {
-    auto b = new PlasmaVirtualDesktopManagementInterface(this, parent);
+    auto b = new PlasmaVirtualDesktopManagementV1Interface(this, parent);
     connect(this, &Display::aboutToTerminate, b, [this, b] { delete b; });
     return b;
 }

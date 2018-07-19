@@ -19,7 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "plasmawindowmanagement.h"
 #include "plasmawindowmodel.h"
-#include "plasmavirtualdesktop_unstable_v1.h"
+#include "plasmavirtualdesktop.h"
 #include "event_queue.h"
 #include "output.h"
 #include "surface.h"

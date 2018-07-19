@@ -17,8 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ****************************************************************************/
-#ifndef KWAYLAND_SERVER_PLASMAVIRTUALDESKTOP_UNSTABLE_V1_H
-#define KWAYLAND_SERVER_PLASMAVIRTUALDESKTOP_UNSTABLE_V1_H
+#ifndef KWAYLAND_SERVER_PLASMAVIRTUALDESKTOP_H
+#define KWAYLAND_SERVER_PLASMAVIRTUALDESKTOP_H
 
 #include "global.h"
 #include "resource.h"
@@ -31,7 +31,7 @@ namespace Server
 {
 
 class Display;
-class PlasmaVirtualDesktopV1Interface;
+class PlasmaVirtualDesktopInterface;
 
 /**
  * @short Wrapper for the org_kde_plasma_virtual_desktop_management interface.
@@ -39,11 +39,11 @@ class PlasmaVirtualDesktopV1Interface;
  * This class provides a convenient wrapper for the org_kde_plasma_virtual_desktop_management interface.
  * @since 5.46
  */
-class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementV1Interface : public Global
+class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaVirtualDesktopManagementV1Interface();
+    virtual ~PlasmaVirtualDesktopManagementInterface();
 
     /**
      * Sets a new layout for this desktop grid.
@@ -55,7 +55,7 @@ public:
      * If not found, nullptr will be returned.
      * @see createDesktop
      */
-    PlasmaVirtualDesktopV1Interface *desktop(const QString &id);
+    PlasmaVirtualDesktopInterface *desktop(const QString &id);
 
     /**
      * @returns A desktop identified uniquely by this id, if not found
@@ -65,7 +65,7 @@ public:
      *                 it will be appended at the end. If the desktop was already
      *                 existing, position is ignored.
      */
-    PlasmaVirtualDesktopV1Interface *createDesktop(const QString &id, quint32 position = std::numeric_limits<uint32_t>::max());
+    PlasmaVirtualDesktopInterface *createDesktop(const QString &id, quint32 position = std::numeric_limits<uint32_t>::max());
 
     /**
      * Removed and destroys the desktop identified by id, if present
@@ -75,7 +75,7 @@ public:
     /**
      * @returns All tghe desktops present.
      */
-    QList <PlasmaVirtualDesktopV1Interface *> desktops() const;
+    QList <PlasmaVirtualDesktopInterface *> desktops() const;
 
     /**
      * Inform the clients that all the properties have been sent, and
@@ -104,21 +104,21 @@ Q_SIGNALS:
     void desktopCreateRequested(const QString &name, quint32 position);
 
 private:
-    explicit PlasmaVirtualDesktopManagementV1Interface(Display *display, QObject *parent = nullptr);
+    explicit PlasmaVirtualDesktopManagementInterface(Display *display, QObject *parent = nullptr);
     friend class Display;
     class Private;
     Private *d_func() const;
 };
 
-class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopV1Interface : public QObject
+class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaVirtualDesktopV1Interface();
+    virtual ~PlasmaVirtualDesktopInterface();
 
     /**
      * @returns the unique id for this desktop.
-     * ids are set at creation time by PlasmaVirtualDesktopManagementInterfaceUnstableV1::createDesktop
+     * ids are set at creation time by PlasmaVirtualDesktopManagementInterface::createDesktop
      * and can't be changed at runtime.
      */
     QString id() const;
@@ -158,8 +158,8 @@ Q_SIGNALS:
     void activateRequested();
 
 private:
-    explicit PlasmaVirtualDesktopV1Interface(PlasmaVirtualDesktopManagementV1Interface *parent);
-    friend class PlasmaVirtualDesktopManagementV1Interface;
+    explicit PlasmaVirtualDesktopInterface(PlasmaVirtualDesktopManagementInterface *parent);
+    friend class PlasmaVirtualDesktopManagementInterface;
 
     class Private;
     const QScopedPointer<Private> d;

@@ -37,7 +37,7 @@ namespace Server
 class Display;
 class PlasmaWindowInterface;
 class SurfaceInterface;
-class PlasmaVirtualDesktopManagementV1Interface;
+class PlasmaVirtualDesktopManagementInterface;
 
 /**
  * @todo Add documentation
@@ -74,18 +74,18 @@ public:
     void unmapWindow(PlasmaWindowInterface *window);
 
     /**
-     * Associate a PlasmaVirtualDesktopManagementInterfaceUnstableV1 to this window management.
+     * Associate a PlasmaVirtualDesktopManagementInterface to this window management.
      * It's necessary to associate one in orderto use the plasma virtual desktop features
      * of PlasmaWindowInterface, as a window must know what are the deasktops available
      * @since 5.48
      */
-    void setPlasmaVirtualDesktopManagementInterfaceUnstableV1(PlasmaVirtualDesktopManagementV1Interface *manager);
+    void setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager);
 
     /**
-     * @returns the PlasmaVirtualDesktopManagementInterfaceUnstableV1 associated to this PlasmaWindowManagementInterface
+     * @returns the PlasmaVirtualDesktopManagementInterface associated to this PlasmaWindowManagementInterface
      * @since 5.48
      */
-    PlasmaVirtualDesktopManagementV1Interface *plasmaVirtualDesktopManagementInterfaceUnstableV1() const;
+    PlasmaVirtualDesktopManagementInterface *plasmaVirtualDesktopManagementInterface() const;
 
 Q_SIGNALS:
     void requestChangeShowingDesktop(ShowingDesktopState requestedState);

@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "resource_p.h"
 #include "display.h"
 #include "surface_interface.h"
-#include "plasmavirtualdesktop_interface_unstable_v1.h"
+#include "plasmavirtualdesktop_interface.h"
 
 #include <QtConcurrentRun>
 #include <QFile>
@@ -49,7 +49,7 @@ public:
     ShowingDesktopState state = ShowingDesktopState::Disabled;
     QVector<wl_resource*> resources;
     QList<PlasmaWindowInterface*> windows;
-    QPointer<PlasmaVirtualDesktopManagementV1Interface> plasmaVirtualDesktopManagementInterface = nullptr;
+    QPointer<PlasmaVirtualDesktopManagementInterface> plasmaVirtualDesktopManagementInterface = nullptr;
     quint32 windowIdCounter = 0;
 
 private:
@@ -278,7 +278,7 @@ void PlasmaWindowManagementInterface::unmapWindow(PlasmaWindowInterface *window)
     window->d->unmap();
 }
 
-void PlasmaWindowManagementInterface::setPlasmaVirtualDesktopManagementInterfaceUnstableV1(PlasmaVirtualDesktopManagementV1Interface *manager)
+void PlasmaWindowManagementInterface::setPlasmaVirtualDesktopManagementInterface(PlasmaVirtualDesktopManagementInterface *manager)
 {
     Q_D();
     if (d->plasmaVirtualDesktopManagementInterface == manager) {
@@ -287,7 +287,7 @@ void PlasmaWindowManagementInterface::setPlasmaVirtualDesktopManagementInterface
     d->plasmaVirtualDesktopManagementInterface = manager;
 }
 
-PlasmaVirtualDesktopManagementV1Interface *PlasmaWindowManagementInterface::plasmaVirtualDesktopManagementInterfaceUnstableV1() const
+PlasmaVirtualDesktopManagementInterface *PlasmaWindowManagementInterface::plasmaVirtualDesktopManagementInterface() const
 {
     Q_D();
     return d->plasmaVirtualDesktopManagementInterface;
@@ -790,7 +790,7 @@ void PlasmaWindowInterface::setOnAllDesktops(bool set)
     //the deprecated vd management
     d->setState(ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS, set);
 
-    if (!d->wm->plasmaVirtualDesktopManagementInterfaceUnstableV1()) {
+    if (!d->wm->plasmaVirtualDesktopManagementInterface()) {
         return;
     }
 
@@ -811,7 +811,7 @@ void PlasmaWindowInterface::setOnAllDesktops(bool set)
             return;
         }
         //enters the desktops which are active (usually only one  but not a given)
-        for (auto desk : d->wm->plasmaVirtualDesktopManagementInterfaceUnstableV1()->desktops()) {
+        for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
             if (desk->isActive() && !d->plasmaVirtualDesktops.contains(desk->id())) {
                 d->plasmaVirtualDesktops << desk->id();
                 for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
@@ -872,18 +872,18 @@ void PlasmaWindowInterface::setIcon(const QIcon &icon)
 void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
 {
     //don't add a desktop we're not sure it exists
-    if (!d->wm->plasmaVirtualDesktopManagementInterfaceUnstableV1() || d->plasmaVirtualDesktops.contains(id)) {
+    if (!d->wm->plasmaVirtualDesktopManagementInterface() || d->plasmaVirtualDesktops.contains(id)) {
         return;
     }
 
-    PlasmaVirtualDesktopV1Interface *desktop = d->wm->plasmaVirtualDesktopManagementInterfaceUnstableV1()->desktop(id);
+    PlasmaVirtualDesktopInterface *desktop = d->wm->plasmaVirtualDesktopManagementInterface()->desktop(id);
 
     if (!desktop) {
         return;
     }
 
     //full? lets set it on all desktops, the plasmaVirtualDesktops list will get empty, which means it's on all desktops
-    if (d->wm->plasmaVirtualDesktopManagementInterfaceUnstableV1()->desktops().count() == d->plasmaVirtualDesktops.count() + 1) {
+    if (d->wm->plasmaVirtualDesktopManagementInterface()->desktops().count() == d->plasmaVirtualDesktops.count() + 1) {
         setOnAllDesktops(true);
         return;
     }

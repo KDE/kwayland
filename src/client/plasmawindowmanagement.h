@@ -37,7 +37,7 @@ class EventQueue;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
-class PlasmaVirtualDesktopUnstableV1;
+class PlasmaVirtualDesktop;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.

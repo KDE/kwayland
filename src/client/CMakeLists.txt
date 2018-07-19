@@ -34,7 +34,7 @@ set(CLIENT_LIB_SRCS
     pointerconstraints.cpp
     pointergestures.cpp
     plasmashell.cpp
-    plasmavirtualdesktop_unstable_v1.cpp
+    plasmavirtualdesktop.cpp
     plasmawindowmanagement.cpp
     plasmawindowmodel.cpp
     region.cpp
@@ -82,8 +82,8 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop-unstable-v1.xml
-    BASENAME plasma-virtual-desktop-unstable-v1
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
+    BASENAME plasma-virtual-desktop
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -265,7 +265,7 @@ set(CLIENT_LIB_HEADERS
   pointer.h
   pointerconstraints.h
   plasmashell.h
-  plasmavirtualdesktop_unstable_v1.h
+  plasmavirtualdesktop.h
   plasmawindowmanagement.h
   plasmawindowmodel.h
   pointergestures.h

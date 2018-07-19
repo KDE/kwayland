@@ -37,6 +37,7 @@ class EventQueue;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
+class PlasmaVirtualDesktop;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.
@@ -272,6 +273,8 @@ public:
      **/
     QString appId() const;
     /**
+     * @deprecated: use plasmaVirtualDesktops instead
+     * @see plasmaVirtualDesktops
      * @returns the id of the virtual desktop this PlasmaWindow is on
      * @see virtualDesktopChanged
      **/
@@ -409,6 +412,7 @@ public:
      */
     void requestResize();
     /**
+     * @deprecated: use requestEnterVirtualDesktop instead
      * Requests to send the window to virtual @p desktop.
      **/
     void requestVirtualDesktop(quint32 desktop);
@@ -480,6 +484,40 @@ public:
      **/
     QRect geometry() const;
 
+    /**
+     * Ask the server to make the window enter a virtual desktop.
+     * The server may or may not consent.
+     * A window can enter more than one virtual desktop.
+     *
+     * @since 5.46
+     */
+    void requestEnterVirtualDesktop(const QString &id);
+
+    /**
+     * RFC: do this with an empty id to request_enter_virtual_desktop?
+     * Make the window enter a new virtual desktop. If the server consents the request,
+     * it will create a new virtual desktop and assign the window to it.
+     */
+    void requestEnterNewVirtualDesktop();
+
+    /**
+     * Ask the server to make the window the window exit a virtual desktop.
+     * The server may or may not consent.
+     * If it exits all desktops it will be considered on all of them.
+     *
+     * @since 5.46
+     */
+    void requestLeaveVirtualDesktop(const QString &id);
+
+    /**
+     * Return all the virtual desktop ids this window is associated to.
+     * When a desktop gets deleted, it will be automatically removed from this list.
+     * If this list is empty, assume it's on all desktops.
+     *
+     * @since 5.46
+     */
+    QStringList plasmaVirtualDesktops() const;
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -492,8 +530,8 @@ Q_SIGNALS:
      **/
     void appIdChanged();
     /**
+     * @deprecated use plasmaVirtualDesktopEntered and plasmaVirtualDesktopLeft instead
      * The virtual desktop changed.
-     * @see virtualDesktop
      **/
     void virtualDesktopChanged();
     /**
@@ -619,6 +657,21 @@ Q_SIGNALS:
      * @since 5.25
      **/
     void geometryChanged();
+
+    /**
+     * This signal is emitted when the window has entered a new virtual desktop.
+     * The window can be on more than one desktop, or none: then is considered on all of them.
+     * @since 5.46
+     */
+    void plasmaVirtualDesktopEntered(const QString &id);
+
+    /**
+     * This signal is emitted when the window left a virtual desktop.
+     * If the window leaves all desktops, it can be considered on all.
+     *
+     * @since 5.46
+     */
+    void plasmaVirtualDesktopLeft(const QString &id);
 
 private:
     friend class PlasmaWindowManagement;

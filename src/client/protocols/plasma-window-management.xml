@@ -84,7 +84,7 @@
     </event>
   </interface>
 
-  <interface name="org_kde_plasma_window" version="7">
+  <interface name="org_kde_plasma_window" version="8">
     <description summary="interface to control application windows">
       Manages and control an application window.
 
@@ -105,6 +105,7 @@
 
     <request name="set_virtual_desktop">
       <description summary="map window on a virtual desktop">
+          Deprecated: use enter_virtual_desktop
         Maps the window to a different virtual desktop.
 
         To show the window on all virtual desktops, call the
@@ -199,6 +200,7 @@
 
     <event name="virtual_desktop_changed">
       <description summary="window was moved to another workspace">
+          DEPRECATED: use virtual_desktop_entered and virtual_desktop_left instead
         This event will be sent when a window is moved to another
         virtual desktop.
 
@@ -265,6 +267,46 @@
         This should be set once before the initial_state is sent.
       </description>
       <arg name="pid" type="uint" summary="process id"/>
+    </event>
+
+
+
+
+    <request name="request_enter_virtual_desktop" since="8">
+      <description summary="map window on a virtual desktop">
+        Make the window enter a virtual desktop. A window can enter more
+        than one virtual desktop. if the id is empty or invalid, no action will be performed.
+      </description>
+      <arg name="id" type="string" summary="desktop id"/>
+    </request>
+
+    <request name="request_enter_new_virtual_desktop" since="8">
+      <description summary="map window on a virtual desktop">RFC: do this with an empty id to request_enter_virtual_desktop?
+        Make the window enter a new virtual desktop. If the server consents the request,
+        it will create a new virtual desktop and assign the window to it.
+      </description>
+    </request>
+
+    <request name="request_leave_virtual_desktop" since="8">
+      <description summary="remove a window from a virtual desktop">
+        Make the window exit a virtual desktop. If it exits all desktops it will be considered on all of them.
+      </description>
+      <arg name="id" type="string" summary="desktop id"/>
+    </request>
+
+    <event name="virtual_desktop_entered" since="8">
+      <description summary="the window entered a new virtual desktop">
+          This event will be sent when the window has entered a new virtual desktop. The window can be on more than one desktop, or none: then is considered on all of them.
+      </description>
+      <arg name="id" type="string" summary="desktop id"/>
+    </event>
+
+    <event name="virtual_desktop_left" since="8">
+      <description summary="the window left a virtual desktop">
+          This event will be sent when the window left a virtual desktop. If the window leaves all desktops, it can be considered on all.
+          If the window gets manually added on all desktops, the server has to send virtual_desktop_left for every previous desktop it was in for the window to be really considered on all desktops.
+      </description>
+      <arg name="is" type="string" summary="desktop id"/>
     </event>
 
   </interface>

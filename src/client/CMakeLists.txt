@@ -34,6 +34,7 @@ set(CLIENT_LIB_SRCS
     pointerconstraints.cpp
     pointergestures.cpp
     plasmashell.cpp
+    plasmavirtualdesktop.cpp
     plasmawindowmanagement.cpp
     plasmawindowmodel.cpp
     region.cpp
@@ -81,6 +82,12 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
     BASENAME plasma-shell
 )
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
+    BASENAME plasma-virtual-desktop
+)
+
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
     BASENAME plasma-window-management
@@ -181,6 +188,7 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_kwin_outputdevice-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
+    ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fake-input-client-protocol.h
@@ -260,6 +268,7 @@ set(CLIENT_LIB_HEADERS
   pointer.h
   pointerconstraints.h
   plasmashell.h
+  plasmavirtualdesktop.h
   plasmawindowmanagement.h
   plasmawindowmodel.h
   pointergestures.h

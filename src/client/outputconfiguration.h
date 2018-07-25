@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QPoint>
+#include <QVector>
 
 #include "outputdevice.h"
 #include <KWayland/Client/kwaylandclient_export.h>
@@ -208,6 +209,21 @@ public:
      * @since 5.50
      */
     void setScaleF(OutputDevice *outputdevice, qreal scale);
+
+    /* Set color curves for this output. The respective color curve vector
+     * lengths must equal the current ones in the OutputDevice. The codomain
+     * of the curves is always the full uint16 value range, such that any vector
+     * is accepted as long as it has the right size.
+     * The changes done in this call will be recorded in the
+     * OutputDevice and only applied after apply() has been called.
+     *
+     * @param red color curve of red channel.
+     * @param green color curve of green channel.
+     * @param blue color curve of blue channel.
+     * @param outputdevice the OutputDevice this change applies to.
+     * @since 5.50
+     */
+    void setColorCurves(OutputDevice *outputdevice, QVector<quint16> red, QVector<quint16> green, QVector<quint16> blue);
 
     /**
      * Ask the compositor to apply the changes.

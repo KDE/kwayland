@@ -255,7 +255,23 @@
         <arg name="factor" type="fixed" summary="scaling factor of output"/>
     </event>
 
+    <event name="colorcurves" since="2">
+        <description summary="output color curves">
+            Decribes the color intensity profile of the output.
+            Commonly used for gamma/color correction.
 
+            The array contains all color ramp values of the output.
+            For example on 8bit screens there are 256 of them.
+
+            The array elements are unsigned 16bit integers.
+        </description>
+        <arg name="red" type="array"
+             summary="red color ramp"/>
+        <arg name="green" type="array"
+             summary="green color ramp"/>
+        <arg name="blue" type="array"
+             summary="blue color ramp"/>
+    </event>
 
 </interface>
 

@@ -172,6 +172,20 @@
         <arg name="scale" type="fixed" summary="scaling factor"/>
     </request>
 
+    <request name="colorcurves" since="2">
+        <description summary="set output color curves">
+            Set color curves of output devices through RGB color ramps. Allows color
+            correction of output device from user space.
+
+            These are the raw values. A compositor might opt to adjust these values
+            internally, for example to shift color temperature at night.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice curves apply to"/>
+        <arg name="red" type="array" summary="red color ramp"/>
+        <arg name="green" type="array" summary="green color ramp"/>
+        <arg name="blue" type="array" summary="blue color ramp"/>
+    </request>
+
     <request name="destroy" type="destructor" since="2">
         <description summary="release the outputconfiguration object"/>
     </request>

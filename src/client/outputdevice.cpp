@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2013  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2018  Roman Gilg <subdiff@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -58,6 +59,9 @@ public:
     QByteArray edid;
     OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
     QByteArray uuid;
+
+    ColorCurves colorCurves;
+
     bool done = false;
 
 private:
@@ -72,6 +76,9 @@ private:
     static void edidCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw);
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
     static void uuidCallback(void *data, org_kde_kwin_outputdevice *output, const char *uuid);
+
+    static void colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output,
+                                    wl_array *red, wl_array *green, wl_array *blue);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -107,6 +114,14 @@ bool OutputDevice::Mode::operator==(const OutputDevice::Mode &m) const
            && output == m.output;
 }
 
+bool OutputDevice::ColorCurves::operator==(const OutputDevice::ColorCurves &cc) const
+{
+    return red == cc.red && green == cc.green && blue == cc.blue;
+}
+bool OutputDevice::ColorCurves::operator!=(const ColorCurves &cc) const {
+    return !operator==(cc);
+}
+
 OutputDevice::OutputDevice(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
@@ -126,7 +141,8 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     edidCallback,
     enabledCallback,
     uuidCallback,
-    scaleFCallback
+    scaleFCallback,
+    colorcurvesCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -301,6 +317,33 @@ void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* 
     }
 }
 
+void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output,
+                                                wl_array *red,
+                                                wl_array *green,
+                                                wl_array *blue)
+{
+    Q_UNUSED(output);
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    auto cc = ColorCurves();
+
+    auto setCurve = [](const wl_array *curve, QVector<quint16> *destination) {
+        destination->resize(curve->size / sizeof(uint16_t));
+        memcpy(destination->data(), curve->data, curve->size);
+    };
+    setCurve(red, &cc.red);
+    setCurve(green, &cc.green);
+    setCurve(blue, &cc.blue);
+
+    if (o->colorCurves != cc) {
+        o->colorCurves = cc;
+        emit o->q->colorCurvesChanged();
+        if (o->done) {
+            emit o->q->changed();
+        }
+    }
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -452,6 +495,11 @@ OutputDevice::Enablement OutputDevice::enabled() const
 QByteArray OutputDevice::uuid() const
 {
     return d->uuid;
+}
+
+OutputDevice::ColorCurves OutputDevice::colorCurves() const
+{
+    return d->colorCurves;
 }
 
 void OutputDevice::destroy()

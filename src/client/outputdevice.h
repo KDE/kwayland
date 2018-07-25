@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2013  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2018  Roman Gilg <subdiff@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <QPointer>
 #include <QSize>
+#include <QVector>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -126,6 +128,12 @@ public:
 
         bool operator==(const Mode &m) const;
     };
+    struct ColorCurves {
+        QVector<quint16> red, green, blue;
+
+        bool operator==(const ColorCurves &cc) const;
+        bool operator!=(const ColorCurves &cc) const;
+    };
     explicit OutputDevice(QObject *parent = nullptr);
     virtual ~OutputDevice();
 
@@ -205,6 +213,11 @@ public:
      * directly from client surfaces.
      **/
     Transform transform() const;
+    /**
+     * Color curves.
+     * @since 5.50
+     **/
+    ColorCurves colorCurves() const;
 
     /**
      * @returns The Modes of this OutputDevice.
@@ -282,6 +295,12 @@ Q_SIGNALS:
      **/
     void modeChanged(const KWayland::Client::OutputDevice::Mode &mode);
     /**
+     * Emitted whenever the color curves changed.
+     *
+     * @since 5.TODO
+     **/
+    void colorCurvesChanged();
+    /**
      * The corresponding global for this interface on the Registry got removed.
      *
      * This signal gets only emitted if the OutputDevice got created by
@@ -303,6 +322,7 @@ Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Transform)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Enablement)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Mode)
+Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::ColorCurves)
 Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::OutputDevice::Mode::Flags)
 
 #endif

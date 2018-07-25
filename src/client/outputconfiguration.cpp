@@ -177,6 +177,30 @@ void OutputConfiguration::setScaleF(OutputDevice *outputdevice, qreal scale)
     }
 }
 
+void OutputConfiguration::setColorCurves(OutputDevice *outputdevice,
+                                         QVector<quint16> red, QVector<quint16> green, QVector<quint16> blue)
+{
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+
+    wl_array wlRed, wlGreen, wlBlue;
+
+    auto fillArray = [](QVector<quint16> &origin, wl_array *dest) {
+        wl_array_init(dest);
+        const size_t memLength = sizeof(uint16_t) * origin.size();
+        void *s = wl_array_add(dest, memLength);
+        memcpy(s, origin.data(), memLength);
+    };
+    fillArray(red, &wlRed);
+    fillArray(green, &wlGreen);
+    fillArray(blue, &wlBlue);
+
+    org_kde_kwin_outputconfiguration_colorcurves(d->outputconfiguration, od, &wlRed, &wlGreen, &wlBlue);
+
+    wl_array_release(&wlRed);
+    wl_array_release(&wlGreen);
+    wl_array_release(&wlBlue);
+}
+
 void OutputConfiguration::apply()
 {
     org_kde_kwin_outputconfiguration_apply(d->outputconfiguration);

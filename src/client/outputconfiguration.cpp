@@ -164,8 +164,17 @@ void OutputConfiguration::setPosition(OutputDevice *outputdevice, const QPoint &
 
 void OutputConfiguration::setScale(OutputDevice *outputdevice, qint32 scale)
 {
+    setScaleF(outputdevice, scale);
+}
+
+void OutputConfiguration::setScaleF(OutputDevice *outputdevice, qreal scale)
+{
     org_kde_kwin_outputdevice *od = outputdevice->output();
-    org_kde_kwin_outputconfiguration_scale(d->outputconfiguration, od, scale);
+    if (wl_proxy_get_version(d->outputconfiguration) < ORG_KDE_KWIN_OUTPUTCONFIGURATION_SCALEF_SINCE_VERSION) {
+        org_kde_kwin_outputconfiguration_scale(d->outputconfiguration, od, qRound(scale));
+    } else {
+        org_kde_kwin_outputconfiguration_scalef(d->outputconfiguration, od, wl_fixed_from_double(scale));
+    }
 }
 
 void OutputConfiguration::apply()

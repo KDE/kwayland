@@ -49,7 +49,7 @@ public:
     QPoint globalPosition;
     QString manufacturer;
     QString model;
-    int scale = 1;
+    qreal scale = 1.0;
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
     Modes modes;
@@ -67,6 +67,7 @@ private:
     static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
+    static void scaleFCallback(void *data, org_kde_kwin_outputdevice *output, wl_fixed_t scale);
 
     static void edidCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw);
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
@@ -76,7 +77,7 @@ private:
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
     void setModel(const QString &model);
-    void setScale(int scale);
+    void setScale(qreal scale);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
     void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
@@ -124,7 +125,8 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     scaleCallback,
     edidCallback,
     enabledCallback,
-    uuidCallback
+    uuidCallback,
+    scaleFCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -245,6 +247,13 @@ void OutputDevice::Private::scaleCallback(void *data, org_kde_kwin_outputdevice 
     o->setScale(scale);
 }
 
+void OutputDevice::Private::scaleFCallback(void *data, org_kde_kwin_outputdevice *output, wl_fixed_t scale_fixed)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_ASSERT(o->output == output);
+    o->setScale(wl_fixed_to_double(scale_fixed));
+}
+
 void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *output)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
@@ -327,7 +336,7 @@ void OutputDevice::Private::setPhysicalSize(const QSize &size)
     physicalSize = size;
 }
 
-void OutputDevice::Private::setScale(int s)
+void OutputDevice::Private::setScale(qreal s)
 {
     scale = s;
 }
@@ -393,8 +402,14 @@ int OutputDevice::refreshRate() const
 
 int OutputDevice::scale() const
 {
+    return qRound(d->scale);
+}
+
+qreal OutputDevice::scaleF() const
+{
     return d->scale;
 }
+
 
 bool OutputDevice::isValid() const
 {

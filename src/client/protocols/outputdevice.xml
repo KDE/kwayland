@@ -29,7 +29,7 @@
         ]]></copyright>
 
 
-<interface name="org_kde_kwin_outputdevice" version="1">
+<interface name="org_kde_kwin_outputdevice" version="2">
     <description summary="output configuration representation">
         An outputdevice describes a display device available to the compositor.
         outputdevice is similar to wl_output, but focuses on output
@@ -227,6 +227,34 @@
         </description>
         <arg name="uuid" type="string" summary="output devices ID"/>
     </event>
+
+    <event name="scalef" since="2">
+        <description summary="output scaling properties">
+            This event contains scaling geometry information
+            that is not in the geometry event. It may be sent after
+            binding the output object or if the output scale changes
+            later. If it is not sent, the client should assume a
+            scale of 1.
+
+            A scale larger than 1 means that the compositor will
+            automatically scale surface buffers by this amount
+            when rendering. This is used for high resolution
+            displays where applications rendering at the native
+            resolution would be too small to be legible.
+
+            It is intended that scaling aware clients track the
+            current output of a surface, and if it is on a scaled
+            output it should use wl_surface.set_buffer_scale with
+            the scale of the output. That way the compositor can
+            avoid scaling the surface, and the client can supply
+            a higher detail image.
+
+            wl_output will keep the output scale as an integer. In every situation except
+            configuring the window manager you want to use that.
+        </description>
+        <arg name="factor" type="fixed" summary="scaling factor of output"/>
+    </event>
+
 
 
 </interface>

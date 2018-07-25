@@ -172,6 +172,10 @@
         <arg name="scale" type="fixed" summary="scaling factor"/>
     </request>
 
+    <request name="destroy" type="destructor" since="2">
+        <description summary="release the outputconfiguration object"/>
+    </request>
+
 </interface>
 
 </protocol>

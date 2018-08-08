@@ -51,6 +51,8 @@ public:
     QString manufacturer;
     QString model;
     qreal scale = 1.0;
+    QString serialNumber;
+    QString eisaId;
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
     Modes modes;
@@ -80,11 +82,16 @@ private:
     static void colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output,
                                     wl_array *red, wl_array *green, wl_array *blue);
 
+    static void serialNumberCallback(void *data, org_kde_kwin_outputdevice *output, const char *serialNumber);
+    static void eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *eisa);
+
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
     void setModel(const QString &model);
     void setScale(qreal scale);
+    void setSerialNumber(const QString &serialNumber);
+    void setEisaId(const QString &eisaId);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
     void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
@@ -142,7 +149,9 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     enabledCallback,
     uuidCallback,
     scaleFCallback,
-    colorcurvesCallback
+    colorcurvesCallback,
+    serialNumberCallback,
+    eisaIdCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -344,6 +353,20 @@ void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputd
     }
 }
 
+void OutputDevice::Private::serialNumberCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_UNUSED(output);
+    o->setSerialNumber(raw);
+}
+
+void OutputDevice::Private::eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_UNUSED(output);
+    o->setEisaId(raw);
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -372,6 +395,16 @@ void OutputDevice::Private::setManufacturer(const QString &m)
 void OutputDevice::Private::setModel(const QString &m)
 {
     model = m;
+}
+
+void OutputDevice::Private::setSerialNumber(const QString &sn)
+{
+    serialNumber = sn;
+}
+
+void OutputDevice::Private::setEisaId(const QString &e)
+{
+    eisaId = e;
 }
 
 void OutputDevice::Private::setPhysicalSize(const QSize &size)
@@ -415,6 +448,16 @@ QString OutputDevice::manufacturer() const
 QString OutputDevice::model() const
 {
     return d->model;
+}
+
+QString OutputDevice::serialNumber() const
+{
+    return d->serialNumber;
+}
+
+QString OutputDevice::eisaId() const
+{
+    return d->eisaId;
 }
 
 org_kde_kwin_outputdevice *OutputDevice::output()

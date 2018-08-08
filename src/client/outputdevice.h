@@ -168,6 +168,14 @@ public:
      **/
     QString model() const;
     /**
+     * Textual representation of serial number.
+     */
+    QString serialNumber() const;
+    /**
+     * Textual representation of EISA identifier.
+     */
+    QString eisaId() const;
+    /**
      * Size in the current mode.
      **/
     QSize pixelSize() const;

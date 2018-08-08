@@ -273,6 +273,21 @@
              summary="blue color ramp"/>
     </event>
 
+    <event name="serial_number" since="2">
+        <description summary="Serial Number">
+            Serial ID of the monitor, sent on startup before the first done event.
+        </description>
+        <arg name="serialNumber" type="string"
+                summary="textual representation of serial number"/>
+    </event>
+    <event name="eisa_id" since="2">
+        <description summary="EISA ID">
+            EISA ID of the monitor, sent on startup before the first done event.
+        </description>
+        <arg name="eisaId" type="string"
+             summary="textual representation of EISA identifier"/>
+    </event>
+
 </interface>
 
 

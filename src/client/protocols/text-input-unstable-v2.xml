@@ -381,8 +381,8 @@
 	This event should be handled as part of a following commit_string
 	or preedit_string event.
       </description>
-      <arg name="before_length" type="uint" summary="length of text before current cursor positon"/>
-      <arg name="after_length" type="uint" summary="length of text after current cursor positon"/>
+      <arg name="before_length" type="uint" summary="length of text before current cursor position"/>
+      <arg name="after_length" type="uint" summary="length of text after current cursor position"/>
     </event>
 
     <event name="modifiers_map">

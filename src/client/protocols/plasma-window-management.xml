@@ -242,7 +242,7 @@
     <event name="geometry" since="6">
         <description summary="The geometry of this window in absolute coordinates">
             This event will be sent whenever the window geometry of this org_kde_plasma_window changes.
-            The coordinages are in absolute coordinates of the windowing system.
+            The coordinates are in absolute coordinates of the windowing system.
         </description>
         <arg name="x" type="int" summary="x position of the org_kde_plasma_window"/>
         <arg name="y" type="int" summary="y position of the org_kde_plasma_window"/>

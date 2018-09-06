@@ -44,7 +44,7 @@ class Surface;
  * The model resets when the PlasmaWindowManagement parent signals that its
  * interface is about to be destroyed.
  *
- * To use this class you can create an instance yourself, or preferrably use the
+ * To use this class you can create an instance yourself, or preferably use the
  * convenience method in PlasmaWindowManagement:
  * @code
  * PlasmaWindowModel *model = wm->createWindowModel();

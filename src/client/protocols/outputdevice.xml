@@ -45,7 +45,7 @@
         accordingly.
 
         This object is published as global during start up for every available
-        display devcies, or when one later becomes available, for example by
+        display devices, or when one later becomes available, for example by
         being hotplugged via a physical connector.
     </description>
 
@@ -257,7 +257,7 @@
 
     <event name="colorcurves" since="2">
         <description summary="output color curves">
-            Decribes the color intensity profile of the output.
+            Describes the color intensity profile of the output.
             Commonly used for gamma/color correction.
 
             The array contains all color ramp values of the output.

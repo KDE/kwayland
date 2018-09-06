@@ -45,7 +45,7 @@
 
 	ARBITRARY_MODE:
 	This is a hint to the client that indicates that the compositor is
-	capable of setting practially any mode on its outputs.  If this
+	capable of setting practically any mode on its outputs.  If this
 	capability is provided, wl_fullscreen_shell.present_surface_for_mode
 	will almost never fail and clients should feel free to set whatever
 	mode they like.  If the compositor does not advertise this, it may
@@ -73,7 +73,7 @@
 	once for each capability advertised.  Valid capabilities are given by
 	the wl_fullscreen_shell.capability enum.  If clients want to take
 	advantage of any of these capabilities, they sould use a
-	wl_display.sync request immediatly after binding to ensure that they
+	wl_display.sync request immediately after binding to ensure that they
 	receive all the capability events.
       </description>
       <arg name="capabilty" type="uint"/>

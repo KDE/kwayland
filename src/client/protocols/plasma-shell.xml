@@ -203,7 +203,7 @@
         Assign a role to a shell surface.
 
         The compositor handles surfaces depending on their role.
-        See the explaination below.
+        See the explanation below.
 
         This request fails if the surface already has a role, this means
         the surface role may be assigned only once.

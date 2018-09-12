@@ -127,8 +127,8 @@ public:
      * timeout. A Wayland server might for example have a minimum timeout which is
      * larger than @p msec.
      *
-     * @param msec The duration in milli seconds after which an idle timeout should fire
-     * @param seat The Seat on which the user acitivity should be monitored.
+     * @param msec The duration in milliseconds after which an idle timeout should fire
+     * @param seat The Seat on which the user activity should be monitored.
      **/
     IdleTimeout *getTimeout(quint32 msecs, Seat *seat, QObject *parent = nullptr);
 

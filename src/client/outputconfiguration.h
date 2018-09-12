@@ -177,7 +177,7 @@ public:
     /**
      * Position this output in the global space, relative to other outputs.
      * QPoint(0, 0) for top-left. The position is the top-left corner of this output.
-     * There may not be gaps between outputs, they have to be positioned adjacend to
+     * There may not be gaps between outputs, they have to be positioned adjacent to
      * each other.
      * The changes done in this call will be recorded in the
      * OutputDevice and only applied after apply() has been called.

@@ -104,7 +104,7 @@ public:
 
     /**
      * Specifies in what direction the popup should be positioned around the anchor
-     * i.e if the gravity is "bottom", then then the top of top of the poup will be at the anchor edge
+     * i.e if the gravity is "bottom", then then the top of top of the popup will be at the anchor edge
      * if the gravity is top, then the bottom of the popup will be at the anchor edge
      *
      */
@@ -128,7 +128,7 @@ public:
      * Specifies how the compositor should position the popup if it does not fit in the requested position
      */
     Constraints constraints() const;
-    void setConstraints(Constraints constaints);
+    void setConstraints(Constraints constraints);
 
     /**
      * An additional offset that should be applied from the anchor.

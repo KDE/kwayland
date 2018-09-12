@@ -180,7 +180,7 @@ public:
     void commit();
 
     /**
-     * Sets the area of the window that will have a contrastred
+     * Sets the area of the window that will have a contrasted
      * background.
      * The region will have to be created with
      * Compositor::createRegion(QRegion)

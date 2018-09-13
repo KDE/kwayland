@@ -3,7 +3,7 @@ remove_definitions(-DQT_NO_CAST_FROM_ASCII)
 remove_definitions(-DQT_NO_CAST_TO_ASCII)
 
 # needed to access QPA
-include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
+include_directories(SYSTEM ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
     appmenu.cpp

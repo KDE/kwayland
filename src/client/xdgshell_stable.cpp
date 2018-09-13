@@ -312,7 +312,7 @@ void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct xdg
         s->q->setSize(s->pendingSize);
         s->pendingSize = QSize();
     }
-    s->pendingState = 0;
+    s->pendingState = nullptr;
 }
 
 void XdgTopLevelStable::Private::configureCallback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)

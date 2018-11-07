@@ -55,7 +55,7 @@ class PlasmaVirtualDesktop;
  *
  * The PlasmaVirtualDesktopManagement can be used as a drop-in replacement for any org_kde_plasma_virtual_desktop_management
  * pointer as it provides matching cast operators.
- * @since 5.46
+ * @since 5.52
  *
  * @see Registry
  **/

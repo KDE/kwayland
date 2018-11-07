@@ -178,7 +178,7 @@ public:
         AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
         ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
         RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
-        PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.47
+        PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
         XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
         XdgShellStable ///refers to xdg_wm_base @since 5.48
     };
@@ -402,7 +402,7 @@ public:
      *
      * Prefer using createPlasmaShell instead.
      * @see createPlasmaShell
-     * @since 5.46
+     * @since 5.52
      **/
     org_kde_plasma_virtual_desktop_management *bindPlasmaVirtualDesktopManagement(uint32_t name, uint32_t version) const;
     /**
@@ -839,7 +839,7 @@ public:
      * @param parent The parent for PlasmaShell
      *
      * @returns The created PlasmaShell.
-     * @since 5.46
+     * @since 5.52
      **/
     PlasmaVirtualDesktopManagement *createPlasmaVirtualDesktopManagement(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
@@ -1279,7 +1279,7 @@ Q_SIGNALS:
      * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
-     * @since 5.46
+     * @since 5.52
      **/
     void plasmaVirtualDesktopManagementAnnounced(quint32 name, quint32 version);
     /**
@@ -1527,7 +1527,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets removed.
      * @param name The name for the removed interface
-     * @since 5.46
+     * @since 5.52
      **/
     void plasmaVirtualDesktopManagementRemoved(quint32 name);
     /**

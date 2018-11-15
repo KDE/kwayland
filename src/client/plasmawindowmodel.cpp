@@ -164,6 +164,14 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::geometryChanged, q,
         [window, this] { this->dataChanged(window, Geometry); }
     );
+
+    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopEntered, q,
+        [window, this] { this->dataChanged(window, VirtualDesktops); }
+    );
+
+    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopLeft, q,
+        [window, this] { this->dataChanged(window, VirtualDesktops); }
+    );
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
@@ -273,6 +281,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->isCloseable();
     } else if (role == Geometry) {
         return window->geometry();
+    } else if (role == VirtualDesktops) {
+        return window->plasmaVirtualDesktops();
     }
 
     return QVariant();

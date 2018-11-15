@@ -471,6 +471,9 @@ void PlasmaWindow::Private::virtualDesktopEnteredCallback(void *data, org_kde_pl
     const QString stringId(QString::fromUtf8(id));
     p->plasmaVirtualDesktops << stringId;
     emit p->q->plasmaVirtualDesktopEntered(stringId);
+    if (p->plasmaVirtualDesktops.count() == 1) {
+        emit p->q->onAllDesktopsChanged();
+    }
 }
 
 void PlasmaWindow::Private::virtualDesktopLeftCallback(void *data, org_kde_plasma_window *window, const char *id)
@@ -480,6 +483,9 @@ void PlasmaWindow::Private::virtualDesktopLeftCallback(void *data, org_kde_plasm
     const QString stringId(QString::fromUtf8(id));
     p->plasmaVirtualDesktops.removeAll(stringId);
     emit p->q->plasmaVirtualDesktopLeft(stringId);
+    if (p->plasmaVirtualDesktops.isEmpty()) {
+        emit p->q->onAllDesktopsChanged();
+    }
 }
 
 void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state)

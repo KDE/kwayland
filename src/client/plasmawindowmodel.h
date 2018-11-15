@@ -70,6 +70,9 @@ public:
         IsMinimized,
         IsKeepAbove,
         IsKeepBelow,
+        /**
+          @deprecated @see VirtualDesktops
+         */
         VirtualDesktop,
         IsOnAllDesktops,
         IsDemandingAttention,
@@ -110,6 +113,10 @@ public:
          * @since 5.47
          */
         SkipSwitcher,
+        /**
+         * @since 5.55
+         */
+        VirtualDesktops
     };
     Q_ENUM(AdditionalRoles)
 

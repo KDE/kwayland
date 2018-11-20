@@ -16,6 +16,7 @@ include(CMakePackageConfigHelpers)
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
 include(CMakeFindFrameworks)
+include(ECMQtDeclareLoggingCategory)
 
 include(ECMPoQmTools)
 include(ECMAddQch)

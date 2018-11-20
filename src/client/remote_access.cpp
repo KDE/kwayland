@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remote_access.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
-#include "logging_p.h"
+#include "logging.h"
 // Wayland
 #include <wayland-remote-access-client-protocol.h>
 

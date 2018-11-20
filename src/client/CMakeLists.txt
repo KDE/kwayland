@@ -28,7 +28,6 @@ set(CLIENT_LIB_SRCS
     outputconfiguration.cpp
     outputmanagement.cpp
     outputdevice.cpp
-    logging.cpp
     output.cpp
     pointer.cpp
     pointerconstraints.cpp
@@ -62,6 +61,8 @@ set(CLIENT_LIB_SRCS
     xdgoutput.cpp
     ../compat/wayland-xdg-shell-v5-protocol.c
 )
+
+ecm_qt_declare_logging_category(CLIENT_LIB_SRCS HEADER logging.h IDENTIFIER KWAYLAND_CLIENT CATEGORY_NAME kwayland-client DEFAULT_SEVERITY Critical)
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/fullscreen-shell.xml

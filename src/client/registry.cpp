@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "idle.h"
 #include "idleinhibit.h"
 #include "remote_access.h"
-#include "logging_p.h"
+#include "logging.h"
 #include "outputconfiguration.h"
 #include "outputmanagement.h"
 #include "outputdevice.h"

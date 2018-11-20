@@ -19,7 +19,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 #include "outputdevice.h"
-#include "logging_p.h"
+#include "logging.h"
 #include "wayland_pointer_p.h"
 // Qt
 #include <QDebug>

@@ -289,7 +289,7 @@ set(CLIENT_LIB_HEADERS
   touch.h
   textinput.h
   xdgshell.h
-  xdgforeign_v2.h
+  xdgforeign.h
   xdgoutput.h
 )
 

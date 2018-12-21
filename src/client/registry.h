@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2018  David Edmundson <davidedmundson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -63,6 +64,7 @@ struct zxdg_exporter_v2;
 struct zxdg_importer_v2;
 struct zwp_idle_inhibit_manager_v1;
 struct zxdg_output_manager_v1;
+struct zxdg_decoration_manager_v1;
 
 namespace KWayland
 {
@@ -108,6 +110,7 @@ class XdgImporterUnstableV2;
 class XdgExporter;
 class XdgImporter;
 class XdgOutputManager;
+class XdgDecorationManager;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -180,7 +183,8 @@ public:
         RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
         PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
         XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
-        XdgShellStable ///refers to xdg_wm_base @since 5.48
+        XdgShellStable, ///refers to xdg_wm_base @since 5.48
+        XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.XDG_DECO_VERSION
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -650,6 +654,17 @@ public:
      * @since 5.47
      **/
     zxdg_output_manager_v1 *bindXdgOutputUnstableV1(uint32_t name, uint32_t version) const;
+
+    /**
+     * Binds the zxdg_decoration_manager_v1 with @p name and @p version.
+     * If the @p name does not exist,
+     * @c null will be returned.
+     *
+     * Prefer using createXdgDecorationManager instead.
+     * @see createXdgDecorationManager
+     * @since 5.XDG_DECO_VERSION
+     **/
+    zxdg_decoration_manager_v1 *bindXdgDecorationUnstableV1(uint32_t name, uint32_t version) const;
 
     ///@}
 
@@ -1190,6 +1205,23 @@ public:
      **/
     XdgOutputManager *createXdgOutputManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
+    /**
+     * Creates an XdgDecorationManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the zxdg_decoration_manager_v1 interface,
+     * the returned XdgDecorationManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the zxdg_decoration_manager_v1 interface to bind
+     * @param version The version or the zxdg_decoration_manager_v1 interface to use
+     * @param parent The parent for XdgDecorationManager
+     *
+     * @returns The created XdgDecorationManager.
+     * @since 5.XDG_DECO_VERSION
+     **/
+    XdgDecorationManager *createXdgDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
     ///@}
 
 
@@ -1459,6 +1491,13 @@ Q_SIGNALS:
      **/
     void xdgShellStableAnnounced(quint32 name, quint32 version);
 
+    /**
+     * Emitted whenever a zxdg_decoration_manager_v1 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.XDG_DECO_VERSION
+     **/
+    void xdgDecorationAnnounced(quint32 name, quint32 version);
 
     ///@}
 
@@ -1680,6 +1719,13 @@ Q_SIGNALS:
      * @since 5.48
      **/
     void xdgShellStableRemoved(quint32 name);
+
+    /**
+     * Emitted whenever a zxdg_decoration_manager_v1 gets removed.
+     * @param name The name of the removed interface
+     * @since 5.XDG_DECO_VERSION
+     **/
+    void xdgDecorationRemoved(quint32 name);
 
     ///@}
     /**

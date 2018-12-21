@@ -1,5 +1,6 @@
 /********************************************************************
 Copyright 2014  Martin Gräßlin <mgraesslin@kde.org>
+Copyright 2018  David Edmundson <davidedmundson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -56,6 +57,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "appmenu.h"
 #include "server_decoration_palette.h"
 #include "xdgoutput.h"
+#include "xdgdecoration.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -88,6 +90,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-appmenu-client-protocol.h>
 #include <wayland-server-decoration-palette-client-protocol.h>
 #include <wayland-xdg-output-unstable-v1-client-protocol.h>
+#include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -367,6 +370,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &xdg_wm_base_interface,
         &Registry::xdgShellStableAnnounced,
         &Registry::xdgShellStableRemoved
+    }},
+    {Registry::Interface::XdgDecorationUnstableV1, {
+        1,
+        QByteArrayLiteral("zxdg_decoration_manager_v1"),
+        &zxdg_decoration_manager_v1_interface,
+        &Registry::xdgDecorationAnnounced,
+        &Registry::xdgDecorationRemoved
     }}
 };
 
@@ -682,6 +692,7 @@ BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
 BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
 BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
 BIND(XdgOutputUnstableV1, zxdg_output_manager_v1)
+BIND(XdgDecorationUnstableV1, zxdg_decoration_manager_v1)
 
 #undef BIND
 #undef BIND2
@@ -822,6 +833,16 @@ XdgOutputManager *Registry::createXdgOutputManager(quint32 name, quint32 version
     switch(d->interfaceForName(name)) {
     case Interface::XdgOutputUnstableV1:
         return d->create<XdgOutputManager>(name, version, parent, &Registry::bindXdgOutputUnstableV1);
+    default:
+        return nullptr;
+    }
+}
+
+XdgDecorationManager *Registry::createXdgDecorationManager(quint32 name, quint32 version, QObject *parent)
+{
+    switch(d->interfaceForName(name)) {
+    case Interface::XdgDecorationUnstableV1:
+        return d->create<XdgDecorationManager>(name, version, parent, &Registry::bindXdgDecorationUnstableV1);
     default:
         return nullptr;
     }

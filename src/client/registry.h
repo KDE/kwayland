@@ -184,7 +184,7 @@ public:
         PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
         XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
         XdgShellStable, ///refers to xdg_wm_base @since 5.48
-        XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.XDG_DECO_VERSION
+        XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.54
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -662,7 +662,7 @@ public:
      *
      * Prefer using createXdgDecorationManager instead.
      * @see createXdgDecorationManager
-     * @since 5.XDG_DECO_VERSION
+     * @since 5.54
      **/
     zxdg_decoration_manager_v1 *bindXdgDecorationUnstableV1(uint32_t name, uint32_t version) const;
 
@@ -1218,7 +1218,7 @@ public:
      * @param parent The parent for XdgDecorationManager
      *
      * @returns The created XdgDecorationManager.
-     * @since 5.XDG_DECO_VERSION
+     * @since 5.54
      **/
     XdgDecorationManager *createXdgDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
@@ -1495,7 +1495,7 @@ Q_SIGNALS:
      * Emitted whenever a zxdg_decoration_manager_v1 interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
-     * @since 5.XDG_DECO_VERSION
+     * @since 5.54
      **/
     void xdgDecorationAnnounced(quint32 name, quint32 version);
 
@@ -1723,7 +1723,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a zxdg_decoration_manager_v1 gets removed.
      * @param name The name of the removed interface
-     * @since 5.XDG_DECO_VERSION
+     * @since 5.54
      **/
     void xdgDecorationRemoved(quint32 name);
 

@@ -60,6 +60,7 @@ class XdgShellSurface;
  * If you use the QtWayland QPA you do not need to use this class.
  *
  * @see Registry
+ * @since 5.54
  **/
 class KWAYLANDCLIENT_EXPORT XdgDecorationManager : public QObject
 {

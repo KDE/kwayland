@@ -23,6 +23,8 @@
         shell surface (wl_shell_surface or similar). By announcing support
         for this interface the server indicates that it supports server
         side decorations.
+
+        Use in conjunction with zxdg_decoration_manager_v1 is undefined.
       </description>
       <request name="create">
         <description summary="Create a server-side decoration object for a given surface">

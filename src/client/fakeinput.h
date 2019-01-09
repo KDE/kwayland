@@ -134,6 +134,12 @@ public:
      **/
     void requestPointerMove(const QSizeF &delta);
     /**
+     * Request an absolute pointer motion to @p pos position.
+     *
+     * @since 5.54
+     **/
+    void requestPointerMoveAbsolute(const QPointF &pos);
+    /**
      * Convenience overload.
      * @see requestPointerButtonPress(quint32)
      **/

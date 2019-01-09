@@ -100,6 +100,16 @@ void FakeInput::requestPointerMove(const QSizeF &delta)
     org_kde_kwin_fake_input_pointer_motion(d->manager, wl_fixed_from_double(delta.width()), wl_fixed_from_double(delta.height()));
 }
 
+void FakeInput::requestPointerMoveAbsolute(const QPointF &pos)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_POINTER_MOTION_ABSOLUTE_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_pointer_motion_absolute(d->manager, wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
+}
+
 void FakeInput::Private::sendPointerButtonState(Qt::MouseButton button, quint32 state)
 {
 #if HAVE_LINUX_INPUT_H

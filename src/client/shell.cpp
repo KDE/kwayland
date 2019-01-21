@@ -363,6 +363,16 @@ void ShellSurface::requestResize(Seat *seat, quint32 serial, Qt::Edges edges)
     wl_shell_surface_resize(d->surface, *seat, serial, wlEdge);
 }
 
+void ShellSurface::setTitle(const QString &title)
+{
+    wl_shell_surface_set_title(d->surface, title.toUtf8().constData());
+}
+
+void ShellSurface::setWindowClass(const QByteArray &windowClass)
+{
+    wl_shell_surface_set_class(d->surface, windowClass.constData());
+}
+
 QSize ShellSurface::size() const
 {
     return d->size;

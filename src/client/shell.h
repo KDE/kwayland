@@ -289,6 +289,27 @@ public:
     void requestResize(Seat *seat, quint32 serial, Qt::Edges edges);
 
     /**
+     * Sets a short title for the surface.
+     *
+     * This string may be used to identify the surface in a task bar, window list, or other user
+     * interface elements provided by the compositor.
+     *
+     * @since 5.55
+     **/
+    void setTitle(const QString &title);
+
+    /**
+     * Sets a window class for the surface.
+     *
+     * The surface class identifies the general class of applications to which the surface belongs.
+     * A common convention is to use the file name (or the full path if it is a non-standard location)
+     * of the application's .desktop file as the class.
+     *
+     * @since 5.55
+     **/
+    void setWindowClass(const QByteArray &windowClass);
+
+    /**
      * Creates a ShellSurface for the given @p window.
      * This is an integration feature for QtWayland. On non-wayland platforms this method returns
      * @c nullptr as well as for not created QWindows.

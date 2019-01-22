@@ -41,6 +41,7 @@ public:
     WaylandPointer<org_kde_plasma_virtual_desktop_management, org_kde_plasma_virtual_desktop_management_destroy> plasmavirtualdesktopmanagement;
     EventQueue *queue = nullptr;
 
+    quint32 rows = 1;
     QList<PlasmaVirtualDesktop *> desktops;
 
     inline QList<PlasmaVirtualDesktop*>::const_iterator constFindDesktop(const QString &id);
@@ -49,6 +50,7 @@ public:
 private:
     static void createdCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id, uint32_t position);
     static void removedCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id);
+    static void rowsCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows);
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management);
 
     PlasmaVirtualDesktopManagement *q;
@@ -103,7 +105,8 @@ inline QList<PlasmaVirtualDesktop*>::iterator PlasmaVirtualDesktopManagement::Pr
 const org_kde_plasma_virtual_desktop_management_listener PlasmaVirtualDesktopManagement::Private::s_listener = {
     createdCallback,
     removedCallback,
-    doneCallback
+    doneCallback,
+    rowsCallback
 };
 
 void PlasmaVirtualDesktopManagement::Private::createdCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, const char *id, uint32_t position)
@@ -134,6 +137,17 @@ void PlasmaVirtualDesktopManagement::Private::removedCallback(void *data, org_kd
     vd->destroy();
     vd->deleteLater();
     emit p->q->desktopRemoved(stringId);
+}
+
+void PlasmaVirtualDesktopManagement::Private::rowsCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management, uint32_t rows)
+{
+    auto p = reinterpret_cast<PlasmaVirtualDesktopManagement::Private*>(data);
+    Q_ASSERT(p->plasmavirtualdesktopmanagement == org_kde_plasma_virtual_desktop_management);
+    if (rows == 0) {
+        return;
+    }
+    p->rows = rows;
+    emit p->q->rowsChanged(rows);
 }
 
 void PlasmaVirtualDesktopManagement::Private::doneCallback(void *data, org_kde_plasma_virtual_desktop_management *org_kde_plasma_virtual_desktop_management)
@@ -251,6 +265,11 @@ void PlasmaVirtualDesktopManagement::requestCreateVirtualDesktop(const QString &
 QList <PlasmaVirtualDesktop *> PlasmaVirtualDesktopManagement::desktops() const
 {
     return d->desktops;
+}
+
+quint32 PlasmaVirtualDesktopManagement::rows() const
+{
+    return d->rows;
 }
 
 const org_kde_plasma_virtual_desktop_listener PlasmaVirtualDesktop::Private::s_listener = {

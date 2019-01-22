@@ -143,6 +143,12 @@ public:
      */
     QList <PlasmaVirtualDesktop *> desktops() const;
 
+    /**
+     * @returns How many rows the virtual desktops should be laid out into
+     * @since 5.55
+     */
+    quint32 rows() const;
+
     operator org_kde_plasma_virtual_desktop_management*();
     operator org_kde_plasma_virtual_desktop_management*() const;
 
@@ -158,6 +164,12 @@ Q_SIGNALS:
      * Emitted when a desktop has been removed
      */
     void desktopRemoved(const QString &id);
+
+    /**
+     * Emitted when the number of rows of virtual desktops has been changed by the server
+     * @since 5.55
+     */
+    void rowsChanged(quint32 rows);
 
     /**
      * This event is sent after all other properties has been

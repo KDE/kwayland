@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-<interface name="org_kde_plasma_virtual_desktop_management" version="1">
+<interface name="org_kde_plasma_virtual_desktop_management" version="2">
     <request name="get_virtual_desktop">
         <description summary="get the org_kde_plasma_virtual_desktop interface for a desktop">
             Given the id of a particular virtual desktop, get the corresponding org_kde_plasma_virtual_desktop which represents only the desktop with that id;
@@ -61,6 +61,10 @@
             changes to the org_kde_plasma_virtual_desktop_management properties to be seen as
             atomic, even if they happen via multiple events.
         </description>
+    </event>
+
+    <event name="rows" since="2">
+        <arg name="rows" type="uint" summary="Number of rows the virtual desktops are laid out into."/>
     </event>
 </interface>
 

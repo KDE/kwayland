@@ -31,6 +31,18 @@ namespace KWayland
 namespace Client
 {
 
+static Pointer::Axis wlAxisToPointerAxis(uint32_t axis)
+{
+    switch (axis) {
+    case WL_POINTER_AXIS_VERTICAL_SCROLL:
+        return Pointer::Axis::Vertical;
+    case WL_POINTER_AXIS_HORIZONTAL_SCROLL:
+        return Pointer::Axis::Horizontal;
+    }
+
+    Q_UNREACHABLE();
+}
+
 class Q_DECL_HIDDEN Pointer::Private
 {
 public:
@@ -164,14 +176,7 @@ void Pointer::Private::axisCallback(void *data, wl_pointer *pointer, uint32_t ti
 {
     auto p = reinterpret_cast<Pointer::Private*>(data);
     Q_ASSERT(p->pointer == pointer);
-    auto toAxis = [axis] {
-        if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL) {
-            return Axis::Horizontal;
-        } else {
-            return Axis::Vertical;
-        }
-    };
-    emit p->q->axisChanged(time, toAxis(), wl_fixed_to_double(value));
+    emit p->q->axisChanged(time, wlAxisToPointerAxis(axis), wl_fixed_to_double(value));
 }
 
 void Pointer::Private::frameCallback(void *data, wl_pointer *pointer)
@@ -183,28 +188,41 @@ void Pointer::Private::frameCallback(void *data, wl_pointer *pointer)
 
 void Pointer::Private::axisSourceCallback(void *data, wl_pointer *pointer, uint32_t axis_source)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(pointer)
-    Q_UNUSED(axis_source)
-    // TODO: implement
+    auto p = reinterpret_cast<Pointer::Private*>(data);
+    Q_ASSERT(p->pointer == pointer);
+    AxisSource source;
+    switch (axis_source) {
+    case WL_POINTER_AXIS_SOURCE_WHEEL:
+        source = AxisSource::Wheel;
+        break;
+    case WL_POINTER_AXIS_SOURCE_FINGER:
+        source = AxisSource::Finger;
+        break;
+    case WL_POINTER_AXIS_SOURCE_CONTINUOUS:
+        source = AxisSource::Continuous;
+        break;
+    case WL_POINTER_AXIS_SOURCE_WHEEL_TILT:
+        source = AxisSource::WheelTilt;
+        break;
+    default:
+        Q_UNREACHABLE();
+        break;
+    }
+    emit p->q->axisSourceChanged(source);
 }
 
 void Pointer::Private::axisStopCallback(void *data, wl_pointer *pointer, uint32_t time, uint32_t axis)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(pointer)
-    Q_UNUSED(time)
-    Q_UNUSED(axis)
-    // TODO: implement
+    auto p = reinterpret_cast<Pointer::Private*>(data);
+    Q_ASSERT(p->pointer == pointer);
+    emit p->q->axisStopped(time, wlAxisToPointerAxis(axis));
 }
 
 void Pointer::Private::axisDiscreteCallback(void *data, wl_pointer *pointer, uint32_t axis, int32_t discrete)
 {
-    Q_UNUSED(data)
-    Q_UNUSED(pointer)
-    Q_UNUSED(axis)
-    Q_UNUSED(discrete)
-    // TODO: implement
+    auto p = reinterpret_cast<Pointer::Private*>(data);
+    Q_ASSERT(p->pointer == pointer);
+    emit p->q->axisDiscreteChanged(wlAxisToPointerAxis(axis), discrete);
 }
 
 void Pointer::setCursor(Surface *surface, const QPoint &hotspot)

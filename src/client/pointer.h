@@ -55,6 +55,12 @@ public:
         Vertical,
         Horizontal
     };
+    enum class AxisSource {
+        Wheel,
+        Finger,
+        Continuous,
+        WheelTilt
+    };
     explicit Pointer(QObject *parent = nullptr);
     virtual ~Pointer();
 
@@ -169,6 +175,24 @@ Q_SIGNALS:
      * @param delta
      **/
     void axisChanged(quint32 time, KWayland::Client::Pointer::Axis axis, qreal delta);
+    /**
+     * Indicates the source of scroll and other axes.
+     *
+     * @since 5.59
+     **/
+    void axisSourceChanged(KWayland::Client::Pointer::AxisSource source);
+    /**
+     * Discrete step information for scroll and other axes.
+     *
+     * @since 5.59
+     **/
+    void axisDiscreteChanged(KWayland::Client::Pointer::Axis axis, qint32 discreteDelta);
+    /**
+     * Stop notification for scroll and other axes.
+     *
+     * @since 5.59
+     **/
+    void axisStopped(quint32 time, KWayland::Client::Pointer::Axis axis);
 
     /**
      * Indicates the end of a set of events that logically belong together.
@@ -188,5 +212,6 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Client::Pointer::ButtonState)
 Q_DECLARE_METATYPE(KWayland::Client::Pointer::Axis)
+Q_DECLARE_METATYPE(KWayland::Client::Pointer::AxisSource)
 
 #endif

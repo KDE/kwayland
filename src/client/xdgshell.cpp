@@ -360,6 +360,11 @@ void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
     d->requestGrab(seat, serial);
 }
 
+void XdgShellPopup::ackConfigure(quint32 serial)
+{
+    d->ackConfigure(serial);
+}
+
 XdgShellPopup::operator xdg_surface*() {
     return *(d.data());
 }

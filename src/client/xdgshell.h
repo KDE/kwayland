@@ -586,6 +586,16 @@ public:
      */
     void requestGrab(Seat *seat, quint32 serial);
 
+    /**
+     * When a configure event is received, if a client commits the
+     * Surface in response to the configure event, then the client
+     * must make an ackConfigure request sometime before the commit
+     * request, passing along the @p serial of the configure event.
+     * @see configureRequested
+     * @since 5.56
+     **/
+    void ackConfigure(quint32 serial);
+
     operator xdg_surface*();
     operator xdg_surface*() const;
     operator xdg_popup*();

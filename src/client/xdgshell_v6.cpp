@@ -483,6 +483,7 @@ public:
     void destroy() override;
     bool isValid() const override;
     void requestGrab(Seat *seat, quint32 serial) override;
+    void ackConfigure(quint32 serial) override;
 
     using XdgShellPopup::Private::operator xdg_popup*;
     using XdgShellPopup::Private::operator xdg_surface*;
@@ -580,6 +581,10 @@ void XdgShellPopupUnstableV6::Private::requestGrab(Seat *seat, quint32 serial)
     zxdg_popup_v6_grab(xdgpopupv6, *seat, serial);
 }
 
+void XdgShellPopupUnstableV6::Private::ackConfigure(quint32 serial)
+{
+    zxdg_surface_v6_ack_configure(xdgsurfacev6, serial);
+}
 
 XdgShellPopupUnstableV6::XdgShellPopupUnstableV6(QObject *parent)
     : XdgShellPopup(new Private(this), parent)

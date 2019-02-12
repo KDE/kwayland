@@ -268,6 +268,10 @@ public:
         Q_UNUSED(seat);
         Q_UNUSED(serial);
     };
+    virtual void ackConfigure(quint32 serial) {
+        Q_UNUSED(serial);
+    }
+
     virtual operator xdg_surface*() {
         return nullptr;
     }

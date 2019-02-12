@@ -502,19 +502,19 @@ public:
     using XdgShellPopup::Private::operator zxdg_popup_v6*;
     using XdgShellPopup::Private::operator zxdg_surface_v6*;
     operator xdg_surface*() override {
-        return xdgsurfacev6;
+        return xdgsurface;
     }
     operator xdg_surface*() const override {
-        return xdgsurfacev6;
+        return xdgsurface;
     }
     operator xdg_popup*() override {
-        return xdgpopupv6;
+        return xdgpopup;
     }
     operator xdg_popup*() const override {
-        return xdgpopupv6;
+        return xdgpopup;
     }
-    WaylandPointer<xdg_surface, xdg_surface_destroy> xdgsurfacev6;
-    WaylandPointer<xdg_popup, xdg_popup_destroy> xdgpopupv6;
+    WaylandPointer<xdg_surface, xdg_surface_destroy> xdgsurface;
+    WaylandPointer<xdg_popup, xdg_popup_destroy> xdgpopup;
 
     QRect pendingRect;
 
@@ -554,7 +554,7 @@ void XdgShellPopupStable::Private::surfaceConfigureCallback(void *data, struct x
 void XdgShellPopupStable::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
 {
     auto s = static_cast<XdgShellPopupStable::Private*>(data);
-    Q_ASSERT(s->xdgpopupv6 == xdg_popup);
+    Q_ASSERT(s->xdgpopup == xdg_popup);
     emit s->q->popupDone();
 }
 
@@ -566,33 +566,33 @@ XdgShellPopupStable::Private::Private(XdgShellPopup *q)
 void XdgShellPopupStable::Private::setup(xdg_surface *s, xdg_popup *p)
 {
     Q_ASSERT(p);
-    Q_ASSERT(!xdgsurfacev6);
-    Q_ASSERT(!xdgpopupv6);
+    Q_ASSERT(!xdgsurface);
+    Q_ASSERT(!xdgpopup);
 
-    xdgsurfacev6.setup(s);
-    xdgpopupv6.setup(p);
-    xdg_surface_add_listener(xdgsurfacev6, &s_surfaceListener, this);
-    xdg_popup_add_listener(xdgpopupv6, &s_popupListener, this);
+    xdgsurface.setup(s);
+    xdgpopup.setup(p);
+    xdg_surface_add_listener(xdgsurface, &s_surfaceListener, this);
+    xdg_popup_add_listener(xdgpopup, &s_popupListener, this);
 }
 
 void XdgShellPopupStable::Private::release()
 {
-    xdgpopupv6.release();
+    xdgpopup.release();
 }
 
 void XdgShellPopupStable::Private::destroy()
 {
-    xdgpopupv6.destroy();
+    xdgpopup.destroy();
 }
 
 bool XdgShellPopupStable::Private::isValid() const
 {
-    return xdgpopupv6.isValid();
+    return xdgpopup.isValid();
 }
 
 void XdgShellPopupStable::Private::requestGrab(Seat *seat, quint32 serial)
 {
-    xdg_popup_grab(xdgpopupv6, *seat, serial);
+    xdg_popup_grab(xdgpopup, *seat, serial);
 }
 
 

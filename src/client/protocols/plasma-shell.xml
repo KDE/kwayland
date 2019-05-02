@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_shell" version="5">
+  <interface name="org_kde_plasma_shell" version="6">
     <description summary="create shell windows and helpers">
       This interface is used by KF5 powered Wayland shells to communicate with
       the compositor and can only be bound one time.
@@ -130,7 +130,7 @@
     -->
   </interface>
 
-  <interface name="org_kde_plasma_surface" version="5">
+  <interface name="org_kde_plasma_surface" version="6">
     <description summary="metadata interface">
       An interface that may be implemented by a wl_surface, for
       implementations that provide the shell user interface.
@@ -190,6 +190,7 @@
       <entry name="onscreendisplay" value="3"/>
       <entry name="notification" value="4"/>
       <entry name="tooltip" value="5"/>
+      <entry name="criticalnotification" value="6" since="6"/>
 <!--
       <entry name="splash" value="1"/>
       <entry name="dashboard" value="3"/>

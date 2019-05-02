@@ -280,6 +280,14 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
     case Role::ToolTip:
         wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_TOOLTIP;
         break;
+    case Role::CriticalNotification:
+        if (wl_proxy_get_version(d->surface) < ORG_KDE_PLASMA_SURFACE_ROLE_CRITICALNOTIFICATION_SINCE_VERSION) {
+            // Fall back to generic notification type if not supported
+            wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_NOTIFICATION;
+        } else {
+            wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_CRITICALNOTIFICATION;
+        }
+        break;
     default:
         Q_UNREACHABLE();
         break;

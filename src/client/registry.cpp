@@ -120,7 +120,7 @@ struct SuppertedInterfaceData {
 };
 static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
     {Registry::Interface::Compositor, {
-        3,
+        4,
         QByteArrayLiteral("wl_compositor"),
         &wl_compositor_interface,
         &Registry::compositorAnnounced,

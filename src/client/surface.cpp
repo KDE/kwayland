@@ -239,6 +239,19 @@ void Surface::damage(const QRect &rect)
     wl_surface_damage(d->surface, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+void Surface::damageBuffer(const QRegion &region)
+{
+    for (const QRect &r : region) {
+        damageBuffer(r);
+    }
+}
+
+void Surface::damageBuffer(const QRect &rect)
+{
+    Q_ASSERT(isValid());
+    wl_surface_damage_buffer(d->surface, rect.x(), rect.y(), rect.width(), rect.height());
+}
+
 void Surface::attachBuffer(wl_buffer *buffer, const QPoint &offset)
 {
     Q_ASSERT(isValid());

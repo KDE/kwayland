@@ -149,12 +149,26 @@ public:
     void commit(CommitFlag flag = CommitFlag::FrameCallback);
     /**
      * Mark @p rect as damaged for the next frame.
+     * @see damageBuffer
      **/
     void damage(const QRect &rect);
     /**
      * Mark @p region as damaged for the next frame.
+     * @see damageBuffer
      **/
     void damage(const QRegion &region);
+    /**
+     * Mark @p rect in buffer coordinates as damaged for the next frame.
+     * @see damage
+     * @since 5.59
+     **/
+    void damageBuffer(const QRect &rect);
+    /**
+     * Mark @p region in buffer coordinates as damaged for the next frame.
+     * @see damage
+     * @since 5.59
+     **/
+    void damageBuffer(const QRegion &region);
     /**
      * Attaches the @p buffer to this Surface for the next frame.
      * @param buffer The buffer to attach to this Surface

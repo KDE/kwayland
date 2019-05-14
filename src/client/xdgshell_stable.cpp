@@ -281,6 +281,7 @@ public:
     void setMinimized() override;
     void setMaxSize(const QSize &size) override;
     void setMinSize(const QSize &size) override;
+    void setWindowGeometry(const QRect &windowGeometry) override;
 
 private:
     QSize pendingSize;
@@ -481,6 +482,11 @@ void XdgTopLevelStable::Private::setMinSize(const QSize &size)
     xdg_toplevel_set_min_size(xdgtoplevel, size.width(), size.height());
 }
 
+void XdgTopLevelStable::Private::setWindowGeometry(const QRect &windowGeometry)
+{
+    xdg_surface_set_window_geometry(xdgsurface, windowGeometry.x(), windowGeometry.y(), windowGeometry.width(), windowGeometry.height());
+}
+
 XdgTopLevelStable::XdgTopLevelStable(QObject *parent)
     : XdgShellSurface(new Private(this), parent)
 {
@@ -499,6 +505,7 @@ public:
     bool isValid() const override;
     void requestGrab(Seat *seat, quint32 serial) override;
     void ackConfigure(quint32 serial) override;
+    void setWindowGeometry(const QRect &windowGeometry) override;
 
     using XdgShellPopup::Private::operator zxdg_popup_v6*;
     using XdgShellPopup::Private::operator zxdg_surface_v6*;
@@ -599,6 +606,11 @@ void XdgShellPopupStable::Private::requestGrab(Seat *seat, quint32 serial)
 void XdgShellPopupStable::Private::ackConfigure(quint32 serial)
 {
     xdg_surface_ack_configure(xdgsurface, serial);
+}
+
+void XdgShellPopupStable::Private::setWindowGeometry(const QRect &windowGeometry)
+{
+    xdg_surface_set_window_geometry(xdgsurface, windowGeometry.x(), windowGeometry.y(), windowGeometry.width(), windowGeometry.height());
 }
 
 XdgShellPopupStable::XdgShellPopupStable(QObject *parent)

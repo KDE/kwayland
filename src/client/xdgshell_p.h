@@ -235,6 +235,9 @@ public:
     virtual void setMinimized() = 0;
     virtual void setMaxSize(const QSize &size) = 0;
     virtual void setMinSize(const QSize &size) = 0;
+    virtual void setWindowGeometry(const QRect &windowGeometry) {
+        Q_UNUSED(windowGeometry);
+    }
 
 protected:
     Private(XdgShellSurface *q);
@@ -270,6 +273,10 @@ public:
     };
     virtual void ackConfigure(quint32 serial) {
         Q_UNUSED(serial);
+    }
+
+    virtual void setWindowGeometry(const QRect &windowGeometry) {
+        Q_UNUSED(windowGeometry);
     }
 
     virtual operator xdg_surface*() {

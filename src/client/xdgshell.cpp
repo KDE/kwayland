@@ -282,6 +282,11 @@ void XdgShellSurface::setMinSize(const QSize &size)
     d->setMinSize(size);
 }
 
+void XdgShellSurface::setWindowGeometry(const QRect &windowGeometry)
+{
+    d->setWindowGeometry(windowGeometry);
+}
+
 void XdgShellSurface::requestMinimize()
 {
     d->setMinimized();
@@ -363,6 +368,11 @@ void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
 void XdgShellPopup::ackConfigure(quint32 serial)
 {
     d->ackConfigure(serial);
+}
+
+void XdgShellPopup::setWindowGeometry(const QRect &windowGeometry)
+{
+    d->setWindowGeometry(windowGeometry);
 }
 
 XdgShellPopup::operator xdg_surface*() {

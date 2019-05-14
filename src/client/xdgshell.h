@@ -468,6 +468,12 @@ public:
      */
     void setMinSize(const QSize &size);
 
+    /**
+     * Sets the position of the window contents within the buffer
+     * @since 5.59
+     */
+    void setWindowGeometry(const QRect &windowGeometry);
+
     operator xdg_surface*();
     operator xdg_surface*() const;
     operator xdg_toplevel*();
@@ -595,6 +601,12 @@ public:
      * @since 5.56
      **/
     void ackConfigure(quint32 serial);
+
+    /**
+     * Sets the position of the window contents within the buffer
+     * @since 5.59
+     */
+    void setWindowGeometry(const QRect &windowGeometry);
 
     operator xdg_surface*();
     operator xdg_surface*() const;

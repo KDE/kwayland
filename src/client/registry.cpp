@@ -28,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "fullscreen_shell.h"
 #include "idle.h"
 #include "idleinhibit.h"
+#include "keystate.h"
 #include "remote_access.h"
 #include "logging.h"
 #include "outputconfiguration.h"
@@ -91,6 +92,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-server-decoration-palette-client-protocol.h>
 #include <wayland-xdg-output-unstable-v1-client-protocol.h>
 #include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
+#include <wayland-keystate-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -377,6 +379,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &zxdg_decoration_manager_v1_interface,
         &Registry::xdgDecorationAnnounced,
         &Registry::xdgDecorationRemoved
+    }},
+    {Registry::Interface::Keystate, {
+        1,
+        QByteArrayLiteral("org_kde_kwin_keystate"),
+        &org_kde_kwin_keystate_interface,
+        &Registry::keystateAnnounced,
+        &Registry::keystateRemoved
     }}
 };
 
@@ -684,6 +693,7 @@ BIND(PointerConstraintsUnstableV1, zwp_pointer_constraints_v1)
 BIND(XdgExporterUnstableV2, zxdg_exporter_v2)
 BIND(XdgImporterUnstableV2, zxdg_importer_v2)
 BIND(IdleInhibitManagerUnstableV1, zwp_idle_inhibit_manager_v1)
+BIND(Keystate, org_kde_kwin_keystate)
 BIND2(ShadowManager, Shadow, org_kde_kwin_shadow_manager)
 BIND2(BlurManager, Blur, org_kde_kwin_blur_manager)
 BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
@@ -745,6 +755,7 @@ CREATE(DpmsManager)
 CREATE(ServerSideDecorationManager)
 CREATE2(ShmPool, Shm)
 CREATE(AppMenuManager)
+CREATE(Keystate)
 CREATE(ServerSideDecorationPaletteManager)
 
 #undef CREATE

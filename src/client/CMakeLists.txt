@@ -24,6 +24,7 @@ set(CLIENT_LIB_SRCS
     idle.cpp
     idleinhibit.cpp
     keyboard.cpp
+    keystate.cpp
     remote_access.cpp
     outputconfiguration.cpp
     outputmanagement.cpp
@@ -189,6 +190,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME xdg-decoration-unstable-v1
 )
 
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/keystate.xml
+    BASENAME keystate
+)
 
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
@@ -268,6 +273,7 @@ set(CLIENT_LIB_HEADERS
   idle.h
   idleinhibit.h
   keyboard.h
+  keystate.h
   remote_access.h
   outputconfiguration.h
   outputmanagement.h

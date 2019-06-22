@@ -19,7 +19,7 @@
 
   <interface  name="org_kde_kwin_keystate" version="3">
       <description summary="Key States">
-        xxxxxxxxxxxxxxx
+        Keeps track of the states of the different keys that have a state attached to it.
       </description>
       <enum name="key">
         <entry name="capslock" value="0" />

@@ -8,7 +8,7 @@ include(FeatureSummary)
 find_package(ECM 5.60.0  NO_MODULE)
 set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://projects.kde.org/projects/kdesupport/extra-cmake-modules")
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 include(FeatureSummary)
 include(GenerateExportHeader)
@@ -33,12 +33,15 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 set(REQUIRED_QT_VERSION 5.11.0)
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui)
 
-find_package(Wayland 1.13 COMPONENTS Client Server)
+find_package(Wayland 1.15 COMPONENTS Client Server)
 set_package_properties(Wayland PROPERTIES
                        TYPE REQUIRED
                       )
 
 find_package(WaylandScanner)
+
+find_package(WaylandProtocols 1.15)
+set_package_properties(WaylandProtocols PROPERTIES TYPE REQUIRED)
 
 find_package(EGL)
 set_package_properties(EGL PROPERTIES TYPE REQUIRED)

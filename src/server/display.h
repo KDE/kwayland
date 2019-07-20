@@ -92,6 +92,7 @@ class XdgOutputManagerInterface;
 class XdgDecorationManagerInterface;
 class EglStreamControllerInterface;
 class KeyStateInterface;
+class DataControlDeviceManagerInterface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -315,6 +316,14 @@ public:
      * @since 5.58
      */
     EglStreamControllerInterface *createEglStreamControllerInterface(QObject *parent = nullptr);
+
+        /**
+     * Creates the EglStreamControllerInterface
+     *
+     * @return the created EGL Stream controller
+     * @since 5.ABC
+     */
+    DataControlDeviceManagerInterface *createDataControlDeviceManager(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

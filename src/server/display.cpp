@@ -57,6 +57,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "xdgdecoration_interface.h"
 #include "eglstream_controller_interface.h"
 #include "keystate_interface.h"
+#include "datacontroldevicemanager_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -529,6 +530,14 @@ KeyStateInterface *Display::createKeyStateInterface(QObject *parent)
     connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
     return d;
 }
+
+DataControlDeviceManagerInterface *Display::createDataControlDeviceManager(QObject *parent)
+{
+    auto m = new DataControlDeviceManagerInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, m, [this, m] { delete m; });
+    return m;
+}
+
 
 void Display::createShm()
 {

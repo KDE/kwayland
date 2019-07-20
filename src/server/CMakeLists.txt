@@ -319,6 +319,10 @@ set(SERVER_LIB_HEADERS
   buffer_interface.h
   clientconnection.h
   compositor_interface.h
+  datacontroldevice_interface.h
+  datacontroldevicemanager_interface.h
+  datacontroloffer_interface.h
+  datacontrolsource_interface.h
   datadevice_interface.h
   datadevicemanager_interface.h
   dataoffer_interface.h

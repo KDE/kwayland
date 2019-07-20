@@ -272,6 +272,10 @@ set(CLIENT_LIB_HEADERS
   connection_thread.h
   contrast.h
   event_queue.h
+  datacontroldevice.h
+  datacontroldevicemanager.h
+  datacontroloffer.h
+  datacontrolsource.h
   datadevice.h
   datadevicemanager.h
   dataoffer.h

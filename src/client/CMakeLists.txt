@@ -14,6 +14,10 @@ set(CLIENT_LIB_SRCS
     contrast.cpp
     slide.cpp
     event_queue.cpp
+    datacontroldevice.cpp
+    datacontroldevicemanager.cpp
+    datacontrolsource.cpp
+    datacontroloffer.cpp
     datadevice.cpp
     datadevicemanager.cpp
     dataoffer.cpp
@@ -193,6 +197,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/keystate.xml
     BASENAME keystate
+)
+
+ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/wlr-data-control-unstable-v1.xml
+    BASENAME data-control-v1
 )
 
 set(CLIENT_GENERATED_FILES

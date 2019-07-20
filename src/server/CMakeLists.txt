@@ -3,6 +3,10 @@ set(SERVER_LIB_SRCS
     buffer_interface.cpp
     clientconnection.cpp
     compositor_interface.cpp
+    datacontroldevice_interface.cpp
+    datacontroldevicemanager_interface.cpp
+    datacontroloffer_interface.cpp
+    datacontrolsource_interface.cpp
     datadevice_interface.cpp
     datadevicemanager_interface.cpp
     dataoffer_interface.cpp
@@ -212,6 +216,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/keystate.xml
     BASENAME keystate
+)
+
+ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/wlr-data-control-unstable-v1.xml
+    BASENAME data-control-v1
 )
 
 set(SERVER_GENERATED_SRCS

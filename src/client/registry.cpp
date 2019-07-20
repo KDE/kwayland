@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "registry.h"
 #include "compositor.h"
 #include "connection_thread.h"
+#include "datacontroldevicemanager.h"
 #include "datadevicemanager.h"
 #include "dpms.h"
 #include "event_queue.h"
@@ -93,6 +94,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wayland-xdg-output-unstable-v1-client-protocol.h>
 #include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
 #include <wayland-keystate-client-protocol.h>
+#include <wayland-data-control-v1-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -386,7 +388,14 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_keystate_interface,
         &Registry::keystateAnnounced,
         &Registry::keystateRemoved
-    }}
+    }},
+    {Registry::Interface::DataControlDeviceManager, {
+        1,
+        QByteArrayLiteral("wlr_data_control_unstable_v1"),
+        &zwlr_data_control_manager_v1_interface,
+        &Registry::dataControlDeviceManagerAnnounced,
+        &Registry::dataControlDeviceManagerRemoved
+    }},
 };
 
 static quint32 maxVersion(const Registry::Interface &interface)
@@ -672,6 +681,7 @@ BIND(Shell, wl_shell)
 BIND(Shm, wl_shm)
 BIND(SubCompositor, wl_subcompositor)
 BIND(FullscreenShell, _wl_fullscreen_shell)
+BIND(DataControlDeviceManager, zwlr_data_control_manager_v1)
 BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
@@ -738,6 +748,7 @@ CREATE(Shell)
 CREATE(SubCompositor)
 CREATE(FullscreenShell)
 CREATE(Output)
+CREATE(DataControlDeviceManager)
 CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
 CREATE(PlasmaVirtualDesktopManagement)

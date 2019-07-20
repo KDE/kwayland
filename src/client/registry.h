@@ -58,6 +58,7 @@ struct org_kde_kwin_server_decoration_palette_manager;
 struct xdg_shell;
 struct zxdg_shell_v6;
 struct xdg_wm_base;
+struct zwlr_data_control_device_v1;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_constraints_v1;
@@ -66,6 +67,7 @@ struct zxdg_importer_v2;
 struct zwp_idle_inhibit_manager_v1;
 struct zxdg_output_manager_v1;
 struct zxdg_decoration_manager_v1;
+struct zwlr_data_control_manager_v1;
 
 namespace KWayland
 {
@@ -75,6 +77,7 @@ namespace Client
 class AppMenuManager;
 class Compositor;
 class ConnectionThread;
+class DataControlDeviceManager;
 class DataDeviceManager;
 class DpmsManager;
 class EventQueue;
@@ -188,6 +191,7 @@ public:
         XdgShellStable, ///refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.54
         Keystate,///<refers to org_kwin_keystate, @since 5.57
+        DataControlDeviceManager, ///< Refers to the zwlr_data_control_manager_v1 interface @since 5.ABC
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -383,6 +387,15 @@ public:
      * @see createFullscreenShell
      **/
     _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the zwlr_data_control_manager_v1 with @p name and @p version.
+     * If the @p name does not exist or is not for the data device manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createDataControlDeviceManager instead.
+     * @see createDataControlDeviceManager
+     **/
+    zwlr_data_control_manager_v1 *bindDataControlDeviceManager(uint32_t name, uint32_t version) const;
     /**
      * Binds the wl_data_device_manager with @p name and @p version.
      * If the @p name does not exist or is not for the data device manager interface,
@@ -823,6 +836,23 @@ public:
      * @since 5.5
      **/
     FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
+
+    /**
+     * Creates a DataDeviceManager and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the zwlr_data_control_manager_v1 interface,
+     * the returned DataDeviceManager will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the zwlr_data_control_manager_v1 interface to bind
+     * @param version The version or the zwlr_data_control_manager_v1 interface to use
+     * @param parent The parent for DataDeviceManager
+     *
+     * @returns The created DataDeviceManager.
+     **/
+    DataControlDeviceManager *createDataControlDeviceManager(quint32 name, quint32 version, QObject *parent = nullptr);
+
     /**
      * Creates a DataDeviceManager and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1314,6 +1344,14 @@ Q_SIGNALS:
      * @param version The maximum supported version of the announced interface
      **/
     void fullscreenShellAnnounced(quint32 name, quint32 version);
+
+    /**
+     * Emitted whenever a zwlr_data_control_manager_v1 interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     **/
+    void dataControlDeviceManagerAnnounced(quint32 name, quint32 version);
+
     /**
      * Emitted whenever a wl_data_device_manager interface gets announced.
      * @param name The name for the announced interface
@@ -1569,6 +1607,11 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void fullscreenShellRemoved(quint32 name);
+    /**
+     * Emitted whenever a zwlr_data_control_manager_v1 interface gets removed.
+     * @param name The name for the removed interface
+     **/
+    void dataControlDeviceManagerRemoved(quint32 name);
     /**
      * Emitted whenever a wl_data_device_manager interface gets removed.
      * @param name The name for the removed interface

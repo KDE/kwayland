@@ -16,7 +16,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
-  <interface  name="org_kde_kwin_fake_input" version="3">
+  <interface  name="org_kde_kwin_fake_input" version="4">
       <description summary="Fake input manager">
         This interface allows other processes to provide fake input events.
         Purpose is on the one hand side to provide testing facilities like XTest on X11.
@@ -86,6 +86,10 @@
       <request name="pointer_motion_absolute" since="3">
           <arg name="x" type="fixed"/>
           <arg name="y" type="fixed"/>
+      </request>
+      <request name="keyboard_key" since="4">
+        <arg name="button" type="uint"/>
+        <arg name="state" type="uint"/>
       </request>
   </interface>
 </protocol>

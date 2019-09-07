@@ -216,6 +216,27 @@ void FakeInput::requestTouchFrame()
     org_kde_kwin_fake_input_touch_frame(d->manager);
 }
 
+void FakeInput::requestKeyboardKeyPress(quint32 linuxKey)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_KEYBOARD_KEY_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_keyboard_key(d->manager, linuxKey, WL_KEYBOARD_KEY_STATE_PRESSED);
+}
+
+void FakeInput::requestKeyboardKeyRelease(quint32 linuxKey)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_KEYBOARD_KEY_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_keyboard_key(d->manager, linuxKey, WL_KEYBOARD_KEY_STATE_RELEASED);
+}
+
+
 FakeInput::operator org_kde_kwin_fake_input*() const
 {
     return d->manager;

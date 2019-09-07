@@ -210,6 +210,21 @@ public:
      **/
     void requestTouchFrame();
 
+    /**
+     * Request a keyboard key press.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     *
+     * @since 5.63
+     **/
+    void requestKeyboardKeyPress(quint32 linuxKey);
+    /**
+     * Request a keyboard button release.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     *
+     * @since 5.63
+     **/
+    void requestKeyboardKeyRelease(quint32 linuxKey);
+
     operator org_kde_kwin_fake_input*();
     operator org_kde_kwin_fake_input*() const;
 

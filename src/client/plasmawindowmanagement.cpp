@@ -361,12 +361,12 @@ void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_wind
     Q_UNUSED(window)
     Private *p = cast(data);
     const auto windows = p->wm->windows();
-    auto it = std::find_if(windows.begin(), windows.end(),
+    auto it = std::find_if(windows.constBegin(), windows.constEnd(),
         [parent] (const PlasmaWindow *w) {
             return *w == parent;
         }
     );
-    p->setParentWindow(it != windows.end() ? *it : nullptr);
+    p->setParentWindow(it != windows.constEnd() ? *it : nullptr);
 }
 
 void PlasmaWindow::Private::windowGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height)

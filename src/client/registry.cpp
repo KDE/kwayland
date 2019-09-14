@@ -556,7 +556,7 @@ void Registry::Private::handleGlobalSync()
 namespace {
 static Registry::Interface nameToInterface(const char *interface)
 {
-    for (auto it = s_interfaces.begin(); it != s_interfaces.end(); ++it) {
+    for (auto it = s_interfaces.constBegin(); it != s_interfaces.constEnd(); ++it) {
         if (qstrcmp(interface, it.value().name) == 0) {
             return it.key();
         }
@@ -601,12 +601,12 @@ void Registry::Private::handleRemove(uint32_t name)
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const
 {
-    auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
+    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(),
         [interface](const InterfaceData &data) {
             return data.interface == interface;
         }
     );
-    return it != m_interfaces.end();
+    return it != m_interfaces.constEnd();
 }
 
 QVector<Registry::AnnouncedInterface> Registry::Private::interfaces(Interface interface) const
@@ -873,10 +873,10 @@ static const wl_interface *wlInterface(Registry::Interface interface)
 template <typename T>
 T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_t version) const
 {
-    auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(), [=](const InterfaceData &data) {
+    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(), [=](const InterfaceData &data) {
         return data.interface == interface && data.name == name && data.version >= version;
     });
-    if (it == m_interfaces.end()) {
+    if (it == m_interfaces.constEnd()) {
         qCDebug(KWAYLAND_CLIENT) << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
         return nullptr;
     }

@@ -36,7 +36,7 @@ class DataSource;
 class Surface;
 
 /**
- * @short Wrapper for the wl_data_device interface.
+ * @short DataDevice allows clients to share data by copy-and-paste and drag-and-drop.
  *
  * This class is a convenient wrapper for the wl_data_device interface.
  * To create a DataDevice call DataDeviceManager::getDataDevice.

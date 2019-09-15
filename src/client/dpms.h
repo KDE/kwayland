@@ -37,9 +37,9 @@ class Dpms;
 class Output;
 
 /**
- * @short Wrapper for the org_kde_kwin_dpms_manager interface.
+ * @short This class is a factory for Dpms instances.
  *
- * This class provides a convenient wrapper for the org_kde_kwin_dpms_manager interface.
+ * It is a convenience wrapper for the org_kde_kwin_dpms_manager interface.
  *
  * To use this class one needs to interact with the Registry. There are two
  * possible ways to create the DpmsManager interface:
@@ -57,7 +57,7 @@ class Output;
  * The DpmsManager can be used as a drop-in replacement for any org_kde_kwin_dpms_manager
  * pointer as it provides matching cast operators.
  *
- * @see Registry
+ * @see Registry, Dpms
  * @since 5.5
  **/
 class KWAYLANDCLIENT_EXPORT DpmsManager : public QObject
@@ -134,8 +134,9 @@ private:
 };
 
 /**
- * @short Wrapper for the org_kde_kwin_dpms interface.
+ * @short Power management for monitors.
  *
+ * Display Power Management Signaling allows power management for monitors.
  * This class is a convenient wrapper for the org_kde_kwin_dpms interface.
  * To create a Dpms call DpmsManager::getDpms.
  *

@@ -33,6 +33,9 @@ if(BUILD_QCH)
         MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
         LINK_QCHS
             Qt5Gui_QCH
+        INCLUDE_DIRS
+            ${KWaylandClient_APIDOX_BUILD_INCLUDE_DIRS}
+            ${KWaylandServer_APIDOX_BUILD_INCLUDE_DIRS}
         BLANK_MACROS
             KWAYLANDCLIENT_EXPORT
             KWAYLANDCLIENT_DEPRECATED

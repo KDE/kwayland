@@ -228,8 +228,8 @@ void Surface::commit(Surface::CommitFlag flag)
 
 void Surface::damage(const QRegion &region)
 {
-    for (const QRect &r : region.rects()) {
-        damage(r);
+    for (const QRect &rect : region) {
+        damage(rect);
     }
 }
 

@@ -58,7 +58,7 @@ void Region::Private::installRegion(const QRect &rect)
 
 void Region::Private::installRegion(const QRegion &region)
 {
-    for (const auto &rect : region.rects()) {
+    for (const QRect &rect : region) {
         installRegion(rect);
     }
 }
@@ -73,7 +73,7 @@ void Region::Private::uninstallRegion(const QRect &rect)
 
 void Region::Private::uninstallRegion(const QRegion &region)
 {
-    for (const auto &rect : region.rects()) {
+    for (const QRect &rect : region) {
         uninstallRegion(rect);
     }
 }

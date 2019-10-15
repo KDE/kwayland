@@ -231,13 +231,20 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
-generate_export_header(KF5WaylandClient
+add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
+ecm_generate_export_header(KF5WaylandClient
     BASE_NAME
         KWaylandClient
     EXPORT_FILE_NAME
         KWayland/Client/kwaylandclient_export.h
+    GROUP_BASE_NAME KF
+    VERSION ${KF5_VERSION}
+    DEPRECATED_BASE_VERSION 0
+    DEPRECATION_VERSIONS 5.49 5.50 5.52 5.53
 )
-add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
+# TODO: add support for EXCLUDE_DEPRECATED_BEFORE_AND_AT to all KWayland libs
+# needs fixing of undeprecated API being still implemented using own deprecated API
+
 
 target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client>")
 

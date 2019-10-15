@@ -70,10 +70,14 @@ public:
         IsMinimized,
         IsKeepAbove,
         IsKeepBelow,
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 53)
         /**
-          @deprecated @see VirtualDesktops
+          @deprecated Since 5.53, use VirtualDesktops
          */
         VirtualDesktop,
+#else
+        VirtualDesktop_DEPRECATED_DO_NOT_USE,
+#endif
         IsOnAllDesktops,
         IsDemandingAttention,
         SkipTaskbar,
@@ -114,7 +118,7 @@ public:
          */
         SkipSwitcher,
         /**
-         * @since 5.55
+         * @since 5.53
          */
         VirtualDesktops
     };

@@ -530,8 +530,9 @@ public:
      * When using XdgShell::createXdgShellPopup there is no need to call this
      * method.
      *
-     * This was for XDGShellV5, this is now deprecated
+     * @deprecated Since 5.49. This was for XDGShellV5, this is now deprecated
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 49, "Use XDGShell version >5")
     void setup(xdg_popup *xdgpopupv5);
 
     /**

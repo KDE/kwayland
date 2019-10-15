@@ -272,13 +272,15 @@ public:
      * @see appIdChanged
      **/
     QString appId() const;
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 52)
     /**
-     * @deprecated: use plasmaVirtualDesktops instead
-     * @see plasmaVirtualDesktops
      * @returns the id of the virtual desktop this PlasmaWindow is on
      * @see virtualDesktopChanged
+     * @deprecated: Since 5.52, use plasmaVirtualDesktops instead
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 52, "Use PlasmaWindow::plasmaVirtualDesktops()")
     quint32 virtualDesktop() const;
+#endif
     /**
      * @returns Whether the window is currently the active Window.
      * @see activeChanged
@@ -411,11 +413,14 @@ public:
      * @since 5.22
      */
     void requestResize();
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 52)
     /**
-     * @deprecated: use requestEnterVirtualDesktop instead
      * Requests to send the window to virtual @p desktop.
+     * @deprecated: Since 5.52, use requestEnterVirtualDesktop instead
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 52, "Use PlasmaWindow::requestEnterVirtualDesktop(const QString &)")
     void requestVirtualDesktop(quint32 desktop);
+#endif
 
     /**
      * Requests the window at this model row index have its keep above state toggled.
@@ -529,11 +534,14 @@ Q_SIGNALS:
      * @see appId
      **/
     void appIdChanged();
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 52)
     /**
-     * @deprecated use plasmaVirtualDesktopEntered and plasmaVirtualDesktopLeft instead
      * The virtual desktop changed.
+     * @deprecated Since 5.52, use plasmaVirtualDesktopEntered and plasmaVirtualDesktopLeft instead
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 52, "Use PlasmaWindow::plasmaVirtualDesktopEntered(const QString &) and PlasmaWindow::plasmaVirtualDesktopLeft(const QString &)")
     void virtualDesktopChanged();
+#endif
     /**
      * The window became active or inactive.
      * @see isActive

@@ -188,16 +188,19 @@ public:
      */
     void setPosition(OutputDevice *outputdevice, const QPoint &pos);
 
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 50)
     /**
      * Scale rendering of this output.
      * The changes done in this call will be recorded in the
      * OutputDevice and only applied after apply() has been called.
-     * @deprecated see setScaleF(qreal)
      *
      * @param scale the scaling factor for this output device.
      * @param outputdevice the OutputDevice this change applies to.
+     * @deprecated Since 5.50, use setScaleF(OutputDevice *, qreal)
      */
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 50, "Use OutputConfiguration::setScaleF(OutputDevice *, qreal)")
     void setScale(OutputDevice *outputdevice, qint32 scale);
+#endif
 
     /**
      * Scale rendering of this output.

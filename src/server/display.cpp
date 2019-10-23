@@ -58,6 +58,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "eglstream_controller_interface.h"
 #include "keystate_interface.h"
 #include "linuxdmabuf_v1_interface.h"
+#include "tablet_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -533,6 +534,13 @@ EglStreamControllerInterface *Display::createEglStreamControllerInterface(QObjec
 KeyStateInterface *Display::createKeyStateInterface(QObject *parent)
 {
     auto d = new KeyStateInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    return d;
+}
+
+TabletManagerInterface *Display::createTabletManagerInterface(QObject* parent)
+{
+    auto d = new TabletManagerInterface(this, parent);
     connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
     return d;
 }

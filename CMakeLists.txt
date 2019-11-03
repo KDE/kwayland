@@ -60,7 +60,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050d00)
-add_definitions(-DQT_DEPRECATED_WARNINGS_SINCE=0x060000)
 # Subdirectories
 if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
     ecm_install_po_files_as_qm(po)

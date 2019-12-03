@@ -297,7 +297,7 @@ void XdgTopLevelUnstableV6::Private::surfaceConfigureCallback(void *data, struct
         s->q->setSize(s->pendingSize);
         s->pendingSize = QSize();
     }
-    s->pendingState = nullptr;
+    s->pendingState = {};
 }
 
 void XdgTopLevelUnstableV6::Private::configureCallback(void *data, struct zxdg_toplevel_v6 *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)

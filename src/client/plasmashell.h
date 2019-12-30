@@ -324,14 +324,15 @@ public:
     void requestShowAutoHidingPanel();
 
     /**
-     * Set whether a PlasmaShellSurface with Role Panel should get focus or not.
+     * Set whether a PlasmaShellSurface should get focus or not.
      *
-     * By default a Panel does not take focus. With this request the compositor
-     * can be instructed to also pass focus to a panel
+     * By default some roles do not take focus. With this request the compositor
+     * can be instructed to also pass focus.
      *
-     * @param takesFocus Set to @c true if the Panel should gain focus.
+     * @param takesFocus Set to @c true if the surface should gain focus.
      * @since 5.28
      **/
+    //KF6 TODO rename to make it generic
     void setPanelTakesFocus(bool takesFocus);
 
 Q_SIGNALS:

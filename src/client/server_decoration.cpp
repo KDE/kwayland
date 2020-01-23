@@ -67,7 +67,7 @@ private:
     ServerSideDecoration *q;
 };
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const org_kde_kwin_server_decoration_manager_listener ServerSideDecorationManager::Private::s_listener = {
     defaultModeCallback
 };
@@ -178,7 +178,7 @@ ServerSideDecoration *ServerSideDecorationManager::create(wl_surface *surface, Q
     return deco;
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const org_kde_kwin_server_decoration_listener ServerSideDecoration::Private::s_listener = {
     modeCallback
 };

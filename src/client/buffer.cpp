@@ -30,7 +30,7 @@ namespace KWayland
 namespace Client
 {
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const struct wl_buffer_listener Buffer::Private::s_listener = {
     Buffer::Private::releasedCallback
 };

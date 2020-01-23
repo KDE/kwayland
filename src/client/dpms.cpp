@@ -131,7 +131,7 @@ private:
 };
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const org_kde_kwin_dpms_listener Dpms::Private::s_listener = {
     supportedCallback,
     modeCallback,

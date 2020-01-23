@@ -234,7 +234,7 @@ void ShellSurface::destroy()
     d->surface.destroy();
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {
     pingCallback,
     configureCallback,

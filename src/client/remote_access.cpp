@@ -162,7 +162,7 @@ void RemoteBuffer::Private::paramsCallback(void *data, org_kde_kwin_remote_buffe
     emit p->q->parametersObtained();
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 org_kde_kwin_remote_buffer_listener RemoteBuffer::Private::s_listener = {
     paramsCallback
 };

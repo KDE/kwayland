@@ -514,7 +514,7 @@ EventQueue *Registry::eventQueue()
     return d->queue;
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 const struct wl_registry_listener Registry::Private::s_registryListener = {
     globalAnnounce,
     globalRemove

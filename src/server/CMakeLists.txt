@@ -221,6 +221,11 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
     BASENAME linux-dmabuf-unstable-v1
 )
 
+ecm_add_qtwayland_server_protocol(SERVER_LIB_SRCS
+    PROTOCOL ${WaylandProtocols_DATADIR}/unstable/input-method/input-method-unstable-v1.xml
+    BASENAME input-method-unstable-v1
+)
+
 set(SERVER_GENERATED_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-blur-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-blur-server-protocol.h

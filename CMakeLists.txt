@@ -64,6 +64,8 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050d00)
 if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
     ecm_install_po_files_as_qm(po)
 endif()
+
+find_package(QtWaylandScanner REQUIRED)
 add_subdirectory(src)
 
 if (BUILD_TESTING)

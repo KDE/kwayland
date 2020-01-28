@@ -35,6 +35,7 @@ class Display;
 class SeatInterface;
 class SurfaceInterface;
 class TabletInterface;
+class TabletToolInterface;
 
 /**
  * This is an implementation of wayland-protocols/unstable/tablet/tablet-unstable-v2.xml
@@ -58,6 +59,42 @@ private:
     explicit TabletManagerInterface(Display *d, QObject *parent);
     class Private;
     QScopedPointer<Private> d;
+};
+
+/**
+ * @brief Class encapsulating a Cursor image.
+ *
+ * @since 5.67
+ **/
+class KWAYLANDSERVER_EXPORT TabletCursor : public QObject
+{
+    Q_OBJECT
+public:
+    virtual ~TabletCursor();
+    /**
+     * The hotspot of the cursor image in surface-relative coordinates.
+     **/
+    QPoint hotspot() const;
+    /**
+     * The entered serial when the Cursor got set.
+     **/
+    quint32 enteredSerial() const;
+    /**
+     * The SurfaceInterface for the image content of the Cursor.
+     **/
+    QPointer<SurfaceInterface> surface() const;
+
+Q_SIGNALS:
+    void hotspotChanged();
+    void enteredSerialChanged();
+    void surfaceChanged();
+    void changed();
+
+private:
+    friend class TabletToolInterface;
+    TabletCursor(QObject* parent);
+    class Private;
+    const QScopedPointer<Private> d;
 };
 
 class KWAYLANDSERVER_EXPORT TabletToolInterface : public QObject
@@ -113,6 +150,14 @@ public:
     void sendButton(quint32 button, bool pressed);
     void sendFrame(quint32 time);
     void sendMotion(const QPointF &pos);
+
+    /**
+     * The Cursor set on this interface by @p client. Might return @c null.
+     **/
+    TabletCursor *cursor(ClientConnection *client) const;
+
+Q_SIGNALS:
+    void cursorChanged();
 
 private:
     friend class TabletSeatInterface;

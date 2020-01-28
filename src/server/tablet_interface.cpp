@@ -70,11 +70,75 @@ bool TabletInterface::isSurfaceSupported(SurfaceInterface* surface) const
     return d->resourceForSurface(surface);
 }
 
+class TabletCursor::Private : public QObject
+{
+public:
+    Private(TabletCursor *q)
+        : q(q)
+    {}
+
+    void update(const QPointer<SurfaceInterface> &newSurface, quint32 newSerial, const QPoint &newHotspot) {
+        bool emitChanged = false;
+        if (enteredSerial != newSerial) {
+            enteredSerial = newSerial;
+            emitChanged = true;
+            emit q->enteredSerialChanged();
+        }
+        if (hotspot != newHotspot) {
+            hotspot = newHotspot;
+            emitChanged = true;
+            emit q->hotspotChanged();
+        }
+        if (surface != newSurface) {
+            if (!surface.isNull()) {
+                QObject::disconnect(surface.data(), &SurfaceInterface::damaged, q, &TabletCursor::changed);
+            }
+            surface = newSurface;
+            if (!surface.isNull()) {
+                QObject::connect(surface.data(), &SurfaceInterface::damaged, q, &TabletCursor::changed);
+            }
+            emitChanged = true;
+            emit q->surfaceChanged();
+        }
+        if (emitChanged) {
+            emit q->changed();
+        }
+    }
+
+    quint32 enteredSerial;
+    QPoint hotspot;
+    QPointer<SurfaceInterface> surface;
+    TabletCursor* const q;
+};
+
+TabletCursor::TabletCursor(QObject* parent)
+    : QObject(parent)
+    , d(new Private(this))
+{
+}
+
+TabletCursor::~TabletCursor() = default;
+
+quint32 TabletCursor::enteredSerial() const
+{
+    return d->enteredSerial;
+}
+
+QPoint TabletCursor::hotspot() const
+{
+    return d->hotspot;
+}
+
+QPointer<SurfaceInterface> TabletCursor::surface() const
+{
+    return d->surface;
+}
+
 class TabletToolInterface::Private : public QtWaylandServer::zwp_tablet_tool_v2
 {
 public:
     Private(Display *display, Type type, uint32_t hsh, uint32_t hsl, uint32_t hih,
-            uint32_t hil, const QVector<Capability>& capabilities)
+            uint32_t hil, const QVector<Capability>& capabilities, TabletToolInterface* q)
         : zwp_tablet_tool_v2()
         , m_display(display)
         , m_type(type)
@@ -83,9 +147,20 @@ public:
         , m_hardwareIdHigh(hih)
         , m_hardwareIdLow(hil)
         , m_capabilities(capabilities)
+        , q(q)
     {}
 
-    Display *const m_display;
+    void zwp_tablet_tool_v2_set_cursor(zwp_tablet_tool_v2::Resource * resource, uint32_t serial, struct ::wl_resource * surface, int32_t hotspot_x, int32_t hotspot_y) override {
+        auto& cursor = m_cursor[resource->client()];
+        if (!cursor) {
+            cursor = new TabletCursor(q);
+            cursor->d->update(SurfaceInterface::get(surface), serial, {hotspot_x, hotspot_y});
+            QObject::connect(cursor, &TabletCursor::changed, q, &TabletToolInterface::cursorChanged);
+            Q_EMIT q->cursorChanged();
+        } else {
+            cursor->d->update(SurfaceInterface::get(surface), serial, {hotspot_x, hotspot_y});
+        }
+    }
 
     wl_resource *targetResource() {
         ClientConnection *client = m_surface->client();
@@ -97,6 +172,7 @@ public:
         return quint64(quint64(m_hardwareIdHigh) << 32) + m_hardwareIdLow;
     }
 
+    Display *const m_display;
     bool m_cleanup = false;
     QPointer<SurfaceInterface> m_surface;
     QPointer<TabletInterface> m_lastTablet;
@@ -104,6 +180,8 @@ public:
     const uint32_t m_hardwareSerialHigh, m_hardwareSerialLow;
     const uint32_t m_hardwareIdHigh, m_hardwareIdLow;
     const QVector<Capability> m_capabilities;
+    QHash<wl_client*, TabletCursor *> m_cursor;
+    TabletToolInterface* const q;
 };
 
 TabletToolInterface::TabletToolInterface(Display *display, Type type, uint32_t hsh,
@@ -111,7 +189,7 @@ TabletToolInterface::TabletToolInterface(Display *display, Type type, uint32_t h
                                          const QVector<Capability>& capabilities,
                                          QObject *parent)
     : QObject(parent)
-    , d(new Private(display, type, hsh, hsl, hih, hil, capabilities))
+    , d(new Private(display, type, hsh, hsl, hih, hil, capabilities, this))
 {}
 
 TabletToolInterface::~TabletToolInterface() = default;
@@ -225,6 +303,11 @@ void TabletToolInterface::sendRemoved()
     for (QtWaylandServer::zwp_tablet_tool_v2::Resource *resource : d->resourceMap()) {
         d->send_removed(resource->handle);
     }
+}
+
+TabletCursor * TabletToolInterface::cursor(ClientConnection *client) const
+{
+    return d->m_cursor[*client];
 }
 
 class TabletSeatInterface::Private : public QtWaylandServer::zwp_tablet_seat_v2

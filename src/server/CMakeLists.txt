@@ -19,6 +19,7 @@ set(SERVER_LIB_SRCS
     idle_interface.cpp
     idleinhibit_interface.cpp
     idleinhibit_interface_v1.cpp
+    inputmethod_interface.cpp
     keyboard_interface.cpp
     keystate_interface.cpp
     linuxdmabuf_v1_interface.cpp
@@ -340,6 +341,7 @@ set(SERVER_LIB_HEADERS
   global.h
   idle_interface.h
   idleinhibit_interface.h
+  inputmethod_interface.h
   keyboard_interface.h
   keystate_interface.h
   linuxdmabuf_v1_interface.h

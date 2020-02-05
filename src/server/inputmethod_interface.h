@@ -32,6 +32,7 @@ namespace Server
 class OutputInterface;
 class SurfaceInterface;
 class Display;
+class InputPanelSurfaceInterface;
 
 class KWAYLANDSERVER_EXPORT InputMethodInterface : public QObject
 {
@@ -40,11 +41,10 @@ public:
     InputMethodInterface(Display *d, QObject *parent);
     virtual ~InputMethodInterface();
 
-    void sendActivate(struct ::wl_resource *id);
-    void sendDeactivate(struct ::wl_resource *context);
+    void sendActivate();
+    void sendDeactivate();
 
 private:
-    friend class InputMethodInterface;
     class Private;
     QScopedPointer<Private> d;
 };
@@ -53,7 +53,6 @@ class KWAYLANDSERVER_EXPORT InputMethodContextInterface : public QObject
 {
     Q_OBJECT
 public:
-    InputMethodContextInterface();
     virtual ~InputMethodContextInterface();
 
     void sendSurroundingText(const QString &text, uint32_t cursor, uint32_t anchor);
@@ -79,7 +78,8 @@ Q_SIGNALS:
     void textDirection(uint32_t serial, uint32_t direction);
 
 private:
-    friend class InputMethodContextInterface;
+    friend class InputMethodInterface;
+    InputMethodContextInterface(QObject *parent);
     class Private;
     QScopedPointer<Private> d;
 };
@@ -88,13 +88,15 @@ class KWAYLANDSERVER_EXPORT InputPanelInterface : public QObject
 {
     Q_OBJECT
 public:
-    InputPanelInterface(QObject* parent);
+    InputPanelInterface(Display* d, QObject* parent);
     virtual ~InputPanelInterface();
 
-    SurfaceInterface* inputPanelSurface(uint32_t id) const;
+    QHash<uint32_t, InputPanelSurfaceInterface*> surfaces() const;
+
+Q_SIGNALS:
+    void inputPanelSurfaceAdded(uint32_t id, InputPanelSurfaceInterface* surface);
 
 private:
-    friend class InputPanelInterface;
     class Private;
     QScopedPointer<Private> d;
 };
@@ -103,7 +105,6 @@ class KWAYLANDSERVER_EXPORT InputPanelSurfaceInterface : public QObject
 {
     Q_OBJECT
 public:
-    InputPanelSurfaceInterface();
     virtual ~InputPanelSurfaceInterface();
 
     enum Position {
@@ -111,10 +112,13 @@ public:
     };
     Q_ENUM(Position)
 
-    void setTopLevel(OutputInterface *output, Position position);
-    void setOverlayPanel();
+    SurfaceInterface* surface() const;
+
+    void topLevel(OutputInterface *output, Position position);
+    void overlayPanel();
 private:
-    friend class InputPanelSurfaceInterface;
+    InputPanelSurfaceInterface(QObject* parent);
+    friend class InputPanelInterface;
     class Private;
     QScopedPointer<Private> d;
 };

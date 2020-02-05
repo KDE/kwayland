@@ -58,6 +58,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "eglstream_controller_interface.h"
 #include "keystate_interface.h"
 #include "linuxdmabuf_v1_interface.h"
+#include "inputmethod_interface.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -535,6 +536,20 @@ KeyStateInterface *Display::createKeyStateInterface(QObject *parent)
     auto d = new KeyStateInterface(this, parent);
     connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
     return d;
+}
+
+InputMethodInterface *Display::createInputMethodInterface(QObject* parent)
+{
+    auto d = new InputMethodInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    return d;
+}
+
+InputPanelInterface *Display::createInputPanelInterface(QObject* parent)
+{
+    auto p = new InputPanelInterface(this, parent);
+    connect(this, &Display::aboutToTerminate, p, [p] { delete p; });
+    return p;
 }
 
 void Display::createShm()

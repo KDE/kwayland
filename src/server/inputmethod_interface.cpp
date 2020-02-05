@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "seat_interface.h"
 #include "display.h"
 #include "surface_interface.h"
+#include "output_interface.h"
 
 #include <QHash>
 #include "qwayland-server-input-method-unstable-v1.h"
@@ -34,38 +35,12 @@ static int s_version = 1;
 
 using namespace KWayland::Server;
 
-class InputMethodInterface::Private : public QtWaylandServer::zwp_input_method_v1
-{
-public:
-    Private(Display *d)
-        : zwp_input_method_v1(*d, s_version)
-    {}
-};
-
-InputMethodInterface::InputMethodInterface(Display *d, QObject* parent)
-    : QObject(parent)
-    , d(new InputMethodInterface::Private(d))
-{
-}
-
-InputMethodInterface::~InputMethodInterface() = default;
-
-void KWayland::Server::InputMethodInterface::sendActivate(struct ::wl_resource* id)
-{
-    d->send_activate(id);
-}
-
-void KWayland::Server::InputMethodInterface::sendDeactivate(struct ::wl_resource* context)
-{
-    d->send_deactivate(context);
-}
-
 class InputMethodContextInterface::Private : public QtWaylandServer::zwp_input_method_context_v1
 {
 public:
-    Private(InputMethodContextInterface* q) : QtWaylandServer::zwp_input_method_context_v1(), q(q) {}
+    Private(InputMethodContextInterface* q) : zwp_input_method_context_v1(), q(q) {}
 
-    void zwp_input_method_context_v1_commit_string(QtWaylandServer::zwp_input_method_context_v1::Resource * resource, uint32_t serial, const QString & text) override {
+    void zwp_input_method_context_v1_commit_string(Resource * resource, uint32_t serial, const QString & text) override {
         Q_EMIT q->commitString(serial, text);
     }
     void zwp_input_method_context_v1_preedit_string(Resource *resource, uint32_t serial, const QString &text, const QString &commit) override {
@@ -109,8 +84,9 @@ private:
     InputMethodContextInterface* const q;
 };
 
-InputMethodContextInterface::InputMethodContextInterface()
-    : d(new InputMethodContextInterface::Private(this))
+InputMethodContextInterface::InputMethodContextInterface(QObject *parent)
+    : QObject(parent)
+    , d(new InputMethodContextInterface::Private(this))
 {
 }
 
@@ -146,42 +122,140 @@ void InputMethodContextInterface::sendSurroundingText(const QString& text, uint3
     d->send_surrounding_text(text, cursor, anchor);
 }
 
+class InputPanelSurfaceInterface::Private : public QtWaylandServer::zwp_input_panel_surface_v1
+{
+public:
+    Private()
+        : zwp_input_panel_surface_v1()
+    {}
+
+    void zwp_input_panel_surface_v1_set_overlay_panel(Resource * resource) override {
+        qDebug() << "overlay!" << resource;
+        m_overlay = true;
+    }
+    void zwp_input_panel_surface_v1_set_toplevel(Resource * resource, struct ::wl_resource * output, uint32_t position) override {
+        qDebug() << "toplevel!" << resource << output << position;
+        OutputInterface* outputIface = OutputInterface::get(output);
+        m_surface->setOutputs({outputIface});
+    }
+
+    QPointer<SurfaceInterface> m_surface;
+    bool m_overlay = false;
+};
+
+InputPanelSurfaceInterface::InputPanelSurfaceInterface(QObject* parent)
+    : QObject(parent)
+    , d(new InputPanelSurfaceInterface::Private)
+{
+}
+
+InputPanelSurfaceInterface::~InputPanelSurfaceInterface() = default;
+
+// void KWayland::Server::InputPanelSurfaceInterface::overlayPanel()
+// {
+// }
+//
+// void InputPanelSurfaceInterface::setTopLevel(OutputInterface* output, InputPanelSurfaceInterface::Position position)
+// {
+// }
+
+
 class InputPanelInterface::Private : public QObject, public QtWaylandServer::zwp_input_panel_v1
 {
 public:
-    void zwp_input_panel_v1_get_input_panel_surface(QtWaylandServer::zwp_input_panel_v1::Resource * resource, uint32_t id, struct ::wl_resource * surface) override {
+    Private(InputPanelInterface *q, Display *d)
+        : zwp_input_panel_v1(*d, s_version)
+        , q(q)
+    {}
+
+    void zwp_input_panel_v1_get_input_panel_surface(Resource * resource, uint32_t id, struct ::wl_resource * surface) override {
         auto surfaceIface = SurfaceInterface::get(surface);
-        m_surfaces[id] = surfaceIface;
-        connect(surfaceIface, &SurfaceInterface::unmapped, this, [this, id] {
-            m_surfaces.remove(id);
-        });
+
+        auto ipsi = new InputPanelSurfaceInterface(nullptr);
+        ipsi->d->init(resource->client(), id, resource->version());
+        ipsi->d->m_surface = surfaceIface;
+        m_surfaces[id] = ipsi;
+
+        Q_EMIT q->inputPanelSurfaceAdded(id, ipsi);
     }
 
-    QHash<uint32_t, SurfaceInterface*> m_surfaces;
+    QHash<uint32_t, InputPanelSurfaceInterface*> m_surfaces;
+    InputPanelInterface * const q;
 };
 
-InputPanelInterface::InputPanelInterface(QObject *parent)
+InputPanelInterface::InputPanelInterface(Display* d, QObject *parent)
     : QObject(parent)
-    , d(new InputPanelInterface::Private)
+    , d(new InputPanelInterface::Private(this, d))
 {
 }
 
 InputPanelInterface::~InputPanelInterface() = default;
 
-SurfaceInterface* InputPanelInterface::inputPanelSurface(uint32_t id) const
+QHash<uint32_t, InputPanelSurfaceInterface*> InputPanelInterface::surfaces() const
 {
-    return d->m_surfaces.value(id);
+    return d->m_surfaces;
 }
 
-class InputPanelSurfaceInterface::Private : public QtWaylandServer::zwp_input_method_v1
+KWayland::Server::SurfaceInterface * KWayland::Server::InputPanelSurfaceInterface::surface() const
+{
+    return d->m_surface;
+}
+
+class InputMethodInterface::Private : public QtWaylandServer::zwp_input_method_v1
 {
 public:
+    Private(Display *d, InputMethodInterface* q)
+        : zwp_input_method_v1(*d, s_version)
+        , q(q)
+        , m_display(d)
+    {}
 
+    void zwp_input_method_v1_bind_resource(Resource * resource) override {
+        auto x = m_context->d->add(resource->client(), 0, 1);
+        if (m_enabled) {
+            send_activate(x->handle, resource->handle);
+        }
+    }
+
+    InputMethodContextInterface *m_context = nullptr;
+    InputMethodInterface * const q;
+    Display * const m_display;
+
+    bool m_enabled = false;
 };
 
-InputPanelSurfaceInterface::InputPanelSurfaceInterface()
-    : d(new InputPanelSurfaceInterface::Private)
+InputMethodInterface::InputMethodInterface(Display *d, QObject* parent)
+    : QObject(parent)
+    , d(new InputMethodInterface::Private(d, this))
 {
 }
 
-InputPanelSurfaceInterface::~InputPanelSurfaceInterface() = default;
+InputMethodInterface::~InputMethodInterface() = default;
+
+void InputMethodInterface::sendActivate()
+{
+    d->m_context = new InputMethodContextInterface(this);
+    qDebug() << "zwp_input_method_v1 activate" << d->resourceMap();
+
+    d->m_enabled = true;
+    for (auto resource : d->resourceMap()) {
+        auto x = d->m_context->d->add(resource->client(), resource->version());
+        d->send_activate(x->handle, resource->handle);
+    }
+}
+
+void InputMethodInterface::sendDeactivate()
+{
+    if (!d->m_enabled)
+        return;
+
+    qDebug() << "zwp_input_method_v1 deactivate" << d->resourceMap();
+    d->m_enabled = false;
+    for (auto resource : d->resourceMap()) {
+        auto fuuu = d->m_context->d->resourceMap().value(resource->client());
+        d->send_deactivate(fuuu->handle, resource->handle);
+    }
+
+    delete d->m_context;
+    d->m_context = nullptr;
+}

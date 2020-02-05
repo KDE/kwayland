@@ -93,6 +93,8 @@ class XdgDecorationManagerInterface;
 class EglStreamControllerInterface;
 class KeyStateInterface;
 class LinuxDmabufUnstableV1Interface;
+class InputMethodInterface;
+class InputPanelInterface;
 
 /**
  * @brief Class holding the Wayland server display loop.
@@ -323,6 +325,9 @@ public:
      * @since 5.58
      */
     EglStreamControllerInterface *createEglStreamControllerInterface(QObject *parent = nullptr);
+
+    InputMethodInterface* createInputMethodInterface(QObject *parent = nullptr);
+    InputPanelInterface* createInputPanelInterface(QObject *parent = nullptr);
 
     /**
      * Gets the ClientConnection for the given @p client.

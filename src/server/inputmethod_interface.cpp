@@ -118,9 +118,6 @@ public:
         }
         return ret;
     }
-    void zwp_input_method_context_v1_destroy(QtWaylandServer::zwp_input_method_context_v1::Resource * resource) override {
-        method->sendDeactivate();
-    }
 
 private:
     InputMethodContextInterface *const q;
@@ -249,6 +246,7 @@ class InputMethodInterface::Private : public QtWaylandServer::zwp_input_method_v
 public:
     Private(Display *d, InputMethodInterface* q)
         : zwp_input_method_v1(*d, s_version)
+        , m_context(new InputMethodContextInterface(q))
         , q(q)
         , m_display(d)
     {}
@@ -261,7 +259,7 @@ public:
         }
     }
 
-    InputMethodContextInterface *m_context = nullptr;
+    InputMethodContextInterface * const m_context = nullptr;
     InputMethodInterface * const q;
     Display * const m_display;
 
@@ -278,7 +276,7 @@ InputMethodInterface::~InputMethodInterface() = default;
 
 InputMethodContextInterface* InputMethodInterface::sendActivate()
 {
-    d->m_context = new InputMethodContextInterface(this);
+    d->m_context->sendReset();
 
     d->m_enabled = true;
     for (auto resource : d->resourceMap()) {
@@ -298,7 +296,4 @@ void InputMethodInterface::sendDeactivate()
         auto connection = d->m_context->d->resourceMap().value(resource->client());
         d->send_deactivate(connection->handle, resource->handle);
     }
-
-    delete d->m_context;
-    d->m_context = nullptr;
 }

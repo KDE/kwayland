@@ -33,6 +33,7 @@ class OutputInterface;
 class SurfaceInterface;
 class Display;
 class InputPanelSurfaceInterface;
+class InputMethodContextInterface;
 
 class KWAYLANDSERVER_EXPORT InputMethodInterface : public QObject
 {
@@ -41,7 +42,7 @@ public:
     InputMethodInterface(Display *d, QObject *parent);
     virtual ~InputMethodInterface();
 
-    void sendActivate();
+    InputMethodContextInterface* sendActivate();
     void sendDeactivate();
 
 private:
@@ -69,17 +70,16 @@ Q_SIGNALS:
     void preeditCursor(int32_t index);
     void deleteSurroundingText(int32_t index, uint32_t length);
     void cursorPosition(int32_t index, int32_t anchor);
-//     void modifiersMap(int mods);
-    void keysym(uint32_t serial, uint32_t time, uint32_t sym, uint32_t state, uint32_t modifiers);
+    void keysym(uint32_t serial, uint32_t time, uint32_t sym, bool pressed, Qt::KeyboardModifiers modifiers);
     void grabKeyboard(uint32_t keyboard);
-    void key(uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
-    void modifiers(uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group);
+    void key(uint32_t serial, uint32_t time, uint32_t key, bool pressed);
+    void modifiers(uint32_t serial, Qt::KeyboardModifiers mods_depressed, Qt::KeyboardModifiers mods_latched, Qt::KeyboardModifiers mods_locked, uint32_t group);
     void language(uint32_t serial, const QString &language);
-    void textDirection(uint32_t serial, uint32_t direction);
+    void textDirection(uint32_t serial, Qt::LayoutDirection direction);
 
 private:
     friend class InputMethodInterface;
-    InputMethodContextInterface(QObject *parent);
+    InputMethodContextInterface(InputMethodInterface *parent);
     class Private;
     QScopedPointer<Private> d;
 };
@@ -114,8 +114,10 @@ public:
 
     SurfaceInterface* surface() const;
 
+Q_SIGNALS:
     void topLevel(OutputInterface *output, Position position);
     void overlayPanel();
+
 private:
     InputPanelSurfaceInterface(QObject* parent);
     friend class InputPanelInterface;

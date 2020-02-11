@@ -6,7 +6,7 @@ modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
 version 2.1 of the License, or (at your option) version 3, or any
 later version accepted by the membership of KDE e.V. (or its
-successor approved by the membership of KDE e.V.), which shall
+successor approved      by the membership of KDE e.V.), which shall
 act as a proxy defined in Section 6 of version 3 of the license.
 
 This library is distributed in the hope that it will be useful,
@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct org_kde_plasma_window_management;
+struct org_kde_plasma_window_appmenu;
 struct org_kde_plasma_window;
 
 namespace KWayland
@@ -686,6 +687,69 @@ private:
     explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);
     class Private;
     QScopedPointer<Private> d;
+};
+
+/**
+ * @short Wrapper for the org_kde_plasma_window_appmenu interface.
+ * 
+ * This class provides a wrapper for the org_kde_plasma_window_appmenu interface.
+ * 
+ * To use this class one needs to interact with the registry. There are two possible
+ * ways to do this:
+ * @code
+ * PlasmaAppMenuListener *paml = registry-> TODO
+ * @endcode
+ * 
+ * This creates the PlasmaAppMenuListener and sets it up directly. As an alternative,
+ * you can manually initialize the PlasmaAppMenuListener:
+ * @code
+ * PlasmaAppMenuListener *paml = new PlasmaAppMenuListener;
+ * paml->setup(registry-> TODO );
+ * @endcode
+ * 
+ * The PlasmaAppMenuListener can be used as a drop-in replacement for org_kde_plasma_window_appmenu
+ * pointers.
+ * 
+ * @see Registry
+ * @since 5.something
+ **/
+
+class KWAYLANDCLIENT_EXPORT PlasmaAppMenuListener : public QObject
+{
+    Q_OBJECT
+    /**
+     * @brief The service name and object path to the active application menu.
+     **/
+    Q_PROPERTY(QPair<QString, QString> activeAppMenu MEMBER m_activeAppMenu NOTIFY activeAppMenuChanged)
+public:
+    /**
+     * Creates a new PlasmaAppMenuListener.
+     * Note: after creating a new PlasmaAppMenuListener it needs to be set up.
+     * To get a ready-to-use PlasmaAppMenuListener, use Registry::todo.
+     **/
+    explicit PlasmaAppMenuListener(QObject *parent = nullptr);
+    ~PlasmaAppMenuListener();
+
+    void setup(org_kde_plasma_window_appmenu *appmenu_interface);
+
+    bool valid() const;
+    void release();
+    void destroy();
+
+    void setEventQueue(EventQueue *queue);
+    EventQueue *eventQueue();
+
+    operator org_kde_plasma_window_appmenu*();
+    operator org_kde_plasma_window_appmenu*() const;
+
+Q_SIGNALS:
+    void activeAppMenuChanged();
+    void removed();
+
+private:
+    class Private;
+    QPair<QString, QString> m_activeAppMenu;
+    QScopedPointer<Private> data;
 };
 
 }

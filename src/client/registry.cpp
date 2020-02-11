@@ -386,7 +386,14 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_keystate_interface,
         &Registry::keystateAnnounced,
         &Registry::keystateRemoved
-    }}
+    }},
+    {Registry::Interface::PlasmaAppMenuListener, {
+        1,
+        QByteArrayLiteral("org_kde_plasma_window_appmenu"),
+        &org_kde_plasma_window_appmenu_interface,
+        &Registry::plasmaAppMenuListenerAnnounced,
+        &Registry::plasmaAppMenuListenerRemoved,
+    }},
 };
 
 static quint32 maxVersion(const Registry::Interface &interface)
@@ -676,6 +683,7 @@ BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
+BIND(PlasmaAppMenuListener, org_kde_plasma_window_appmenu)
 BIND(Idle, org_kde_kwin_idle)
 BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
 BIND(FakeInput, org_kde_kwin_fake_input)
@@ -742,6 +750,7 @@ CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
 CREATE(PlasmaVirtualDesktopManagement)
 CREATE(PlasmaWindowManagement)
+CREATE(PlasmaAppMenuListener)
 CREATE(Idle)
 CREATE(RemoteAccessManager)
 CREATE(FakeInput)

@@ -1065,5 +1065,104 @@ QStringList PlasmaWindow::plasmaVirtualDesktops() const
     return d->plasmaVirtualDesktops;
 }
 
+class PlasmaAppMenuListener::Private
+{
+public:
+    Private(PlasmaAppMenuListener *qt_wrapper);
+    
+    EventQueue *queue = nullptr;
+    void setup(org_kde_plasma_window_appmenu *wl_wrappee);
+
+    WaylandPointer<org_kde_plasma_window_appmenu, org_kde_plasma_window_appmenu_destroy> appmenu_interface;
+
+private:
+    org_kde_plasma_window_appmenu* wayland_wrappee;
+    PlasmaAppMenuListener* parent_wrapper;
+
+    void appmenuChanged(const char *service_name, const char *object_path);
+    static void appMenuChangedCallback(void *data, 
+                                       org_kde_plasma_window_appmenu *appmenu,
+                                       const char *service_name,
+                                       const char *object_path);
+
+    static const org_kde_plasma_window_appmenu_listener appmenu_listener;
+};
+
+PlasmaAppMenuListener::Private::Private(PlasmaAppMenuListener *qt_wrapper)
+                                       : parent_wrapper(qt_wrapper) {}
+
+const struct org_kde_plasma_window_appmenu_listener PlasmaAppMenuListener::Private::appmenu_listener = {
+    appMenuChangedCallback
+};
+
+void PlasmaAppMenuListener::Private::setup(org_kde_plasma_window_appmenu *wl_wrappee) {
+    Q_ASSERT(wl_wrappee);
+    Q_ASSERT(!appmenu_interface);
+    appmenu_interface.setup(wl_wrappee);
+}
+
+void PlasmaAppMenuListener::Private::appmenuChanged(const char *service_name,
+                                                    const char *object_path)
+{
+    parent_wrapper->m_activeAppMenu = qMakePair(service_name, object_path);
+    emit parent_wrapper->activeAppMenuChanged();
+}
+
+void PlasmaAppMenuListener::Private::appMenuChangedCallback(void *data,
+                                                            struct org_kde_plasma_window_appmenu *appmenumanager,
+                                                            const char *service_name,
+                                                            const char *object_path)
+{
+    auto paml = reinterpret_cast<PlasmaAppMenuListener::Private*>(data);
+    Q_ASSERT(paml->appmenu_interface == appmenumanager);
+    paml->appmenuChanged(service_name, object_path);
+}
+
+PlasmaAppMenuListener::~PlasmaAppMenuListener() {}
+
+PlasmaAppMenuListener::PlasmaAppMenuListener(QObject *parent)
+    : QObject(parent)
+    , data(new Private(this))
+{
+}
+
+void PlasmaAppMenuListener::setup(org_kde_plasma_window_appmenu *appmenu_interface)
+{
+    data->setup(appmenu_interface);
+}
+
+bool PlasmaAppMenuListener::valid() const
+{
+    return data->appmenu_interface.isValid();
+}
+
+void PlasmaAppMenuListener::release()
+{
+    data->appmenu_interface.release();
+}
+
+void PlasmaAppMenuListener::destroy()
+{
+    data->appmenu_interface.destroy();
+}
+
+void PlasmaAppMenuListener::setEventQueue(EventQueue *queue)
+{
+    data->queue = queue;
+}
+
+EventQueue *PlasmaAppMenuListener::eventQueue()
+{
+    return data->queue;
+}
+
+PlasmaAppMenuListener::operator org_kde_plasma_window_appmenu*() {
+    return data->appmenu_interface;
+}
+
+PlasmaAppMenuListener::operator org_kde_plasma_window_appmenu*() const {
+    return data->appmenu_interface;
+}
+
 }
 }

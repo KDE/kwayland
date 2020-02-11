@@ -56,26 +56,26 @@ class KWAYLANDSERVER_EXPORT InputMethodContextInterface : public QObject
 public:
     virtual ~InputMethodContextInterface();
 
-    void sendSurroundingText(const QString &text, uint32_t cursor, uint32_t anchor);
+    void sendSurroundingText(const QString &text, quint32 cursor, quint32 anchor);
     void sendReset();
-    void sendContentType(uint32_t hint, uint32_t purpose);
-    void sendInvokeAction(uint32_t button, uint32_t index);
-    void sendCommitState(uint32_t serial);
+    void sendContentType(quint32 hint, quint32 purpose);
+    void sendInvokeAction(quint32 button, quint32 index);
+    void sendCommitState(quint32 serial);
     void sendPreferredLanguage(const QString &language);
 
 Q_SIGNALS:
-    void commitString(uint serial, const QString &text);
-    void preeditString(uint32_t serial, const QString &text, const QString &commit);
-    void preeditStyling(uint32_t index, uint32_t length, uint32_t style);
-    void preeditCursor(int32_t index);
-    void deleteSurroundingText(int32_t index, uint32_t length);
-    void cursorPosition(int32_t index, int32_t anchor);
-    void keysym(uint32_t serial, uint32_t time, uint32_t sym, bool pressed, Qt::KeyboardModifiers modifiers);
-    void grabKeyboard(uint32_t keyboard);
-    void key(uint32_t serial, uint32_t time, uint32_t key, bool pressed);
-    void modifiers(uint32_t serial, Qt::KeyboardModifiers mods_depressed, Qt::KeyboardModifiers mods_latched, Qt::KeyboardModifiers mods_locked, uint32_t group);
-    void language(uint32_t serial, const QString &language);
-    void textDirection(uint32_t serial, Qt::LayoutDirection direction);
+    void commitString(quint32 serial, const QString &text);
+    void preeditString(quint32 serial, const QString &text, const QString &commit);
+    void preeditStyling(quint32 index, quint32 length, quint32 style);
+    void preeditCursor(qint32 index);
+    void deleteSurroundingText(qint32 index, quint32 length);
+    void cursorPosition(qint32 index, qint32 anchor);
+    void keysym(quint32 serial, quint32 time, quint32 sym, bool pressed, Qt::KeyboardModifiers modifiers);
+    void grabKeyboard(quint32 keyboard);
+    void key(quint32 serial, quint32 time, quint32 key, bool pressed);
+    void modifiers(quint32 serial, Qt::KeyboardModifiers mods_depressed, Qt::KeyboardModifiers mods_latched, Qt::KeyboardModifiers mods_locked, quint32 group);
+    void language(quint32 serial, const QString &language);
+    void textDirection(quint32 serial, Qt::LayoutDirection direction);
 
 private:
     friend class InputMethodInterface;
@@ -91,10 +91,10 @@ public:
     InputPanelInterface(Display* d, QObject* parent);
     virtual ~InputPanelInterface();
 
-    QHash<uint32_t, InputPanelSurfaceInterface*> surfaces() const;
+    QHash<quint32, InputPanelSurfaceInterface*> surfaces() const;
 
 Q_SIGNALS:
-    void inputPanelSurfaceAdded(uint32_t id, InputPanelSurfaceInterface* surface);
+    void inputPanelSurfaceAdded(quint32 id, InputPanelSurfaceInterface* surface);
 
 private:
     class Private;

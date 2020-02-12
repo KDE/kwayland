@@ -31,7 +31,9 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 
 # Dependencies
 set(REQUIRED_QT_VERSION 5.12.0)
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui)
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui WaylandClient)
+
+find_package(QtWaylandScanner REQUIRED)
 
 find_package(Wayland 1.15 COMPONENTS Client Server)
 set_package_properties(Wayland PROPERTIES
@@ -64,6 +66,8 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050d00)
 if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
     ecm_install_po_files_as_qm(po)
 endif()
+
+find_package(QtWaylandScanner REQUIRED)
 add_subdirectory(src)
 
 if (BUILD_TESTING)

@@ -2,7 +2,11 @@ add_subdirectory(client)
 add_subdirectory(server)
 add_subdirectory(tools)
 
-install( FILES org_kde_kwayland.categories DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR} )
+ecm_qt_install_logging_categories(
+    EXPORT KWAYLAND
+    FILE kwayland.categories
+    DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
+)
 
 
 if(BUILD_QCH)

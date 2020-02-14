@@ -53,6 +53,8 @@ public:
     };
     void setShowingDesktopState(ShowingDesktopState state);
 
+    void setAppMenuPaths(const QString& service, const QString& object);
+
     PlasmaWindowInterface *createWindow(QObject *parent);
     QList<PlasmaWindowInterface*> windows() const;
 

@@ -72,6 +72,7 @@ class PlasmaVirtualDesktop;
 class KWAYLANDCLIENT_EXPORT PlasmaWindowManagement : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QPair<QString,QString> activeAppmenu MEMBER m_appmenuPaths NOTIFY activeAppMenuChanged)
 public:
     explicit PlasmaWindowManagement(QObject *parent = nullptr);
     virtual ~PlasmaWindowManagement();
@@ -197,6 +198,11 @@ Q_SIGNALS:
     void activeWindowChanged();
 
     /**
+     *  TODO: Documentation.
+     **/
+    void activeAppMenuChanged();
+
+    /**
      * The corresponding global for this interface on the Registry got removed.
      *
      * This signal gets only emitted if the Compositor got created by
@@ -209,6 +215,7 @@ Q_SIGNALS:
 private:
     class Private;
     QScopedPointer<Private> d;
+    QPair<QString,QString> m_appmenuPaths;
 };
 
 /**

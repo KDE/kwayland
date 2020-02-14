@@ -261,6 +261,14 @@ PlasmaWindowInterface *PlasmaWindowManagementInterface::createWindow(QObject *pa
     return window;
 }
 
+void PlasmaWindowManagementInterface::setAppMenuPaths(const QString& service, const QString &object)
+{
+    Q_D();
+    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+        org_kde_plasma_window_management_send_active_appmenu_changed(*it, qUtf8Printable(service), qUtf8Printable(object));
+    }
+}
+
 QList<PlasmaWindowInterface*> PlasmaWindowManagementInterface::windows() const
 {
     Q_D();

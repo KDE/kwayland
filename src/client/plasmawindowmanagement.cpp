@@ -54,6 +54,7 @@ public:
 private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
     static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
+    static void activeAppMenuChangedCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char* service_name, const char* object_path);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId);
 
@@ -201,6 +202,17 @@ void PlasmaWindowManagement::Private::windowCallback(void *data, org_kde_plasma_
         }, Qt::QueuedConnection
     );
     timer->start();
+}
+
+void PlasmaWindowManagement::Private::activeAppMenuChangedCallback(void *data,
+                                                                   org_kde_plasma_window_management *interface, 
+                                                                   const char* service,
+                                                                   const char* object)
+{
+    auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
+    Q_ASSERT(wm->wm == interface);
+    wm->q->m_appmenuPaths = qMakePair(QString::fromLocal8Bit(service), QString::fromLocal8Bit(object));
+    emit wm->q->activeAppMenuChanged();
 }
 
 void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, quint32 internalId)

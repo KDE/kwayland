@@ -82,6 +82,7 @@ public:
     void setState(org_kde_plasma_window_management_state flag, bool set);
     void setParentWindow(PlasmaWindowInterface *parent);
     void setGeometry(const QRect &geometry);
+    void setApplicationMenuPaths(const QString& service, const QString& object);
     wl_resource *resourceForParent(PlasmaWindowInterface *parent, wl_resource *child) const;
 
     QVector<wl_resource*> resources;
@@ -259,14 +260,6 @@ PlasmaWindowInterface *PlasmaWindowManagementInterface::createWindow(QObject *pa
         }
     );
     return window;
-}
-
-void PlasmaWindowManagementInterface::setAppMenuPaths(const QString& service, const QString &object)
-{
-    Q_D();
-    for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-        org_kde_plasma_window_management_send_active_appmenu_changed(*it, qUtf8Printable(service), qUtf8Printable(object));
-    }
 }
 
 QList<PlasmaWindowInterface*> PlasmaWindowManagementInterface::windows() const
@@ -593,6 +586,17 @@ void PlasmaWindowInterface::Private::setGeometry(const QRect &geo)
             continue;
         }
         org_kde_plasma_window_send_geometry(resource, geometry.x(), geometry.y(), geometry.width(), geometry.height());
+    }
+}
+
+void PlasmaWindowInterface::Private::setApplicationMenuPaths(const QString &service, const QString &object)
+{
+    for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+        auto resource = *it;
+        if (wl_resource_get_version(resource) < ORG_KDE_PLASMA_WINDOW_APPLICATION_MENU_CHANGED_SINCE_VERSION) {
+            continue;
+        }
+        org_kde_plasma_window_send_application_menu_changed(resource, qUtf8Printable(service), qUtf8Printable(object));
     }
 }
 
@@ -952,6 +956,11 @@ void PlasmaWindowInterface::setParentWindow(PlasmaWindowInterface *parentWindow)
 void PlasmaWindowInterface::setGeometry(const QRect &geometry)
 {
     d->setGeometry(geometry);
+}
+
+void PlasmaWindowInterface::setApplicationMenuPaths(const QString& service_name, const QString &object_path)
+{
+    d->setApplicationMenuPaths(service_name, object_path);
 }
 
 }

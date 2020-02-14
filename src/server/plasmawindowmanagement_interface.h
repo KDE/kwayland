@@ -53,8 +53,6 @@ public:
     };
     void setShowingDesktopState(ShowingDesktopState state);
 
-    void setAppMenuPaths(const QString& service, const QString& object);
-
     PlasmaWindowInterface *createWindow(QObject *parent);
     QList<PlasmaWindowInterface*> windows() const;
 
@@ -229,6 +227,11 @@ public:
      * @since 5.48
      */
     QStringList plasmaVirtualDesktops() const;
+
+    /**
+     * TODO: Documentation.
+     */
+    void setApplicationMenuPaths(const QString& service_name, const QString& object_path);
 
 Q_SIGNALS:
     void closeRequested();

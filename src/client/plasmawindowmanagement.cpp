@@ -54,7 +54,6 @@ public:
 private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
     static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
-    static void activeAppMenuChangedCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char* service_name, const char* object_path);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId);
 
@@ -98,6 +97,8 @@ public:
     QStringList plasmaVirtualDesktops;
     QRect geometry;
     quint32 pid = 0;
+    QString applicationMenuServiceName;
+    QString applicationMenuObjectPath;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -113,6 +114,7 @@ private:
     static void iconChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window);
     static void virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void virtualDesktopLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
+    static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char* service_name, const char* object_path);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -151,8 +153,7 @@ PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
 
 org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_listener = {
     showDesktopCallback,
-    windowCallback,
-    activeAppMenuChangedCallback
+    windowCallback
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -203,17 +204,6 @@ void PlasmaWindowManagement::Private::windowCallback(void *data, org_kde_plasma_
         }, Qt::QueuedConnection
     );
     timer->start();
-}
-
-void PlasmaWindowManagement::Private::activeAppMenuChangedCallback(void *data,
-                                                                   org_kde_plasma_window_management *interface, 
-                                                                   const char* service,
-                                                                   const char* object)
-{
-    auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
-    Q_ASSERT(wm->wm == interface);
-    wm->q->m_appmenuPaths = qMakePair(QString::fromLocal8Bit(service), QString::fromLocal8Bit(object));
-    emit wm->q->activeAppMenuChanged();
 }
 
 void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, quint32 internalId)
@@ -366,8 +356,21 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     iconChangedCallback,
     pidChangedCallback,
     virtualDesktopEnteredCallback,
-    virtualDesktopLeftCallback
+    virtualDesktopLeftCallback,
+    appmenuChangedCallback
 };
+
+void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char* service_name, const char* object_path)
+{
+    Private *p = cast(data);
+
+    p->applicationMenuServiceName = QString::fromLocal8Bit(service_name);
+    p->applicationMenuObjectPath = QString::fromLocal8Bit(object_path);
+
+    emit p->q->applicationMenuChanged();
+
+    Q_UNUSED(window);
+}
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
 {
@@ -939,6 +942,16 @@ bool PlasmaWindow::isMovable() const
 bool PlasmaWindow::isVirtualDesktopChangeable() const
 {
     return d->virtualDesktopChangeable;
+}
+
+QString PlasmaWindow::applicationMenuObjectPath() const
+{
+    return d->applicationMenuObjectPath;
+}
+
+QString PlasmaWindow::applicationMenuServiceName() const
+{
+    return d->applicationMenuServiceName;
 }
 
 void PlasmaWindow::requestActivate()

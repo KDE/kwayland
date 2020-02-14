@@ -82,18 +82,9 @@
       </description>
       <arg name="id" type="uint" summary="internal window Id"/>
     </event>
-
-    <event name="active_appmenu_changed">
-        <description summary="notify the client that the current appmenu changed">
-            This event will be sent after the application menu corresponding
-            to the active client has changed.
-        </description>
-        <arg name="service_name" type="string" />
-        <arg name="object_path" type="string" />
-    </event>
   </interface>
 
-  <interface name="org_kde_plasma_window" version="8">
+  <interface name="org_kde_plasma_window" version="9">
     <description summary="interface to control application windows">
       Manages and control an application window.
 
@@ -317,6 +308,15 @@
       </description>
       <arg name="is" type="string" summary="desktop id"/>
     </event>
+
+    <event name="application_menu_changed" since="9">
+      <description summary="notify the client that the current appmenu changed">
+          This event will be sent after the application menu
+          for the window has changed.
+      </description>
+      <arg name="service_name" type="string" />
+      <arg name="object_path" type="string" />
+  </event>
 
   </interface>
 </protocol>

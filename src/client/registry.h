@@ -53,7 +53,6 @@ struct org_kde_kwin_slide_manager;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_virtual_desktop_management;
 struct org_kde_plasma_window_management;
-struct org_kde_plasma_window_appmenu;
 struct org_kde_kwin_server_decoration_manager;
 struct org_kde_kwin_server_decoration_palette_manager;
 struct xdg_shell;
@@ -91,7 +90,6 @@ class Output;
 class PlasmaShell;
 class PlasmaVirtualDesktopManagement;
 class PlasmaWindowManagement;
-class PlasmaAppMenuListener;
 class PointerConstraints;
 class PointerGestures;
 class Seat;
@@ -190,7 +188,6 @@ public:
         XdgShellStable, ///refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.54
         Keystate,///<refers to org_kwin_keystate, @since 5.57
-        PlasmaAppMenuListener,
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -681,8 +678,6 @@ public:
      * @since 5.54
      **/
     zxdg_decoration_manager_v1 *bindXdgDecorationUnstableV1(uint32_t name, uint32_t version) const;
-
-    org_kde_plasma_window_appmenu *bindPlasmaAppMenuListener(uint32_t name, uint32_t version) const;
 
     ///@}
 
@@ -1256,8 +1251,6 @@ public:
      **/
     XdgDecorationManager *createXdgDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
-    PlasmaAppMenuListener *createPlasmaAppMenuListener(quint32 name, quint32 version, QObject *parent = nullptr);
-
     ///@}
 
 
@@ -1765,9 +1758,6 @@ Q_SIGNALS:
 
     void keystateAnnounced(quint32 name, quint32 version);
     void keystateRemoved(quint32 name);
-
-    void plasmaAppMenuListenerAnnounced(quint32 name, quint32 version);
-    void plasmaAppMenuListenerRemoved(quint32 name);
 
     ///@}
     /**

@@ -17,21 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ]]></copyright>
 
-  <interface name="org_kde_plasma_window_appmenu" version="1">
-    <description summary="appmenu for active window">
-      This interface allows a client to listen for
-      changes to the appmenu that corresponds to the currently
-      active window.
-    </description>
-    <event name="active_appmenu_changed">
-        <description summary="current appmenu changed">
-            The current application menu changed.
-        </description>
-        <arg name="service_name" type="string" />
-        <arg name="object_path" type="string" />
-    </event>
-  </interface>
-
   <interface name="org_kde_plasma_window_management" version="9">
     <description summary="application windows management">
       This interface manages application windows.

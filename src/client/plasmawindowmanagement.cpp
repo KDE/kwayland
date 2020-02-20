@@ -114,7 +114,7 @@ private:
     static void iconChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window);
     static void virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void virtualDesktopLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
-    static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char* service_name, const char* object_path);
+    static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *service_name, const char *object_path);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -360,16 +360,16 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     appmenuChangedCallback
 };
 
-void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char* service_name, const char* object_path)
+void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char *service_name, const char *object_path)
 {
+    Q_UNUSED(window)
+    
     Private *p = cast(data);
 
-    p->applicationMenuServiceName = QString::fromLocal8Bit(service_name);
-    p->applicationMenuObjectPath = QString::fromLocal8Bit(object_path);
+    p->applicationMenuServiceName = QString::fromUtf8(service_name);
+    p->applicationMenuObjectPath = QString::fromUtf8(object_path);
 
     emit p->q->applicationMenuChanged();
-
-    Q_UNUSED(window);
 }
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)

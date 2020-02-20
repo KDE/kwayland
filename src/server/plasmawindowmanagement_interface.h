@@ -229,9 +229,11 @@ public:
     QStringList plasmaVirtualDesktops() const;
 
     /**
-     * TODO: Documentation.
+     * Set the application menu D-BUS service name and object path for the window.
+     * 
+     * @since 5.69
      */
-    void setApplicationMenuPaths(const QString& service_name, const QString& object_path);
+    void setApplicationMenuPaths(const QString &serviceName, const QString &objectPath);
 
 Q_SIGNALS:
     void closeRequested();

@@ -97,6 +97,8 @@ public:
     QStringList plasmaVirtualDesktops;
     QRect geometry;
     quint32 pid = 0;
+    QString applicationMenuServiceName;
+    QString applicationMenuObjectPath;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -112,6 +114,7 @@ private:
     static void iconChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window);
     static void virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void virtualDesktopLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
+    static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *service_name, const char *object_path);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -353,8 +356,21 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     iconChangedCallback,
     pidChangedCallback,
     virtualDesktopEnteredCallback,
-    virtualDesktopLeftCallback
+    virtualDesktopLeftCallback,
+    appmenuChangedCallback
 };
+
+void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char *service_name, const char *object_path)
+{
+    Q_UNUSED(window)
+    
+    Private *p = cast(data);
+
+    p->applicationMenuServiceName = QString::fromUtf8(service_name);
+    p->applicationMenuObjectPath = QString::fromUtf8(object_path);
+
+    emit p->q->applicationMenuChanged();
+}
 
 void PlasmaWindow::Private::parentWindowCallback(void *data, org_kde_plasma_window *window, org_kde_plasma_window *parent)
 {
@@ -926,6 +942,16 @@ bool PlasmaWindow::isMovable() const
 bool PlasmaWindow::isVirtualDesktopChangeable() const
 {
     return d->virtualDesktopChangeable;
+}
+
+QString PlasmaWindow::applicationMenuObjectPath() const
+{
+    return d->applicationMenuObjectPath;
+}
+
+QString PlasmaWindow::applicationMenuServiceName() const
+{
+    return d->applicationMenuServiceName;
 }
 
 void PlasmaWindow::requestActivate()

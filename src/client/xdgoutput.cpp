@@ -101,6 +101,8 @@ struct XdgOutputBuffer
 {
     QPoint logicalPosition;
     QSize logicalSize;
+    QString name;
+    QString description;
 };
 
 class XdgOutput::Private
@@ -122,6 +124,8 @@ private:
     static void logical_positionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, int32_t x, int32_t y);
     static void logical_sizeCallback(void *data, zxdg_output_v1 *zxdg_output_v1, int32_t width, int32_t height);
     static void doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1);
+    static void nameCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *name);
+    static void descriptionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *description);
 
     static const zxdg_output_v1_listener s_listener;
 };
@@ -129,7 +133,9 @@ private:
 const zxdg_output_v1_listener XdgOutput::Private::s_listener = {
     logical_positionCallback,
     logical_sizeCallback,
-    doneCallback
+    doneCallback,
+    nameCallback,
+    descriptionCallback
 };
 
 void XdgOutput::Private::logical_positionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, int32_t x, int32_t y)
@@ -146,16 +152,28 @@ void XdgOutput::Private::logical_sizeCallback(void *data, zxdg_output_v1 *zxdg_o
     p->pending.logicalSize = QSize(width,height);
 }
 
+void XdgOutput::Private::nameCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *name)
+{
+    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    Q_ASSERT(p->xdgoutput == zxdg_output_v1);
+    p->pending.name = name;
+}
+
+void XdgOutput::Private::descriptionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *description)
+{
+    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    Q_ASSERT(p->xdgoutput == zxdg_output_v1);
+    p->pending.description = description;
+}
+
+
 void XdgOutput::Private::doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1)
 {
     auto p = reinterpret_cast<XdgOutput::Private*>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
     std::swap(p->current, p->pending);
 
-    if (p->current.logicalSize != p->pending.logicalSize ||
-        p->current.logicalPosition != p->pending.logicalPosition) {
-        emit p->q->changed();
-    }
+    emit p->q->changed();
 }
 
 XdgOutput::Private::Private(XdgOutput *qptr)
@@ -205,6 +223,16 @@ QSize XdgOutput::logicalSize() const
 QPoint XdgOutput::logicalPosition() const
 {
     return d->current.logicalPosition;
+}
+
+QString XdgOutput::name() const
+{
+    return d->current.name;
+}
+
+QString XdgOutput::description() const
+{
+    return d->current.description;
 }
 
 XdgOutput::operator zxdg_output_v1*() {

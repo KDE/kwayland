@@ -97,24 +97,14 @@ IdleInhibitor *IdleInhibitManager::createInhibitor(Surface *surface, QObject *pa
 class Q_DECL_HIDDEN IdleInhibitor::Private
 {
 public:
-    Private(IdleInhibitor *q);
-
     void setup(zwp_idle_inhibitor_v1 *arg);
 
     WaylandPointer<zwp_idle_inhibitor_v1, zwp_idle_inhibitor_v1_destroy> idleinhibitor;
-
-private:
-    IdleInhibitor *q;
 };
-
-IdleInhibitor::Private::Private(IdleInhibitor *q)
-    : q(q)
-{
-}
 
 IdleInhibitor::IdleInhibitor(QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new Private)
 {
 }
 

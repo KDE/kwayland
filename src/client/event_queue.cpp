@@ -17,23 +17,13 @@ namespace Client
 class Q_DECL_HIDDEN EventQueue::Private
 {
 public:
-    Private(EventQueue *q);
-
     wl_display *display = nullptr;
     WaylandPointer<wl_event_queue, wl_event_queue_destroy> queue;
-
-private:
-    EventQueue *q;
 };
-
-EventQueue::Private::Private(EventQueue *q)
-    : q(q)
-{
-}
 
 EventQueue::EventQueue(QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new Private)
 {
 }
 

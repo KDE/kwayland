@@ -100,24 +100,14 @@ ServerSideDecorationPalette *ServerSideDecorationPaletteManager::create(Surface 
 class ServerSideDecorationPalette::Private
 {
 public:
-    Private(ServerSideDecorationPalette *q);
-
     void setup(org_kde_kwin_server_decoration_palette *arg);
 
     WaylandPointer<org_kde_kwin_server_decoration_palette, org_kde_kwin_server_decoration_palette_release> decoration_palette;
-
-private:
-    ServerSideDecorationPalette *q;
 };
-
-ServerSideDecorationPalette::Private::Private(ServerSideDecorationPalette *q)
-    : q(q)
-{
-}
 
 ServerSideDecorationPalette::ServerSideDecorationPalette(QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new Private)
 {
 }
 

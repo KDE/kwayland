@@ -97,24 +97,14 @@ AppMenu *AppMenuManager::create(Surface *surface, QObject *parent)
 class AppMenu::Private
 {
 public:
-    Private(AppMenu *q);
-
     void setup(org_kde_kwin_appmenu *arg);
 
     WaylandPointer<org_kde_kwin_appmenu, org_kde_kwin_appmenu_release> appmenu;
-
-private:
-    AppMenu *q;
 };
-
-AppMenu::Private::Private(AppMenu *q)
-    : q(q)
-{
-}
 
 AppMenu::AppMenu(QObject *parent)
     : QObject(parent)
-    , d(new Private(this))
+    , d(new Private)
 {
 }
 

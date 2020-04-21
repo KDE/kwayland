@@ -6,7 +6,7 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
   ]]></copyright>
 
-  <interface name="org_kde_plasma_window_management" version="10">
+  <interface name="org_kde_plasma_window_management" version="11">
     <description summary="application windows management">
       This interface manages application windows.
       It provides requests to show and hide the desktop and emits
@@ -71,9 +71,16 @@
       </description>
       <arg name="id" type="uint" summary="internal window Id"/>
     </event>
+
+    <event name="stacking_order_changed" since="11">
+      <description summary="notify the client when stacking order changed">
+        This event will be sent when stacking order changed and on bind
+      </description>
+      <arg name="ids" type="array" summary="internal windows id array"/>
+    </event>
   </interface>
 
-  <interface name="org_kde_plasma_window" version="10">
+  <interface name="org_kde_plasma_window" version="11">
     <description summary="interface to control application windows">
       Manages and control an application window.
 

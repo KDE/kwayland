@@ -34,14 +34,17 @@ public:
     bool showingDesktop = false;
     QList<PlasmaWindow*> windows;
     PlasmaWindow *activeWindow = nullptr;
+    QVector<quint32> stackingOrder;
 
     void setup(org_kde_plasma_window_management *wm);
 
 private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
     static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
+    static void stackingOrderCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, wl_array *ids);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId);
+    void setStackingOrder(const QVector<quint32> &ids);
 
     static struct org_kde_plasma_window_management_listener s_listener;
     PlasmaWindowManagement *q;
@@ -139,7 +142,8 @@ PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
 
 org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_listener = {
     showDesktopCallback,
-    windowCallback
+    windowCallback,
+    stackingOrderCallback
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -235,6 +239,25 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
     );
 }
 
+void PlasmaWindowManagement::Private::stackingOrderCallback(void *data, org_kde_plasma_window_management *interface, wl_array *ids)
+{
+    auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
+    Q_ASSERT(wm->wm == interface);
+    QVector<quint32> destination;
+    destination.resize(ids->size / sizeof(uint32_t));
+    memcpy(destination.data(), ids->data, ids->size);
+    wm->setStackingOrder(destination);
+}
+
+void PlasmaWindowManagement::Private::setStackingOrder(const QVector<quint32> &ids)
+{
+    if (stackingOrder == ids) {
+        return;
+    }
+    stackingOrder = ids;
+    emit q->stackingOrderChanged();
+}
+
 PlasmaWindowManagement::PlasmaWindowManagement(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
@@ -327,6 +350,11 @@ PlasmaWindow *PlasmaWindowManagement::activeWindow() const
 PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
 {
     return new PlasmaWindowModel(this);
+}
+
+QVector<quint32> PlasmaWindowManagement::stackingOrder() const
+{
+    return d->stackingOrder;
 }
 
 org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {

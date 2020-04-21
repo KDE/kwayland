@@ -156,6 +156,11 @@ public:
      **/
     PlasmaWindowModel *createWindowModel();
 
+    /**
+     * @returns windows stacking order
+     */
+    QVector<quint32> stackingOrder() const;
+
 Q_SIGNALS:
     /**
      * This signal is emitted right before the interface is released.
@@ -191,6 +196,12 @@ Q_SIGNALS:
      * @since 5.5
      **/
     void removed();
+
+    /**
+     * The stacking order changed
+     * @since 5.70
+     **/
+    void stackingOrderChanged();
 
 private:
     class Private;

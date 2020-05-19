@@ -269,6 +269,8 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
         return window->geometry();
     } else if (role == VirtualDesktops) {
         return window->plasmaVirtualDesktops();
+    } else if (role == Uuid) {
+        return window->uuid();
     }
 
     return QVariant();

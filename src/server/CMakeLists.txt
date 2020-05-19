@@ -97,7 +97,7 @@ ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
 )
 
 ecm_add_wayland_server_protocol(SERVER_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-window-management.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-window-management.xml
     BASENAME plasma-window-management
 )
 
@@ -308,7 +308,7 @@ ecm_generate_export_header(KF5WaylandServer
     GROUP_BASE_NAME KF
     VERSION ${KF5_VERSION}
     DEPRECATED_BASE_VERSION 0
-    DEPRECATION_VERSIONS 5.5 5.28 5.50 5.52 5.69
+    DEPRECATION_VERSIONS 5.5 5.28 5.50 5.52 5.69 5.71
 )
 # TODO: add support for EXCLUDE_DEPRECATED_BEFORE_AND_AT to all KWayland libs
 # needs fixing of undeprecated API being still implemented using own deprecated API

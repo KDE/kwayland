@@ -156,10 +156,22 @@ public:
      **/
     PlasmaWindowModel *createWindowModel();
 
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
     /**
      * @returns windows stacking order
+     *
+     * @deprecated since 5.71, Use stackingOrderUuids
      */
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::stackingOrderUuids()")
     QVector<quint32> stackingOrder() const;
+#endif
+
+    /**
+     * @returns windows stacking order
+     *
+     * @since 5.71
+     */
+    QVector<QByteArray> stackingOrderUuids() const;
 
 Q_SIGNALS:
     /**
@@ -197,11 +209,20 @@ Q_SIGNALS:
      **/
     void removed();
 
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
     /**
      * The stacking order changed
-     * @since 5.70
+     * @deprecated since 5.71, use stackingOrderUuidsChanged
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::stackingOrderUuidsChanged()")
     void stackingOrderChanged();
+#endif
+
+    /**
+     * The stacking order uuids changed
+     * @since 5.71
+     **/
+    void stackingOrderUuidsChanged();
 
 private:
     class Private;
@@ -460,12 +481,24 @@ public:
      */
     void requestToggleShaded();
 
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
     /**
      * An internal window identifier.
      * This is not a global window identifier.
      * This identifier does not correspond to QWindow::winId in any way.
+     *
+     * @deprecated since 5.71, use uuid instead
      **/
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::uuid(const QString &)")
     quint32 internalId() const;
+#endif
+
+    /**
+     * A unique identifier for the window
+     *
+     * @see QUuid
+     */
+    QByteArray uuid() const;
 
     /**
      * The parent window of this PlasmaWindow.
@@ -703,7 +736,7 @@ Q_SIGNALS:
 
 private:
     friend class PlasmaWindowManagement;
-    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId);
+    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId, const char *uuid);
     class Private;
     QScopedPointer<Private> d;
 };

@@ -35,16 +35,20 @@ public:
     QList<PlasmaWindow*> windows;
     PlasmaWindow *activeWindow = nullptr;
     QVector<quint32> stackingOrder;
+    QVector<QByteArray> stackingOrderUuids;
 
     void setup(org_kde_plasma_window_management *wm);
 
 private:
     static void showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state);
     static void windowCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id);
+    static void windowWithUuidCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id, const char* uuid);
     static void stackingOrderCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, wl_array *ids);
+    static void stackingOrderUuidsCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char *uuids);
     void setShowDesktop(bool set);
-    void windowCreated(org_kde_plasma_window *id, quint32 internalId);
+    void windowCreated(org_kde_plasma_window *id, quint32 internalId, const char *uuid);
     void setStackingOrder(const QVector<quint32> &ids);
+    void setStackingOrder(const QVector<QByteArray> &uuids);
 
     static struct org_kde_plasma_window_management_listener s_listener;
     PlasmaWindowManagement *q;
@@ -53,9 +57,10 @@ private:
 class Q_DECL_HIDDEN PlasmaWindow::Private
 {
 public:
-    Private(org_kde_plasma_window *window, quint32 internalId, PlasmaWindow *q);
+    Private(org_kde_plasma_window *window, quint32 internalId, const char *uuid, PlasmaWindow *q);
     WaylandPointer<org_kde_plasma_window, org_kde_plasma_window_destroy> window;
-    quint32 internalId;
+    quint32 internalId; ///< @deprecated
+    QByteArray uuid;
     QString title;
     QString appId;
     quint32 desktop = 0;
@@ -143,7 +148,9 @@ PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
 org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_listener = {
     showDesktopCallback,
     windowCallback,
-    stackingOrderCallback
+    windowWithUuidCallback,
+    stackingOrderCallback,
+    stackingOrderUuidsCallback
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -189,19 +196,36 @@ void PlasmaWindowManagement::Private::windowCallback(void *data, org_kde_plasma_
     timer->setInterval(0);
     QObject::connect(timer, &QTimer::timeout, wm->q,
         [timer, wm, id] {
-            wm->windowCreated(org_kde_plasma_window_management_get_window(wm->wm, id), id);
+            wm->windowCreated(org_kde_plasma_window_management_get_window(wm->wm, id), id, "unavailable");
             timer->deleteLater();
         }, Qt::QueuedConnection
     );
     timer->start();
 }
 
-void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, quint32 internalId)
+void PlasmaWindowManagement::Private::windowWithUuidCallback(void *data, org_kde_plasma_window_management *interface, uint32_t id, const char *_uuid)
+{
+    QByteArray uuid(_uuid);
+    auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
+    Q_ASSERT(wm->wm == interface);
+    QTimer *timer = new QTimer();
+    timer->setSingleShot(true);
+    timer->setInterval(0);
+    QObject::connect(timer, &QTimer::timeout, wm->q,
+        [timer, wm, id, uuid] {
+            wm->windowCreated(org_kde_plasma_window_management_get_window_by_uuid(wm->wm, uuid), id, uuid);
+            timer->deleteLater();
+        }, Qt::QueuedConnection
+    );
+    timer->start();
+}
+
+void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, quint32 internalId, const char *uuid)
 {
     if (queue) {
         queue->addProxy(id);
     }
-    PlasmaWindow *window = new PlasmaWindow(q, id, internalId);
+    PlasmaWindow *window = new PlasmaWindow(q, id, internalId, uuid);
     window->d->wm = q;
     windows << window;
     QObject::connect(window, &QObject::destroyed, q,
@@ -249,6 +273,13 @@ void PlasmaWindowManagement::Private::stackingOrderCallback(void *data, org_kde_
     wm->setStackingOrder(destination);
 }
 
+void PlasmaWindowManagement::Private::stackingOrderUuidsCallback(void *data, org_kde_plasma_window_management *interface, const char *uuids)
+{
+    auto wm = reinterpret_cast<PlasmaWindowManagement::Private*>(data);
+    Q_ASSERT(wm->wm == interface);
+    wm->setStackingOrder(QByteArray(uuids).split(';').toVector());
+}
+
 void PlasmaWindowManagement::Private::setStackingOrder(const QVector<quint32> &ids)
 {
     if (stackingOrder == ids) {
@@ -256,6 +287,15 @@ void PlasmaWindowManagement::Private::setStackingOrder(const QVector<quint32> &i
     }
     stackingOrder = ids;
     emit q->stackingOrderChanged();
+}
+
+void PlasmaWindowManagement::Private::setStackingOrder(const QVector<QByteArray> &uuids)
+{
+    if (stackingOrderUuids == uuids) {
+        return;
+    }
+    stackingOrderUuids = uuids;
+    emit q->stackingOrderUuidsChanged();
 }
 
 PlasmaWindowManagement::PlasmaWindowManagement(QObject *parent)
@@ -355,6 +395,11 @@ PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
 QVector<quint32> PlasmaWindowManagement::stackingOrder() const
 {
     return d->stackingOrder;
+}
+
+QVector<QByteArray> PlasmaWindowManagement::stackingOrderUuids() const
+{
+    return d->stackingOrderUuids;
 }
 
 org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
@@ -788,17 +833,19 @@ void PlasmaWindow::Private::setVirtualDesktopChangeable(bool set)
     emit q->virtualDesktopChangeableChanged();
 }
 
-PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, PlasmaWindow *q)
+PlasmaWindow::Private::Private(org_kde_plasma_window *w, quint32 internalId, const char *uuid, PlasmaWindow *q)
     : internalId(internalId)
+    , uuid(uuid)
     , q(q)
 {
+    Q_ASSERT(!this->uuid.isEmpty());
     window.setup(w);
     org_kde_plasma_window_add_listener(w, &s_listener, this);
 }
 
-PlasmaWindow::PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *window, quint32 internalId)
+PlasmaWindow::PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *window, quint32 internalId, const char *uuid)
     : QObject(parent)
-    , d(new Private(window, internalId, this))
+    , d(new Private(window, internalId, uuid, this))
 {
 }
 
@@ -1073,6 +1120,11 @@ void PlasmaWindow::requestToggleShaded()
 quint32 PlasmaWindow::internalId() const
 {
     return d->internalId;
+}
+
+QByteArray PlasmaWindow::uuid() const
+{
+    return d->uuid;
 }
 
 QPointer<PlasmaWindow> PlasmaWindow::parentWindow() const

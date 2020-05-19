@@ -6,9 +6,12 @@
 #ifndef WAYLAND_SERVER_PLASMA_WINDOW_MANAGEMENT_INTERFACE_H
 #define WAYLAND_SERVER_PLASMA_WINDOW_MANAGEMENT_INTERFACE_H
 
+#include <KWayland/Server/kwaylandserver_export.h>
+
+#if KWAYLANDSERVER_ENABLE_DEPRECATED_SINCE(5, 71)
+
 #include <QObject>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 
 #include "global.h"
 #include "resource.h"
@@ -26,9 +29,9 @@ class SurfaceInterface;
 class PlasmaVirtualDesktopManagementInterface;
 
 /**
- * @todo Add documentation
+ * @deprecated 5.71 port to KWaylandServer in Plasma
  */
-class KWAYLANDSERVER_EXPORT PlasmaWindowManagementInterface : public Global
+class KWAYLANDSERVER_DEPRECATED_EXPORT PlasmaWindowManagementInterface : public Global
 {
     Q_OBJECT
 public:
@@ -323,4 +326,5 @@ private:
 
 Q_DECLARE_METATYPE(KWayland::Server::PlasmaWindowManagementInterface::ShowingDesktopState)
 
+#endif
 #endif

@@ -106,7 +106,11 @@ public:
         /**
          * @since 5.53
          */
-        VirtualDesktops
+        VirtualDesktops,
+        /**
+         * @since 5.71
+         */
+        Uuid,
     };
     Q_ENUM(AdditionalRoles)
 

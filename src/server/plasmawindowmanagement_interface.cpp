@@ -44,6 +44,7 @@ private:
     static void unbind(wl_resource *resource);
     static void showDesktopCallback(wl_client *client, wl_resource *resource, uint32_t state);
     static void getWindowCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t internalWindowId);
+    static void getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char* uuid);
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
     void sendShowingDesktopState(wl_resource *r);
@@ -127,7 +128,8 @@ PlasmaWindowManagementInterface::Private::Private(PlasmaWindowManagementInterfac
 #ifndef K_DOXYGEN
 const struct org_kde_plasma_window_management_interface PlasmaWindowManagementInterface::Private::s_interface = {
     showDesktopCallback,
-    getWindowCallback
+    getWindowCallback,
+    getWindowByUuidCallback
 };
 #endif
 
@@ -193,6 +195,19 @@ void PlasmaWindowManagementInterface::Private::showDesktopCallback(wl_client *cl
         break;
     }
     emit reinterpret_cast<Private*>(wl_resource_get_user_data(resource))->q->requestChangeShowingDesktop(s);
+}
+
+void PlasmaWindowManagementInterface::Private::getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char* uuid)
+{
+    Q_UNUSED(client);
+    Q_UNUSED(uuid);
+    qCritical() << "window_by_uuid is unsupported, port to KWaylandServer::PlasmaWindowManagementInterface";
+
+    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    PlasmaWindowInterface *window = new PlasmaWindowInterface(p->q, p->q);
+    window->d->unmapped = true;
+    window->d->createResource(resource, id);
+    return;
 }
 
 void PlasmaWindowManagementInterface::Private::getWindowCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t internalWindowId)

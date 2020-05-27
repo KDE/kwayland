@@ -434,8 +434,8 @@ ecm_mark_as_test(testServerSideDecorationPalette)
 # Test RemoteAccess
 ########################################################
 set( testRemoteAccess_SRCS
-        test_remote_access.cpp
-    )
+    test_remote_access.cpp
+)
 add_executable(testRemoteAccess ${testRemoteAccess_SRCS})
 target_link_libraries( testRemoteAccess Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
 add_test(NAME kwayland-testRemoteAccess COMMAND testRemoteAccess)

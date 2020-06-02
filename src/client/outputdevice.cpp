@@ -45,7 +45,7 @@ public:
     Modes::iterator currentMode = modes.end();
 
     QByteArray edid;
-    OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
+    OutputDevice::Enablement enabled = OutputDevice::Enablement::Disabled;
     QByteArray uuid;
 
     ColorCurves colorCurves;

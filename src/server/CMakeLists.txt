@@ -69,7 +69,8 @@ set(SERVER_LIB_SRCS
 ecm_qt_declare_logging_category(SERVER_LIB_SRCS
     HEADER logging.h
     IDENTIFIER KWAYLAND_SERVER
-    CATEGORY_NAME kwayland-server
+    CATEGORY_NAME kf.wayland.server
+    OLD_CATEGORY_NAMES kwayland-server
     DEFAULT_SEVERITY Critical
     DESCRIPTION "KWayland Server Library"
     EXPORT KWAYLAND

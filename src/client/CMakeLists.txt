@@ -67,7 +67,8 @@ set(CLIENT_LIB_SRCS
 ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
     HEADER logging.h
     IDENTIFIER KWAYLAND_CLIENT
-    CATEGORY_NAME kwayland-client
+    CATEGORY_NAME kf.wayland.client
+    OLD_CATEGORY_NAMES kwayland-client
     DEFAULT_SEVERITY Critical
     DESCRIPTION "KWayland Client Library"
     EXPORT KWAYLAND

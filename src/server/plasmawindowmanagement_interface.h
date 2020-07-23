@@ -8,7 +8,7 @@
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
-#if KWAYLANDSERVER_ENABLE_DEPRECATED_SINCE(5, 71)
+#if KWAYLANDSERVER_ENABLE_DEPRECATED_SINCE(5, 73)
 
 #include <QObject>
 
@@ -29,12 +29,14 @@ class SurfaceInterface;
 class PlasmaVirtualDesktopManagementInterface;
 
 /**
- * @deprecated 5.71 port to KWaylandServer in Plasma
+ * @deprecated 5.73 port to KWaylandServer in Plasma
  */
-class KWAYLANDSERVER_DEPRECATED_EXPORT PlasmaWindowManagementInterface : public Global
+class KWAYLANDSERVER_EXPORT PlasmaWindowManagementInterface : public Global
 {
     Q_OBJECT
 public:
+    KWAYLANDSERVER_DEPRECATED_VERSION(5, 73, "Port to KWaylandServer")
+    PlasmaWindowManagementInterface() = default;
     virtual ~PlasmaWindowManagementInterface();
     enum class ShowingDesktopState {
         Disabled,
@@ -100,6 +102,8 @@ class KWAYLANDSERVER_EXPORT PlasmaWindowInterface : public QObject
 {
     Q_OBJECT
 public:
+    KWAYLANDSERVER_DEPRECATED_VERSION(5, 73, "Port to KWaylandServer")
+    PlasmaWindowInterface() = default;
     virtual ~PlasmaWindowInterface();
 
     void setTitle(const QString &title);

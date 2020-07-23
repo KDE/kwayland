@@ -156,20 +156,20 @@ public:
      **/
     PlasmaWindowModel *createWindowModel();
 
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 73)
     /**
      * @returns windows stacking order
      *
-     * @deprecated since 5.71, Use stackingOrderUuids
+     * @deprecated Since 5.73, use stackingOrderUuids()
      */
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::stackingOrderUuids()")
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 73, "Use PlasmaWindow::stackingOrderUuids()")
     QVector<quint32> stackingOrder() const;
 #endif
 
     /**
      * @returns windows stacking order
      *
-     * @since 5.71
+     * @since 5.73
      */
     QVector<QByteArray> stackingOrderUuids() const;
 
@@ -209,18 +209,19 @@ Q_SIGNALS:
      **/
     void removed();
 
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 73)
     /**
      * The stacking order changed
-     * @deprecated since 5.71, use stackingOrderUuidsChanged
+     * @since 5.70
+     * @deprecated Since 5.73, use stackingOrderUuidsChanged()
      **/
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::stackingOrderUuidsChanged()")
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 73, "Use PlasmaWindow::stackingOrderUuidsChanged()")
     void stackingOrderChanged();
 #endif
 
     /**
      * The stacking order uuids changed
-     * @since 5.71
+     * @since 5.73
      **/
     void stackingOrderUuidsChanged();
 
@@ -481,15 +482,15 @@ public:
      */
     void requestToggleShaded();
 
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 71)
+#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 73)
     /**
      * An internal window identifier.
      * This is not a global window identifier.
      * This identifier does not correspond to QWindow::winId in any way.
      *
-     * @deprecated since 5.71, use uuid instead
-     **/
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 71, "Use PlasmaWindow::uuid(const QString &)")
+     * @deprecated Since 5.73, use uuid(const QString &) instead
+     */
+    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 73, "Use PlasmaWindow::uuid(const QString &)")
     quint32 internalId() const;
 #endif
 
@@ -497,6 +498,7 @@ public:
      * A unique identifier for the window
      *
      * @see QUuid
+     * @since 5.73
      */
     QByteArray uuid() const;
 

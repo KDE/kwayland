@@ -108,7 +108,7 @@ public:
          */
         VirtualDesktops,
         /**
-         * @since 5.71
+         * @since 5.73
          */
         Uuid,
     };

@@ -148,9 +148,9 @@ PlasmaWindowManagement::Private::Private(PlasmaWindowManagement *q)
 org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_listener = {
     showDesktopCallback,
     windowCallback,
-    windowWithUuidCallback,
     stackingOrderCallback,
-    stackingOrderUuidsCallback
+    stackingOrderUuidsCallback,
+    windowWithUuidCallback,
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)

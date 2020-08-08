@@ -122,6 +122,14 @@ public:
     QPoint anchorOffset() const;
     void setAnchorOffset(const QPoint &offset);
 
+    /**
+     * Whether this positioner is a reactive positioner.
+     * This causes the surface this positioner is used for to reconstrain
+     * when the elements for constraining change.
+     */
+    bool reactive() const;
+    void setReactive(bool reactive);
+
 private:
     class Private;
     QScopedPointer<Private> d;
@@ -595,6 +603,9 @@ public:
      */
     void setWindowGeometry(const QRect &windowGeometry);
 
+    /// Repositions the popup with the given positioner..
+    void reposition(const XdgPositioner &positioner, quint32 token);
+
     operator xdg_surface*();
     operator xdg_surface*() const;
     operator xdg_popup*();
@@ -618,6 +629,9 @@ Q_SIGNALS:
      * @since 5.39
      **/
     void configureRequested(const QRect &relativePosition, quint32 serial);
+
+    /// Emitted when the server repositions the popup.
+    void reposition();
 
 
 protected:

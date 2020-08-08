@@ -107,14 +107,8 @@ XdgShellPopup *XdgShellStable::Private::getXdgPopup(Surface *surface, XdgShellPo
     return internalGetXdgPopup(surface, *parentSurface, positioner, parent);
 }
 
-XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xdg_surface *parentSurface, const XdgPositioner &positioner, QObject *parent)
+static QSharedPointer<WaylandPointer<xdg_positioner, xdg_positioner_destroy>> libwlPositionerForKWaylandPositioner(xdg_wm_base* xdg_shell_base, const XdgPositioner &positioner)
 {
-    Q_ASSERT(isValid());
-    auto ss = xdg_wm_base_get_xdg_surface(xdg_shell_base, *surface);
-    if (!ss) {
-        return nullptr;
-    }
-
     auto p = xdg_wm_base_create_positioner(xdg_shell_base);
 
     auto anchorRect = positioner.anchorRect();
@@ -126,6 +120,10 @@ XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xd
     QPoint anchorOffset = positioner.anchorOffset();
     if (!anchorOffset.isNull()) {
         xdg_positioner_set_offset(p, anchorOffset.x(), anchorOffset.y());
+    }
+
+    if (positioner.reactive()) {
+        xdg_positioner_set_reactive(p);
     }
 
     uint32_t anchor = XDG_POSITIONER_ANCHOR_NONE;
@@ -203,16 +201,28 @@ XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xd
         xdg_positioner_set_constraint_adjustment(p, constraint);
     }
 
+    return QSharedPointer<WaylandPointer<xdg_positioner, xdg_positioner_destroy>>(new WaylandPointer<xdg_positioner, xdg_positioner_destroy>(p));
+}
+
+XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xdg_surface *parentSurface, const XdgPositioner &positioner, QObject *parent)
+{
+    Q_ASSERT(isValid());
+    auto ss = xdg_wm_base_get_xdg_surface(xdg_shell_base, *surface);
+    if (!ss) {
+        return nullptr;
+    }
+
+    auto p = libwlPositionerForKWaylandPositioner(xdg_shell_base, positioner);
+
     XdgShellPopup *s = new XdgShellPopupStable(parent);
-    auto popup = xdg_surface_get_popup(ss, parentSurface, p);
+    s->setProperty("xdg_wm_base", QVariant::fromValue((void*)(xdg_shell_base.operator->())));
+    auto popup = xdg_surface_get_popup(ss, parentSurface, *p.data());
     if (queue) {
         //deliberately not adding the positioner because the positioner has no events sent to it
         queue->addProxy(ss);
         queue->addProxy(popup);
     }
     s->setup(ss, popup);
-
-    xdg_positioner_destroy(p);
 
     return s;
 }
@@ -492,6 +502,7 @@ public:
     void requestGrab(Seat *seat, quint32 serial) override;
     void ackConfigure(quint32 serial) override;
     void setWindowGeometry(const QRect &windowGeometry) override;
+    void reposition(const XdgPositioner &positioner, quint32 token) override;
 
     using XdgShellPopup::Private::operator zxdg_popup_v6*;
     using XdgShellPopup::Private::operator zxdg_surface_v6*;
@@ -597,6 +608,13 @@ void XdgShellPopupStable::Private::ackConfigure(quint32 serial)
 void XdgShellPopupStable::Private::setWindowGeometry(const QRect &windowGeometry)
 {
     xdg_surface_set_window_geometry(xdgsurface, windowGeometry.x(), windowGeometry.y(), windowGeometry.width(), windowGeometry.height());
+}
+
+void XdgShellPopupStable::Private::reposition(const XdgPositioner &positioner, quint32 token)
+{
+    auto base = (xdg_wm_base*)q->property("xdg_wm_base").value<void*>();
+    auto p = libwlPositionerForKWaylandPositioner(base, positioner);
+    xdg_popup_reposition(xdgpopup, *p.data(), token);
 }
 
 XdgShellPopupStable::XdgShellPopupStable(QObject *parent)

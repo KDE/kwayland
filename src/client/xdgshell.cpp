@@ -361,6 +361,11 @@ void XdgShellPopup::setWindowGeometry(const QRect &windowGeometry)
     d->setWindowGeometry(windowGeometry);
 }
 
+void XdgShellPopup::reposition(const XdgPositioner &positioner, quint32 token)
+{
+
+}
+
 XdgShellPopup::operator xdg_surface*() {
     return *(d.data());
 }
@@ -414,6 +419,16 @@ XdgPositioner::XdgPositioner(const XdgPositioner &other)
 
 XdgPositioner::~XdgPositioner()
 {
+}
+
+void XdgPositioner::setReactive(bool reactive)
+{
+    d->reactive = reactive;
+}
+
+bool XdgPositioner::reactive() const
+{
+    return d->reactive;
 }
 
 void XdgPositioner::setInitialSize(const QSize& size)

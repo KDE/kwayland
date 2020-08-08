@@ -265,6 +265,11 @@ public:
         Q_UNUSED(windowGeometry);
     }
 
+    virtual void reposition(const XdgPositioner &positioner, quint32 token) {
+        Q_UNUSED(positioner)
+        Q_UNUSED(token)
+    }
+
     virtual operator xdg_surface*() {
         return nullptr;
     }
@@ -305,6 +310,7 @@ public:
     Qt::Edges anchorEdge;
     XdgPositioner::Constraints constraints;
     QPoint anchorOffset;
+    bool reactive;
 };
 
 

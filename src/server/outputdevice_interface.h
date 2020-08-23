@@ -178,10 +178,11 @@ private:
     Private *d_func() const;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(OutputDeviceInterface::ModeFlags)
+
 }
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::OutputDeviceInterface::ModeFlags)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Enablement)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Server::OutputDeviceInterface::Transform)

@@ -411,6 +411,7 @@ private:
     Private *d_func() const;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextInputInterface::ContentHints)
 
 }
 }
@@ -419,7 +420,6 @@ Q_DECLARE_METATYPE(KWayland::Server::TextInputInterfaceVersion)
 Q_DECLARE_METATYPE(KWayland::Server::TextInputInterface *)
 Q_DECLARE_METATYPE(KWayland::Server::TextInputInterface::ContentHint)
 Q_DECLARE_METATYPE(KWayland::Server::TextInputInterface::ContentHints)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::TextInputInterface::ContentHints)
 Q_DECLARE_METATYPE(KWayland::Server::TextInputInterface::ContentPurpose)
 
 #endif

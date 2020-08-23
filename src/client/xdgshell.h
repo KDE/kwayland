@@ -127,6 +127,8 @@ private:
     QScopedPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(XdgPositioner::Constraints)
+
 /**
  * @short Wrapper for the xdg_shell interface.
  *
@@ -497,6 +499,8 @@ private:
     QScopedPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(XdgShellSurface::States)
+
 /**
  * A XdgShellPopup is a short-lived, temporary surface that can be
  * used to implement menus. It takes an explicit grab on the surface
@@ -630,9 +634,6 @@ private:
 
 }
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgShellSurface::States)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::XdgPositioner::Constraints)
 
 Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::State)

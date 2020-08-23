@@ -508,6 +508,8 @@ protected:
     QScopedPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextInput::ContentHints)
+
 }
 }
 
@@ -515,6 +517,5 @@ Q_DECLARE_METATYPE(KWayland::Client::TextInput::KeyState)
 Q_DECLARE_METATYPE(KWayland::Client::TextInput::ContentHint)
 Q_DECLARE_METATYPE(KWayland::Client::TextInput::ContentPurpose)
 Q_DECLARE_METATYPE(KWayland::Client::TextInput::ContentHints)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::TextInput::ContentHints)
 
 #endif

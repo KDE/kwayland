@@ -134,9 +134,9 @@ private:
     QScopedPointer<Private> d;
 };
 
-}
-}
+Q_DECLARE_OPERATORS_FOR_FLAGS(DataDeviceManager::DnDActions)
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::DataDeviceManager::DnDActions)
+}
+}
 
 #endif

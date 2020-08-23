@@ -52,9 +52,9 @@ private:
     class Private;
 };
 
-}
-}
+Q_DECLARE_OPERATORS_FOR_FLAGS(DataDeviceManagerInterface::DnDActions)
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::DataDeviceManagerInterface::DnDActions)
+}
+}
 
 #endif

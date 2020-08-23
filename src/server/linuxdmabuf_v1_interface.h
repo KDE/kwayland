@@ -162,10 +162,11 @@ private:
     Private *d_func() const;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(LinuxDmabufUnstableV1Interface::Flags)
+
 }
 }
 
 Q_DECLARE_METATYPE(KWayland::Server::LinuxDmabufUnstableV1Interface*)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::LinuxDmabufUnstableV1Interface::Flags)
 
 #endif // WAYLAND_SERVER_LINUXDMABUF_INTERFACE_H

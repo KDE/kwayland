@@ -238,6 +238,8 @@ private:
     QScopedPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(Output::Mode::Flags)
+
 }
 }
 
@@ -245,6 +247,5 @@ Q_DECLARE_METATYPE(KWayland::Client::Output*)
 Q_DECLARE_METATYPE(KWayland::Client::Output::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Client::Output::Transform)
 Q_DECLARE_METATYPE(KWayland::Client::Output::Mode)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::Output::Mode::Flags)
 
 #endif

@@ -500,6 +500,8 @@ private:
     Private *d_func() const;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(PositionerConstraints)
+
 }
 }
 
@@ -507,6 +509,5 @@ Q_DECLARE_METATYPE(KWayland::Server::XdgShellSurfaceInterface *)
 Q_DECLARE_METATYPE(KWayland::Server::XdgShellPopupInterface *)
 Q_DECLARE_METATYPE(KWayland::Server::XdgShellSurfaceInterface::State)
 Q_DECLARE_METATYPE(KWayland::Server::XdgShellSurfaceInterface::States)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Server::PositionerConstraints)
 
 #endif

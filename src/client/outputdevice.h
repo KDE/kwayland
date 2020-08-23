@@ -313,6 +313,8 @@ private:
     QScopedPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(OutputDevice::Mode::Flags)
+
 }
 }
 
@@ -321,6 +323,5 @@ Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Transform)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Enablement)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::Mode)
 Q_DECLARE_METATYPE(KWayland::Client::OutputDevice::ColorCurves)
-Q_DECLARE_OPERATORS_FOR_FLAGS(KWayland::Client::OutputDevice::Mode::Flags)
 
 #endif

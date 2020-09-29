@@ -234,9 +234,9 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
     }
 
     // insert new mode after erase all repeat old mode
-    modes.insert(modes.end(), mode);
+    const auto last = modes.insert(modes.end(), mode);
     if (flags & WL_OUTPUT_MODE_CURRENT) {
-        currentMode = modes.last();
+        currentMode = last;
     }
 
     if (existing) {

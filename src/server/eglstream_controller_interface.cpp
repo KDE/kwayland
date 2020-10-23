@@ -8,7 +8,6 @@
 #include "display.h"
 #include "logging.h"
 
-#include <wayland-util.h>
 #include <QLibrary>
 
 namespace KWayland

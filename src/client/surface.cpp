@@ -4,7 +4,6 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "surface.h"
-#include "buffer.h"
 #include "region.h"
 #include "output.h"
 #include "wayland_pointer_p.h"
@@ -12,7 +11,6 @@
 #include <QGuiApplication>
 #include <QRegion>
 #include <QVector>
-#include <QWindow>
 #include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>

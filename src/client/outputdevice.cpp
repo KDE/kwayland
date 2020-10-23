@@ -11,7 +11,6 @@
 #include <QDebug>
 #include <QPoint>
 #include <QRect>
-#include <QSize>
 // wayland
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 #include <wayland-client-protocol.h>

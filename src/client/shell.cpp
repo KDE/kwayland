@@ -12,7 +12,6 @@
 // Qt
 #include <QGuiApplication>
 #include <QVector>
-#include <QWindow>
 #include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>

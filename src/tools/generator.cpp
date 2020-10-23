@@ -15,7 +15,6 @@
 #include <QProcess>
 #include <QtConcurrent>
 #include <QTextStream>
-#include <QXmlStreamReader>
 
 #include <QDebug>
 

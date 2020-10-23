@@ -8,7 +8,6 @@
 // Qt
 #include <QPoint>
 #include <QRect>
-#include <QSize>
 #include <QVector>
 // wayland
 #include <wayland-client-protocol.h>

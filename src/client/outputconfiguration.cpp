@@ -4,7 +4,6 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "outputconfiguration.h"
-#include "outputdevice.h"
 #include "outputmanagement.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"

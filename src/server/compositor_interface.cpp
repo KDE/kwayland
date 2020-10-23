@@ -6,7 +6,6 @@
 #include "compositor_interface.h"
 #include "display.h"
 #include "global_p.h"
-#include "surface_interface.h"
 // Wayland
 #include <wayland-server.h>
 

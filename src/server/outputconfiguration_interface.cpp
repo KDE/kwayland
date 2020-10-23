@@ -5,7 +5,6 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "outputconfiguration_interface.h"
-#include "outputdevice_interface.h"
 #include "logging.h"
 #include "resource_p.h"
 #include "display.h"

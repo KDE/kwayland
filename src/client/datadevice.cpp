@@ -4,7 +4,6 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "datadevice.h"
-#include "dataoffer.h"
 #include "datasource.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"

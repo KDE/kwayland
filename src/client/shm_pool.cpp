@@ -5,7 +5,6 @@
 */
 #include "shm_pool.h"
 #include "event_queue.h"
-#include "buffer.h"
 #include "buffer_p.h"
 #include "logging.h"
 #include "wayland_pointer_p.h"

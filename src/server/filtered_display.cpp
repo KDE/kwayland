@@ -5,7 +5,6 @@
 */
 
 #include "filtered_display.h"
-#include "display.h"
 
 #include <wayland-server.h>
 

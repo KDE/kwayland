@@ -64,6 +64,23 @@ public:
 
     QList<QMimeType> offeredMimeTypes() const;
 
+    /**
+     * Indicates that the client can accept data of the given @a mimeType.
+     * The @a serial parameter specifies the serial number of the corresponding
+     * dragEntered() event.
+     *
+     * @see DataDevice::dragEntered
+     */
+    void accept(const QMimeType &mimeType, quint32 serial);
+    /**
+     * Indicates that the client can accept data of the given @a mimeType.
+     * The @a serial parameter specifies the serial number of the corresponding
+     * dragEntered() event.
+     *
+     * @see DataDevice::dragEntered
+     */
+    void accept(const QString &mimeType, quint32 serial);
+
     void receive(const QMimeType &mimeType, qint32 fd);
     void receive(const QString &mimeType, qint32 fd);
 

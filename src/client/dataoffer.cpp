@@ -152,6 +152,16 @@ QList< QMimeType > DataOffer::offeredMimeTypes() const
     return d->mimeTypes;
 }
 
+void DataOffer::accept(const QMimeType &mimeType, quint32 serial)
+{
+    accept(mimeType.name(), serial);
+}
+
+void DataOffer::accept(const QString &mimeType, quint32 serial)
+{
+    wl_data_offer_accept(d->dataOffer, serial, mimeType.toUtf8().constData());
+}
+
 void DataOffer::receive(const QMimeType &mimeType, qint32 fd)
 {
     receive(mimeType.name(), fd);

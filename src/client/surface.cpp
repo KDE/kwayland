@@ -201,6 +201,11 @@ void Surface::setupFrameCallback()
     d->setupFrameCallback();
 }
 
+bool Surface::isFrameCallbackInstalled() const
+{
+    return d->frameCallbackInstalled;
+}
+
 void Surface::commit(Surface::CommitFlag flag)
 {
     Q_ASSERT(isValid());

@@ -117,6 +117,10 @@ public:
      **/
     void setupFrameCallback();
     /**
+     * Returns @c true if a frame callback is installed; otherwise returns @c false.
+     */
+    bool isFrameCallbackInstalled() const;
+    /**
      * Flags to be added to commit.
      * @li None: no flag
      * @li FrameCallback: register a frame rendered callback

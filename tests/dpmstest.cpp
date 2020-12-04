@@ -118,7 +118,7 @@ int main(int argc, char **argv)
                 hasDpmsLabel->setText(QStringLiteral("Compositor does not provide a DpmsManager"));
             }
 
-            QVBoxLayout *layout = new QVBoxLayout;
+            QVBoxLayout *layout = new QVBoxLayout(&window);
             layout->addWidget(hasDpmsLabel);
             QFrame *hline = new QFrame;
             hline->setFrameShape(QFrame::HLine);
@@ -139,7 +139,6 @@ int main(int argc, char **argv)
                 layout->addWidget(hline);
             }
 
-            window.setLayout(layout);
             window.show();
         }, Qt::QueuedConnection
     );

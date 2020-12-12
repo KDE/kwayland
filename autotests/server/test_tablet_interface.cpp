@@ -20,7 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // Qt
 #include <QHash>
 #include <QThread>
-#include <QtTest>
+#include <QTest>
+#include <QSignalSpy>
 // WaylandServer
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"

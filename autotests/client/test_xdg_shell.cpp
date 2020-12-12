@@ -7,6 +7,8 @@
 
 #include "test_xdg_shell.h"
 
+#include <QSignalSpy>
+
 XdgShellTest::XdgShellTest(XdgShellInterfaceVersion version):
     m_version(version)
 {}

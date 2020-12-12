@@ -4,7 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QtTest>
+#include <QAbstractEventDispatcher>
+#include <QSignalSpy>
+#include <QTest>
 // KWin
 #include "../../src/client/blur.h"
 #include "../../src/client/contrast.h"

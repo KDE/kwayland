@@ -6,6 +6,7 @@
 */
 
 #include "test_xdg_shell.h"
+#include <QSignalSpy>
 #include <wayland-xdg-shell-client-protocol.h>
 
 class XdgShellTestStable : public XdgShellTest {

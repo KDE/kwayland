@@ -7,7 +7,7 @@
 #define TEST_XDG_SHELL_H
 
 // Qt
-#include <QtTest>
+#include <QTest>
 // client
 #include "../../src/client/xdgshell.h"
 #include "../../src/client/connection_thread.h"

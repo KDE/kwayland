@@ -4,9 +4,10 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QtTest>
+#include <QTest>
 #include <QImage>
 #include <QPainter>
+#include <QSignalSpy>
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"

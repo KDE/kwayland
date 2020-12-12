@@ -7,6 +7,8 @@
 
 #include "test_xdg_shell.h"
 
+#include <QSignalSpy>
+
 class XdgShellTestV5 : public XdgShellTest {
     Q_OBJECT
 public:

@@ -114,7 +114,7 @@ void DataOfferInterface::Private::setActionsCallback(wl_client *client, wl_resou
     auto p = cast<Private>(resource);
     p->supportedDnDActions = supportedActions;
     p->preferredDnDAction = preferredAction;
-    emit p->q_func()->dragAndDropActionsChanged();
+    Q_EMIT p->q_func()->dragAndDropActionsChanged();
 }
 
 void DataOfferInterface::Private::sendSourceActions()

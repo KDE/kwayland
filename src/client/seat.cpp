@@ -78,7 +78,7 @@ void Seat::release()
     if (!d->seat) {
         return;
     }
-    emit interfaceAboutToBeReleased();
+    Q_EMIT interfaceAboutToBeReleased();
     d->seat.release();
     d->resetSeat();
 }
@@ -88,7 +88,7 @@ void Seat::destroy()
     if (!d->seat) {
         return;
     }
-    emit interfaceAboutToBeDestroyed();
+    Q_EMIT interfaceAboutToBeDestroyed();
     d->seat.destroy();
     d->resetSeat();
 }
@@ -117,7 +117,7 @@ void Seat::Private::setHasKeyboard(bool has)
         return;
     }
     capabilityKeyboard = has;
-    emit q->hasKeyboardChanged(capabilityKeyboard);
+    Q_EMIT q->hasKeyboardChanged(capabilityKeyboard);
 }
 
 void Seat::Private::setHasPointer(bool has)
@@ -126,7 +126,7 @@ void Seat::Private::setHasPointer(bool has)
         return;
     }
     capabilityPointer = has;
-    emit q->hasPointerChanged(capabilityPointer);
+    Q_EMIT q->hasPointerChanged(capabilityPointer);
 }
 
 void Seat::Private::setHasTouch(bool has)
@@ -135,7 +135,7 @@ void Seat::Private::setHasTouch(bool has)
         return;
     }
     capabilityTouch = has;
-    emit q->hasTouchChanged(capabilityTouch);
+    Q_EMIT q->hasTouchChanged(capabilityTouch);
 }
 
 void Seat::setup(wl_seat *seat)
@@ -215,7 +215,7 @@ void Seat::Private::setName(const QString &n)
         return;
     }
     name = n;
-    emit q->nameChanged(name);
+    Q_EMIT q->nameChanged(name);
 }
 
 bool Seat::isValid() const

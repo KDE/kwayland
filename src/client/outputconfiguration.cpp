@@ -201,14 +201,14 @@ void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outp
 {
     Q_UNUSED(config);
     auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
-    emit o->q->applied();
+    Q_EMIT o->q->applied();
 }
 
 void OutputConfiguration::Private::failedCallback(void* data, org_kde_kwin_outputconfiguration* config)
 {
     Q_UNUSED(config);
     auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
-    emit o->q->failed();
+    Q_EMIT o->q->failed();
 }
 
 

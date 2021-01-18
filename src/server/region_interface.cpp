@@ -53,7 +53,7 @@ void RegionInterface::Private::add(const QRect &rect)
 {
     qtRegion = qtRegion.united(rect);
     Q_Q(RegionInterface);
-    emit q->regionChanged(qtRegion);
+    Q_EMIT q->regionChanged(qtRegion);
 }
 
 void RegionInterface::Private::subtract(const QRect &rect)
@@ -63,7 +63,7 @@ void RegionInterface::Private::subtract(const QRect &rect)
     }
     qtRegion = qtRegion.subtracted(rect);
     Q_Q(RegionInterface);
-    emit q->regionChanged(qtRegion);
+    Q_EMIT q->regionChanged(qtRegion);
 }
 
 void RegionInterface::Private::addCallback(wl_client *client, wl_resource *r, int32_t x, int32_t y, int32_t width, int32_t height)

@@ -73,7 +73,7 @@ void ServerSideDecorationManagerInterface::Private::create(wl_client *client, wl
         return;
     }
     decoration->setMode(defaultMode);
-    emit q->decorationCreated(decoration);
+    Q_EMIT q->decorationCreated(decoration);
 }
 
 ServerSideDecorationManagerInterface::Mode ServerSideDecorationManagerInterface::defaultMode() const
@@ -198,7 +198,7 @@ void ServerSideDecorationInterface::Private::requestModeCallback(wl_client *clie
         qCWarning(KWAYLAND_SERVER) << "Invalid mode:" << mode;
         return;
     }
-    emit cast<Private>(resource)->q_func()->modeRequested(m);
+    Q_EMIT cast<Private>(resource)->q_func()->modeRequested(m);
 }
 
 ServerSideDecorationInterface *ServerSideDecorationInterface::Private::get(SurfaceInterface *s)

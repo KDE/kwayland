@@ -50,7 +50,7 @@ void RemoteAccessManager::Private::bufferReadyCallback(void *data, org_kde_kwin_
     rbuf->setup(requested);
     qCDebug(KWAYLAND_CLIENT) << "Got buffer, server fd:" << buffer_id;
 
-    emit ramp->q->bufferReady(output, rbuf);
+    Q_EMIT ramp->q->bufferReady(output, rbuf);
 }
 
 void RemoteAccessManager::Private::setup(org_kde_kwin_remote_access_manager *k)
@@ -145,7 +145,7 @@ void RemoteBuffer::Private::paramsCallback(void *data, org_kde_kwin_remote_buffe
     p->height = height;
     p->stride = stride;
     p->format = format;
-    emit p->q->parametersObtained();
+    Q_EMIT p->q->parametersObtained();
 }
 
 #ifndef K_DOXYGEN

@@ -117,14 +117,14 @@ void PlasmaVirtualDesktopManagementInterface::Private::requestCreateVirtualDeskt
 {
     Q_UNUSED(client)
     auto s = cast(resource);
-    emit s->q->desktopCreateRequested(QString::fromUtf8(name), qBound<quint32>(0, position, (quint32)s->desktops.count()));
+    Q_EMIT s->q->desktopCreateRequested(QString::fromUtf8(name), qBound<quint32>(0, position, (quint32)s->desktops.count()));
 }
 
 void PlasmaVirtualDesktopManagementInterface::Private::requestRemoveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
 {
     Q_UNUSED(client)
     auto s = cast(resource);
-    emit s->q->desktopRemoveRequested(QString::fromUtf8(id));
+    Q_EMIT s->q->desktopRemoveRequested(QString::fromUtf8(id));
 }
 
 PlasmaVirtualDesktopManagementInterface::Private::Private(PlasmaVirtualDesktopManagementInterface *q, Display *d)
@@ -284,7 +284,7 @@ void PlasmaVirtualDesktopInterface::Private::requestActivateCallback(wl_client *
 {
     Q_UNUSED(client)
     auto s = cast(resource);
-    emit s->q->activateRequested();
+    Q_EMIT s->q->activateRequested();
 }
 
 PlasmaVirtualDesktopInterface::Private::Private(PlasmaVirtualDesktopInterface *q, PlasmaVirtualDesktopManagementInterface *c)

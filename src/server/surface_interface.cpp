@@ -43,8 +43,8 @@ void SurfaceInterface::Private::addChild(QPointer< SubSurfaceInterface > child)
     subSurfacePending.children.append(child);
     current.children.append(child);
     Q_Q(SurfaceInterface);
-    emit q->childSubSurfaceAdded(child);
-    emit q->subSurfaceTreeChanged();
+    Q_EMIT q->childSubSurfaceAdded(child);
+    Q_EMIT q->subSurfaceTreeChanged();
     QObject::connect(child.data(), &SubSurfaceInterface::positionChanged, q, &SurfaceInterface::subSurfaceTreeChanged);
     QObject::connect(child->surface().data(), &SurfaceInterface::damaged, q, &SurfaceInterface::subSurfaceTreeChanged);
     QObject::connect(child->surface().data(), &SurfaceInterface::unmapped, q, &SurfaceInterface::subSurfaceTreeChanged);
@@ -58,8 +58,8 @@ void SurfaceInterface::Private::removeChild(QPointer< SubSurfaceInterface > chil
     subSurfacePending.children.removeAll(child);
     current.children.removeAll(child);
     Q_Q(SurfaceInterface);
-    emit q->childSubSurfaceRemoved(child);
-    emit q->subSurfaceTreeChanged();
+    Q_EMIT q->childSubSurfaceRemoved(child);
+    Q_EMIT q->subSurfaceTreeChanged();
     QObject::disconnect(child.data(), &SubSurfaceInterface::positionChanged, q, &SurfaceInterface::subSurfaceTreeChanged);
     if (!child->surface().isNull()) {
         QObject::disconnect(child->surface().data(), &SurfaceInterface::damaged, q, &SurfaceInterface::subSurfaceTreeChanged);
@@ -177,7 +177,7 @@ void SurfaceInterface::Private::installPointerConstraint(LockedPointerInterface 
         constrainsOneShotConnection = QMetaObject::Connection();
         disconnect(constrainsUnboundConnection);
         constrainsUnboundConnection = QMetaObject::Connection();
-        emit q_func()->pointerConstraintsChanged();
+        Q_EMIT q_func()->pointerConstraintsChanged();
     };
 
     if (lock->lifeTime() == LockedPointerInterface::LifeTime::OneShot) {
@@ -198,7 +198,7 @@ void SurfaceInterface::Private::installPointerConstraint(LockedPointerInterface 
             cleanUp();
         }
     );
-    emit q_func()->pointerConstraintsChanged();
+    Q_EMIT q_func()->pointerConstraintsChanged();
 }
 
 void SurfaceInterface::Private::installPointerConstraint(ConfinedPointerInterface *confinement)
@@ -213,7 +213,7 @@ void SurfaceInterface::Private::installPointerConstraint(ConfinedPointerInterfac
         constrainsOneShotConnection = QMetaObject::Connection();
         disconnect(constrainsUnboundConnection);
         constrainsUnboundConnection = QMetaObject::Connection();
-        emit q_func()->pointerConstraintsChanged();
+        Q_EMIT q_func()->pointerConstraintsChanged();
     };
 
     if (confinement->lifeTime() == ConfinedPointerInterface::LifeTime::OneShot) {
@@ -234,7 +234,7 @@ void SurfaceInterface::Private::installPointerConstraint(ConfinedPointerInterfac
             cleanUp();
         }
     );
-    emit q_func()->pointerConstraintsChanged();
+    Q_EMIT q_func()->pointerConstraintsChanged();
 }
 
 void SurfaceInterface::Private::installIdleInhibitor(IdleInhibitorInterface *inhibitor)
@@ -244,12 +244,12 @@ void SurfaceInterface::Private::installIdleInhibitor(IdleInhibitorInterface *inh
         [this, inhibitor] {
             idleInhibitors.removeOne(inhibitor);
             if (idleInhibitors.isEmpty()) {
-                emit q_func()->inhibitsIdleChanged();
+                Q_EMIT q_func()->inhibitsIdleChanged();
             }
         }
     );
     if (idleInhibitors.count() == 1) {
-        emit q_func()->inhibitsIdleChanged();
+        Q_EMIT q_func()->inhibitsIdleChanged();
     }
 }
 
@@ -416,19 +416,19 @@ void SurfaceInterface::Private::swapStates(State *source, State *target, bool em
     *source = State{};
     source->children = target->children;
     if (opaqueRegionChanged) {
-        emit q->opaqueChanged(target->opaque);
+        Q_EMIT q->opaqueChanged(target->opaque);
     }
     if (inputRegionChanged) {
-        emit q->inputChanged(target->input);
+        Q_EMIT q->inputChanged(target->input);
     }
     if (scaleFactorChanged) {
-        emit q->scaleChanged(target->scale);
+        Q_EMIT q->scaleChanged(target->scale);
         if (buffer && !sizeChanged) {
-            emit q->sizeChanged();
+            Q_EMIT q->sizeChanged();
         }
     }
     if (transformChanged) {
-        emit q->transformChanged(target->transform);
+        Q_EMIT q->transformChanged(target->transform);
     }
     if (bufferChanged && emitChanged) {
         if (target->buffer && (!target->damage.isEmpty() || !target->bufferDamage.isEmpty())) {
@@ -460,7 +460,7 @@ void SurfaceInterface::Private::swapStates(State *source, State *target, bool em
                 if (emitChanged) {
                     subSurfaceIsMapped = true;
                     trackedDamage = trackedDamage.united(target->damage);
-                    emit q->damaged(target->damage);
+                    Q_EMIT q->damaged(target->damage);
                     // workaround for https://bugreports.qt.io/browse/QTBUG-52092
                     // if the surface is a sub-surface, but the main surface is not yet mapped, fake frame rendered
                     if (subSurface) {
@@ -473,29 +473,29 @@ void SurfaceInterface::Private::swapStates(State *source, State *target, bool em
             }
         } else if (!target->buffer && emitChanged) {
             subSurfaceIsMapped = false;
-            emit q->unmapped();
+            Q_EMIT q->unmapped();
         }
     }
     if (!emitChanged) {
         return;
     }
     if (sizeChanged) {
-        emit q->sizeChanged();
+        Q_EMIT q->sizeChanged();
     }
     if (shadowChanged) {
-        emit q->shadowChanged();
+        Q_EMIT q->shadowChanged();
     }
     if (blurChanged) {
-        emit q->blurChanged();
+        Q_EMIT q->blurChanged();
     }
     if (contrastChanged) {
-        emit q->contrastChanged();
+        Q_EMIT q->contrastChanged();
     }
     if (slideChanged) {
-        emit q->slideOnShowHideChanged();
+        Q_EMIT q->slideOnShowHideChanged();
     }
     if (childrenChanged) {
-        emit q->subSurfaceTreeChanged();
+        Q_EMIT q->subSurfaceTreeChanged();
     }
 }
 
@@ -522,7 +522,7 @@ void SurfaceInterface::Private::commit()
     if (role) {
         role->commit();
     }
-    emit q->committed();
+    Q_EMIT q->committed();
 }
 
 void SurfaceInterface::Private::commitSubSurface()

@@ -69,7 +69,7 @@ void ServerSideDecorationPaletteManagerInterface::Private::createCallback(wl_cli
     QObject::connect(palette, &QObject::destroyed, p->q, [=]() {
         p->palettes.removeOne(palette);
     });
-    emit p->q->paletteCreated(palette);
+    Q_EMIT p->q->paletteCreated(palette);
 }
 
 ServerSideDecorationPaletteManagerInterface::Private::Private(ServerSideDecorationPaletteManagerInterface *q, Display *d)
@@ -130,7 +130,7 @@ void ServerSideDecorationPaletteInterface::Private::setPaletteCallback(wl_client
         return;
     }
     p->palette = QString::fromUtf8(palette);
-    emit p->q_func()->paletteChanged(p->palette);
+    Q_EMIT p->q_func()->paletteChanged(p->palette);
 }
 
 ServerSideDecorationPaletteInterface::Private::Private(ServerSideDecorationPaletteInterface *q, ServerSideDecorationPaletteManagerInterface *c, SurfaceInterface *s, wl_resource *parentResource)

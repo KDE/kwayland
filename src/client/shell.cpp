@@ -44,7 +44,7 @@ void Shell::destroy()
     if (!d->shell) {
         return;
     }
-    emit interfaceAboutToBeDestroyed();
+    Q_EMIT interfaceAboutToBeDestroyed();
     d->shell.destroy();
 }
 
@@ -53,7 +53,7 @@ void Shell::release()
     if (!d->shell) {
         return;
     }
-    emit interfaceAboutToBeReleased();
+    Q_EMIT interfaceAboutToBeReleased();
     d->shell.release();
 }
 
@@ -246,7 +246,7 @@ void ShellSurface::Private::popupDoneCallback(void *data, wl_shell_surface *shel
 {
     auto s = reinterpret_cast<ShellSurface::Private*>(data);
     Q_ASSERT(s->surface == shellSurface);
-    emit s->q->popupDone();
+    Q_EMIT s->q->popupDone();
 }
 
 void ShellSurface::setup(wl_shell_surface *surface)
@@ -257,7 +257,7 @@ void ShellSurface::setup(wl_shell_surface *surface)
 void ShellSurface::Private::ping(uint32_t serial)
 {
     wl_shell_surface_pong(surface, serial);
-    emit q->pinged();
+    Q_EMIT q->pinged();
 }
 
 void ShellSurface::setSize(const QSize &size)
@@ -266,7 +266,7 @@ void ShellSurface::setSize(const QSize &size)
         return;
     }
     d->size = size;
-    emit sizeChanged(size);
+    Q_EMIT sizeChanged(size);
 }
 
 void ShellSurface::setFullscreen(Output *output)

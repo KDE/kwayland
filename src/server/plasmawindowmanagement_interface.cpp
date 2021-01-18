@@ -194,7 +194,7 @@ void PlasmaWindowManagementInterface::Private::showDesktopCallback(wl_client *cl
         s = ShowingDesktopState::Disabled;
         break;
     }
-    emit reinterpret_cast<Private*>(wl_resource_get_user_data(resource))->q->requestChangeShowingDesktop(s);
+    Q_EMIT reinterpret_cast<Private*>(wl_resource_get_user_data(resource))->q->requestChangeShowingDesktop(s);
 }
 
 void PlasmaWindowManagementInterface::Private::getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char* uuid)
@@ -506,21 +506,21 @@ void PlasmaWindowInterface::Private::requestEnterVirtualDesktopCallback(wl_clien
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->enterPlasmaVirtualDesktopRequested(QString::fromUtf8(id));
+    Q_EMIT p->q->enterPlasmaVirtualDesktopRequested(QString::fromUtf8(id));
 }
 
 void PlasmaWindowInterface::Private::requestEnterNewVirtualDesktopCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->enterNewPlasmaVirtualDesktopRequested();
+    Q_EMIT p->q->enterNewPlasmaVirtualDesktopRequested();
 }
 
 void PlasmaWindowInterface::Private::requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->leavePlasmaVirtualDesktopRequested(QString::fromUtf8(id));
+    Q_EMIT p->q->leavePlasmaVirtualDesktopRequested(QString::fromUtf8(id));
 }
 
 void PlasmaWindowInterface::Private::setTitle(const QString &title)
@@ -652,28 +652,28 @@ void PlasmaWindowInterface::Private::closeCallback(wl_client *client, wl_resourc
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->closeRequested();
+    Q_EMIT p->q->closeRequested();
 }
 
 void PlasmaWindowInterface::Private::requestMoveCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->moveRequested();
+    Q_EMIT p->q->moveRequested();
 }
 
 void PlasmaWindowInterface::Private::requestResizeCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->resizeRequested();
+    Q_EMIT p->q->resizeRequested();
 }
 
 void PlasmaWindowInterface::Private::setVirtualDesktopCallback(wl_client *client, wl_resource *resource, uint32_t number)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
-    emit p->q->virtualDesktopRequested(number);
+    Q_EMIT p->q->virtualDesktopRequested(number);
 }
 
 void PlasmaWindowInterface::Private::setStateCallback(wl_client *client, wl_resource *resource, uint32_t flags, uint32_t state)
@@ -681,58 +681,58 @@ void PlasmaWindowInterface::Private::setStateCallback(wl_client *client, wl_reso
     Q_UNUSED(client)
     Private *p = cast(resource);
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE) {
-        emit p->q->activeRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
+        Q_EMIT p->q->activeRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED) {
-        emit p->q->minimizedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
+        Q_EMIT p->q->minimizedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED) {
-        emit p->q->maximizedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED);
+        Q_EMIT p->q->maximizedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZED);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN) {
-        emit p->q->fullscreenRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN);
+        Q_EMIT p->q->fullscreenRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE) {
-        emit p->q->keepAboveRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+        Q_EMIT p->q->keepAboveRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW) {
-        emit p->q->keepBelowRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW);
+        Q_EMIT p->q->keepBelowRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_BELOW);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION) {
-        emit p->q->demandsAttentionRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION);
+        Q_EMIT p->q->demandsAttentionRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_CLOSEABLE) {
-        emit p->q->closeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_CLOSEABLE);
+        Q_EMIT p->q->closeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_CLOSEABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE) {
-        emit p->q->minimizeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
+        Q_EMIT p->q->minimizeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE) {
-        emit p->q->maximizeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
+        Q_EMIT p->q->maximizeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MAXIMIZABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE) {
-        emit p->q->fullscreenableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE);
+        Q_EMIT p->q->fullscreenableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREENABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR) {
-        emit p->q->skipTaskbarRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
+        Q_EMIT p->q->skipTaskbarRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPSWITCHER) {
-        emit p->q->skipSwitcherRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPSWITCHER);
+        Q_EMIT p->q->skipSwitcherRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPSWITCHER);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE) {
-        emit p->q->shadeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE);
+        Q_EMIT p->q->shadeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADEABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED) {
-        emit p->q->shadedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
+        Q_EMIT p->q->shadedRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SHADED);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE) {
-        emit p->q->movableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE);
+        Q_EMIT p->q->movableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MOVABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_RESIZABLE) {
-        emit p->q->resizableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_RESIZABLE);
+        Q_EMIT p->q->resizableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_RESIZABLE);
     }
     if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_VIRTUAL_DESKTOP_CHANGEABLE) {
-        emit p->q->virtualDesktopChangeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_VIRTUAL_DESKTOP_CHANGEABLE);
+        Q_EMIT p->q->virtualDesktopChangeableRequested(state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_VIRTUAL_DESKTOP_CHANGEABLE);
     }
 }
 
@@ -751,10 +751,10 @@ void PlasmaWindowInterface::Private::setMinimizedGeometryCallback(wl_client *cli
     }
 
     p->minimizedGeometries[panelSurface] = QRect(x, y, width, height);
-    emit p->q->minimizedGeometriesChanged();
+    Q_EMIT p->q->minimizedGeometriesChanged();
     connect(panelSurface, &QObject::destroyed, p->q, [p, panelSurface] () {
         if (p->minimizedGeometries.remove(panelSurface)) {
-            emit p->q->minimizedGeometriesChanged();
+            Q_EMIT p->q->minimizedGeometriesChanged();
         }
     });
 }
@@ -772,7 +772,7 @@ void PlasmaWindowInterface::Private::unsetMinimizedGeometryCallback(wl_client *c
         return;
     }
     p->minimizedGeometries.remove(panelSurface);
-    emit p->q->minimizedGeometriesChanged();
+    Q_EMIT p->q->minimizedGeometriesChanged();
 }
 
 PlasmaWindowInterface::PlasmaWindowInterface(PlasmaWindowManagementInterface *wm, QObject *parent)

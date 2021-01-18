@@ -202,11 +202,11 @@ void OutputInterface::addMode(const QSize &size, OutputInterface::ModeFlags flag
         }
     );
     auto emitChanges = [this,flags,size,refreshRate] {
-        emit modesChanged();
+        Q_EMIT modesChanged();
         if (flags.testFlag(ModeFlag::Current)) {
-            emit refreshRateChanged(refreshRate);
-            emit pixelSizeChanged(size);
-            emit currentModeChanged();
+            Q_EMIT refreshRateChanged(refreshRate);
+            Q_EMIT pixelSizeChanged(size);
+            Q_EMIT currentModeChanged();
         }
     };
     if (existingModeIt != d->modes.end()) {
@@ -247,10 +247,10 @@ void OutputInterface::setCurrentMode(const QSize &size, int refreshRate)
 
     Q_ASSERT(existingModeIt != d->modes.end());
     (*existingModeIt).flags |= ModeFlag::Current;
-    emit modesChanged();
-    emit refreshRateChanged((*existingModeIt).refreshRate);
-    emit pixelSizeChanged((*existingModeIt).size);
-    emit currentModeChanged();
+    Q_EMIT modesChanged();
+    Q_EMIT refreshRateChanged((*existingModeIt).refreshRate);
+    Q_EMIT pixelSizeChanged((*existingModeIt).size);
+    Q_EMIT currentModeChanged();
 }
 
 int32_t OutputInterface::Private::toTransform() const
@@ -414,7 +414,7 @@ void OutputInterface::Private::updateScale()
             return; \
         } \
         d->argumentName = arg; \
-        emit argumentName##Changed(d->argumentName); \
+        Q_EMIT argumentName##Changed(d->argumentName); \
     }
 
 SETTER(setPhysicalSize, const QSize&, physicalSize)
@@ -482,7 +482,7 @@ void OutputInterface::setDpmsMode(OutputInterface::DpmsMode mode)
         return;
     }
     d->dpms.mode = mode;
-    emit dpmsModeChanged();
+    Q_EMIT dpmsModeChanged();
 }
 
 void OutputInterface::setDpmsSupported(bool supported)
@@ -492,7 +492,7 @@ void OutputInterface::setDpmsSupported(bool supported)
         return;
     }
     d->dpms.supported = supported;
-    emit dpmsSupportedChanged();
+    Q_EMIT dpmsSupportedChanged();
 }
 
 OutputInterface::DpmsMode OutputInterface::dpmsMode() const

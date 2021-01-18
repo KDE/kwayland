@@ -64,7 +64,7 @@ void PlasmaShell::destroy()
     if (!d->shell) {
         return;
     }
-    emit interfaceAboutToBeDestroyed();
+    Q_EMIT interfaceAboutToBeDestroyed();
     d->shell.destroy();
 }
 
@@ -73,7 +73,7 @@ void PlasmaShell::release()
     if (!d->shell) {
         return;
     }
-    emit interfaceAboutToBeReleased();
+    Q_EMIT interfaceAboutToBeReleased();
     d->shell.release();
 }
 
@@ -177,14 +177,14 @@ void PlasmaShellSurface::Private::autoHidingPanelHiddenCallback(void *data, org_
 {
     auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
     Q_ASSERT(p->surface == org_kde_plasma_surface);
-    emit p->q->autoHidePanelHidden();
+    Q_EMIT p->q->autoHidePanelHidden();
 }
 
 void PlasmaShellSurface::Private::autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface)
 {
     auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
     Q_ASSERT(p->surface == org_kde_plasma_surface);
-    emit p->q->autoHidePanelShown();
+    Q_EMIT p->q->autoHidePanelShown();
 }
 
 PlasmaShellSurface::PlasmaShellSurface(QObject *parent)

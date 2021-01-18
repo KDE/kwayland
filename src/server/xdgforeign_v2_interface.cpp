@@ -103,7 +103,7 @@ void XdgExporterUnstableV2Interface::Private::exportCallback(wl_client *client, 
     connect(e.data(), &XdgExportedUnstableV2Interface::unbound,
             s->q, [s, handle]() {
                 s->exportedSurfaces.remove(handle);
-                emit s->q->surfaceUnexported(handle);
+                Q_EMIT s->q->surfaceUnexported(handle);
             });
 
     //if the surface dies before this, this dies too
@@ -113,12 +113,12 @@ void XdgExporterUnstableV2Interface::Private::exportCallback(wl_client *client, 
                     e->deleteLater();
                 }
                 s->exportedSurfaces.remove(handle);
-                emit s->q->surfaceUnexported(handle);
+                Q_EMIT s->q->surfaceUnexported(handle);
             });
 
     s->exportedSurfaces[handle] = e;
     zxdg_exported_v2_send_handle(e->resource(), handle.toUtf8().constData());
-    emit s->q->surfaceExported(handle, e);
+    Q_EMIT s->q->surfaceExported(handle, e);
 }
 
 XdgExporterUnstableV2Interface::Private::Private(XdgExporterUnstableV2Interface *q, Display *d,XdgForeignInterface *foreignInterface)
@@ -258,7 +258,7 @@ void XdgImporterUnstableV2Interface::Private::importCallback(wl_client *client, 
                     imp->deleteLater();
                 }
                 s->importedSurfaces.remove(handle);
-                emit s->q->surfaceUnimported(handle);
+                Q_EMIT s->q->surfaceUnimported(handle);
             });
 
     connect(imp.data(), &XdgImportedUnstableV2Interface::childChanged,
@@ -273,7 +273,7 @@ void XdgImporterUnstableV2Interface::Private::importCallback(wl_client *client, 
                 s->parents[child] = imp;
                 s->children[imp] = child;
                 SurfaceInterface *parent = SurfaceInterface::get(imp->parentResource());
-                emit s->q->transientChanged(child, parent);
+                Q_EMIT s->q->transientChanged(child, parent);
 
                 //child surface destroyed
                 connect(child, &Resource::unbound,
@@ -283,7 +283,7 @@ void XdgImporterUnstableV2Interface::Private::importCallback(wl_client *client, 
                                 KWayland::Server::XdgImportedUnstableV2Interface* parent = *it;
                                 s->children.remove(*it);
                                 s->parents.erase(it);
-                                emit s->q->transientChanged(nullptr, SurfaceInterface::get(parent->parentResource()));
+                                Q_EMIT s->q->transientChanged(nullptr, SurfaceInterface::get(parent->parentResource()));
                             }
                         });
             });
@@ -292,14 +292,14 @@ void XdgImporterUnstableV2Interface::Private::importCallback(wl_client *client, 
     connect(imp.data(), &XdgImportedUnstableV2Interface::unbound,
             s->q, [s, handle, imp]() {
                 s->importedSurfaces.remove(handle);
-                emit s->q->surfaceUnimported(handle);
+                Q_EMIT s->q->surfaceUnimported(handle);
 
                 auto it = s->children.find(imp);
                 if (it != s->children.end()) {
                     KWayland::Server::SurfaceInterface* child = *it;
                     s->parents.remove(*it);
                     s->children.erase(it);
-                    emit s->q->transientChanged(child, nullptr);
+                    Q_EMIT s->q->transientChanged(child, nullptr);
                 }
             });
 
@@ -310,7 +310,7 @@ void XdgImporterUnstableV2Interface::Private::importCallback(wl_client *client, 
     }
 
     s->importedSurfaces[handle] = imp;
-    emit s->q->surfaceImported(handle, imp);
+    Q_EMIT s->q->surfaceImported(handle, imp);
 }
 
 XdgImporterUnstableV2Interface::Private::Private(XdgImporterUnstableV2Interface *q, Display *d, XdgForeignInterface *foreignInterface)
@@ -436,7 +436,7 @@ void XdgImportedUnstableV2Interface::Private::setParentOfCallback(wl_client *cli
     }
 
     s->parentOf = surf;
-    emit s->q_func()->childChanged(surf);
+    Q_EMIT s->q_func()->childChanged(surf);
 }
 
 XdgImportedUnstableV2Interface::Private::Private(XdgImportedUnstableV2Interface *q, XdgImporterUnstableV2Interface *c, wl_resource *parentResource)

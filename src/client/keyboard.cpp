@@ -101,7 +101,7 @@ void Keyboard::Private::enter(uint32_t serial, wl_surface *surface, wl_array *ke
 {
     Q_UNUSED(keys)
     enteredSurface = Surface::get(surface);
-    emit q->entered(serial);
+    Q_EMIT q->entered(serial);
 }
 
 void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
@@ -115,7 +115,7 @@ void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_
 void Keyboard::Private::leave(uint32_t serial)
 {
     enteredSurface.clear();
-    emit q->left(serial);
+    Q_EMIT q->left(serial);
 }
 
 void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
@@ -130,7 +130,7 @@ void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t 
             return KeyState::Pressed;
         }
     };
-    emit k->q->keyChanged(key, toState(), time);
+    Q_EMIT k->q->keyChanged(key, toState(), time);
 }
 
 void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
@@ -140,7 +140,7 @@ void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32
     if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
         return;
     }
-    emit k->q->keymapChanged(fd, size);
+    Q_EMIT k->q->keymapChanged(fd, size);
 }
 
 void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
@@ -149,7 +149,7 @@ void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uin
     Q_UNUSED(serial)
     auto k = reinterpret_cast<Keyboard::Private*>(data);
     Q_ASSERT(k->keyboard == keyboard);
-    emit k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
+    Q_EMIT k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
 }
 
 void Keyboard::Private::repeatInfoCallback(void *data, wl_keyboard *keyboard, int32_t charactersPerSecond, int32_t delay)
@@ -158,7 +158,7 @@ void Keyboard::Private::repeatInfoCallback(void *data, wl_keyboard *keyboard, in
     Q_ASSERT(k->keyboard == keyboard);
     k->repeatInfo.charactersPerSecond = qMax(charactersPerSecond, 0);
     k->repeatInfo.delay = qMax(delay, 0);
-    emit k->q->keyRepeatChanged();
+    Q_EMIT k->q->keyRepeatChanged();
 }
 
 Surface *Keyboard::enteredSurface()

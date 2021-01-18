@@ -284,7 +284,7 @@ void XdgShellSurface::setSize(const QSize &size)
         return;
     }
     d->size = size;
-    emit sizeChanged(size);
+    Q_EMIT sizeChanged(size);
 }
 
 QSize XdgShellSurface::size() const

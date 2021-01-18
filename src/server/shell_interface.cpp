@@ -138,7 +138,7 @@ void ShellInterface::Private::createSurface(wl_client *client, uint32_t version,
         }
     );
     shellSurface->d->create(display->getConnection(client), version, id);
-    emit q->surfaceCreated(shellSurface);
+    Q_EMIT q->surfaceCreated(shellSurface);
 }
 
 /*********************************
@@ -199,7 +199,7 @@ void ShellSurfaceInterface::Private::pong(quint32 serial)
     if (pingTimer->isActive() && serial == pingSerial) {
         pingTimer->stop();
         Q_Q(ShellSurfaceInterface);
-        emit q->pongReceived();
+        Q_EMIT q->pongReceived();
     }
 }
 
@@ -306,9 +306,9 @@ void ShellSurfaceInterface::Private::setTransientCallback(wl_client *client, wl_
     }
     s->transientFor = QPointer<SurfaceInterface>(surface);
     s->transientOffset = QPoint(x, y);
-    emit s->q_func()->transientChanged(!s->transientFor.isNull());
-    emit s->q_func()->transientOffsetChanged(s->transientOffset);
-    emit s->q_func()->transientForChanged();
+    Q_EMIT s->q_func()->transientChanged(!s->transientFor.isNull());
+    Q_EMIT s->q_func()->transientOffsetChanged(s->transientOffset);
+    Q_EMIT s->q_func()->transientForChanged();
     s->setAcceptsFocus(flags);
 }
 
@@ -318,7 +318,7 @@ void ShellSurfaceInterface::Private::setAcceptsFocus(quint32 flags)
     if (acceptsFocus != acceptsKeyboardFocus) {
         acceptsKeyboardFocus = acceptsFocus;
         Q_Q(ShellSurfaceInterface);
-        emit q->acceptsKeyboardFocusChanged();
+        Q_EMIT q->acceptsKeyboardFocusChanged();
     }
 }
 
@@ -343,16 +343,16 @@ void ShellSurfaceInterface::Private::setWindowMode(WindowMode newWindowMode)
     windowMode = newWindowMode;
     Q_Q(ShellSurfaceInterface);
     if (oldWindowMode == WindowMode::Fullscreen || newWindowMode == WindowMode::Fullscreen) {
-        emit q->fullscreenChanged(windowMode == WindowMode::Fullscreen);
+        Q_EMIT q->fullscreenChanged(windowMode == WindowMode::Fullscreen);
     }
     if (oldWindowMode == WindowMode::Toplevel || newWindowMode == WindowMode::Toplevel) {
-        emit q->toplevelChanged(windowMode == WindowMode::Toplevel);
+        Q_EMIT q->toplevelChanged(windowMode == WindowMode::Toplevel);
     }
     if (oldWindowMode == WindowMode::Maximized || newWindowMode == WindowMode::Maximized) {
-        emit q->maximizedChanged(windowMode == WindowMode::Maximized);
+        Q_EMIT q->maximizedChanged(windowMode == WindowMode::Maximized);
     }
     if (oldWindowMode == WindowMode::Popup || newWindowMode == WindowMode::Popup) {
-        emit q->popupChanged(windowMode == WindowMode::Popup);
+        Q_EMIT q->popupChanged(windowMode == WindowMode::Popup);
     }
 }
 
@@ -368,9 +368,9 @@ void ShellSurfaceInterface::Private::setPopupCallback(wl_client *client, wl_reso
     s->transientFor = QPointer<SurfaceInterface>(SurfaceInterface::get(parent));
     s->transientOffset = QPoint(x, y);
     s->setWindowMode(WindowMode::Popup);
-    emit s->q_func()->transientChanged(!s->transientFor.isNull());
-    emit s->q_func()->transientOffsetChanged(s->transientOffset);
-    emit s->q_func()->transientForChanged();
+    Q_EMIT s->q_func()->transientChanged(!s->transientFor.isNull());
+    Q_EMIT s->q_func()->transientOffsetChanged(s->transientOffset);
+    Q_EMIT s->q_func()->transientForChanged();
     // we ignore the flags as Qt requests keyboard focus for popups
     // if we would honor the flag this could break compositors
     // compare QtWayland (5.6), file qwaylandwlshellsurface.cpp:208

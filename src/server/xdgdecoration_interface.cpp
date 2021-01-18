@@ -93,7 +93,7 @@ void XdgDecorationManagerInterface::Private::getToplevelDecorationCallback(wl_cl
     QObject::connect(xdgDecoration, &QObject::destroyed, p->q, [=]() {
         p->m_decorations.remove(shell);
     });
-    emit p->q->xdgDecorationInterfaceCreated(xdgDecoration);
+    Q_EMIT p->q->xdgDecorationInterfaceCreated(xdgDecoration);
 }
 
 XdgDecorationManagerInterface::Private::Private(XdgDecorationManagerInterface *q, XdgShellInterface *shellInterface, Display *d)
@@ -166,7 +166,7 @@ void XdgDecorationInterface::Private::setModeCallback(wl_client *client, wl_reso
     }
 
     p->m_requestedMode = mode;
-    emit p->q_func()->modeRequested(p->m_requestedMode);
+    Q_EMIT p->q_func()->modeRequested(p->m_requestedMode);
 }
 
 void XdgDecorationInterface::Private::unsetModeCallback(wl_client *client, wl_resource *resource)
@@ -176,7 +176,7 @@ void XdgDecorationInterface::Private::unsetModeCallback(wl_client *client, wl_re
     Q_ASSERT(p);
 
     p->m_requestedMode = Mode::Undefined;
-    emit p->q_func()->modeRequested(p->m_requestedMode);
+    Q_EMIT p->q_func()->modeRequested(p->m_requestedMode);
 }
 
 XdgDecorationInterface::Private::Private(XdgDecorationInterface *q, XdgDecorationManagerInterface *c, XdgShellSurfaceInterface *shell, wl_resource *parentResource)

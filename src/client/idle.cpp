@@ -112,13 +112,13 @@ const org_kde_kwin_idle_timeout_listener IdleTimeout::Private::s_listener = {
 void IdleTimeout::Private::idleCallback(void *data, org_kde_kwin_idle_timeout *org_kde_kwin_idle_timeout)
 {
     Q_UNUSED(org_kde_kwin_idle_timeout)
-    emit reinterpret_cast<Private*>(data)->q->idle();
+    Q_EMIT reinterpret_cast<Private*>(data)->q->idle();
 }
 
 void IdleTimeout::Private::resumedCallback(void *data, org_kde_kwin_idle_timeout *org_kde_kwin_idle_timeout)
 {
     Q_UNUSED(org_kde_kwin_idle_timeout)
-    emit reinterpret_cast<Private*>(data)->q->resumeFromIdle();
+    Q_EMIT reinterpret_cast<Private*>(data)->q->resumeFromIdle();
 }
 
 IdleTimeout::Private::Private(IdleTimeout *q)

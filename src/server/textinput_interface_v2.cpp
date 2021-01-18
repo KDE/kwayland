@@ -75,14 +75,14 @@ void TextInputUnstableV2Interface::Private::enable(SurfaceInterface *s)
 {
     surface = QPointer<SurfaceInterface>(s);
     enabled = true;
-    emit q_func()->enabledChanged();
+    Q_EMIT q_func()->enabledChanged();
 }
 
 void TextInputUnstableV2Interface::Private::disable()
 {
     surface.clear();
     enabled = false;
-    emit q_func()->enabledChanged();
+    Q_EMIT q_func()->enabledChanged();
 }
 
 void TextInputUnstableV2Interface::Private::sendEnter(SurfaceInterface *surface, quint32 serial)
@@ -229,7 +229,7 @@ void TextInputUnstableV2Interface::Private::updateStateCallback(wl_client *clien
     Q_UNUSED(serial)
     // TODO: use other reason values reason
     if (reason == ZWP_TEXT_INPUT_V2_UPDATE_STATE_RESET) {
-        emit p->q_func()->requestReset();
+        Q_EMIT p->q_func()->requestReset();
     }
 }
 

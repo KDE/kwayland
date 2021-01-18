@@ -88,7 +88,7 @@ void ConnectionThread::Private::doInitConnection()
     }
     if (!display) {
         qCWarning(KWAYLAND_CLIENT) << "Failed connecting to Wayland display";
-        emit q->failed();
+        Q_EMIT q->failed();
         return;
     }
     if (fd != -1) {
@@ -100,7 +100,7 @@ void ConnectionThread::Private::doInitConnection()
     // setup socket notifier
     setupSocketNotifier();
     setupSocketFileWatcher();
-    emit q->connected();
+    Q_EMIT q->connected();
 }
 
 void ConnectionThread::Private::setupSocketNotifier()
@@ -119,11 +119,11 @@ void ConnectionThread::Private::setupSocketNotifier()
                         free(display);
                         display = nullptr;
                     }
-                    emit q->errorOccurred();
+                    Q_EMIT q->errorOccurred();
                     return;
                 }
             }
-            emit q->eventsRead();
+            Q_EMIT q->eventsRead();
         }
     );
 }
@@ -165,7 +165,7 @@ void ConnectionThread::Private::setupSocketFileWatcher()
                     }
                 }
             );
-            emit q->connectionDied();
+            Q_EMIT q->connectionDied();
         }
     );
 }

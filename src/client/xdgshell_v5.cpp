@@ -178,7 +178,7 @@ void XdgShellSurfaceUnstableV5::Private::configureCallback(void *data, xdg_surfa
         }
     }
     const QSize size = QSize(width, height);
-    emit s->q->configureRequested(size, states, serial);
+    Q_EMIT s->q->configureRequested(size, states, serial);
     if (!size.isNull()) {
         s->q->setSize(size);
     }
@@ -188,7 +188,7 @@ void XdgShellSurfaceUnstableV5::Private::closeCallback(void *data, xdg_surface *
 {
     auto s = reinterpret_cast<XdgShellSurfaceUnstableV5::Private*>(data);
     Q_ASSERT(s->xdgsurfacev5 == xdg_surface);
-    emit s->q->closeRequested();
+    Q_EMIT s->q->closeRequested();
 }
 
 XdgShellSurfaceUnstableV5::Private::Private(XdgShellSurface *q)
@@ -363,7 +363,7 @@ void XdgShellPopupUnstableV5::Private::popupDoneCallback(void *data, xdg_popup *
 {
     auto s = reinterpret_cast<XdgShellPopupUnstableV5::Private*>(data);
     Q_ASSERT(s->xdgpopupv5 == xdg_popup);
-    emit s->q->popupDone();
+    Q_EMIT s->q->popupDone();
 }
 
 XdgShellPopupUnstableV5::Private::Private(XdgShellPopup *q)

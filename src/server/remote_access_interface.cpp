@@ -199,7 +199,7 @@ void RemoteAccessManagerInterface::Private::sendBufferReady(const OutputInterfac
     }
     if (holder.counter == 0) {
         // buffer was not requested by any client
-        emit q->bufferReleased(buf);
+        Q_EMIT q->bufferReleased(buf);
         return;
     }
     // store buffer locally, clients will ask it later
@@ -262,7 +262,7 @@ bool RemoteAccessManagerInterface::Private::unref(BufferHolder &bh)
     if (!bh.counter) {
         // no more clients using this buffer
         qCDebug(KWAYLAND_SERVER) << "Buffer released, fd" << bh.buf->fd();
-        emit q->bufferReleased(bh.buf);
+        Q_EMIT q->bufferReleased(bh.buf);
         return true;
     }
 

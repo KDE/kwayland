@@ -75,7 +75,7 @@ void GenericShellSurface<T>::setTitle(const QString &t)
     }
     title = t;
     Q_Q(T);
-    emit q->titleChanged(title);
+    Q_EMIT q->titleChanged(title);
 }
 
 template <class T>
@@ -86,7 +86,7 @@ void GenericShellSurface<T>::setWindowClass(const QByteArray &wc)
     }
     windowClass = wc;
     Q_Q(T);
-    emit q->windowClassChanged(windowClass);
+    Q_EMIT q->windowClassChanged(windowClass);
 }
 
 template <class T>
@@ -94,7 +94,7 @@ void GenericShellSurface<T>::moveCallback(wl_client *client, wl_resource *resour
 {
     auto s = userData(resource);
     Q_ASSERT(client == *s->client);
-    emit s->q_func()->moveRequested(SeatInterface::get(seat), serial);
+    Q_EMIT s->q_func()->moveRequested(SeatInterface::get(seat), serial);
 }
 
 namespace {
@@ -108,7 +108,7 @@ void GenericShellSurface<T>::resizeCallback(wl_client *client, wl_resource *reso
 {
     auto s = userData(resource);
     Q_ASSERT(client == *s->client);
-    emit s->q_func()->resizeRequested(SeatInterface::get(seat), serial, edgesToQtEdges(U(edges)));
+    Q_EMIT s->q_func()->resizeRequested(SeatInterface::get(seat), serial, edgesToQtEdges(U(edges)));
 }
 
 }

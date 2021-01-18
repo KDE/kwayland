@@ -41,7 +41,7 @@ void EglStreamControllerInterface::Private::attachStreamConsumerAttribs(wl_clien
 {
     Q_UNUSED(client);
     Private *p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
-    emit p->q->streamConsumerAttached(SurfaceInterface::get(surface), eglStream, attribs);
+    Q_EMIT p->q->streamConsumerAttached(SurfaceInterface::get(surface), eglStream, attribs);
 }
 
 EglStreamControllerInterface::Private::Private(EglStreamControllerInterface *q, Display *display)

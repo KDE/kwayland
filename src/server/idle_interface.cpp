@@ -124,7 +124,7 @@ void IdleInterface::inhibit()
     Q_D();
     d->inhibitCount++;
     if (d->inhibitCount == 1) {
-        emit inhibitedChanged();
+        Q_EMIT inhibitedChanged();
     }
 }
 
@@ -133,7 +133,7 @@ void IdleInterface::uninhibit()
     Q_D();
     d->inhibitCount--;
     if (d->inhibitCount == 0) {
-        emit inhibitedChanged();
+        Q_EMIT inhibitedChanged();
     }
 }
 

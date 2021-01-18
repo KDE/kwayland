@@ -51,7 +51,7 @@ void PointerInterface::Private::setCursor(quint32 serial, SurfaceInterface *surf
         cursor = new Cursor(q);
         cursor->d->update(QPointer<SurfaceInterface>(surface), serial, hotspot);
         QObject::connect(cursor, &Cursor::changed, q, &PointerInterface::cursorChanged);
-        emit q->cursorChanged();
+        Q_EMIT q->cursorChanged();
     } else {
         cursor->d->update(QPointer<SurfaceInterface>(surface), serial, hotspot);
     }
@@ -417,12 +417,12 @@ void Cursor::Private::update(const QPointer< SurfaceInterface > &s, quint32 seri
     if (enteredSerial != serial) {
         enteredSerial = serial;
         emitChanged = true;
-        emit q->enteredSerialChanged();
+        Q_EMIT q->enteredSerialChanged();
     }
     if (hotspot != p) {
         hotspot = p;
         emitChanged = true;
-        emit q->hotspotChanged();
+        Q_EMIT q->hotspotChanged();
     }
     if (surface != s) {
         if (!surface.isNull()) {
@@ -433,10 +433,10 @@ void Cursor::Private::update(const QPointer< SurfaceInterface > &s, quint32 seri
             QObject::connect(surface.data(), &SurfaceInterface::damaged, q, &Cursor::changed);
         }
         emitChanged = true;
-        emit q->surfaceChanged();
+        Q_EMIT q->surfaceChanged();
     }
     if (emitChanged) {
-        emit q->changed();
+        Q_EMIT q->changed();
     }
 }
 

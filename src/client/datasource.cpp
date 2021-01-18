@@ -56,35 +56,35 @@ void DataSource::Private::targetCallback(void *data, wl_data_source *dataSource,
 {
     auto d = reinterpret_cast<DataSource::Private*>(data);
     Q_ASSERT(d->source == dataSource);
-    emit d->q->targetAccepts(QString::fromUtf8(mimeType));
+    Q_EMIT d->q->targetAccepts(QString::fromUtf8(mimeType));
 }
 
 void DataSource::Private::sendCallback(void *data, wl_data_source *dataSource, const char *mimeType, int32_t fd)
 {
     auto d = reinterpret_cast<DataSource::Private*>(data);
     Q_ASSERT(d->source == dataSource);
-    emit d->q->sendDataRequested(QString::fromUtf8(mimeType), fd);
+    Q_EMIT d->q->sendDataRequested(QString::fromUtf8(mimeType), fd);
 }
 
 void DataSource::Private::cancelledCallback(void *data, wl_data_source *dataSource)
 {
     auto d = reinterpret_cast<DataSource::Private*>(data);
     Q_ASSERT(d->source == dataSource);
-    emit d->q->cancelled();
+    Q_EMIT d->q->cancelled();
 }
 
 void DataSource::Private::dndDropPerformedCallback(void *data, wl_data_source *wl_data_source)
 {
     Q_UNUSED(wl_data_source)
     auto d = reinterpret_cast<DataSource::Private*>(data);
-    emit d->q->dragAndDropPerformed();
+    Q_EMIT d->q->dragAndDropPerformed();
 }
 
 void DataSource::Private::dndFinishedCallback(void *data, wl_data_source *wl_data_source)
 {
     Q_UNUSED(wl_data_source)
     auto d = reinterpret_cast<DataSource::Private*>(data);
-    emit d->q->dragAndDropFinished();
+    Q_EMIT d->q->dragAndDropFinished();
 }
 
 void DataSource::Private::actionCallback(void *data, wl_data_source *wl_data_source, uint32_t dnd_action)
@@ -115,7 +115,7 @@ void DataSource::Private::setAction(DataDeviceManager::DnDAction action)
         return;
     }
     selectedAction = action;
-    emit q->selectedDragAndDropActionChanged();
+    Q_EMIT q->selectedDragAndDropActionChanged();
 }
 
 void DataSource::Private::setup(wl_data_source *s)

@@ -221,7 +221,7 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
             auto &m = (*it);
             if (m.flags.testFlag(Mode::Flag::Current)) {
                 m.flags &= ~Mode::Flags(Mode::Flag::Current);
-                emit q->modeChanged(m);
+                Q_EMIT q->modeChanged(m);
             }
             if (m.refreshRate == mode.refreshRate && m.size == mode.size) {
                 it = modes.erase(it);
@@ -239,9 +239,9 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
     }
 
     if (existing) {
-        emit q->modeChanged(mode);
+        Q_EMIT q->modeChanged(mode);
     } else {
-        emit q->modeAdded(mode);
+        Q_EMIT q->modeAdded(mode);
     }
 }
 
@@ -275,8 +275,8 @@ void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
     o->done = true;
-    emit o->q->changed();
-    emit o->q->done();
+    Q_EMIT o->q->changed();
+    Q_EMIT o->q->done();
 }
 
 void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
@@ -297,9 +297,9 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
     }
     if (o->enabled != _enabled) {
         o->enabled = _enabled;
-        emit o->q->enabledChanged(o->enabled);
+        Q_EMIT o->q->enabledChanged(o->enabled);
         if (o->done) {
-            emit o->q->changed();
+            Q_EMIT o->q->changed();
         }
     }
 }
@@ -310,9 +310,9 @@ void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* 
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     if (o->uuid != uuid) {
         o->uuid = uuid;
-        emit o->q->uuidChanged(o->uuid);
+        Q_EMIT o->q->uuidChanged(o->uuid);
         if (o->done) {
-            emit o->q->changed();
+            Q_EMIT o->q->changed();
         }
     }
 }
@@ -337,9 +337,9 @@ void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputd
 
     if (o->colorCurves != cc) {
         o->colorCurves = cc;
-        emit o->q->colorCurvesChanged();
+        Q_EMIT o->q->colorCurvesChanged();
         if (o->done) {
-            emit o->q->changed();
+            Q_EMIT o->q->changed();
         }
     }
 }

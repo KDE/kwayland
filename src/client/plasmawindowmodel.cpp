@@ -163,7 +163,7 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
 {
     QModelIndex idx = q->index(windows.indexOf(window));
-    emit q->dataChanged(idx, idx, QVector<int>() << role);
+    Q_EMIT q->dataChanged(idx, idx, QVector<int>() << role);
 }
 
 PlasmaWindowModel::PlasmaWindowModel(PlasmaWindowManagement *parent)

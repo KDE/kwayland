@@ -64,11 +64,11 @@ void FullscreenShell::Private::handleCapabilities(uint32_t capability)
 {
     if (capability & _WL_FULLSCREEN_SHELL_CAPABILITY_ARBITRARY_MODES) {
         capabilityArbitraryModes = true;
-        emit q->capabilityArbitraryModesChanged(capabilityArbitraryModes);
+        Q_EMIT q->capabilityArbitraryModesChanged(capabilityArbitraryModes);
     }
     if (capability & _WL_FULLSCREEN_SHELL_CAPABILITY_CURSOR_PLANE) {
         capabilityCursorPlane = true;
-        emit q->capabilityCursorPlaneChanged(capabilityCursorPlane);
+        Q_EMIT q->capabilityCursorPlaneChanged(capabilityCursorPlane);
     }
 }
 

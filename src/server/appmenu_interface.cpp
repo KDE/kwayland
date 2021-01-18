@@ -69,7 +69,7 @@ void AppMenuManagerInterface::Private::createCallback(wl_client *client, wl_reso
     QObject::connect(appmenu, &QObject::destroyed, p->q, [=]() {
         p->appmenus.removeOne(appmenu);
     });
-    emit p->q->appMenuCreated(appmenu);
+    Q_EMIT p->q->appMenuCreated(appmenu);
 }
 
 AppMenuManagerInterface::Private::Private(AppMenuManagerInterface *q, Display *d)
@@ -132,7 +132,7 @@ void AppMenuInterface::Private::setAddressCallback(wl_client *client, wl_resourc
     }
     p->address.serviceName = QString::fromLatin1(service_name);
     p->address.objectPath = QString::fromLatin1(object_path);
-    emit p->q_func()->addressChanged(p->address);
+    Q_EMIT p->q_func()->addressChanged(p->address);
 }
 
 AppMenuInterface::Private::Private(AppMenuInterface *q, AppMenuManagerInterface *c, SurfaceInterface *s, wl_resource *parentResource)

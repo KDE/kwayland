@@ -150,13 +150,13 @@ void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF
     p->d->timestamps << time;
     if (active) {
         sequence << p;
-        emit q->pointAdded(p);
+        Q_EMIT q->pointAdded(p);
     } else {
         qDeleteAll(sequence);
         sequence.clear();
         sequence << p;
         active = true;
-        emit q->sequenceStarted(p);
+        Q_EMIT q->sequenceStarted(p);
     }
 }
 
@@ -189,7 +189,7 @@ void Touch::Private::up(quint32 serial, quint32 time, qint32 id)
     p->d->timestamps << time;
     p->d->upSerial = serial;
     p->d->down = false;
-    emit q->pointRemoved(p);
+    Q_EMIT q->pointRemoved(p);
     // check whether the sequence ended
     for (auto it = sequence.constBegin(); it != sequence.constEnd(); ++it) {
         if ((*it)->isDown()) {
@@ -198,7 +198,7 @@ void Touch::Private::up(quint32 serial, quint32 time, qint32 id)
     }
     // no touch point is down
     active = false;
-    emit q->sequenceEnded();
+    Q_EMIT q->sequenceEnded();
 }
 
 void Touch::Private::motionCallback(void *data, wl_touch *touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
@@ -216,14 +216,14 @@ void Touch::Private::motion(quint32 time, qint32 id, const QPointF &position)
     }
     p->d->positions << position;
     p->d->timestamps << time;
-    emit q->pointMoved(p);
+    Q_EMIT q->pointMoved(p);
 }
 
 void Touch::Private::frameCallback(void *data, wl_touch *touch)
 {
     auto t = reinterpret_cast<Touch::Private*>(data);
     Q_ASSERT(t->touch == touch);
-    emit t->q->frameEnded();
+    Q_EMIT t->q->frameEnded();
 }
 
 void Touch::Private::cancelCallback(void *data, wl_touch *touch)
@@ -231,7 +231,7 @@ void Touch::Private::cancelCallback(void *data, wl_touch *touch)
     auto t = reinterpret_cast<Touch::Private*>(data);
     Q_ASSERT(t->touch == touch);
     t->active = false;
-    emit t->q->sequenceCanceled();
+    Q_EMIT t->q->sequenceCanceled();
 }
 
 Touch::Touch(QObject *parent)

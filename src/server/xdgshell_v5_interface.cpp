@@ -123,7 +123,7 @@ void XdgShellV5Interface::Private::createSurface(wl_client *client, uint32_t ver
         }
     );
     shellSurface->d->create(display->getConnection(client), version, id);
-    emit q->surfaceCreated(shellSurface);
+    Q_EMIT q->surfaceCreated(shellSurface);
 }
 
 void XdgShellV5Interface::Private::getXdgPopupCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface, wl_resource * parent, wl_resource * seat, uint32_t serial, int32_t x, int32_t y)
@@ -144,11 +144,11 @@ void XdgShellV5Interface::Private::createPopup(wl_client *client, uint32_t versi
     d->create(display->getConnection(client), version, id);
 
     //compat
-    emit q->popupCreated(popupSurface, seat, serial);
+    Q_EMIT q->popupCreated(popupSurface, seat, serial);
 
     //new system
-    emit q->xdgPopupCreated(popupSurface);
-    emit popupSurface->grabRequested(seat, serial);
+    Q_EMIT q->xdgPopupCreated(popupSurface);
+    Q_EMIT popupSurface->grabRequested(seat, serial);
 }
 
 void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *resource, uint32_t serial)
@@ -159,7 +159,7 @@ void XdgShellV5Interface::Private::pongCallback(wl_client *client, wl_resource *
     if (timerIt != s->pingTimers.end() && timerIt.value()->isActive()) {
         delete timerIt.value();
         s->pingTimers.erase(timerIt);
-        emit s->q->pongReceived(serial);
+        Q_EMIT s->q->pongReceived(serial);
     }
 }
 
@@ -333,7 +333,7 @@ void XdgSurfaceV5Interface::Private::setParentCallback(wl_client *client, wl_res
     auto parentSurface = static_cast<XdgShellV5Interface*>(s->q->global())->getSurface(parent);
     if (s->parent.data() != parentSurface) {
         s->parent = QPointer<XdgSurfaceV5Interface>(parentSurface);
-        emit s->q_func()->transientForChanged();
+        Q_EMIT s->q_func()->transientForChanged();
     }
 }
 
@@ -341,7 +341,7 @@ void XdgSurfaceV5Interface::Private::showWindowMenuCallback(wl_client *client, w
 {
     auto s = cast<Private>(resource);
     Q_ASSERT(client == *s->client);
-    emit s->q_func()->windowMenuRequested(SeatInterface::get(seat), serial, QPoint(x, y));
+    Q_EMIT s->q_func()->windowMenuRequested(SeatInterface::get(seat), serial, QPoint(x, y));
 }
 
 void XdgSurfaceV5Interface::Private::ackConfigureCallback(wl_client *client, wl_resource *resource, uint32_t serial)
@@ -354,7 +354,7 @@ void XdgSurfaceV5Interface::Private::ackConfigureCallback(wl_client *client, wl_
     }
     while (!s->configureSerials.isEmpty()) {
         quint32 i = s->configureSerials.takeFirst();
-        emit s->q_func()->configureAcknowledged(i);
+        Q_EMIT s->q_func()->configureAcknowledged(i);
         if (i == serial) {
             break;
         }
@@ -451,7 +451,7 @@ void XdgSurfaceV5Interface::Private::commit()
     m_pendingState = ShellSurfaceState{};
 
     if (windowGeometryChanged) {
-        emit q_func()->windowGeometryChanged(m_currentState.windowGeometry);
+        Q_EMIT q_func()->windowGeometryChanged(m_currentState.windowGeometry);
     }
 }
 

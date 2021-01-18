@@ -71,7 +71,7 @@ public:
         }
         while (!configureSerials.isEmpty()) {
             quint32 i = configureSerials.takeFirst();
-            emit q_func()->configureAcknowledged(i);
+            Q_EMIT q_func()->configureAcknowledged(i);
             if (i == serial) {
                 break;
             }
@@ -153,7 +153,7 @@ public:
         }
         while (!configureSerials.isEmpty()) {
             quint32 i = configureSerials.takeFirst();
-            emit q_func()->configureAcknowledged(i);
+            Q_EMIT q_func()->configureAcknowledged(i);
             if (i == serial) {
                 break;
             }
@@ -306,7 +306,7 @@ void XdgShellV6Interface::Private::pongCallback(wl_client *client, wl_resource *
     if (timerIt != s->pingTimers.end() && timerIt.value()->isActive()) {
         delete timerIt.value();
         s->pingTimers.erase(timerIt);
-        emit s->q->pongReceived(serial);
+        Q_EMIT s->q->pongReceived(serial);
     }
 }
 
@@ -480,7 +480,7 @@ void XdgSurfaceV6Interface::Private::createTopLevel(wl_client *client, uint32_t 
     m_topLevel = new XdgTopLevelV6Interface (m_shell, m_surface, parentResource);
     m_topLevel->d->create(m_shell->display()->getConnection(client), version, id);
 
-    emit m_shell->surfaceCreated(m_topLevel);
+    Q_EMIT m_shell->surfaceCreated(m_topLevel);
 }
 
 
@@ -528,7 +528,7 @@ void XdgSurfaceV6Interface::Private::createPopup(wl_client *client, uint32_t ver
     pd->constraintAdjustments = xdgPositioner->constraintAdjustments();
     pd->anchorOffset = xdgPositioner->anchorOffset();
 
-    emit m_shell->xdgPopupCreated(m_popup.data());
+    Q_EMIT m_shell->xdgPopupCreated(m_popup.data());
 }
 
 
@@ -808,12 +808,12 @@ void XdgTopLevelV6Interface::Private::setParentCallback(wl_client *client, wl_re
     if (!parent) {
         //setting null is valid API. Clear
         s->parent = nullptr;
-        emit s->q_func()->transientForChanged();
+        Q_EMIT s->q_func()->transientForChanged();
     } else {
         auto parentSurface = static_cast<XdgShellV6Interface*>(s->q->global())->getSurface(parent);
         if (s->parent.data() != parentSurface) {
             s->parent = QPointer<XdgTopLevelV6Interface>(parentSurface);
-            emit s->q_func()->transientForChanged();
+            Q_EMIT s->q_func()->transientForChanged();
         }
     }
 }
@@ -822,7 +822,7 @@ void XdgTopLevelV6Interface::Private::showWindowMenuCallback(wl_client *client, 
 {
     auto s = cast<Private>(resource);
     Q_ASSERT(client == *s->client);
-    emit s->q_func()->windowMenuRequested(SeatInterface::get(seat), serial, QPoint(x, y));
+    Q_EMIT s->q_func()->windowMenuRequested(SeatInterface::get(seat), serial, QPoint(x, y));
 }
 
 XdgTopLevelV6Interface::Private::Private(XdgTopLevelV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource)
@@ -849,13 +849,13 @@ void XdgTopLevelV6Interface::Private::commit()
     m_pendingState = ShellSurfaceState{};
 
     if (windowGeometryChanged) {
-        emit q_func()->windowGeometryChanged(m_currentState.windowGeometry);
+        Q_EMIT q_func()->windowGeometryChanged(m_currentState.windowGeometry);
     }
     if (minimumSizeChanged) {
-        emit q_func()->minSizeChanged(m_currentState.minimumSize);
+        Q_EMIT q_func()->minSizeChanged(m_currentState.minimumSize);
     }
     if (maximumSizeChanged) {
-        emit q_func()->maxSizeChanged(m_currentState.maximiumSize);
+        Q_EMIT q_func()->maxSizeChanged(m_currentState.maximiumSize);
     }
 }
 
@@ -938,7 +938,7 @@ void XdgPopupV6Interface::Private::commit()
     m_pendingState = ShellSurfaceState{};
 
     if (windowGeometryChanged) {
-        emit q_func()->windowGeometryChanged(m_currentState.windowGeometry);
+        Q_EMIT q_func()->windowGeometryChanged(m_currentState.windowGeometry);
     }
 }
 

@@ -207,7 +207,7 @@ void Output::Private::addMode(uint32_t flags, int32_t width, int32_t height, int
             auto &m = (*it);
             if (m.flags.testFlag(Mode::Flag::Current)) {
                 m.flags &= ~Mode::Flags(Mode::Flag::Current);
-                emit q->modeChanged(m);
+                Q_EMIT q->modeChanged(m);
             }
             if (m.refreshRate == mode.refreshRate && m.size == mode.size) {
                 it = modes.erase(it);
@@ -219,9 +219,9 @@ void Output::Private::addMode(uint32_t flags, int32_t width, int32_t height, int
         currentMode = currentIt;
     }
     if (existing) {
-        emit q->modeChanged(mode);
+        Q_EMIT q->modeChanged(mode);
     } else {
-        emit q->modeAdded(mode);
+        Q_EMIT q->modeAdded(mode);
     }
 }
 
@@ -236,7 +236,7 @@ void Output::Private::doneCallback(void *data, wl_output *output)
 {
     auto o = reinterpret_cast<Output::Private*>(data);
     Q_ASSERT(o->output == output);
-    emit o->q->changed();
+    Q_EMIT o->q->changed();
 }
 
 void Output::setup(wl_output *output)

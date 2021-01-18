@@ -333,7 +333,7 @@ void XdgTopLevelStable::Private::closeCallback(void *data, xdg_toplevel *xdg_top
 {
     auto s = static_cast<XdgTopLevelStable::Private*>(data);
     Q_ASSERT(s->xdgtoplevel == xdg_toplevel);
-    emit s->q->closeRequested();
+    Q_EMIT s->q->closeRequested();
 }
 
 XdgTopLevelStable::Private::Private(XdgShellSurface *q)
@@ -549,7 +549,7 @@ void XdgShellPopupStable::Private::popupDoneCallback(void *data, xdg_popup *xdg_
 {
     auto s = static_cast<XdgShellPopupStable::Private*>(data);
     Q_ASSERT(s->xdgpopup == xdg_popup);
-    emit s->q->popupDone();
+    Q_EMIT s->q->popupDone();
 }
 
 XdgShellPopupStable::Private::Private(XdgShellPopup *q)

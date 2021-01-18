@@ -117,7 +117,7 @@ void QtSurfaceExtensionInterface::Private::createSurface(wl_client *client, uint
         }
     );
     shellSurface->d->create(display->getConnection(client), version, id);
-    emit q->surfaceCreated(shellSurface);
+    Q_EMIT q->surfaceCreated(shellSurface);
 }
 
 /*********************************
@@ -142,13 +142,13 @@ const struct qt_extended_surface_interface QtExtendedSurfaceInterface::Private::
 void QtExtendedSurfaceInterface::Private::lowerCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
-    emit cast<Private>(resource)->q_func()->lowerRequested();
+    Q_EMIT cast<Private>(resource)->q_func()->lowerRequested();
 }
 
 void QtExtendedSurfaceInterface::Private::raiseCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client)
-    emit cast<Private>(resource)->q_func()->raiseRequested();
+    Q_EMIT cast<Private>(resource)->q_func()->raiseRequested();
 }
 
 void QtExtendedSurfaceInterface::Private::setContentOrientationMaskCallback(wl_client *client, wl_resource *resource, int32_t orientation)

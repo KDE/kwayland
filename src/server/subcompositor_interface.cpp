@@ -103,7 +103,7 @@ void SubCompositorInterface::Private::subsurface(wl_client *client, wl_resource 
         delete s;
         return;
     }
-    emit q->subSurfaceCreated(s);
+    Q_EMIT q->subSurfaceCreated(s);
 }
 
 SubCompositorInterface::SubCompositorInterface(Display *display, QObject *parent)
@@ -183,7 +183,7 @@ void SubSurfaceInterface::Private::commit()
         pos = scheduledPos;
         scheduledPos = QPoint();
         Q_Q(SubSurfaceInterface);
-        emit q->positionChanged(pos);
+        Q_EMIT q->positionChanged(pos);
     }
     if (surface) {
         surface->d_func()->commitSubSurface();
@@ -204,7 +204,7 @@ void SubSurfaceInterface::Private::setPosition(const QPoint &p)
         // workaround for https://bugreports.qt.io/browse/QTBUG-52118
         // apply directly as Qt doesn't commit the parent surface
         pos = p;
-        emit q->positionChanged(pos);
+        Q_EMIT q->positionChanged(pos);
         return;
     }
     if (scheduledPos == p) {
@@ -276,7 +276,7 @@ void SubSurfaceInterface::Private::setMode(Mode m)
     }
     mode = m;
     Q_Q(SubSurfaceInterface);
-    emit q->modeChanged(m);
+    Q_EMIT q->modeChanged(m);
 }
 
 SubSurfaceInterface::SubSurfaceInterface(SubCompositorInterface *parent, wl_resource *parentResource)

@@ -88,7 +88,7 @@ void DataDeviceManagerInterface::Private::createDataSource(wl_client *client, wl
         delete dataSource;
         return;
     }
-    emit q->dataSourceCreated(dataSource);
+    Q_EMIT q->dataSourceCreated(dataSource);
 }
 
 void DataDeviceManagerInterface::Private::getDataDeviceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat)
@@ -107,7 +107,7 @@ void DataDeviceManagerInterface::Private::getDataDevice(wl_client *client, wl_re
         return;
     }
     s->d_func()->registerDataDevice(dataDevice);
-    emit q->dataDeviceCreated(dataDevice);
+    Q_EMIT q->dataDeviceCreated(dataDevice);
 }
 
 DataDeviceManagerInterface::DataDeviceManagerInterface(Display *display, QObject *parent)

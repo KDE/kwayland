@@ -96,7 +96,7 @@ void FakeInputInterface::Private::bind(wl_client *client, uint32_t version, uint
     FakeInputDevice *device = new FakeInputDevice(resource, q);
     devices << device;
     QObject::connect(device, &FakeInputDevice::destroyed, q, [device, this] { devices.removeAll(device); });
-    emit q->deviceCreated(device);
+    Q_EMIT q->deviceCreated(device);
 }
 
 void FakeInputInterface::Private::unbind(wl_resource *resource)
@@ -123,7 +123,7 @@ void FakeInputInterface::Private::authenticateCallback(wl_client *client, wl_res
     if (!d) {
         return;
     }
-    emit d->authenticationRequested(QString::fromUtf8(application), QString::fromUtf8(reason));
+    Q_EMIT d->authenticationRequested(QString::fromUtf8(application), QString::fromUtf8(reason));
 }
 
 void FakeInputInterface::Private::pointerMotionCallback(wl_client *client, wl_resource *resource, wl_fixed_t delta_x, wl_fixed_t delta_y)
@@ -133,7 +133,7 @@ void FakeInputInterface::Private::pointerMotionCallback(wl_client *client, wl_re
     if (!d || !d->isAuthenticated()) {
         return;
     }
-    emit d->pointerMotionRequested(QSizeF(wl_fixed_to_double(delta_x), wl_fixed_to_double(delta_y)));
+    Q_EMIT d->pointerMotionRequested(QSizeF(wl_fixed_to_double(delta_x), wl_fixed_to_double(delta_y)));
 }
 
 void FakeInputInterface::Private::pointerMotionAbsoluteCallback(wl_client *client, wl_resource *resource, wl_fixed_t x, wl_fixed_t y)
@@ -143,7 +143,7 @@ void FakeInputInterface::Private::pointerMotionAbsoluteCallback(wl_client *clien
     if (!d || !d->isAuthenticated()) {
         return;
     }
-    emit d->pointerMotionAbsoluteRequested(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
+    Q_EMIT d->pointerMotionAbsoluteRequested(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
 }
 
 void FakeInputInterface::Private::axisCallback(wl_client *client, wl_resource *resource, uint32_t axis, wl_fixed_t value)
@@ -165,7 +165,7 @@ void FakeInputInterface::Private::axisCallback(wl_client *client, wl_resource *r
         // invalid
         return;
     }
-    emit d->pointerAxisRequested(orientation, wl_fixed_to_double(value));
+    Q_EMIT d->pointerAxisRequested(orientation, wl_fixed_to_double(value));
 }
 
 void FakeInputInterface::Private::buttonCallback(wl_client *client, wl_resource *resource, uint32_t button, uint32_t state)
@@ -177,10 +177,10 @@ void FakeInputInterface::Private::buttonCallback(wl_client *client, wl_resource 
     }
     switch (state) {
     case WL_POINTER_BUTTON_STATE_PRESSED:
-        emit d->pointerButtonPressRequested(button);
+        Q_EMIT d->pointerButtonPressRequested(button);
         break;
     case WL_POINTER_BUTTON_STATE_RELEASED:
-        emit d->pointerButtonReleaseRequested(button);
+        Q_EMIT d->pointerButtonReleaseRequested(button);
         break;
     default:
         // nothing
@@ -199,7 +199,7 @@ void FakeInputInterface::Private::touchDownCallback(wl_client *client, wl_resour
         return;
     }
     touchIds << id;
-    emit d->touchDownRequested(id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
+    Q_EMIT d->touchDownRequested(id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
 }
 
 void FakeInputInterface::Private::touchMotionCallback(wl_client *client, wl_resource *resource, quint32 id, wl_fixed_t x, wl_fixed_t y)
@@ -212,7 +212,7 @@ void FakeInputInterface::Private::touchMotionCallback(wl_client *client, wl_reso
     if (!touchIds.contains(id)) {
         return;
     }
-    emit d->touchMotionRequested(id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
+    Q_EMIT d->touchMotionRequested(id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
 }
 
 void FakeInputInterface::Private::touchUpCallback(wl_client *client, wl_resource *resource, quint32 id)
@@ -226,7 +226,7 @@ void FakeInputInterface::Private::touchUpCallback(wl_client *client, wl_resource
         return;
     }
     touchIds.removeOne(id);
-    emit d->touchUpRequested(id);
+    Q_EMIT d->touchUpRequested(id);
 }
 
 void FakeInputInterface::Private::touchCancelCallback(wl_client *client, wl_resource *resource)
@@ -237,7 +237,7 @@ void FakeInputInterface::Private::touchCancelCallback(wl_client *client, wl_reso
         return;
     }
     touchIds.clear();
-    emit d->touchCancelRequested();
+    Q_EMIT d->touchCancelRequested();
 }
 
 void FakeInputInterface::Private::touchFrameCallback(wl_client *client, wl_resource *resource)
@@ -247,7 +247,7 @@ void FakeInputInterface::Private::touchFrameCallback(wl_client *client, wl_resou
     if (!d || !d->isAuthenticated()) {
         return;
     }
-    emit d->touchFrameRequested();
+    Q_EMIT d->touchFrameRequested();
 }
 
 void FakeInputInterface::Private::keyboardKeyCallback(wl_client *client, wl_resource *resource, uint32_t button, uint32_t state)
@@ -259,10 +259,10 @@ void FakeInputInterface::Private::keyboardKeyCallback(wl_client *client, wl_reso
     }
     switch (state) {
     case WL_KEYBOARD_KEY_STATE_PRESSED:
-        emit d->keyboardKeyPressRequested(button);
+        Q_EMIT d->keyboardKeyPressRequested(button);
         break;
     case WL_KEYBOARD_KEY_STATE_RELEASED:
-        emit d->keyboardKeyReleaseRequested(button);
+        Q_EMIT d->keyboardKeyReleaseRequested(button);
         break;
     default:
         // nothing

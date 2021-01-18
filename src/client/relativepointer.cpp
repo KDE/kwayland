@@ -126,7 +126,7 @@ void RelativePointer::Private::relativeMotionCallback(void *data, zwp_relative_p
     const QSizeF delta(wl_fixed_to_double(dx), wl_fixed_to_double(dy));
     const QSizeF deltaNonAccel(wl_fixed_to_double(dx_unaccel), wl_fixed_to_double(dy_unaccel));
     const quint64 timestamp = quint64(utime_lo) | (quint64(utime_hi) << 32);
-    emit p->q->relativeMotion(delta, deltaNonAccel, timestamp);
+    Q_EMIT p->q->relativeMotion(delta, deltaNonAccel, timestamp);
 }
 
 void RelativePointer::Private::setup(zwp_relative_pointer_v1 *v1)

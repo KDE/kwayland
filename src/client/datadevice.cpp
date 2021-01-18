@@ -85,7 +85,7 @@ void DataDevice::Private::dragEnter(quint32 serial, const QPointer<Surface> &sur
     Q_ASSERT(*lastOffer == dataOffer);
     drag.offer = lastOffer;
     lastOffer = nullptr;
-    emit q->dragEntered(serial, relativeToSurface);
+    Q_EMIT q->dragEntered(serial, relativeToSurface);
 }
 
 void DataDevice::Private::leaveCallback(void *data, wl_data_device *dataDevice)
@@ -101,21 +101,21 @@ void DataDevice::Private::dragLeft()
         delete drag.offer;
     }
     drag = Drag();
-    emit q->dragLeft();
+    Q_EMIT q->dragLeft();
 }
 
 void DataDevice::Private::motionCallback(void *data, wl_data_device *dataDevice, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
     auto d = reinterpret_cast<Private*>(data);
     Q_ASSERT(d->device == dataDevice);
-    emit d->q->dragMotion(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), time);
+    Q_EMIT d->q->dragMotion(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), time);
 }
 
 void DataDevice::Private::dropCallback(void *data, wl_data_device *dataDevice)
 {
     auto d = reinterpret_cast<Private*>(data);
     Q_ASSERT(d->device == dataDevice);
-    emit d->q->dropped();
+    Q_EMIT d->q->dropped();
 }
 
 void DataDevice::Private::selectionCallback(void *data, wl_data_device *dataDevice, wl_data_offer *id)
@@ -129,13 +129,13 @@ void DataDevice::Private::selection(wl_data_offer *id)
 {
     if (!id) {
         selectionOffer.reset();
-        emit q->selectionCleared();
+        Q_EMIT q->selectionCleared();
         return;
     }
     Q_ASSERT(*lastOffer == id);
     selectionOffer.reset(lastOffer);
     lastOffer = nullptr;
-    emit q->selectionOffered(selectionOffer.data());
+    Q_EMIT q->selectionOffered(selectionOffer.data());
 }
 
 DataDevice::Private::Private(DataDevice *q)

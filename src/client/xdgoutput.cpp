@@ -173,7 +173,7 @@ void XdgOutput::Private::doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
     std::swap(p->current, p->pending);
 
-    emit p->q->changed();
+    Q_EMIT p->q->changed();
 }
 
 XdgOutput::Private::Private(XdgOutput *qptr)

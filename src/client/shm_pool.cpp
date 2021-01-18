@@ -147,7 +147,7 @@ bool ShmPool::Private::resizePool(int32_t newSize)
         qCDebug(KWAYLAND_CLIENT) << "Resizing Shm pool failed";
         return false;
     }
-    emit q->poolResized();
+    Q_EMIT q->poolResized();
     return true;
 }
 

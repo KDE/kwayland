@@ -317,7 +317,7 @@ void XdgTopLevelUnstableV6::Private::closeCallback(void *data, zxdg_toplevel_v6 
 {
     auto s = reinterpret_cast<XdgTopLevelUnstableV6::Private*>(data);
     Q_ASSERT(s->xdgtoplevelv6 == xdg_toplevel);
-    emit s->q->closeRequested();
+    Q_EMIT s->q->closeRequested();
 }
 
 XdgTopLevelUnstableV6::Private::Private(XdgShellSurface *q)
@@ -527,7 +527,7 @@ void XdgShellPopupUnstableV6::Private::popupDoneCallback(void *data, zxdg_popup_
 {
     auto s = reinterpret_cast<XdgShellPopupUnstableV6::Private*>(data);
     Q_ASSERT(s->xdgpopupv6 == xdg_popup);
-    emit s->q->popupDone();
+    Q_EMIT s->q->popupDone();
 }
 
 XdgShellPopupUnstableV6::Private::Private(XdgShellPopup *q)

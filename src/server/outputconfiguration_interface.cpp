@@ -241,7 +241,7 @@ void OutputConfigurationInterface::Private::colorcurvesCallback(wl_client *clien
 void OutputConfigurationInterface::Private::emitConfigurationChangeRequested() const
 {
     auto configinterface = reinterpret_cast<OutputConfigurationInterface *>(q);
-    emit outputManagement->configurationChangeRequested(configinterface);
+    Q_EMIT outputManagement->configurationChangeRequested(configinterface);
 }
 
 

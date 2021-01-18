@@ -77,7 +77,7 @@ void TextInputUnstableV0::Private::enterCallaback(void *data, wl_text_input *wl_
     auto t = reinterpret_cast<TextInputUnstableV0::Private*>(data);
     Q_ASSERT(t->textinputunstablev0 == wl_text_input);
     t->enteredSurface = Surface::get(surface);
-    emit t->q->entered();
+    Q_EMIT t->q->entered();
 }
 
 void TextInputUnstableV0::Private::leaveCallback(void *data, wl_text_input *wl_text_input)
@@ -85,7 +85,7 @@ void TextInputUnstableV0::Private::leaveCallback(void *data, wl_text_input *wl_t
     auto t = reinterpret_cast<TextInputUnstableV0::Private*>(data);
     Q_ASSERT(t->textinputunstablev0 == wl_text_input);
     t->enteredSurface = nullptr;
-    emit t->q->left();
+    Q_EMIT t->q->left();
 }
 
 void TextInputUnstableV0::Private::modifiersMapCallback(void *data, wl_text_input *wl_text_input, wl_array *map)
@@ -102,7 +102,7 @@ void TextInputUnstableV0::Private::inputPanelStateCallback(void *data, wl_text_i
     Q_ASSERT(t->textinputunstablev0 == wl_text_input);
     if (t->inputPanelVisible != state) {
         t->inputPanelVisible = state;
-        emit t->q->inputPanelStateChanged();
+        Q_EMIT t->q->inputPanelStateChanged();
     }
 }
 
@@ -118,7 +118,7 @@ void TextInputUnstableV0::Private::preeditStringCallback(void *data, wl_text_inp
     }
     t->currentPreEdit = t->pendingPreEdit;
     t->pendingPreEdit = TextInput::Private::PreEdit();
-    emit t->q->composingTextChanged();
+    Q_EMIT t->q->composingTextChanged();
 }
 
 void TextInputUnstableV0::Private::preeditStylingCallback(void *data, wl_text_input *wl_text_input, uint32_t index, uint32_t length, uint32_t style)
@@ -150,7 +150,7 @@ void TextInputUnstableV0::Private::commitStringCallback(void *data, wl_text_inpu
     t->pendingCommit = TextInput::Private::Commit();
     t->pendingCommit.deleteSurrounding.beforeLength = 0;
     t->pendingCommit.deleteSurrounding.afterLength = 0;
-    emit t->q->committed();
+    Q_EMIT t->q->committed();
 }
 
 void TextInputUnstableV0::Private::cursorPositionCallback(void *data, wl_text_input *wl_text_input, int32_t index, int32_t anchor)
@@ -188,7 +188,7 @@ void TextInputUnstableV0::Private::keysymCallback(void *data, wl_text_input *wl_
         // invalid
         return;
     }
-    emit t->q->keyEvent(sym, state, Qt::KeyboardModifiers(), time);
+    Q_EMIT t->q->keyEvent(sym, state, Qt::KeyboardModifiers(), time);
 }
 
 void TextInputUnstableV0::Private::languageCallback(void *data, wl_text_input *wl_text_input, uint32_t serial, const char *language)
@@ -198,7 +198,7 @@ void TextInputUnstableV0::Private::languageCallback(void *data, wl_text_input *w
     Q_ASSERT(t->textinputunstablev0 == wl_text_input);
     if (qstrcmp(t->language, language) != 0) {
         t->language = QByteArray(language);
-        emit t->q->languageChanged();
+        Q_EMIT t->q->languageChanged();
     }
 }
 
@@ -224,7 +224,7 @@ void TextInputUnstableV0::Private::textDirectionCallback(void *data, wl_text_inp
     }
     if (direction != t->textDirection) {
         t->textDirection = direction;
-        emit t->q->textDirectionChanged();
+        Q_EMIT t->q->textDirectionChanged();
     }
 }
 

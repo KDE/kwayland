@@ -72,7 +72,7 @@ void ClientConnection::Private::destroyListenerCallback(wl_listener *listener, v
     auto q = p->q;
     p->client = nullptr;
     wl_list_remove(&p->listener.link);
-    emit q->disconnected(q);
+    Q_EMIT q->disconnected(q);
     q->deleteLater();
 }
 

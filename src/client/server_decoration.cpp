@@ -196,7 +196,7 @@ void ServerSideDecoration::Private::modeCallback(void *data, org_kde_kwin_server
         return;
     }
     p->mode = m;
-    emit p->q->modeChanged();
+    Q_EMIT p->q->modeChanged();
 }
 
 ServerSideDecoration::ServerSideDecoration(QObject *parent)

@@ -81,15 +81,15 @@ void TextInputUnstableV0Interface::Private::activate(SeatInterface *seat, Surfac
 {
     surface = QPointer<SurfaceInterface>(s);
     enabled = true;
-    emit q_func()->enabledChanged();
-    emit q_func()->requestActivate(seat, surface);
+    Q_EMIT q_func()->enabledChanged();
+    Q_EMIT q_func()->requestActivate(seat, surface);
 }
 
 void TextInputUnstableV0Interface::Private::deactivate()
 {
     surface.clear();
     enabled = false;
-    emit q_func()->enabledChanged();
+    Q_EMIT q_func()->enabledChanged();
 }
 
 void TextInputUnstableV0Interface::Private::sendEnter(SurfaceInterface *surface, quint32 serial)
@@ -234,7 +234,7 @@ void TextInputUnstableV0Interface::Private::resetCallback(wl_client *client, wl_
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(*p->client == client);
-    emit p->q_func()->requestReset();
+    Q_EMIT p->q_func()->requestReset();
 }
 
 void TextInputUnstableV0Interface::Private::setSurroundingTextUintCallback(wl_client *client, wl_resource *resource, const char * text, uint32_t cursor, uint32_t anchor)

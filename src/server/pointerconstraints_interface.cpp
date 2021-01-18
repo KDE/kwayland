@@ -57,12 +57,12 @@ void LockedPointerInterface::Private::commit()
         region = pendingRegion;
         pendingRegion = QRegion();
         regionIsSet = false;
-        emit q_func()->regionChanged();
+        Q_EMIT q_func()->regionChanged();
     }
     if (hintIsSet) {
         hint = pendingHint;
         hintIsSet = false;
-        emit q_func()->cursorPositionHintChanged();
+        Q_EMIT q_func()->cursorPositionHintChanged();
     }
 }
 
@@ -115,7 +115,7 @@ void LockedPointerInterface::setLocked(bool locked)
     }
     d->locked = locked;
     d->updateLocked();
-    emit lockedChanged();
+    Q_EMIT lockedChanged();
 }
 
 LockedPointerInterface::Private *LockedPointerInterface::d_func() const
@@ -145,7 +145,7 @@ void ConfinedPointerInterface::Private::commit()
     region = pendingRegion;
     pendingRegion = QRegion();
     regionIsSet = false;
-    emit q_func()->regionChanged();
+    Q_EMIT q_func()->regionChanged();
 }
 
 ConfinedPointerInterface::ConfinedPointerInterface(Private *p, QObject *parent)
@@ -188,7 +188,7 @@ void ConfinedPointerInterface::setConfined(bool confined)
     }
     d->confined = confined;
     d->updateConfined();
-    emit confinedChanged();
+    Q_EMIT confinedChanged();
 }
 
 ConfinedPointerInterface::Private *ConfinedPointerInterface::d_func() const

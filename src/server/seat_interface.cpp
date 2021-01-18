@@ -259,7 +259,7 @@ void SeatInterface::Private::registerDataDevice(DataDeviceInterface *dataDevice)
         if (currentSelection == dataDevice) {
             // current selection is cleared
             currentSelection = nullptr;
-            emit q->selectionChanged(nullptr);
+            Q_EMIT q->selectionChanged(nullptr);
             if (keys.focus.selection) {
                 keys.focus.selection->sendClearSelection();
             }
@@ -324,8 +324,8 @@ void SeatInterface::Private::registerDataDevice(DataDeviceInterface *dataDevice)
                 drag.dragSourceDestroyConnection = QMetaObject::Connection();
             }
             dataDevice->updateDragTarget(proxied ? nullptr : originSurface, dataDevice->dragImplicitGrabSerial());
-            emit q->dragStarted();
-            emit q->dragSurfaceChanged();
+            Q_EMIT q->dragStarted();
+            Q_EMIT q->dragSurfaceChanged();
         }
     );
     // is the new DataDevice for the current keyoard focus?
@@ -353,7 +353,7 @@ void SeatInterface::Private::registerTextInput(TextInputInterface *ti)
         if (!textInput.focus.textInput) {
             textInput.focus.textInput = ti;
             ti->d_func()->sendEnter(textInput.focus.surface, textInput.focus.serial);
-            emit q->focusedTextInputChanged();
+            Q_EMIT q->focusedTextInputChanged();
         }
     }
     QObject::connect(ti, &QObject::destroyed, q,
@@ -361,7 +361,7 @@ void SeatInterface::Private::registerTextInput(TextInputInterface *ti)
             textInputs.removeAt(textInputs.indexOf(ti));
             if (textInput.focus.textInput == ti) {
                 textInput.focus.textInput = nullptr;
-                emit q->focusedTextInputChanged();
+                Q_EMIT q->focusedTextInputChanged();
             }
         }
     );
@@ -380,8 +380,8 @@ void SeatInterface::Private::endDrag(quint32 serial)
         target->updateDragTarget(nullptr, serial);
     }
     drag = Drag();
-    emit q->dragSurfaceChanged();
-    emit q->dragEnded();
+    Q_EMIT q->dragSurfaceChanged();
+    Q_EMIT q->dragEnded();
 }
 
 void SeatInterface::Private::cancelPreviousSelection(DataDeviceInterface *dataDevice)
@@ -420,7 +420,7 @@ void SeatInterface::Private::updateSelection(DataDeviceInterface *dataDevice, bo
         }
     }
     if (selChanged) {
-        emit q->selectionChanged(currentSelection);
+        Q_EMIT q->selectionChanged(currentSelection);
     }
 }
 
@@ -431,7 +431,7 @@ void SeatInterface::setHasKeyboard(bool has)
         return;
     }
     d->keyboard = has;
-    emit hasKeyboardChanged(d->keyboard);
+    Q_EMIT hasKeyboardChanged(d->keyboard);
 }
 
 void SeatInterface::setHasPointer(bool has)
@@ -441,7 +441,7 @@ void SeatInterface::setHasPointer(bool has)
         return;
     }
     d->pointer = has;
-    emit hasPointerChanged(d->pointer);
+    Q_EMIT hasPointerChanged(d->pointer);
 }
 
 void SeatInterface::setHasTouch(bool has)
@@ -451,7 +451,7 @@ void SeatInterface::setHasTouch(bool has)
         return;
     }
     d->touch = has;
-    emit hasTouchChanged(d->touch);
+    Q_EMIT hasTouchChanged(d->touch);
 }
 
 void SeatInterface::setName(const QString &name)
@@ -461,7 +461,7 @@ void SeatInterface::setName(const QString &name)
         return;
     }
     d->name = name;
-    emit nameChanged(d->name);
+    Q_EMIT nameChanged(d->name);
 }
 
 void SeatInterface::Private::getPointerCallback(wl_client *client, wl_resource *resource, uint32_t id)
@@ -488,7 +488,7 @@ void SeatInterface::Private::getPointer(wl_client *client, wl_resource *resource
         pointer->d_func()->sendFrame();
         if (globalPointer.focus.pointers.count() == 1) {
             // got a new pointer
-            emit q->focusedPointerChanged(pointer);
+            Q_EMIT q->focusedPointerChanged(pointer);
         }
     }
     QObject::connect(pointer, &QObject::destroyed, q,
@@ -496,12 +496,12 @@ void SeatInterface::Private::getPointer(wl_client *client, wl_resource *resource
             pointers.removeAt(pointers.indexOf(pointer));
             if (globalPointer.focus.pointers.removeOne(pointer)) {
                 if (globalPointer.focus.pointers.isEmpty()) {
-                    emit q->focusedPointerChanged(nullptr);
+                    Q_EMIT q->focusedPointerChanged(nullptr);
                 }
             }
         }
     );
-    emit q->pointerCreated(pointer);
+    Q_EMIT q->pointerCreated(pointer);
 }
 
 void SeatInterface::Private::getKeyboardCallback(wl_client *client, wl_resource *resource, uint32_t id)
@@ -536,7 +536,7 @@ void SeatInterface::Private::getKeyboard(wl_client *client, wl_resource *resourc
             keys.focus.keyboards.removeOne(keyboard);
         }
     );
-    emit q->keyboardCreated(keyboard);
+    Q_EMIT q->keyboardCreated(keyboard);
 }
 
 void SeatInterface::Private::getTouchCallback(wl_client *client, wl_resource *resource, uint32_t id)
@@ -569,7 +569,7 @@ void SeatInterface::Private::getTouch(wl_client *client, wl_resource *resource, 
             globalTouch.focus.touchs.removeOne(touch);
         }
     );
-    emit q->touchCreated(touch);
+    Q_EMIT q->touchCreated(touch);
 }
 
 QString SeatInterface::name() const
@@ -619,7 +619,7 @@ void SeatInterface::setPointerPos(const QPointF &pos)
         return;
     }
     d->globalPointer.pos = pos;
-    emit pointerPosChanged(pos);
+    Q_EMIT pointerPosChanged(pos);
 }
 
 quint32 SeatInterface::timestamp() const
@@ -635,7 +635,7 @@ void SeatInterface::setTimestamp(quint32 time)
         return;
     }
     d->timestamp = time;
-    emit timestampChanged(time);
+    Q_EMIT timestampChanged(time);
 }
 
 void SeatInterface::setDragTarget(SurfaceInterface *surface, const QPointF &globalPosition, const QMatrix4x4 &inputTransformation)
@@ -663,7 +663,7 @@ void SeatInterface::setDragTarget(SurfaceInterface *surface, const QPointF &glob
     } else {
         d->drag.surface = nullptr;
     }
-    emit dragSurfaceChanged();
+    Q_EMIT dragSurfaceChanged();
     return;
 }
 
@@ -721,7 +721,7 @@ void SeatInterface::setFocusedPointerSurface(SurfaceInterface *surface, const QM
             [this] {
                 Q_D();
                 d->globalPointer.focus = Private::Pointer::Focus();
-                emit focusedPointerChanged(nullptr);
+                Q_EMIT focusedPointerChanged(nullptr);
             }
         );
         d->globalPointer.focus.offset = QPointF();
@@ -729,7 +729,7 @@ void SeatInterface::setFocusedPointerSurface(SurfaceInterface *surface, const QM
         d->globalPointer.focus.serial = serial;
     }
     if (p.isEmpty()) {
-        emit focusedPointerChanged(nullptr);
+        Q_EMIT focusedPointerChanged(nullptr);
         for (auto p : qAsConst(framePointers))
         {
             p->d_func()->sendFrame();
@@ -737,7 +737,7 @@ void SeatInterface::setFocusedPointerSurface(SurfaceInterface *surface, const QM
         return;
     }
     // TODO: signal with all pointers
-    emit focusedPointerChanged(p.first());
+    Q_EMIT focusedPointerChanged(p.first());
     for (auto it = p.constBegin(), end = p.constEnd(); it != end; ++it) {
         (*it)->setFocusedSurface(surface, serial);
         framePointers << *it;
@@ -1432,7 +1432,7 @@ void SeatInterface::touchMove(qint32 id, const QPointF &globalPosition)
             }
         );
     }
-    emit touchMoved(id, d->globalTouch.ids[id], globalPosition);
+    Q_EMIT touchMoved(id, d->globalTouch.ids[id], globalPosition);
 }
 
 void SeatInterface::touchUp(qint32 id)
@@ -1572,7 +1572,7 @@ void SeatInterface::setFocusedTextInputSurface(SurfaceInterface *surface)
         t->d_func()->sendEnter(surface, serial);
     }
     if (old != t) {
-        emit focusedTextInputChanged();
+        Q_EMIT focusedTextInputChanged();
     }
 }
 
@@ -1610,7 +1610,7 @@ void SeatInterface::setSelection(DataDeviceInterface *dataDevice)
             d->keys.focus.selection->sendClearSelection();
         }
     }
-    emit selectionChanged(dataDevice);
+    Q_EMIT selectionChanged(dataDevice);
 }
 
 }

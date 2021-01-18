@@ -144,7 +144,7 @@ void Display::setSocketName(const QString &name)
         return;
     }
     d->socketName = name;
-    emit socketNameChanged(d->socketName);
+    Q_EMIT socketNameChanged(d->socketName);
 }
 
 QString Display::socketName() const
@@ -158,7 +158,7 @@ void Display::setAutomaticSocketNaming(bool automaticSocketNaming)
         return;
     }
     d->automaticSocketNaming = automaticSocketNaming;
-    emit automaticSocketNamingChanged(automaticSocketNaming);
+    Q_EMIT automaticSocketNamingChanged(automaticSocketNaming);
 }
 
 bool Display::automaticSocketNaming() const
@@ -182,7 +182,7 @@ void Display::start(StartMode mode)
             const QString newEffectiveSocketName = QString::fromUtf8(socket);
             if (d->socketName != newEffectiveSocketName) {
                 d->socketName = newEffectiveSocketName;
-                emit socketNameChanged(d->socketName);
+                Q_EMIT socketNameChanged(d->socketName);
             }
         } else if (wl_display_add_socket(d->display, qPrintable(d->socketName)) != 0) {
             qCWarning(KWAYLAND_SERVER) << "Failed to create Wayland socket";
@@ -217,7 +217,7 @@ void Display::terminate()
     if (!d->running) {
         return;
     }
-    emit aboutToTerminate();
+    Q_EMIT aboutToTerminate();
     wl_display_terminate(d->display);
     wl_display_destroy(d->display);
     d->display = nullptr;
@@ -229,7 +229,7 @@ void Display::Private::setRunning(bool r)
 {
     Q_ASSERT(running != r);
     running = r;
-    emit q->runningChanged(running);
+    Q_EMIT q->runningChanged(running);
 }
 
 OutputInterface *Display::createOutput(QObject *parent)
@@ -609,10 +609,10 @@ ClientConnection *Display::getConnection(wl_client *client)
             Q_ASSERT(index != -1);
             d->clients.remove(index);
             Q_ASSERT(d->clients.indexOf(c) == -1);
-            emit clientDisconnected(c);
+            Q_EMIT clientDisconnected(c);
         }
     );
-    emit clientConnected(c);
+    Q_EMIT clientConnected(c);
     return c;
 }
 

@@ -110,7 +110,7 @@ void DataDeviceInterface::Private::startDrag(DataSourceInterface *dataSource, Su
     surface = origin;
     icon = i;
     drag.serial = serial;
-    emit q->dragStarted();
+    Q_EMIT q->dragStarted();
 }
 
 void DataDeviceInterface::Private::setSelectionCallback(wl_client *client, wl_resource *resource, wl_resource *source, uint32_t serial)
@@ -143,11 +143,11 @@ void DataDeviceInterface::Private::setSelection(DataSourceInterface *dataSource)
         };
         selectionUnboundConnection = QObject::connect(selection, &Resource::unbound, q, clearSelection);
         selectionDestroyedConnection = QObject::connect(selection, &QObject::destroyed, q, clearSelection);
-        emit q->selectionChanged(selection);
+        Q_EMIT q->selectionChanged(selection);
     } else {
         selectionUnboundConnection = QMetaObject::Connection();
         selectionDestroyedConnection = QMetaObject::Connection();
-        emit q->selectionCleared();
+        Q_EMIT q->selectionCleared();
     }
 }
 

@@ -24,14 +24,14 @@ void TextInputInterface::Private::showInputPanelCallback(wl_client *client, wl_r
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(*p->client == client);
-    emit p->q_func()->requestShowInputPanel();
+    Q_EMIT p->q_func()->requestShowInputPanel();
 }
 
 void TextInputInterface::Private::hideInputPanelCallback(wl_client *client, wl_resource *resource)
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(*p->client == client);
-    emit p->q_func()->requestHideInputPanel();
+    Q_EMIT p->q_func()->requestHideInputPanel();
 }
 
 void TextInputInterface::Private::setSurroundingTextCallback(wl_client *client, wl_resource *resource, const char * text, int32_t cursor, int32_t anchor)
@@ -42,7 +42,7 @@ void TextInputInterface::Private::setSurroundingTextCallback(wl_client *client, 
     // TODO: make qint32
     p->surroundingTextCursorPosition = cursor;
     p->surroundingTextSelectionAnchor = anchor;
-    emit p->q_func()->surroundingTextChanged();
+    Q_EMIT p->q_func()->surroundingTextChanged();
 }
 
 void TextInputInterface::Private::setContentTypeCallback(wl_client *client, wl_resource *resource, uint32_t hint, uint32_t purpose)
@@ -54,7 +54,7 @@ void TextInputInterface::Private::setContentTypeCallback(wl_client *client, wl_r
     if (contentHints != p->contentHints || contentPurpose != p->contentPurpose) {
         p->contentHints = contentHints;
         p->contentPurpose = contentPurpose;
-        emit p->q_func()->contentTypeChanged();
+        Q_EMIT p->q_func()->contentTypeChanged();
     }
 }
 
@@ -65,7 +65,7 @@ void TextInputInterface::Private::setCursorRectangleCallback(wl_client *client, 
     const QRect rect = QRect(x, y, width, height);
     if (p->cursorRectangle != rect) {
         p->cursorRectangle = rect;
-        emit p->q_func()->cursorRectangleChanged(p->cursorRectangle);
+        Q_EMIT p->q_func()->cursorRectangleChanged(p->cursorRectangle);
     }
 }
 
@@ -76,7 +76,7 @@ void TextInputInterface::Private::setPreferredLanguageCallback(wl_client *client
     const QByteArray preferredLanguage = QByteArray(language);
     if (p->preferredLanguage != preferredLanguage) {
         p->preferredLanguage = preferredLanguage;
-        emit p->q_func()->preferredLanguageChanged(p->preferredLanguage);
+        Q_EMIT p->q_func()->preferredLanguageChanged(p->preferredLanguage);
     }
 }
 

@@ -64,7 +64,7 @@ void DataSourceInterface::Private::offer(const QString &mimeType)
 {
     mimeTypes << mimeType;
     Q_Q(DataSourceInterface);
-    emit q->mimeTypeOffered(mimeType);
+    Q_EMIT q->mimeTypeOffered(mimeType);
 }
 
 void DataSourceInterface::Private::setActionsCallback(wl_client *client, wl_resource *resource, uint32_t dnd_actions)
@@ -88,7 +88,7 @@ void DataSourceInterface::Private::setActionsCallback(wl_client *client, wl_reso
     auto p = cast<Private>(resource);
     if (p->supportedDnDActions!= supportedActions) {
         p->supportedDnDActions = supportedActions;
-        emit p->q_func()->supportedDragAndDropActionsChanged();
+        Q_EMIT p->q_func()->supportedDragAndDropActionsChanged();
     }
 }
 

@@ -90,7 +90,7 @@ void CompositorInterface::Private::createSurface(wl_client *client, wl_resource 
         delete surface;
         return;
     }
-    emit q->surfaceCreated(surface);
+    Q_EMIT q->surfaceCreated(surface);
 }
 
 void CompositorInterface::Private::createRegionCallback(wl_client *client, wl_resource *resource, uint32_t id)
@@ -107,7 +107,7 @@ void CompositorInterface::Private::createRegion(wl_client *client, wl_resource *
         delete region;
         return;
     }
-    emit q->regionCreated(region);
+    Q_EMIT q->regionCreated(region);
 }
 
 }

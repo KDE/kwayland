@@ -306,7 +306,7 @@ ecm_generate_export_header(KF5WaylandServer
     EXPORT_FILE_NAME
         KWayland/Server/kwaylandserver_export.h
     GROUP_BASE_NAME KF
-    VERSION ${KF5_VERSION}
+    VERSION ${KF_VERSION}
     DEPRECATED_BASE_VERSION 0
     DEPRECATION_VERSIONS 5.5 5.28 5.50 5.52 5.69 5.73
 )

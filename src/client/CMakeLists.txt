@@ -254,7 +254,7 @@ ecm_generate_export_header(KF5WaylandClient
 # needs fixing of undeprecated API being still implemented using own deprecated API
 
 
-target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client>")
+target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Client>")
 
 target_link_libraries(KF5WaylandClient
     PUBLIC Qt5::Gui
@@ -324,7 +324,7 @@ set(CLIENT_LIB_HEADERS
 
 install(FILES
   ${CLIENT_LIB_HEADERS}
-  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KWayland/Client COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Client COMPONENT Devel
 )
 
 # make available to ecm_add_qch in parent folder

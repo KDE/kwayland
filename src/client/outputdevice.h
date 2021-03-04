@@ -124,8 +124,15 @@ public:
     };
     enum class Capability {
         Overscan = 0x1,
+        Vrr = 0x2,
     };
     Q_DECLARE_FLAGS(Capabilities, Capability)
+    enum class VrrPolicy {
+        Never = 0,
+        Always = 1,
+        Automatic = 2
+    };
+
     explicit OutputDevice(QObject *parent = nullptr);
     virtual ~OutputDevice();
 
@@ -267,6 +274,12 @@ public:
     uint32_t overscan() const;
 
     /**
+     * @returns the compositors policy regarding vrr on this output
+     * @since 5.82
+     */
+    VrrPolicy vrrPolicy() const;
+
+    /**
      * Destroys the data hold by this OutputDevice.
      * This method is supposed to be used when the connection to the Wayland
      * server goes away. If the connection is not valid any more, it's not
@@ -327,6 +340,12 @@ Q_SIGNALS:
      * @since 5.82
      **/
     void overscanChanged(uint32_t overscan);
+    /**
+     * Emitted whenever the variable refresh rate policy for this output changes
+     *
+     * @since 5.82
+     **/
+    void vrrPolicyChanged(VrrPolicy vrrPolicy);
     /**
      * The corresponding global for this interface on the Registry got removed.
      *

@@ -221,6 +221,13 @@ public:
     void setOverscan(OutputDevice *outputdevice, uint32_t overscan);
 
     /**
+     * Set the VRR policy for this output
+     *
+     * @since 5.82
+     */
+    void setVrrPolicy(OutputDevice *outputdevice, OutputDevice::VrrPolicy policy);
+
+    /**
      * Ask the compositor to apply the changes.
      * This results in the compositor looking at all outputdevices and if they have
      * pending changes from the set* calls, these changes will be tested with the

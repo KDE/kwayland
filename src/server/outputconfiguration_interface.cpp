@@ -50,6 +50,7 @@ private:
     static void scaleFCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, wl_fixed_t scale);
     static void colorcurvesCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, wl_array *red, wl_array *green, wl_array *blue);
     static void overscanCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t overscan);
+    static void vrrCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t vrrPolicy);
 
     OutputConfigurationInterface *q_func()
     {
@@ -68,7 +69,8 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
                                                                                                               scaleFCallback,
                                                                                                               colorcurvesCallback,
                                                                                                               resourceDestroyedCallback,
-                                                                                                              overscanCallback};
+                                                                                                              overscanCallback,
+                                                                                                              vrrCallback};
 
 OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface *parent, wl_resource *parentResource)
     : Resource(new Private(this, parent, parentResource))
@@ -237,6 +239,15 @@ void OutputConfigurationInterface::Private::overscanCallback(wl_client *client, 
     Q_UNUSED(resource);
     Q_UNUSED(outputdevice);
     Q_UNUSED(overscan);
+}
+
+void OutputConfigurationInterface::Private::vrrCallback(wl_client *client, wl_resource *resource,
+                                                        wl_resource *outputdevice, uint32_t vrrPolicy)
+{
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
+    Q_UNUSED(outputdevice);
+    Q_UNUSED(vrrPolicy);
 }
 
 void OutputConfigurationInterface::Private::emitConfigurationChangeRequested() const

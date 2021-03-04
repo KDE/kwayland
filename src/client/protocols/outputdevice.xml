@@ -10,7 +10,7 @@
         ]]></copyright>
 
 
-<interface name="org_kde_kwin_outputdevice" version="3">
+<interface name="org_kde_kwin_outputdevice" version="4">
     <description summary="output configuration representation">
         An outputdevice describes a display device available to the compositor.
         outputdevice is similar to wl_output, but focuses on output
@@ -275,6 +275,8 @@
         </description>
         <entry name="overscan" value="1"
                summary="if this outputdevice can use overscan"/>
+        <entry name="vrr" value="2" since="4"
+               summary="if this outputdevice supports variable refresh rate"/>
     </enum>
 
     <event name="capabilities" since="3">
@@ -292,6 +294,23 @@
         </description>
         <arg name="overscan" type="uint"
              summary="amount of overscan of the monitor"/>
+    </event>
+
+    <enum name="vrr_policy" since="4">
+        <description summary="describes vrr policy">
+            Describes when the compositor may employ variable refresh rate
+        </description>
+        <entry name="never" value="0"/>
+        <entry name="always" value="1"/>
+        <entry name="automatic" value="2"/>
+    </enum>
+
+    <event name="vrr_policy" since="4">
+        <description summary="Variable Refresh Rate Policy">
+            What policy the compositor will employ regarding its use of variable
+            refresh rate.
+        </description>
+        <arg name="vrr_policy" type="uint" enum="vrr_policy"/>
     </event>
 
 </interface>

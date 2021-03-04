@@ -191,6 +191,14 @@ void OutputConfiguration::setOverscan(OutputDevice *outputdevice, uint32_t overs
     }
 }
 
+void OutputConfiguration::setVrrPolicy(OutputDevice *outputdevice, OutputDevice::VrrPolicy policy)
+{
+    if (wl_proxy_get_version(d->outputconfiguration) >= ORG_KDE_KWIN_OUTPUTCONFIGURATION_SET_VRR_POLICY_SINCE_VERSION) {
+        org_kde_kwin_outputdevice *od = outputdevice->output();
+        org_kde_kwin_outputconfiguration_set_vrr_policy(d->outputconfiguration, od, static_cast<uint32_t>(policy));
+    }
+}
+
 void OutputConfiguration::apply()
 {
     org_kde_kwin_outputconfiguration_apply(d->outputconfiguration);

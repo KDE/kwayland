@@ -49,6 +49,7 @@ public:
 
     Capabilities capabilities;
     uint32_t overscan = 0;
+    VrrPolicy vrrPolicy = VrrPolicy::Automatic;
 
     bool done = false;
 
@@ -78,6 +79,7 @@ private:
     static void eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *eisa);
     static void capabilitiesCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t capabilities);
     static void overscanCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t overscan);
+    static void vrrPolicyCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t vrrPolicy);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -146,6 +148,7 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     eisaIdCallback,
     capabilitiesCallback,
     overscanCallback,
+    vrrPolicyCallback
 };
 
 void OutputDevice::Private::geometryCallback(void *data,
@@ -403,6 +406,20 @@ void OutputDevice::Private::overscanCallback(void *data, org_kde_kwin_outputdevi
     }
 }
 
+void OutputDevice::Private::vrrPolicyCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t vrr_policy)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_UNUSED(output);
+    auto vrrPolicy = static_cast<VrrPolicy>(vrr_policy);
+    if (o->vrrPolicy != vrrPolicy) {
+        o->vrrPolicy = vrrPolicy;
+        Q_EMIT o->q->vrrPolicyChanged(vrrPolicy);
+        if (o->done) {
+            Q_EMIT o->q->changed();
+        }
+    }
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -590,6 +607,11 @@ OutputDevice::Capabilities OutputDevice::capabilities() const
 uint32_t OutputDevice::overscan() const
 {
     return d->overscan;
+}
+
+OutputDevice::VrrPolicy OutputDevice::vrrPolicy() const
+{
+    return d->vrrPolicy;
 }
 
 void OutputDevice::destroy()

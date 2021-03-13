@@ -204,6 +204,7 @@ void ShadowInterface::Private::commitCallback(wl_client *client, wl_resource *re
 
 void ShadowInterface::Private::commit()
 {
+// clang-format off
 #define BUFFER( __FLAG__, __PART__ ) \
     if (pending.flags & State::Flags::__FLAG__##Buffer) { \
         if (current.__PART__) { \
@@ -376,6 +377,7 @@ BufferInterface *ShadowInterface::__PART__() const \
     Q_D(); \
     return d->current.__PART__; \
 }
+// clang-format on
 
 BUFFER(left)
 BUFFER(topLeft)

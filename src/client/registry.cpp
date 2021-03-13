@@ -106,6 +106,7 @@ struct SuppertedInterfaceData {
     void (Registry::*announcedSignal)(quint32, quint32);
     void (Registry::*removedSignal)(quint32);
 };
+// clang-format off
 static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
     {Registry::Interface::Compositor, {
         4,
@@ -374,6 +375,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::keystateRemoved
     }}
 };
+// clang-format on
 
 static quint32 maxVersion(const Registry::Interface &interface)
 {
@@ -643,6 +645,7 @@ Registry::AnnouncedInterface Registry::interface(Interface interface) const
     return d->interface(interface);
 }
 
+// clang-format off
 #define BIND2(__NAME__, __INAME__, __WL__) \
 __WL__ *Registry::bind##__NAME__(uint32_t name, uint32_t version) const \
 { \
@@ -650,6 +653,7 @@ __WL__ *Registry::bind##__NAME__(uint32_t name, uint32_t version) const \
 }
 
 #define BIND(__NAME__, __WL__) BIND2(__NAME__, __NAME__, __WL__)
+// clang-format on
 
 BIND(Compositor, wl_compositor)
 BIND(Output, wl_output)
@@ -710,6 +714,7 @@ T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL 
     return t;
 }
 
+// clang-format off
 #define CREATE2(__NAME__, __BINDNAME__) \
 __NAME__ *Registry::create##__NAME__(quint32 name, quint32 version, QObject *parent) \
 { \
@@ -717,6 +722,7 @@ __NAME__ *Registry::create##__NAME__(quint32 name, quint32 version, QObject *par
 }
 
 #define CREATE(__NAME__) CREATE2(__NAME__, __NAME__)
+// clang-format on
 
 CREATE(Compositor)
 CREATE(Seat)

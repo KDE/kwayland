@@ -406,6 +406,7 @@ void OutputInterface::Private::updateScale()
     }
 }
 
+// clang-format off
 #define SETTER(setterName, type, argumentName) \
     void OutputInterface::setterName(type arg) \
     { \
@@ -416,6 +417,7 @@ void OutputInterface::Private::updateScale()
         d->argumentName = arg; \
         Q_EMIT argumentName##Changed(d->argumentName); \
     }
+// clang-format on
 
 SETTER(setPhysicalSize, const QSize&, physicalSize)
 SETTER(setGlobalPosition, const QPoint&, globalPosition)

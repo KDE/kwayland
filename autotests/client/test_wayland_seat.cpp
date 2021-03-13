@@ -295,6 +295,7 @@ void TestWaylandSeat::testCapabilities_data()
     QTest::addColumn<bool>("keyboard");
     QTest::addColumn<bool>("touch");
 
+    // clang-format off
     QTest::newRow("none")             << false << false << false;
     QTest::newRow("pointer")          << true  << false << false;
     QTest::newRow("keyboard")         << false << true  << false;
@@ -303,6 +304,7 @@ void TestWaylandSeat::testCapabilities_data()
     QTest::newRow("pointer/touch")    << true  << false << true;
     QTest::newRow("keyboard/touch")   << false << true  << true;
     QTest::newRow("all")              << true  << true  << true;
+    // clang-format on
 }
 
 void TestWaylandSeat::testCapabilities()
@@ -720,6 +722,7 @@ void TestWaylandSeat::testPointerButton_data()
     QTest::addColumn<Qt::MouseButton>("qtButton");
     QTest::addColumn<quint32>("waylandButton");
 
+    // clang-format off
     QTest::newRow("left")    << Qt::LeftButton    << quint32(BTN_LEFT);
     QTest::newRow("right")   << Qt::RightButton   << quint32(BTN_RIGHT);
     QTest::newRow("middle")  << Qt::MiddleButton  << quint32(BTN_MIDDLE);
@@ -741,6 +744,7 @@ void TestWaylandSeat::testPointerButton_data()
     QTest::newRow("extra11") << Qt::ExtraButton11 << quint32(0x11d);
     QTest::newRow("extra12") << Qt::ExtraButton12 << quint32(0x11e);
     QTest::newRow("extra13") << Qt::ExtraButton13 << quint32(0x11f);
+    // clang-format on
 }
 
 void TestWaylandSeat::testPointerButton()

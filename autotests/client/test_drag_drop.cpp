@@ -4,9 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
+#include <QMimeType>
 #include <QSignalSpy>
 #include <QTest>
-#include <QMimeType>
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
@@ -15,16 +15,16 @@
 #include "../../src/client/datasource.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/pointer.h"
-#include "../../src/client/touch.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/seat.h"
 #include "../../src/client/shell.h"
 #include "../../src/client/shm_pool.h"
 #include "../../src/client/surface.h"
-#include "../../src/server/display.h"
+#include "../../src/client/touch.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/datadevicemanager_interface.h"
 #include "../../src/server/datasource_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/seat_interface.h"
 #include "../../src/server/shell_interface.h"
 
@@ -122,8 +122,9 @@ void TestDragAndDrop::init()
     m_registry->setup();
 
     QVERIFY(interfacesAnnouncedSpy.wait());
-#define CREATE(variable, factory, iface) \
-    variable = m_registry->create##factory(m_registry->interface(Registry::Interface::iface).name, m_registry->interface(Registry::Interface::iface).version, this); \
+#define CREATE(variable, factory, iface)                                                                                                                       \
+    variable =                                                                                                                                                 \
+        m_registry->create##factory(m_registry->interface(Registry::Interface::iface).name, m_registry->interface(Registry::Interface::iface).version, this);  \
     QVERIFY(variable);
 
     CREATE(m_compositor, Compositor, Compositor)
@@ -150,10 +151,10 @@ void TestDragAndDrop::init()
 
 void TestDragAndDrop::cleanup()
 {
-#define DELETE(name) \
-    if (name) { \
-        delete name; \
-        name = nullptr; \
+#define DELETE(name)                                                                                                                                           \
+    if (name) {                                                                                                                                                \
+        delete name;                                                                                                                                           \
+        name = nullptr;                                                                                                                                        \
     }
     DELETE(m_dataSource)
     DELETE(m_dataDevice)
@@ -201,7 +202,7 @@ KWayland::Server::SurfaceInterface *TestDragAndDrop::getServerSurface()
     if (!surfaceCreatedSpy.wait(500)) {
         return nullptr;
     }
-    return surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    return surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
 }
 
 void TestDragAndDrop::testPointerDragAndDrop()
@@ -304,7 +305,7 @@ void TestDragAndDrop::testTouchDragAndDrop()
     using namespace KWayland::Client;
     // first create a window
     QScopedPointer<Surface> s(createSurface());
-    s->setSize(QSize(100,100));
+    s->setSize(QSize(100, 100));
     auto serverSurface = getServerSurface();
     QVERIFY(serverSurface);
 
@@ -318,10 +319,10 @@ void TestDragAndDrop::testTouchDragAndDrop()
     QVERIFY(pointAddedSpy.isValid());
     m_seatInterface->setFocusedTouchSurface(serverSurface);
     m_seatInterface->setTimestamp(2);
-    const qint32 touchId = m_seatInterface->touchDown(QPointF(50,50));
+    const qint32 touchId = m_seatInterface->touchDown(QPointF(50, 50));
     QVERIFY(sequenceStartedSpy.wait());
 
-    QScopedPointer<TouchPoint> tp(sequenceStartedSpy.first().at(0).value<TouchPoint*>());
+    QScopedPointer<TouchPoint> tp(sequenceStartedSpy.first().at(0).value<TouchPoint *>());
     QVERIFY(!tp.isNull());
     QCOMPARE(tp->time(), quint32(2));
 
@@ -395,7 +396,6 @@ void TestDragAndDrop::testTouchDragAndDrop()
     QVERIFY(touchMotionSpy.isEmpty());
     QCOMPARE(pointAddedSpy.count(), 0);
 }
-
 
 void TestDragAndDrop::testDragAndDropWithCancelByDestroyDataSource()
 {

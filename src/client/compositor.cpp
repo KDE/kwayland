@@ -19,7 +19,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Compositor::Private
 {
 public:
@@ -46,7 +45,7 @@ Compositor *Compositor::fromApplication(QObject *parent)
     if (!native) {
         return nullptr;
     }
-    wl_compositor *compositor = reinterpret_cast<wl_compositor*>(native->nativeResourceForIntegration(QByteArrayLiteral("compositor")));
+    wl_compositor *compositor = reinterpret_cast<wl_compositor *>(native->nativeResourceForIntegration(QByteArrayLiteral("compositor")));
     if (!compositor) {
         return nullptr;
     }
@@ -111,16 +110,18 @@ Region *Compositor::createRegion(const QRegion &region, QObject *parent)
     return r;
 }
 
-std::unique_ptr< Region > Compositor::createRegion(const QRegion &region)
+std::unique_ptr<Region> Compositor::createRegion(const QRegion &region)
 {
     return std::unique_ptr<Region>(createRegion(region, nullptr));
 }
 
-Compositor::operator wl_compositor*() {
+Compositor::operator wl_compositor *()
+{
     return d->compositor;
 }
 
-Compositor::operator wl_compositor*() const {
+Compositor::operator wl_compositor *() const
+{
     return d->compositor;
 }
 

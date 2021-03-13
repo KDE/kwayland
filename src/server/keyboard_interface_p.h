@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class KeyboardInterface::Private : public Resource::Private
 {
 public:

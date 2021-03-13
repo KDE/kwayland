@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class SubSurface;
 class Surface;
@@ -84,8 +83,8 @@ public:
      **/
     SubSurface *createSubSurface(QPointer<Surface> surface, QPointer<Surface> parentSurface, QObject *parent = nullptr);
 
-    operator wl_subcompositor*();
-    operator wl_subcompositor*() const;
+    operator wl_subcompositor *();
+    operator wl_subcompositor *() const;
 
 Q_SIGNALS:
     /**

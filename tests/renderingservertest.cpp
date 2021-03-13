@@ -22,17 +22,15 @@
 #include <QWidget>
 #include <QtConcurrent>
 
-#include <unistd.h>
 #include <iostream>
+#include <unistd.h>
 
 static int startXServer()
 {
     const QByteArray process = QByteArrayLiteral("Xwayland");
     int pipeFds[2];
     if (pipe(pipeFds) != 0) {
-        std::cerr << "FATAL ERROR failed to create pipe to start X Server "
-                  << process.constData()
-                  << std::endl;
+        std::cerr << "FATAL ERROR failed to create pipe to start X Server " << process.constData() << std::endl;
         exit(1);
     }
 
@@ -63,7 +61,7 @@ static void readDisplayFromPipe(int pipe)
     QByteArray displayNumber = readPipe.readLine();
 
     displayNumber.prepend(QByteArray(":"));
-    displayNumber.remove(displayNumber.size() -1, 1);
+    displayNumber.remove(displayNumber.size() - 1, 1);
     std::cout << "X-Server started on display " << displayNumber.constData() << std::endl;
 
     setenv("DISPLAY", displayNumber.constData(), true);
@@ -94,7 +92,7 @@ protected:
 
 private:
     void updateFocus();
-    QList<KWayland::Server::ShellSurfaceInterface*> m_stackingOrder;
+    QList<KWayland::Server::ShellSurfaceInterface *> m_stackingOrder;
     QPointer<KWayland::Server::SeatInterface> m_seat;
 };
 
@@ -110,28 +108,22 @@ void CompositorWindow::surfaceCreated(KWayland::Server::ShellSurfaceInterface *s
 {
     using namespace KWayland::Server;
     m_stackingOrder << surface;
-    connect(surface, &ShellSurfaceInterface::fullscreenChanged, this,
-        [surface, this](bool fullscreen) {
-            if (fullscreen) {
-                surface->requestSize(size());
-            }
+    connect(surface, &ShellSurfaceInterface::fullscreenChanged, this, [surface, this](bool fullscreen) {
+        if (fullscreen) {
+            surface->requestSize(size());
         }
-    );
-    connect(surface, &ShellSurfaceInterface::maximizedChanged, this,
-        [surface, this](bool maximized) {
-            if (maximized) {
-                surface->requestSize(size());
-            }
+    });
+    connect(surface, &ShellSurfaceInterface::maximizedChanged, this, [surface, this](bool maximized) {
+        if (maximized) {
+            surface->requestSize(size());
         }
-    );
+    });
     connect(surface->surface(), &SurfaceInterface::damaged, this, static_cast<void (CompositorWindow::*)()>(&CompositorWindow::update));
-    connect(surface, &ShellSurfaceInterface::destroyed, this,
-        [surface, this] {
-            m_stackingOrder.removeAll(surface);
-            updateFocus();
-            update();
-        }
-    );
+    connect(surface, &ShellSurfaceInterface::destroyed, this, [surface, this] {
+        m_stackingOrder.removeAll(surface);
+        updateFocus();
+        update();
+    });
     updateFocus();
 }
 
@@ -141,11 +133,9 @@ void CompositorWindow::updateFocus()
     if (!m_seat || m_stackingOrder.isEmpty()) {
         return;
     }
-    auto it = std::find_if(m_stackingOrder.constBegin(), m_stackingOrder.constEnd(),
-        [](ShellSurfaceInterface *s) {
-            return s->surface()->buffer() != nullptr;
-        }
-    );
+    auto it = std::find_if(m_stackingOrder.constBegin(), m_stackingOrder.constEnd(), [](ShellSurfaceInterface *s) {
+        return s->surface()->buffer() != nullptr;
+    });
     if (it == m_stackingOrder.constEnd()) {
         return;
     }
@@ -153,7 +143,7 @@ void CompositorWindow::updateFocus()
     m_seat->setFocusedKeyboardSurface((*it)->surface());
 }
 
-void CompositorWindow::setSeat(const QPointer< KWayland::Server::SeatInterface > &seat)
+void CompositorWindow::setSeat(const QPointer<KWayland::Server::SeatInterface> &seat)
 {
     m_seat = seat;
 }
@@ -242,8 +232,7 @@ int main(int argc, char **argv)
 
     QCommandLineParser parser;
     parser.addHelpOption();
-    QCommandLineOption xwaylandOption(QStringList{QStringLiteral("x"), QStringLiteral("xwayland")},
-                                      QStringLiteral("Start a rootless Xwayland server"));
+    QCommandLineOption xwaylandOption(QStringList{QStringLiteral("x"), QStringLiteral("xwayland")}, QStringLiteral("Start a rootless Xwayland server"));
     parser.addOption(xwaylandOption);
     parser.process(app);
 
@@ -283,7 +272,9 @@ int main(int argc, char **argv)
             exit(1);
         }
 
-        QtConcurrent::run([pipe] { readDisplayFromPipe(pipe); });
+        QtConcurrent::run([pipe] {
+            readDisplayFromPipe(pipe);
+        });
     }
 
     return app.exec();

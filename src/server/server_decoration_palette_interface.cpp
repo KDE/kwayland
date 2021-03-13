@@ -5,10 +5,10 @@
 */
 #include "server_decoration_palette_interface.h"
 #include "display.h"
-#include "surface_interface.h"
 #include "global_p.h"
-#include "resource_p.h"
 #include "logging.h"
+#include "resource_p.h"
+#include "surface_interface.h"
 
 #include <QtGlobal>
 
@@ -23,16 +23,18 @@ class ServerSideDecorationPaletteManagerInterface::Private : public Global::Priv
 public:
     Private(ServerSideDecorationPaletteManagerInterface *q, Display *d);
 
-    QVector<ServerSideDecorationPaletteInterface*> palettes;
+    QVector<ServerSideDecorationPaletteInterface *> palettes;
+
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
-    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
+    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
 
     ServerSideDecorationPaletteManagerInterface *q;
     static const struct org_kde_kwin_server_decoration_palette_manager_interface s_interface;
@@ -42,14 +44,12 @@ private:
 const quint32 ServerSideDecorationPaletteManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_server_decoration_palette_manager_interface ServerSideDecorationPaletteManagerInterface::Private::s_interface = {
-    createCallback
-};
+const struct org_kde_kwin_server_decoration_palette_manager_interface ServerSideDecorationPaletteManagerInterface::Private::s_interface = {createCallback};
 #endif
 
-void ServerSideDecorationPaletteManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
+void ServerSideDecorationPaletteManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     SurfaceInterface *s = SurfaceInterface::get(surface);
@@ -100,13 +100,14 @@ public:
     Private(ServerSideDecorationPaletteInterface *q, ServerSideDecorationPaletteManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
     ~Private();
 
-
     SurfaceInterface *surface;
     QString palette;
-private:
-    static void setPaletteCallback(wl_client *client, wl_resource *resource, const char * palette);
 
-    ServerSideDecorationPaletteInterface *q_func() {
+private:
+    static void setPaletteCallback(wl_client *client, wl_resource *resource, const char *palette);
+
+    ServerSideDecorationPaletteInterface *q_func()
+    {
         return reinterpret_cast<ServerSideDecorationPaletteInterface *>(q);
     }
     static ServerSideDecorationPaletteInterface *get(SurfaceInterface *s);
@@ -114,16 +115,14 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_server_decoration_palette_interface ServerSideDecorationPaletteInterface::Private::s_interface = {
-    setPaletteCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_server_decoration_palette_interface ServerSideDecorationPaletteInterface::Private::s_interface = {setPaletteCallback,
+                                                                                                                            resourceDestroyedCallback};
 #endif
 
-void ServerSideDecorationPaletteInterface::Private::setPaletteCallback(wl_client *client, wl_resource *resource, const char * palette)
+void ServerSideDecorationPaletteInterface::Private::setPaletteCallback(wl_client *client, wl_resource *resource, const char *palette)
 {
     Q_UNUSED(client);
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     if (p->palette == QLatin1String(palette)) {
@@ -133,9 +132,12 @@ void ServerSideDecorationPaletteInterface::Private::setPaletteCallback(wl_client
     Q_EMIT p->q_func()->paletteChanged(p->palette);
 }
 
-ServerSideDecorationPaletteInterface::Private::Private(ServerSideDecorationPaletteInterface *q, ServerSideDecorationPaletteManagerInterface *c, SurfaceInterface *s, wl_resource *parentResource)
-    : Resource::Private(q, c, parentResource, &org_kde_kwin_server_decoration_palette_interface, &s_interface),
-    surface(s)
+ServerSideDecorationPaletteInterface::Private::Private(ServerSideDecorationPaletteInterface *q,
+                                                       ServerSideDecorationPaletteManagerInterface *c,
+                                                       SurfaceInterface *s,
+                                                       wl_resource *parentResource)
+    : Resource::Private(q, c, parentResource, &org_kde_kwin_server_decoration_palette_interface, &s_interface)
+    , surface(s)
 {
 }
 
@@ -158,13 +160,13 @@ ServerSideDecorationPaletteManagerInterface::~ServerSideDecorationPaletteManager
 
 ServerSideDecorationPaletteManagerInterface::Private *ServerSideDecorationPaletteManagerInterface::d_func() const
 {
-    return reinterpret_cast<ServerSideDecorationPaletteManagerInterface::Private*>(d.data());
+    return reinterpret_cast<ServerSideDecorationPaletteManagerInterface::Private *>(d.data());
 }
 
-ServerSideDecorationPaletteInterface* ServerSideDecorationPaletteManagerInterface::paletteForSurface(SurfaceInterface *surface)
+ServerSideDecorationPaletteInterface *ServerSideDecorationPaletteManagerInterface::paletteForSurface(SurfaceInterface *surface)
 {
     Q_D();
-    for (ServerSideDecorationPaletteInterface* menu: d->palettes) {
+    for (ServerSideDecorationPaletteInterface *menu : d->palettes) {
         if (menu->surface() == surface) {
             return menu;
         }
@@ -172,18 +174,21 @@ ServerSideDecorationPaletteInterface* ServerSideDecorationPaletteManagerInterfac
     return nullptr;
 }
 
-ServerSideDecorationPaletteInterface::ServerSideDecorationPaletteInterface(ServerSideDecorationPaletteManagerInterface *parent, SurfaceInterface *s, wl_resource *parentResource):
-    Resource(new Private(this, parent, s, parentResource))
+ServerSideDecorationPaletteInterface::ServerSideDecorationPaletteInterface(ServerSideDecorationPaletteManagerInterface *parent,
+                                                                           SurfaceInterface *s,
+                                                                           wl_resource *parentResource)
+    : Resource(new Private(this, parent, s, parentResource))
 {
 }
 
 ServerSideDecorationPaletteInterface::Private *ServerSideDecorationPaletteInterface::d_func() const
 {
-    return reinterpret_cast<ServerSideDecorationPaletteInterface::Private*>(d.data());
+    return reinterpret_cast<ServerSideDecorationPaletteInterface::Private *>(d.data());
 }
 
 ServerSideDecorationPaletteInterface::~ServerSideDecorationPaletteInterface()
-{}
+{
+}
 
 QString ServerSideDecorationPaletteInterface::palette() const
 {
@@ -191,12 +196,11 @@ QString ServerSideDecorationPaletteInterface::palette() const
     return d->palette;
 }
 
-SurfaceInterface* ServerSideDecorationPaletteInterface::surface() const
+SurfaceInterface *ServerSideDecorationPaletteInterface::surface() const
 {
     Q_D();
     return d->surface;
 }
 
-}//namespace
+} // namespace
 }
-

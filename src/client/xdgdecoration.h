@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class XdgDecoration;
 class XdgShellSurface;
@@ -106,8 +105,8 @@ public:
 
     XdgDecoration *getToplevelDecoration(XdgShellSurface *toplevel, QObject *parent = nullptr);
 
-    operator zxdg_decoration_manager_v1*();
-    operator zxdg_decoration_manager_v1*() const;
+    operator zxdg_decoration_manager_v1 *();
+    operator zxdg_decoration_manager_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -171,9 +170,9 @@ public:
     void destroy();
 
     /**
-    * @brief Request that the server puts us in a given mode. The compositor will respond with a modeChange
-    * The compositor may ignore this request.
-    */
+     * @brief Request that the server puts us in a given mode. The compositor will respond with a modeChange
+     * The compositor may ignore this request.
+     */
     void setMode(Mode mode);
 
     /**
@@ -186,8 +185,8 @@ public:
      */
     Mode mode() const;
 
-    operator zxdg_toplevel_decoration_v1*();
-    operator zxdg_toplevel_decoration_v1*() const;
+    operator zxdg_toplevel_decoration_v1 *();
+    operator zxdg_toplevel_decoration_v1 *() const;
 
 Q_SIGNALS:
     void modeChanged(KWayland::Client::XdgDecoration::Mode mode);
@@ -198,7 +197,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

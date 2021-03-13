@@ -27,7 +27,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Blur;
 class Surface;
@@ -100,8 +99,8 @@ public:
     Blur *createBlur(Surface *surface, QObject *parent = nullptr);
     void removeBlur(Surface *surface);
 
-    operator org_kde_kwin_blur_manager*();
-    operator org_kde_kwin_blur_manager*() const;
+    operator org_kde_kwin_blur_manager *();
+    operator org_kde_kwin_blur_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -180,8 +179,8 @@ public:
      */
     void setRegion(Region *region);
 
-    operator org_kde_kwin_blur*();
-    operator org_kde_kwin_blur*() const;
+    operator org_kde_kwin_blur *();
+    operator org_kde_kwin_blur *() const;
 
 private:
     friend class BlurManager;
@@ -194,4 +193,3 @@ private:
 }
 
 #endif
-

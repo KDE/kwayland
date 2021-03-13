@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class RemoteBuffer;
 
@@ -101,8 +100,8 @@ public:
      **/
     EventQueue *eventQueue();
 
-    operator org_kde_kwin_remote_access_manager*();
-    operator org_kde_kwin_remote_access_manager*() const;
+    operator org_kde_kwin_remote_access_manager *();
+    operator org_kde_kwin_remote_access_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -117,7 +116,7 @@ Q_SIGNALS:
      * Buffer from server is ready to be delivered to this client
      * @param buffer_id internal buffer id to be created
      **/
-    void bufferReady(const void* output, const RemoteBuffer *rbuf);
+    void bufferReady(const void *output, const RemoteBuffer *rbuf);
 
 private:
     class Private;
@@ -166,8 +165,8 @@ public:
      **/
     void destroy();
 
-    operator org_kde_kwin_remote_buffer*();
-    operator org_kde_kwin_remote_buffer*() const;
+    operator org_kde_kwin_remote_buffer *();
+    operator org_kde_kwin_remote_buffer *() const;
 
     qint32 fd() const;
     quint32 width() const;
@@ -175,18 +174,15 @@ public:
     quint32 stride() const;
     quint32 format() const;
 
-
 Q_SIGNALS:
     void parametersObtained();
 
 private:
-
     friend class RemoteAccessManager;
     explicit RemoteBuffer(QObject *parent = nullptr);
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

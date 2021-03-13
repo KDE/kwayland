@@ -4,12 +4,12 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "remote_access_interface.h"
-#include "remote_access_interface_p.h"
-#include "output_interface.h"
 #include "display.h"
 #include "global_p.h"
-#include "resource_p.h"
 #include "logging.h"
+#include "output_interface.h"
+#include "remote_access_interface_p.h"
+#include "resource_p.h"
 
 #include <wayland-remote-access-server-protocol.h>
 
@@ -22,7 +22,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class BufferHandle::Private // @see gbm_import_fd_data
 {
 public:
@@ -76,7 +75,6 @@ void BufferHandle::setStride(quint32 stride)
     d->stride = stride;
 }
 
-
 quint32 BufferHandle::stride() const
 {
     return d->stride;
@@ -96,8 +94,7 @@ quint32 BufferHandle::format() const
  * @brief helper struct for manual reference counting.
  * automatic counting via QSharedPointer is no-go here as we hold strong reference in sentBuffers.
  */
-struct BufferHolder
-{
+struct BufferHolder {
     const BufferHandle *buf;
     quint64 counter;
 };
@@ -126,11 +123,13 @@ public:
      * remote control app etc.
      */
     QList<wl_resource *> clientResources;
+
 private:
     // methods
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
     static void getBufferCallback(wl_client *client, wl_resource *resource, uint32_t buffer, int32_t internalBufId);
     static void releaseCallback(wl_client *client, wl_resource *resource);
@@ -181,7 +180,7 @@ void RemoteAccessManagerInterface::Private::bind(wl_client *client, uint32_t ver
 
 void RemoteAccessManagerInterface::Private::sendBufferReady(const OutputInterface *output, const BufferHandle *buf)
 {
-    BufferHolder holder {buf, 0};
+    BufferHolder holder{buf, 0};
     // notify clients
     qCDebug(KWAYLAND_SERVER) << "Server buffer sent: fd" << buf->fd();
     for (auto res : clientResources) {
@@ -207,10 +206,7 @@ void RemoteAccessManagerInterface::Private::sendBufferReady(const OutputInterfac
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_remote_access_manager_interface RemoteAccessManagerInterface::Private::s_interface = {
-    getBufferCallback,
-    releaseCallback
-};
+const struct org_kde_kwin_remote_access_manager_interface RemoteAccessManagerInterface::Private::s_interface = {getBufferCallback, releaseCallback};
 #endif
 
 void RemoteAccessManagerInterface::Private::getBufferCallback(wl_client *client, wl_resource *resource, uint32_t buffer, int32_t internalBufId)
@@ -238,9 +234,7 @@ void RemoteAccessManagerInterface::Private::getBufferCallback(wl_client *client,
             // all relevant buffers are already unreferenced
             return;
         }
-        qCDebug(KWAYLAND_SERVER) << "Remote buffer returned, client" << wl_resource_get_id(resource)
-                                                     << ", id" << rbuf->id()
-                                                     << ", fd" << bh.buf->fd();
+        qCDebug(KWAYLAND_SERVER) << "Remote buffer returned, client" << wl_resource_get_id(resource) << ", id" << rbuf->id() << ", fd" << bh.buf->fd();
         if (p->unref(bh)) {
             p->sentBuffers.remove(bh.buf->fd());
         }
@@ -331,13 +325,12 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_remote_buffer_interface RemoteBufferInterface::Private::s_interface = {
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_remote_buffer_interface RemoteBufferInterface::Private::s_interface = {resourceDestroyedCallback};
 #endif
 
 RemoteBufferInterface::Private::Private(RemoteAccessManagerInterface *ram, RemoteBufferInterface *q, wl_resource *pResource, const BufferHandle *buf)
-    : Resource::Private(q, ram, pResource, &org_kde_kwin_remote_buffer_interface, &s_interface), wrapped(buf)
+    : Resource::Private(q, ram, pResource, &org_kde_kwin_remote_buffer_interface, &s_interface)
+    , wrapped(buf)
 {
 }
 
@@ -347,8 +340,7 @@ RemoteBufferInterface::Private::~Private()
 
 void RemoteBufferInterface::Private::passFd()
 {
-    org_kde_kwin_remote_buffer_send_gbm_handle(resource, wrapped->fd(),
-            wrapped->width(), wrapped->height(), wrapped->stride(), wrapped->format());
+    org_kde_kwin_remote_buffer_send_gbm_handle(resource, wrapped->fd(), wrapped->width(), wrapped->height(), wrapped->stride(), wrapped->format());
 }
 
 RemoteBufferInterface::RemoteBufferInterface(RemoteAccessManagerInterface *ram, wl_resource *pResource, const BufferHandle *buf)
@@ -358,9 +350,8 @@ RemoteBufferInterface::RemoteBufferInterface(RemoteAccessManagerInterface *ram, 
 
 RemoteBufferInterface::Private *RemoteBufferInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
-
 
 void RemoteBufferInterface::passFd()
 {

@@ -21,7 +21,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class PointerPinchGesture;
 class Pointer;
@@ -119,8 +118,8 @@ public:
      **/
     PointerPinchGesture *createPinchGesture(Pointer *pointer, QObject *parent = nullptr);
 
-    operator zwp_pointer_gestures_v1*();
-    operator zwp_pointer_gestures_v1*() const;
+    operator zwp_pointer_gestures_v1 *();
+    operator zwp_pointer_gestures_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -211,8 +210,8 @@ public:
      **/
     QPointer<Surface> surface() const;
 
-    operator zwp_pointer_gesture_swipe_v1*();
-    operator zwp_pointer_gesture_swipe_v1*() const;
+    operator zwp_pointer_gesture_swipe_v1 *();
+    operator zwp_pointer_gesture_swipe_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -339,8 +338,8 @@ public:
      **/
     QPointer<Surface> surface() const;
 
-    operator zwp_pointer_gesture_pinch_v1*();
-    operator zwp_pointer_gesture_pinch_v1*() const;
+    operator zwp_pointer_gesture_pinch_v1 *();
+    operator zwp_pointer_gesture_pinch_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -393,7 +392,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

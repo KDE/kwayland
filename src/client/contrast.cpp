@@ -14,10 +14,8 @@
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 class Q_DECL_HIDDEN ContrastManager::Private
 {
 public:
@@ -88,12 +86,12 @@ void ContrastManager::removeContrast(Surface *surface)
     org_kde_kwin_contrast_manager_unset(d->manager, *surface);
 }
 
-ContrastManager::operator org_kde_kwin_contrast_manager*()
+ContrastManager::operator org_kde_kwin_contrast_manager *()
 {
     return d->manager;
 }
 
-ContrastManager::operator org_kde_kwin_contrast_manager*() const
+ContrastManager::operator org_kde_kwin_contrast_manager *() const
 {
     return d->manager;
 }
@@ -163,12 +161,12 @@ void Contrast::setSaturation(qreal saturation)
     org_kde_kwin_contrast_set_saturation(d->contrast, wl_fixed_from_double(saturation));
 }
 
-Contrast::operator org_kde_kwin_contrast*()
+Contrast::operator org_kde_kwin_contrast *()
 {
     return d->contrast;
 }
 
-Contrast::operator org_kde_kwin_contrast*() const
+Contrast::operator org_kde_kwin_contrast *() const
 {
     return d->contrast;
 }

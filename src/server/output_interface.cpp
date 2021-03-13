@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "output_interface.h"
-#include "global_p.h"
 #include "display.h"
+#include "global_p.h"
 
 #include <QVector>
 
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class OutputInterface::Private : public Global::Private
 {
 public:
@@ -57,12 +56,12 @@ private:
     void sendScale(const ResourceData &data);
 
     OutputInterface *q;
-    static QVector<Private*> s_privates;
+    static QVector<Private *> s_privates;
     static const struct wl_output_interface s_interface;
     static const quint32 s_version;
 };
 
-QVector<OutputInterface::Private*> OutputInterface::Private::s_privates;
+QVector<OutputInterface::Private *> OutputInterface::Private::s_privates;
 const quint32 OutputInterface::Private::s_version = 3;
 
 OutputInterface::Private::Private(OutputInterface *q, Display *d)
@@ -78,9 +77,7 @@ OutputInterface::Private::~Private()
 }
 
 #ifndef K_DOXYGEN
-const struct wl_output_interface OutputInterface::Private::s_interface = {
-    releaseCallback
-};
+const struct wl_output_interface OutputInterface::Private::s_interface = {releaseCallback};
 #endif
 
 void OutputInterface::Private::releaseCallback(wl_client *client, wl_resource *resource)
@@ -101,7 +98,9 @@ OutputInterface::Private *OutputInterface::Private::cast(wl_resource *native)
 {
     for (auto it = s_privates.constBegin(); it != s_privates.constEnd(); ++it) {
         const auto &resources = (*it)->resources;
-        auto rit = std::find_if(resources.constBegin(), resources.constEnd(), [native] (const ResourceData &data) { return data.resource == native; });
+        auto rit = std::find_if(resources.constBegin(), resources.constEnd(), [native](const ResourceData &data) {
+            return data.resource == native;
+        });
         if (rit != resources.constEnd()) {
             return (*it);
         }
@@ -113,26 +112,38 @@ OutputInterface::OutputInterface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
     Q_D();
-    connect(this, &OutputInterface::currentModeChanged, this,
-        [this] {
-            Q_D();
-            auto currentModeIt = std::find_if(d->modes.constBegin(), d->modes.constEnd(), [](const Mode &mode) { return mode.flags.testFlag(ModeFlag::Current); });
-            if (currentModeIt == d->modes.constEnd()) {
-                return;
-            }
-            for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
-                d->sendMode((*it).resource, *currentModeIt);
-                d->sendDone(*it);
-            }
-            wl_display_flush_clients(*(d->display));
+    connect(this, &OutputInterface::currentModeChanged, this, [this] {
+        Q_D();
+        auto currentModeIt = std::find_if(d->modes.constBegin(), d->modes.constEnd(), [](const Mode &mode) {
+            return mode.flags.testFlag(ModeFlag::Current);
+        });
+        if (currentModeIt == d->modes.constEnd()) {
+            return;
         }
-    );
-    connect(this, &OutputInterface::subPixelChanged,       this, [d] { d->updateGeometry(); });
-    connect(this, &OutputInterface::transformChanged,      this, [d] { d->updateGeometry(); });
-    connect(this, &OutputInterface::globalPositionChanged, this, [d] { d->updateGeometry(); });
-    connect(this, &OutputInterface::modelChanged,          this, [d] { d->updateGeometry(); });
-    connect(this, &OutputInterface::manufacturerChanged,   this, [d] { d->updateGeometry(); });
-    connect(this, &OutputInterface::scaleChanged,          this, [d] { d->updateScale(); });
+        for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
+            d->sendMode((*it).resource, *currentModeIt);
+            d->sendDone(*it);
+        }
+        wl_display_flush_clients(*(d->display));
+    });
+    connect(this, &OutputInterface::subPixelChanged, this, [d] {
+        d->updateGeometry();
+    });
+    connect(this, &OutputInterface::transformChanged, this, [d] {
+        d->updateGeometry();
+    });
+    connect(this, &OutputInterface::globalPositionChanged, this, [d] {
+        d->updateGeometry();
+    });
+    connect(this, &OutputInterface::modelChanged, this, [d] {
+        d->updateGeometry();
+    });
+    connect(this, &OutputInterface::manufacturerChanged, this, [d] {
+        d->updateGeometry();
+    });
+    connect(this, &OutputInterface::scaleChanged, this, [d] {
+        d->updateScale();
+    });
 }
 
 OutputInterface::~OutputInterface() = default;
@@ -140,11 +151,9 @@ OutputInterface::~OutputInterface() = default;
 QSize OutputInterface::pixelSize() const
 {
     Q_D();
-    auto it = std::find_if(d->modes.constBegin(), d->modes.constEnd(),
-        [](const Mode &mode) {
-            return mode.flags.testFlag(ModeFlag::Current);
-        }
-    );
+    auto it = std::find_if(d->modes.constBegin(), d->modes.constEnd(), [](const Mode &mode) {
+        return mode.flags.testFlag(ModeFlag::Current);
+    });
     if (it == d->modes.constEnd()) {
         return QSize();
     }
@@ -154,11 +163,9 @@ QSize OutputInterface::pixelSize() const
 int OutputInterface::refreshRate() const
 {
     Q_D();
-    auto it = std::find_if(d->modes.constBegin(), d->modes.constEnd(),
-        [](const Mode &mode) {
-            return mode.flags.testFlag(ModeFlag::Current);
-        }
-    );
+    auto it = std::find_if(d->modes.constBegin(), d->modes.constEnd(), [](const Mode &mode) {
+        return mode.flags.testFlag(ModeFlag::Current);
+    });
     if (it == d->modes.constEnd()) {
         return 60000;
     }
@@ -170,11 +177,9 @@ void OutputInterface::addMode(const QSize &size, OutputInterface::ModeFlags flag
     Q_ASSERT(!isValid());
     Q_D();
 
-    auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [](const Mode &mode) {
-            return mode.flags.testFlag(ModeFlag::Current);
-        }
-    );
+    auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(), [](const Mode &mode) {
+        return mode.flags.testFlag(ModeFlag::Current);
+    });
     if (currentModeIt == d->modes.end() && !flags.testFlag(ModeFlag::Current)) {
         // no mode with current flag - enforce
         flags |= ModeFlag::Current;
@@ -186,22 +191,18 @@ void OutputInterface::addMode(const QSize &size, OutputInterface::ModeFlags flag
 
     if (flags.testFlag(ModeFlag::Preferred)) {
         // remove from existing Preferred mode
-        auto preferredIt = std::find_if(d->modes.begin(), d->modes.end(),
-            [](const Mode &mode) {
-                return mode.flags.testFlag(ModeFlag::Preferred);
-            }
-        );
+        auto preferredIt = std::find_if(d->modes.begin(), d->modes.end(), [](const Mode &mode) {
+            return mode.flags.testFlag(ModeFlag::Preferred);
+        });
         if (preferredIt != d->modes.end()) {
             (*preferredIt).flags &= ~uint(ModeFlag::Preferred);
         }
     }
 
-    auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [size,refreshRate](const Mode &mode) {
-            return mode.size == size && mode.refreshRate == refreshRate;
-        }
-    );
-    auto emitChanges = [this,flags,size,refreshRate] {
+    auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(), [size, refreshRate](const Mode &mode) {
+        return mode.size == size && mode.refreshRate == refreshRate;
+    });
+    auto emitChanges = [this, flags, size, refreshRate] {
         Q_EMIT modesChanged();
         if (flags.testFlag(ModeFlag::Current)) {
             Q_EMIT refreshRateChanged(refreshRate);
@@ -229,21 +230,17 @@ void OutputInterface::addMode(const QSize &size, OutputInterface::ModeFlags flag
 void OutputInterface::setCurrentMode(const QSize &size, int refreshRate)
 {
     Q_D();
-    auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [](const Mode &mode) {
-            return mode.flags.testFlag(ModeFlag::Current);
-        }
-    );
+    auto currentModeIt = std::find_if(d->modes.begin(), d->modes.end(), [](const Mode &mode) {
+        return mode.flags.testFlag(ModeFlag::Current);
+    });
     if (currentModeIt != d->modes.end()) {
         // another mode has the current flag - remove
         (*currentModeIt).flags &= ~uint(ModeFlag::Current);
     }
 
-    auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(),
-        [size,refreshRate](const Mode &mode) {
-            return mode.size == size && mode.refreshRate == refreshRate;
-        }
-    );
+    auto existingModeIt = std::find_if(d->modes.begin(), d->modes.end(), [size, refreshRate](const Mode &mode) {
+        return mode.size == size && mode.refreshRate == refreshRate;
+    });
 
     Q_ASSERT(existingModeIt != d->modes.end());
     (*existingModeIt).flags |= ModeFlag::Current;
@@ -338,7 +335,9 @@ void OutputInterface::Private::unbind(wl_resource *resource)
     if (!o) {
         return;
     }
-    auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) { return r.resource == resource; });
+    auto it = std::find_if(o->resources.begin(), o->resources.end(), [resource](const ResourceData &r) {
+        return r.resource == resource;
+    });
     if (it != o->resources.end()) {
         o->resources.erase(it);
     }
@@ -353,12 +352,7 @@ void OutputInterface::Private::sendMode(wl_resource *resource, const Mode &mode)
     if (mode.flags.testFlag(ModeFlag::Preferred)) {
         flags |= WL_OUTPUT_MODE_PREFERRED;
     }
-    wl_output_send_mode(resource,
-                        flags,
-                        mode.size.width(),
-                        mode.size.height(),
-                        mode.refreshRate);
-
+    wl_output_send_mode(resource, flags, mode.size.width(), mode.size.height(), mode.refreshRate);
 }
 
 void OutputInterface::Private::sendGeometry(wl_resource *resource)
@@ -419,10 +413,10 @@ void OutputInterface::Private::updateScale()
     }
 // clang-format on
 
-SETTER(setPhysicalSize, const QSize&, physicalSize)
-SETTER(setGlobalPosition, const QPoint&, globalPosition)
-SETTER(setManufacturer, const QString&, manufacturer)
-SETTER(setModel, const QString&, model)
+SETTER(setPhysicalSize, const QSize &, physicalSize)
+SETTER(setGlobalPosition, const QPoint &, globalPosition)
+SETTER(setManufacturer, const QString &, manufacturer)
+SETTER(setModel, const QString &, model)
 SETTER(setScale, int, scale)
 SETTER(setSubPixel, SubPixel, subPixel)
 SETTER(setTransform, Transform, transform)
@@ -471,7 +465,7 @@ OutputInterface::Transform OutputInterface::transform() const
     return d->transform;
 }
 
-QList< OutputInterface::Mode > OutputInterface::modes() const
+QList<OutputInterface::Mode> OutputInterface::modes() const
 {
     Q_D();
     return d->modes;
@@ -521,14 +515,14 @@ QVector<wl_resource *> OutputInterface::clientResources(ClientConnection *client
     return ret;
 }
 
-OutputInterface *OutputInterface::get(wl_resource* native)
+OutputInterface *OutputInterface::get(wl_resource *native)
 {
     return Private::get(native);
 }
 
 OutputInterface::Private *OutputInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

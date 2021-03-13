@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Q_DECL_HIDDEN EglStreamControllerInterface::Private : public Global::Private
 {
 public:
@@ -23,15 +22,8 @@ public:
     void create();
 
 private:
-    static void attachStreamConsumer(wl_client *client,
-                                     wl_resource *resource,
-                                     wl_resource *surface,
-                                     wl_resource *eglStream);
-    static void attachStreamConsumerAttribs(wl_client *client,
-                                            wl_resource *resource,
-                                            wl_resource *surface,
-                                            wl_resource *eglStream,
-                                            wl_array *attribs);
+    static void attachStreamConsumer(wl_client *client, wl_resource *resource, wl_resource *surface, wl_resource *eglStream);
+    static void attachStreamConsumerAttribs(wl_client *client, wl_resource *resource, wl_resource *surface, wl_resource *eglStream, wl_array *attribs);
     static const struct wl_eglstream_controller_interface s_interface;
     static const quint32 s_version;
     void bind(wl_client *client, uint32_t version, uint32_t id) override;

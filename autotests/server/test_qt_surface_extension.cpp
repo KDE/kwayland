@@ -4,9 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QProcess>
 #include <QSignalSpy>
+#include <QTest>
 // WaylandServer
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"
@@ -16,7 +16,6 @@
 #include "../../src/server/shell_interface.h"
 
 using namespace KWayland::Server;
-
 
 class TestQtSurfaceExtension : public QObject
 {
@@ -69,7 +68,7 @@ void TestQtSurfaceExtension::testCloseWindow()
     process.start(binary, QStringList());
     QVERIFY(surfaceExtensionSpy.wait());
     QCOMPARE(surfaceExtensionSpy.count(), 1);
-    auto *extension = surfaceExtensionSpy.first().first().value<QtExtendedSurfaceInterface*>();
+    auto *extension = surfaceExtensionSpy.first().first().value<QtExtendedSurfaceInterface *>();
     QVERIFY(extension);
     QSignalSpy surfaceExtensionDestroyedSpy(extension, &QObject::destroyed);
     QVERIFY(surfaceExtensionSpy.isValid());

@@ -24,7 +24,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Output;
 class Region;
 
@@ -227,8 +226,8 @@ public:
      **/
     qint32 scale() const;
 
-    operator wl_surface*();
-    operator wl_surface*() const;
+    operator wl_surface *();
+    operator wl_surface *() const;
 
     /**
      * @returns the id of the referenced wl_proxy.
@@ -248,7 +247,7 @@ public:
      * All Surfaces which are currently created.
      * TODO: KF6 return QList<Surface*> instead of const-ref
      **/
-    static const QList<Surface*> &all(); // krazy:exclude=constref
+    static const QList<Surface *> &all(); // krazy:exclude=constref
     /**
      * @returns The Surface referencing the @p native wl_surface or @c null if there is no such Surface.
      **/
@@ -263,7 +262,7 @@ Q_SIGNALS:
      * @see commit
      **/
     void frameRendered();
-    void sizeChanged(const QSize&);
+    void sizeChanged(const QSize &);
 
     /**
      * Emitted whenever a change in the Surface (e.g. creation, movement, resize) results in

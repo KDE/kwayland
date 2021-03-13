@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 class SubSurfaceInterface;
@@ -35,7 +34,7 @@ public:
     virtual ~SubCompositorInterface();
 
 Q_SIGNALS:
-    void subSurfaceCreated(KWayland::Server::SubSurfaceInterface*);
+    void subSurfaceCreated(KWayland::Server::SubSurfaceInterface *);
 
 private:
     explicit SubCompositorInterface(Display *display, QObject *parent = nullptr);
@@ -96,7 +95,7 @@ public:
     QPointer<SurfaceInterface> mainSurface() const;
 
 Q_SIGNALS:
-    void positionChanged(const QPoint&);
+    void positionChanged(const QPoint &);
     void modeChanged(KWayland::Server::SubSurfaceInterface::Mode);
 
 private:

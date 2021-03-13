@@ -7,8 +7,8 @@
 #define KWAYLAND_CLIENT_XDGOUTPUT_H
 
 #include <QObject>
-#include <QSize>
 #include <QPoint>
+#include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -19,7 +19,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class XdgOutput;
 class Output;
@@ -110,8 +109,8 @@ public:
 
     XdgOutput *getXdgOutput(Output *output, QObject *parent = nullptr);
 
-    operator zxdg_output_manager_v1*();
-    operator zxdg_output_manager_v1*() const;
+    operator zxdg_output_manager_v1 *();
+    operator zxdg_output_manager_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -181,8 +180,8 @@ public:
      **/
     void destroy();
 
-    operator zxdg_output_v1*();
-    operator zxdg_output_v1*() const;
+    operator zxdg_output_v1 *();
+    operator zxdg_output_v1 *() const;
 
     /**
      * The top left position of the output in compositor co-ordinates
@@ -201,10 +200,10 @@ public:
      */
     QString name() const;
 
-   /**
-    * A longer human readable description
-    * @since 5.XDGOUTPUT
-    */
+    /**
+     * A longer human readable description
+     * @since 5.XDGOUTPUT
+     */
     QString description() const;
 
 Q_SIGNALS:
@@ -219,7 +218,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

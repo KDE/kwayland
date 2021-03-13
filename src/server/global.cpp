@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "global.h"
-#include "global_p.h"
 #include "display.h"
+#include "global_p.h"
 // wayland
 #include <wayland-server.h>
 
@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 Global::Private::Private(Display *d, const wl_interface *interface, quint32 version)
     : display(d)
     , m_interface(interface)
@@ -25,7 +24,7 @@ Global::Private::~Private() = default;
 
 void Global::Private::bind(wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     d->bind(client, version, id);
 }
 
@@ -66,12 +65,12 @@ bool Global::isValid() const
     return d->global != nullptr;
 }
 
-Global::operator wl_global*() const
+Global::operator wl_global *() const
 {
     return d->global;
 }
 
-Global::operator wl_global*()
+Global::operator wl_global *()
 {
     return d->global;
 }

@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN DataDeviceManager::Private
 {
 public:
@@ -92,12 +91,12 @@ DataDevice *DataDeviceManager::getDataDevice(Seat *seat, QObject *parent)
     return device;
 }
 
-DataDeviceManager::operator wl_data_device_manager*() const
+DataDeviceManager::operator wl_data_device_manager *() const
 {
     return d->manager;
 }
 
-DataDeviceManager::operator wl_data_device_manager*()
+DataDeviceManager::operator wl_data_device_manager *()
 {
     return d->manager;
 }

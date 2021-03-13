@@ -5,8 +5,8 @@
 */
 #ifndef KWAYLAND_SERVER_POINTERCONSTRAINTS_INTERFACE_P_H
 #define KWAYLAND_SERVER_POINTERCONSTRAINTS_INTERFACE_P_H
-#include "pointerconstraints_interface.h"
 #include "global_p.h"
+#include "pointerconstraints_interface.h"
 #include "resource_p.h"
 
 #include <QRegion>
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class PointerConstraintsInterface::Private : public Global::Private
 {
 public:
@@ -53,7 +52,12 @@ public:
     QPointF hint = QPointF(-1., -1.);
 
 protected:
-    Private(PointerConstraintsInterfaceVersion interfaceVersion, LockedPointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
+    Private(PointerConstraintsInterfaceVersion interfaceVersion,
+            LockedPointerInterface *q,
+            Global *c,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation);
 
     QRegion pendingRegion;
     bool regionIsSet = false;
@@ -62,7 +66,8 @@ protected:
     bool hintIsSet = false;
 
 private:
-    LockedPointerInterface *q_func() {
+    LockedPointerInterface *q_func()
+    {
         return reinterpret_cast<LockedPointerInterface *>(q);
     }
 };
@@ -96,13 +101,19 @@ public:
     bool confined = false;
 
 protected:
-    Private(PointerConstraintsInterfaceVersion interfaceVersion, ConfinedPointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
+    Private(PointerConstraintsInterfaceVersion interfaceVersion,
+            ConfinedPointerInterface *q,
+            Global *c,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation);
 
     QRegion pendingRegion;
     bool regionIsSet = false;
 
 private:
-    ConfinedPointerInterface *q_func() {
+    ConfinedPointerInterface *q_func()
+    {
         return reinterpret_cast<ConfinedPointerInterface *>(q);
     }
 };

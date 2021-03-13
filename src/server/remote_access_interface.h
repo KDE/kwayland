@@ -12,7 +12,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class OutputInterface;
 
@@ -44,8 +43,8 @@ public:
     quint32 width() const;
     quint32 stride() const;
     quint32 format() const;
-private:
 
+private:
     friend class RemoteAccessManagerInterface;
     friend class RemoteBufferInterface;
     class Private;

@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class OutputInterface;
 class SeatInterface;
@@ -27,7 +26,7 @@ class XdgTopLevelStableInterface;
 class XdgPopupStableInterface;
 class XdgPositionerStableInterface;
 class XdgSurfaceStableInterface;
-template <typename T>
+template<typename T>
 class GenericShellSurface;
 
 class XdgShellStableInterface : public XdgShellInterface
@@ -40,8 +39,8 @@ public:
      * @returns The XdgTopLevelV6Interface for the @p native resource.
      **/
     XdgTopLevelStableInterface *getSurface(wl_resource *native);
-    //DAVE we want to rename this, as it's bloody confusing. But XdgShellInterface::getSurface exists and expects that
-    //also use a less terrible argument name than native. It's obvious it's native from the type
+    // DAVE we want to rename this, as it's bloody confusing. But XdgShellInterface::getSurface exists and expects that
+    // also use a less terrible argument name than native. It's obvious it's native from the type
 
     XdgPositionerStableInterface *getPositioner(wl_resource *native);
 
@@ -49,7 +48,7 @@ public:
 
     Display *display() const;
 
-    void ping(XdgShellSurfaceInterface * surface);
+    void ping(XdgShellSurfaceInterface *surface);
 
 private:
     explicit XdgShellStableInterface(Display *display, QObject *parent = nullptr);
@@ -63,8 +62,8 @@ class XdgSurfaceStableInterface : public KWayland::Server::Resource
     Q_OBJECT
 public:
     virtual ~XdgSurfaceStableInterface();
-    SurfaceInterface* surface() const;
-    XdgTopLevelStableInterface* topLevel() const;
+    SurfaceInterface *surface() const;
+    XdgTopLevelStableInterface *topLevel() const;
     XdgPopupStableInterface *popup() const;
 
 private:
@@ -75,8 +74,7 @@ private:
     Private *d_func() const;
 };
 
-class XdgTopLevelStableInterface : public
-XdgShellSurfaceInterface
+class XdgTopLevelStableInterface : public XdgShellSurfaceInterface
 {
     Q_OBJECT
 public:
@@ -111,7 +109,7 @@ private:
  * This is a private internal class that keeps track of sent data
  * At the time of PopupCreation these values are copied to the popup
  */
-class XdgPositionerStableInterface: public KWayland::Server::Resource
+class XdgPositionerStableInterface : public KWayland::Server::Resource
 {
 public:
     QSize initialSize() const;
@@ -120,6 +118,7 @@ public:
     Qt::Edges gravity() const;
     PositionerConstraints constraintAdjustments() const;
     QPoint anchorOffset() const;
+
 private:
     explicit XdgPositionerStableInterface(XdgShellStableInterface *parent, wl_resource *parentResource);
     friend class XdgShellStableInterface;

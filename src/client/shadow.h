@@ -25,7 +25,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Shadow;
 class Surface;
@@ -116,8 +115,8 @@ public:
     Shadow *createShadow(Surface *surface, QObject *parent = nullptr);
     void removeShadow(Surface *surface);
 
-    operator org_kde_kwin_shadow_manager*();
-    operator org_kde_kwin_shadow_manager*() const;
+    operator org_kde_kwin_shadow_manager *();
+    operator org_kde_kwin_shadow_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -215,8 +214,8 @@ public:
     void attachBottomLeft(Buffer::Ptr buffer);
     void setOffsets(const QMarginsF &margins);
 
-    operator org_kde_kwin_shadow*();
-    operator org_kde_kwin_shadow*() const;
+    operator org_kde_kwin_shadow *();
+    operator org_kde_kwin_shadow *() const;
 
 private:
     friend class ShadowManager;
@@ -229,4 +228,3 @@ private:
 }
 
 #endif
-

@@ -4,15 +4,14 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 
-#include "surfacerole_p.h"
-#include "surface_interface_p.h"
 #include "surface_interface.h"
+#include "surface_interface_p.h"
+#include "surfacerole_p.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 SurfaceRole::SurfaceRole(SurfaceInterface *surface)
     : m_surface(surface)
 {

@@ -5,9 +5,9 @@
 */
 #include "buffer_interface.h"
 #include "display.h"
+#include "linuxdmabuf_v1_interface.h"
 #include "logging.h"
 #include "surface_interface.h"
-#include "linuxdmabuf_v1_interface.h"
 // Wayland
 #include <wayland-server.h>
 // EGL
@@ -20,10 +20,9 @@ namespace KWayland
 {
 namespace Server
 {
-
 namespace EGL
 {
-typedef GLboolean(*eglQueryWaylandBufferWL_func)(EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
+typedef GLboolean (*eglQueryWaylandBufferWL_func)(EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
 eglQueryWaylandBufferWL_func eglQueryWaylandBufferWL = nullptr;
 }
 
@@ -48,7 +47,7 @@ private:
     static void destroyListenerCallback(wl_listener *listener, void *data);
     static Private *cast(wl_resource *r);
     static void imageBufferCleanupHandler(void *info);
-    static QList<Private*> s_buffers;
+    static QList<Private *> s_buffers;
     static Private *s_accessedBuffer;
     static int s_accessCounter;
 
@@ -56,13 +55,15 @@ private:
     wl_listener listener;
 };
 
-QList<BufferInterface::Private*> BufferInterface::Private::s_buffers;
+QList<BufferInterface::Private *> BufferInterface::Private::s_buffers;
 BufferInterface::Private *BufferInterface::Private::s_accessedBuffer = nullptr;
 int BufferInterface::Private::s_accessCounter = 0;
 
 BufferInterface::Private *BufferInterface::Private::cast(wl_resource *r)
 {
-    auto it = std::find_if(s_buffers.constBegin(), s_buffers.constEnd(), [r](Private *d) { return d->buffer == r; });
+    auto it = std::find_if(s_buffers.constBegin(), s_buffers.constEnd(), [r](Private *d) {
+        return d->buffer == r;
+    });
     if (it == s_buffers.constEnd()) {
         return nullptr;
     }
@@ -80,7 +81,7 @@ BufferInterface *BufferInterface::Private::get(wl_resource *r)
 
 void BufferInterface::Private::imageBufferCleanupHandler(void *info)
 {
-    Private *p = reinterpret_cast<Private*>(info);
+    Private *p = reinterpret_cast<Private *>(info);
     Q_ASSERT(p == s_accessedBuffer);
     Q_ASSERT(s_accessCounter > 0);
     s_accessCounter--;
@@ -224,7 +225,7 @@ BufferInterface::~BufferInterface()
 void BufferInterface::Private::destroyListenerCallback(wl_listener *listener, void *data)
 {
     Q_UNUSED(listener);
-    auto b = cast(reinterpret_cast<wl_resource*>(data));
+    auto b = cast(reinterpret_cast<wl_resource *>(data));
     b->buffer = nullptr;
     Q_EMIT b->q->aboutToBeDestroyed(b->q);
     delete b->q;
@@ -283,12 +284,13 @@ QImage BufferInterface::Private::createImage()
     s_accessedBuffer = this;
     s_accessCounter++;
     wl_shm_buffer_begin_access(shmBuffer);
-    return QImage((const uchar*)wl_shm_buffer_get_data(shmBuffer),
+    return QImage((const uchar *)wl_shm_buffer_get_data(shmBuffer),
                   size.width(),
                   size.height(),
                   wl_shm_buffer_get_stride(shmBuffer),
                   imageFormat,
-                  &imageBufferCleanupHandler, this);
+                  &imageBufferCleanupHandler,
+                  this);
 }
 
 bool BufferInterface::isReferenced() const

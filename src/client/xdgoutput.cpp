@@ -5,11 +5,11 @@
 */
 #include "xdgoutput.h"
 #include "event_queue.h"
-#include "wayland_pointer_p.h"
 #include "output.h"
+#include "wayland_pointer_p.h"
 
-#include <wayland-xdg-output-unstable-v1-client-protocol.h>
 #include <wayland-client-protocol.h>
+#include <wayland-xdg-output-unstable-v1-client-protocol.h>
 
 #include <QDebug>
 
@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class XdgOutputManager::Private
 {
 public:
@@ -62,11 +61,13 @@ void XdgOutputManager::destroy()
     d->xdgoutputmanager.destroy();
 }
 
-XdgOutputManager::operator zxdg_output_manager_v1*() {
+XdgOutputManager::operator zxdg_output_manager_v1 *()
+{
     return d->xdgoutputmanager;
 }
 
-XdgOutputManager::operator zxdg_output_manager_v1*() const {
+XdgOutputManager::operator zxdg_output_manager_v1 *() const
+{
     return d->xdgoutputmanager;
 }
 
@@ -97,8 +98,7 @@ XdgOutput *XdgOutputManager::getXdgOutput(Output *output, QObject *parent)
     return p;
 }
 
-struct XdgOutputBuffer
-{
+struct XdgOutputBuffer {
     QPoint logicalPosition;
     QSize logicalSize;
     QString name;
@@ -130,46 +130,43 @@ private:
     static const zxdg_output_v1_listener s_listener;
 };
 
-const zxdg_output_v1_listener XdgOutput::Private::s_listener = {
-    logical_positionCallback,
-    logical_sizeCallback,
-    doneCallback,
-    nameCallback,
-    descriptionCallback
-};
+const zxdg_output_v1_listener XdgOutput::Private::s_listener = {logical_positionCallback,
+                                                                logical_sizeCallback,
+                                                                doneCallback,
+                                                                nameCallback,
+                                                                descriptionCallback};
 
 void XdgOutput::Private::logical_positionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, int32_t x, int32_t y)
 {
-    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    auto p = reinterpret_cast<XdgOutput::Private *>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
-    p->pending.logicalPosition = QPoint(x,y);
+    p->pending.logicalPosition = QPoint(x, y);
 }
 
 void XdgOutput::Private::logical_sizeCallback(void *data, zxdg_output_v1 *zxdg_output_v1, int32_t width, int32_t height)
 {
-    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    auto p = reinterpret_cast<XdgOutput::Private *>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
-    p->pending.logicalSize = QSize(width,height);
+    p->pending.logicalSize = QSize(width, height);
 }
 
 void XdgOutput::Private::nameCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *name)
 {
-    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    auto p = reinterpret_cast<XdgOutput::Private *>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
     p->pending.name = name;
 }
 
 void XdgOutput::Private::descriptionCallback(void *data, zxdg_output_v1 *zxdg_output_v1, const char *description)
 {
-    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    auto p = reinterpret_cast<XdgOutput::Private *>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
     p->pending.description = description;
 }
 
-
 void XdgOutput::Private::doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1)
 {
-    auto p = reinterpret_cast<XdgOutput::Private*>(data);
+    auto p = reinterpret_cast<XdgOutput::Private *>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
     std::swap(p->current, p->pending);
 
@@ -235,11 +232,13 @@ QString XdgOutput::description() const
     return d->current.description;
 }
 
-XdgOutput::operator zxdg_output_v1*() {
+XdgOutput::operator zxdg_output_v1 *()
+{
     return d->xdgoutput;
 }
 
-XdgOutput::operator zxdg_output_v1*() const {
+XdgOutput::operator zxdg_output_v1 *() const
+{
     return d->xdgoutput;
 }
 
@@ -248,7 +247,5 @@ bool XdgOutput::isValid() const
     return d->xdgoutput.isValid();
 }
 
-
 }
 }
-

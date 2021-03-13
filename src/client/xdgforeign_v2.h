@@ -6,8 +6,8 @@
 #ifndef KWAYLAND_CLIENT_XDGFOREIGN_V2_H
 #define KWAYLAND_CLIENT_XDGFOREIGN_V2_H
 
-#include "xdgforeign.h"
 #include "surface.h"
+#include "xdgforeign.h"
 
 #include <QObject>
 
@@ -22,7 +22,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Surface;
 class XdgExportedUnstableV2;
@@ -131,7 +130,6 @@ private:
     explicit XdgImportedUnstableV2(QObject *parent = nullptr);
     class Private;
 };
-
 
 }
 }

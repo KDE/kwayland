@@ -87,11 +87,11 @@ public:
      **/
     DataOffer *dragOffer() const;
 
-    operator wl_data_device*();
-    operator wl_data_device*() const;
+    operator wl_data_device *();
+    operator wl_data_device *() const;
 
 Q_SIGNALS:
-    void selectionOffered(KWayland::Client::DataOffer*);
+    void selectionOffered(KWayland::Client::DataOffer *);
     void selectionCleared();
     /**
      * Notification that a drag'n'drop operation entered a Surface on this DataDevice.

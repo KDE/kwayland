@@ -21,7 +21,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Surface;
 class XdgExported;
@@ -109,8 +108,8 @@ public:
      */
     XdgExported *exportTopLevel(Surface *surface, QObject *parent = nullptr);
 
-    operator zxdg_exporter_v2*();
-    operator zxdg_exporter_v2*() const;
+    operator zxdg_exporter_v2 *();
+    operator zxdg_exporter_v2 *() const;
 
 Q_SIGNALS:
     /**
@@ -212,10 +211,10 @@ public:
      *               in some way, such as command line or a DBus call)
      * @param parent the parent in the QObject's hierarchy of the new XdgImported
      */
-    XdgImported *importTopLevel(const QString & handle, QObject *parent = nullptr);
+    XdgImported *importTopLevel(const QString &handle, QObject *parent = nullptr);
 
-    operator zxdg_importer_v2*();
-    operator zxdg_importer_v2*() const;
+    operator zxdg_importer_v2 *();
+    operator zxdg_importer_v2 *() const;
 
 Q_SIGNALS:
     /**
@@ -279,8 +278,8 @@ public:
      */
     QString handle() const;
 
-    operator zxdg_exported_v2*();
-    operator zxdg_exported_v2*() const;
+    operator zxdg_exported_v2 *();
+    operator zxdg_exported_v2 *() const;
 
 Q_SIGNALS:
     /**
@@ -346,8 +345,8 @@ public:
      */
     void setParentOf(Surface *surface);
 
-    operator zxdg_imported_v2*();
-    operator zxdg_imported_v2*() const;
+    operator zxdg_imported_v2 *();
+    operator zxdg_imported_v2 *() const;
 
 Q_SIGNALS:
     /**
@@ -362,7 +361,6 @@ protected:
     explicit XdgImported(Private *p, QObject *parent = nullptr);
     QScopedPointer<Private> d;
 };
-
 
 }
 }

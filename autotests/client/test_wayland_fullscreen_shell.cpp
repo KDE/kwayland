@@ -7,8 +7,8 @@
 #include <QtTest>
 // KWin
 #include "../../src/client/connection_thread.h"
-#include "../../src/client/registry.h"
 #include "../../src/client/fullscreen_shell.h"
+#include "../../src/client/registry.h"
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -45,9 +45,8 @@ void TestWaylandFullscreenShell::init()
     m_westonProcess = new QProcess(this);
     m_westonProcess->setProgram(QStringLiteral("weston"));
 
-    m_westonProcess->setArguments(QStringList({QStringLiteral("--socket=%1").arg(s_socketName),
-                                               QStringLiteral("--backend=headless-backend.so"),
-                                               QStringLiteral("--shell=fullscreen-shell.so")}));
+    m_westonProcess->setArguments(QStringList(
+        {QStringLiteral("--socket=%1").arg(s_socketName), QStringLiteral("--backend=headless-backend.so"), QStringLiteral("--shell=fullscreen-shell.so")}));
     m_westonProcess->start();
     QVERIFY(m_westonProcess->waitForStarted());
     QTest::qWait(500);
@@ -93,7 +92,7 @@ void TestWaylandFullscreenShell::testRegistry()
     KWayland::Client::Registry registry;
     QSignalSpy interfacesAnnouncedSpy(&registry, &KWayland::Client::Registry::interfaceAnnounced);
     QVERIFY(interfacesAnnouncedSpy.isValid());
-    QSignalSpy announced(&registry, SIGNAL(fullscreenShellAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(fullscreenShellAnnounced(quint32, quint32)));
     registry.create(connection.display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -115,7 +114,8 @@ void TestWaylandFullscreenShell::testRegistry()
 }
 
 void TestWaylandFullscreenShell::testRegistryCreate()
-{    if (m_westonProcess->state() != QProcess::Running) {
+{
+    if (m_westonProcess->state() != QProcess::Running) {
         QSKIP("This test requires a running wayland server");
     }
     KWayland::Client::ConnectionThread connection;
@@ -127,7 +127,7 @@ void TestWaylandFullscreenShell::testRegistryCreate()
     KWayland::Client::Registry registry;
     QSignalSpy interfacesAnnouncedSpy(&registry, &KWayland::Client::Registry::interfaceAnnounced);
     QVERIFY(interfacesAnnouncedSpy.isValid());
-    QSignalSpy announced(&registry, SIGNAL(fullscreenShellAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(fullscreenShellAnnounced(quint32, quint32)));
     registry.create(connection.display());
     QVERIFY(registry.isValid());
     registry.setup();

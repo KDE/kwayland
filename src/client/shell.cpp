@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Shell::Private
 {
 public:
@@ -99,12 +98,12 @@ bool Shell::isValid() const
     return d->shell.isValid();
 }
 
-Shell::operator wl_shell*()
+Shell::operator wl_shell *()
 {
     return d->shell;
 }
 
-Shell::operator wl_shell*() const
+Shell::operator wl_shell *() const
 {
     return d->shell;
 }
@@ -117,7 +116,7 @@ public:
 
     WaylandPointer<wl_shell_surface, wl_shell_surface_destroy> surface;
     QSize size;
-    static QVector<ShellSurface*> s_surfaces;
+    static QVector<ShellSurface *> s_surfaces;
 
 private:
     void ping(uint32_t serial);
@@ -129,7 +128,7 @@ private:
     static const struct wl_shell_surface_listener s_listener;
 };
 
-QVector<ShellSurface*> ShellSurface::Private::s_surfaces = QVector<ShellSurface*>();
+QVector<ShellSurface *> ShellSurface::Private::s_surfaces = QVector<ShellSurface *>();
 
 ShellSurface::Private::Private(ShellSurface *q)
     : q(q)
@@ -154,7 +153,7 @@ ShellSurface *ShellSurface::fromWindow(QWindow *window)
         return nullptr;
     }
     window->create();
-    wl_shell_surface *s = reinterpret_cast<wl_shell_surface*>(native->nativeResourceForWindow(QByteArrayLiteral("wl_shell_surface"), window));
+    wl_shell_surface *s = reinterpret_cast<wl_shell_surface *>(native->nativeResourceForWindow(QByteArrayLiteral("wl_shell_surface"), window));
     if (!s) {
         return nullptr;
     }
@@ -185,11 +184,9 @@ ShellSurface *ShellSurface::fromQtWinId(WId wid)
 
 ShellSurface *ShellSurface::get(wl_shell_surface *native)
 {
-    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(),
-        [native](ShellSurface *s) {
-            return s->d->surface == native;
-        }
-    );
+    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(), [native](ShellSurface *s) {
+        return s->d->surface == native;
+    });
     if (it != Private::s_surfaces.constEnd()) {
         return *(it);
     }
@@ -220,31 +217,27 @@ void ShellSurface::destroy()
 }
 
 #ifndef K_DOXYGEN
-const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {
-    pingCallback,
-    configureCallback,
-    popupDoneCallback
-};
+const struct wl_shell_surface_listener ShellSurface::Private::s_listener = {pingCallback, configureCallback, popupDoneCallback};
 #endif
 
 void ShellSurface::Private::configureCallback(void *data, wl_shell_surface *shellSurface, uint32_t edges, int32_t width, int32_t height)
 {
     Q_UNUSED(edges)
-    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    auto s = reinterpret_cast<ShellSurface::Private *>(data);
     Q_ASSERT(s->surface == shellSurface);
     s->q->setSize(QSize(width, height));
 }
 
 void ShellSurface::Private::pingCallback(void *data, wl_shell_surface *shellSurface, uint32_t serial)
 {
-    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    auto s = reinterpret_cast<ShellSurface::Private *>(data);
     Q_ASSERT(s->surface == shellSurface);
     s->ping(serial);
 }
 
 void ShellSurface::Private::popupDoneCallback(void *data, wl_shell_surface *shellSurface)
 {
-    auto s = reinterpret_cast<ShellSurface::Private*>(data);
+    auto s = reinterpret_cast<ShellSurface::Private *>(data);
     Q_ASSERT(s->surface == shellSurface);
     Q_EMIT s->q->popupDone();
 }
@@ -368,12 +361,12 @@ bool ShellSurface::isValid() const
     return d->surface.isValid();
 }
 
-ShellSurface::operator wl_shell_surface*()
+ShellSurface::operator wl_shell_surface *()
 {
     return d->surface;
 }
 
-ShellSurface::operator wl_shell_surface*() const
+ShellSurface::operator wl_shell_surface *() const
 {
     return d->surface;
 }

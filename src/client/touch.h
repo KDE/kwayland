@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Surface;
 class Touch;
 
@@ -131,10 +130,10 @@ public:
      * The TouchPoints of the latest touch event sequence.
      * Only valid till the next touch event sequence is started
      **/
-    QVector<TouchPoint*> sequence() const;
+    QVector<TouchPoint *> sequence() const;
 
-    operator wl_touch*();
-    operator wl_touch*() const;
+    operator wl_touch *();
+    operator wl_touch *() const;
 
 Q_SIGNALS:
     /**
@@ -177,6 +176,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::TouchPoint*)
+Q_DECLARE_METATYPE(KWayland::Client::TouchPoint *)
 
 #endif

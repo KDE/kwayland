@@ -12,9 +12,9 @@
 // client
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/remote_access.h"
-#include "../../src/client/registry.h"
 #include "../../src/client/output.h"
+#include "../../src/client/registry.h"
+#include "../../src/client/remote_access.h"
 // server
 #include "../../src/server/display.h"
 #include "../../src/server/output_interface.h"
@@ -93,20 +93,19 @@ MockupClient::MockupClient(QObject *parent)
     registry->setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    remoteAccess = registry->createRemoteAccessManager(
-                                            registry->interface(Registry::Interface::RemoteAccessManager).name,
-                                            registry->interface(Registry::Interface::RemoteAccessManager).version,
-                                            this);
+    remoteAccess = registry->createRemoteAccessManager(registry->interface(Registry::Interface::RemoteAccessManager).name,
+                                                       registry->interface(Registry::Interface::RemoteAccessManager).version,
+                                                       this);
     QVERIFY(remoteAccess->isValid());
     connection->flush();
 }
 
 MockupClient::~MockupClient()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(outputs[0])
     CLEANUP(outputs[1])
@@ -132,8 +131,8 @@ void MockupClient::bindOutput(int index)
 {
     // client-bound output
     outputs[index] = registry->createOutput(registry->interfaces(Registry::Interface::Output)[index].name,
-                             registry->interfaces(Registry::Interface::Output)[index].version,
-                             this);
+                                            registry->interfaces(Registry::Interface::Output)[index].version,
+                                            this);
     QVERIFY(outputs[index]->isValid());
     connection->flush();
 }
@@ -166,10 +165,10 @@ void RemoteAccessTest::init()
 
 void RemoteAccessTest::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_outputInterface[0])
     CLEANUP(m_outputInterface[1])
@@ -263,18 +262,18 @@ void RemoteAccessTest::testSendReleaseMultiple()
 
     {
         QEventLoop e;
-        QTimer::singleShot(1000, &e, &QEventLoop::quit); //safety timer
-        connect(client1->remoteAccess, &RemoteAccessManager::bufferReady, [&] (const void*, const RemoteBuffer *buffer) {
-                rbuf1 = buffer;
-                connect(rbuf1, &RemoteBuffer::parametersObtained, [&]() {
-                    buffer1ParametersReceived = true;
-                    if (buffer1ParametersReceived && buffer2ParametersReceived) {
-                        e.quit();
-                    }
-                });
+        QTimer::singleShot(1000, &e, &QEventLoop::quit); // safety timer
+        connect(client1->remoteAccess, &RemoteAccessManager::bufferReady, [&](const void *, const RemoteBuffer *buffer) {
+            rbuf1 = buffer;
+            connect(rbuf1, &RemoteBuffer::parametersObtained, [&]() {
+                buffer1ParametersReceived = true;
+                if (buffer1ParametersReceived && buffer2ParametersReceived) {
+                    e.quit();
+                }
+            });
         });
 
-        connect(client2->remoteAccess, &RemoteAccessManager::bufferReady, [&] (const void*, const RemoteBuffer *buffer) {
+        connect(client2->remoteAccess, &RemoteAccessManager::bufferReady, [&](const void *, const RemoteBuffer *buffer) {
             rbuf2 = buffer;
             connect(rbuf2, &RemoteBuffer::parametersObtained, [&]() {
                 buffer2ParametersReceived = true;
@@ -287,7 +286,6 @@ void RemoteAccessTest::testSendReleaseMultiple()
 
         e.exec();
     }
-
 
     QVERIFY(rbuf1);
     QVERIFY(rbuf2);

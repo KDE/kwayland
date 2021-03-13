@@ -4,12 +4,12 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 // KWin
 #include "../../src/client/connection_thread.h"
-#include "../../src/client/event_queue.h"
 #include "../../src/client/dpms.h"
+#include "../../src/client/event_queue.h"
 #include "../../src/client/output.h"
 #include "../../src/client/registry.h"
 #include "../../src/server/display.h"
@@ -149,7 +149,7 @@ void TestWaylandOutput::testRegistry()
     QCOMPARE(physicalSizeChangedSpy.count(), 1);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -211,7 +211,7 @@ void TestWaylandOutput::testModeChanges()
 
     using namespace KWayland::Client;
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -304,7 +304,7 @@ void TestWaylandOutput::testModeChanges()
 void TestWaylandOutput::testScaleChange()
 {
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -371,7 +371,7 @@ void TestWaylandOutput::testSubPixel()
     QCOMPARE(serverSubPixelChangedSpy.count(), 1);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -407,11 +407,11 @@ void TestWaylandOutput::testTransform_data()
     QTest::addColumn<KWayland::Client::Output::Transform>("expected");
     QTest::addColumn<KWayland::Server::OutputInterface::Transform>("actual");
 
-    QTest::newRow("90")          << Output::Transform::Rotated90  << OutputInterface::Transform::Rotated90;
-    QTest::newRow("180")         << Output::Transform::Rotated180 << OutputInterface::Transform::Rotated180;
-    QTest::newRow("270")         << Output::Transform::Rotated270 << OutputInterface::Transform::Rotated270;
-    QTest::newRow("Flipped")     << Output::Transform::Flipped    << OutputInterface::Transform::Flipped;
-    QTest::newRow("Flipped 90")  << Output::Transform::Flipped90  << OutputInterface::Transform::Flipped90;
+    QTest::newRow("90") << Output::Transform::Rotated90 << OutputInterface::Transform::Rotated90;
+    QTest::newRow("180") << Output::Transform::Rotated180 << OutputInterface::Transform::Rotated180;
+    QTest::newRow("270") << Output::Transform::Rotated270 << OutputInterface::Transform::Rotated270;
+    QTest::newRow("Flipped") << Output::Transform::Flipped << OutputInterface::Transform::Flipped;
+    QTest::newRow("Flipped 90") << Output::Transform::Flipped90 << OutputInterface::Transform::Flipped90;
     QTest::newRow("Flipped 180") << Output::Transform::Flipped180 << OutputInterface::Transform::Flipped180;
     QTest::newRow("Flipped 280") << Output::Transform::Flipped270 << OutputInterface::Transform::Flipped270;
 }
@@ -432,7 +432,7 @@ void TestWaylandOutput::testTransform()
     QCOMPARE(serverTransformChangedSpy.count(), 1);
 
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -501,9 +501,11 @@ void TestWaylandOutput::testDpms()
     QVERIFY(announced.wait());
     QCOMPARE(dpmsAnnouncedSpy.count(), 1);
 
-    Output *output = registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
+    Output *output =
+        registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
 
-    DpmsManager *dpmsManager = registry.createDpmsManager(dpmsAnnouncedSpy.first().first().value<quint32>(), dpmsAnnouncedSpy.first().last().value<quint32>(), &registry);
+    DpmsManager *dpmsManager =
+        registry.createDpmsManager(dpmsAnnouncedSpy.first().first().value<quint32>(), dpmsAnnouncedSpy.first().last().value<quint32>(), &registry);
     QVERIFY(dpmsManager->isValid());
 
     Dpms *dpms = dpmsManager->getDpms(output, &registry);
@@ -596,9 +598,11 @@ void TestWaylandOutput::testDpmsRequestMode()
     QVERIFY(announced.wait());
     QCOMPARE(dpmsAnnouncedSpy.count(), 1);
 
-    Output *output = registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
+    Output *output =
+        registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
 
-    DpmsManager *dpmsManager = registry.createDpmsManager(dpmsAnnouncedSpy.first().first().value<quint32>(), dpmsAnnouncedSpy.first().last().value<quint32>(), &registry);
+    DpmsManager *dpmsManager =
+        registry.createDpmsManager(dpmsAnnouncedSpy.first().first().value<quint32>(), dpmsAnnouncedSpy.first().last().value<quint32>(), &registry);
     QVERIFY(dpmsManager->isValid());
 
     Dpms *dpms = dpmsManager->getDpms(output, &registry);

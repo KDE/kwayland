@@ -57,7 +57,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class AppMenuManager;
 class Compositor;
 class ConnectionThread;
@@ -135,12 +134,12 @@ public:
      * object.
      **/
     enum class Interface {
-        Unknown,    ///< Refers to an Unknown interface
+        Unknown, ///< Refers to an Unknown interface
         Compositor, ///< Refers to the wl_compositor interface
-        Shell,      ///< Refers to the wl_shell interface
-        Seat,       ///< Refers to the wl_seat interface
-        Shm,        ///< Refers to the wl_shm interface
-        Output,     ///< Refers to the wl_output interface
+        Shell, ///< Refers to the wl_shell interface
+        Seat, ///< Refers to the wl_seat interface
+        Shm, ///< Refers to the wl_shm interface
+        Output, ///< Refers to the wl_output interface
         FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
@@ -154,7 +153,7 @@ public:
         Slide, ///< refers to org_kde_kwin_slide_manager
         Dpms, ///< Refers to org_kde_kwin_dpms_manager interface
         OutputManagement, ///< Refers to the wl_data_device_manager interface
-        OutputDevice,     ///< Refers to the org_kde_kwin_outputdevice interface
+        OutputDevice, ///< Refers to the org_kde_kwin_outputdevice interface
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
         TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2, @since 5.23
@@ -166,14 +165,14 @@ public:
         XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
-        AppMenu, ///Refers to org_kde_kwin_appmenu @since 5.42
-        ServerSideDecorationPalette, ///Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
+        AppMenu, /// Refers to org_kde_kwin_appmenu @since 5.42
+        ServerSideDecorationPalette, /// Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
         RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
         PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
-        XdgOutputUnstableV1, ///refers to zxdg_output_v1, @since 5.47
-        XdgShellStable, ///refers to xdg_wm_base @since 5.48
-        XdgDecorationUnstableV1, ///refers to zxdg_decoration_manager_v1, @since 5.54
-        Keystate,///<refers to org_kwin_keystate, @since 5.57
+        XdgOutputUnstableV1, /// refers to zxdg_output_v1, @since 5.47
+        XdgShellStable, /// refers to xdg_wm_base @since 5.48
+        XdgDecorationUnstableV1, /// refers to zxdg_decoration_manager_v1, @since 5.54
+        Keystate, ///< refers to org_kwin_keystate, @since 5.57
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -487,7 +486,7 @@ public:
      * @see createSlideManager
      * @since 5.5
      **/
-    org_kde_kwin_slide_manager * bindSlideManager(uint32_t name, uint32_t version) const;
+    org_kde_kwin_slide_manager *bindSlideManager(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_dpms_manager with @p name and @p version.
      * If the @p name does not exist or is not for the dpms manager interface,
@@ -1239,15 +1238,14 @@ public:
 
     ///@}
 
-
     /**
      * cast operator to the low-level Wayland @c wl_registry
      **/
-    operator wl_registry*();
+    operator wl_registry *();
     /**
      * cast operator to the low-level Wayland @c wl_registry
      **/
-    operator wl_registry*() const;
+    operator wl_registry *() const;
     /**
      * @returns access to the low-level Wayland @c wl_registry
      **/

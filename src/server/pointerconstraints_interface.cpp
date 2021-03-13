@@ -11,8 +11,11 @@ namespace KWayland
 {
 namespace Server
 {
-
-PointerConstraintsInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion, PointerConstraintsInterface *q, Display *d, const wl_interface *interface, quint32 version)
+PointerConstraintsInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion,
+                                              PointerConstraintsInterface *q,
+                                              Display *d,
+                                              const wl_interface *interface,
+                                              quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
     , q(q)
@@ -34,10 +37,15 @@ PointerConstraintsInterfaceVersion PointerConstraintsInterface::interfaceVersion
 
 PointerConstraintsInterface::Private *PointerConstraintsInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
-LockedPointerInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion, LockedPointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
+LockedPointerInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion,
+                                         LockedPointerInterface *q,
+                                         Global *c,
+                                         wl_resource *parentResource,
+                                         const wl_interface *interface,
+                                         const void *implementation)
     : Resource::Private(q, c, parentResource, interface, implementation)
     , interfaceVersion(interfaceVersion)
 {
@@ -69,7 +77,9 @@ void LockedPointerInterface::Private::commit()
 LockedPointerInterface::LockedPointerInterface(Private *p, QObject *parent)
     : Resource(p, parent)
 {
-    connect(this, &LockedPointerInterface::unbound, this, [this]() { setLocked(false); });
+    connect(this, &LockedPointerInterface::unbound, this, [this]() {
+        setLocked(false);
+    });
 }
 
 LockedPointerInterface::~LockedPointerInterface() = default;
@@ -120,10 +130,15 @@ void LockedPointerInterface::setLocked(bool locked)
 
 LockedPointerInterface::Private *LockedPointerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
-ConfinedPointerInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion, ConfinedPointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
+ConfinedPointerInterface::Private::Private(PointerConstraintsInterfaceVersion interfaceVersion,
+                                           ConfinedPointerInterface *q,
+                                           Global *c,
+                                           wl_resource *parentResource,
+                                           const wl_interface *interface,
+                                           const void *implementation)
     : Resource::Private(q, c, parentResource, interface, implementation)
     , interfaceVersion(interfaceVersion)
 {
@@ -151,7 +166,9 @@ void ConfinedPointerInterface::Private::commit()
 ConfinedPointerInterface::ConfinedPointerInterface(Private *p, QObject *parent)
     : Resource(p, parent)
 {
-    connect(this, &ConfinedPointerInterface::unbound, this, [this]() { setConfined(false); });
+    connect(this, &ConfinedPointerInterface::unbound, this, [this]() {
+        setConfined(false);
+    });
 }
 
 ConfinedPointerInterface::~ConfinedPointerInterface() = default;
@@ -193,7 +210,7 @@ void ConfinedPointerInterface::setConfined(bool confined)
 
 ConfinedPointerInterface::Private *ConfinedPointerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

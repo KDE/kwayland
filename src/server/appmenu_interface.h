@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 class AppMenuInterface;
@@ -36,13 +35,13 @@ public:
      * Returns any existing appMenu for a given surface
      * This returns a null pointer if no AppMenuInterface exists.
      */
-    AppMenuInterface* appMenuForSurface(SurfaceInterface *);
+    AppMenuInterface *appMenuForSurface(SurfaceInterface *);
 
 Q_SIGNALS:
     /**
      * Emitted whenever a new AppmenuInterface is created.
      **/
-    void appMenuCreated(KWayland::Server::AppMenuInterface*);
+    void appMenuCreated(KWayland::Server::AppMenuInterface *);
 
 private:
     explicit AppMenuManagerInterface(Display *display, QObject *parent = nullptr);

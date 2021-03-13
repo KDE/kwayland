@@ -13,7 +13,6 @@
 
 using namespace KWayland::Server;
 
-
 class TestWaylandServerSeat : public QObject
 {
     Q_OBJECT
@@ -162,7 +161,7 @@ void TestWaylandServerSeat::testDestroyThroughTerminate()
     display.setSocketName(s_socketName);
     display.start();
     SeatInterface *seat = display.createSeat();
-    QSignalSpy destroyedSpy(seat, SIGNAL(destroyed(QObject*)));
+    QSignalSpy destroyedSpy(seat, SIGNAL(destroyed(QObject *)));
     QVERIFY(destroyedSpy.isValid());
     display.terminate();
     QVERIFY(!destroyedSpy.isEmpty());

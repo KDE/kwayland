@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 /**
  * @short Wrapper for the wl_region interface.
  *
@@ -92,8 +91,8 @@ public:
      **/
     QRegion region() const;
 
-    operator wl_region*();
-    operator wl_region*() const;
+    operator wl_region *();
+    operator wl_region *() const;
 
 private:
     class Private;

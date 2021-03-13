@@ -70,11 +70,11 @@ public:
     /**
      * Cast operator to the native wl_global this Global represents.
      **/
-    operator wl_global*();
+    operator wl_global *();
     /**
      * Cast operator to the native wl_global this Global represents.
      **/
-    operator wl_global*() const;
+    operator wl_global *() const;
 
 Q_SIGNALS:
     /**

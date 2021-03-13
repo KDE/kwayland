@@ -4,17 +4,15 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "outputmanagement.h"
-#include "outputconfiguration.h"
 #include "event_queue.h"
-#include "wayland_pointer_p.h"
+#include "outputconfiguration.h"
 #include "wayland-output-management-client-protocol.h"
-
+#include "wayland_pointer_p.h"
 
 namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN OutputManagement::Private
 {
 public:
@@ -25,8 +23,8 @@ public:
 };
 
 OutputManagement::OutputManagement(QObject *parent)
-: QObject(parent)
-, d(new Private)
+    : QObject(parent)
+    , d(new Private)
 {
 }
 
@@ -62,11 +60,13 @@ EventQueue *OutputManagement::eventQueue()
     return d->queue;
 }
 
-OutputManagement::operator org_kde_kwin_outputmanagement*() {
+OutputManagement::operator org_kde_kwin_outputmanagement *()
+{
     return d->outputmanagement;
 }
 
-OutputManagement::operator org_kde_kwin_outputmanagement*() const {
+OutputManagement::operator org_kde_kwin_outputmanagement *() const
+{
     return d->outputmanagement;
 }
 
@@ -88,7 +88,6 @@ OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
     config->setup(w);
     return config;
 }
-
 
 }
 }

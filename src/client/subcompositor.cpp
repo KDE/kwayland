@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN SubCompositor::Private
 {
 public:
@@ -68,12 +67,12 @@ bool SubCompositor::isValid() const
     return d->subCompositor.isValid();
 }
 
-SubCompositor::operator wl_subcompositor*()
+SubCompositor::operator wl_subcompositor *()
 {
     return d->subCompositor;
 }
 
-SubCompositor::operator wl_subcompositor*() const
+SubCompositor::operator wl_subcompositor *() const
 {
     return d->subCompositor;
 }

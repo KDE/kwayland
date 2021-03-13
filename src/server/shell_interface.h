@@ -8,8 +8,8 @@
 
 #include <QObject>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "seat_interface.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 #include "global.h"
 #include "resource.h"
@@ -21,12 +21,11 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SeatInterface;
 class SurfaceInterface;
 class ShellSurfaceInterface;
-template <typename T>
+template<typename T>
 class GenericShellSurface;
 
 /**
@@ -45,7 +44,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a new ShellSurfaceInterface gets created for a SurfaceInterface.
      **/
-    void surfaceCreated(KWayland::Server::ShellSurfaceInterface*);
+    void surfaceCreated(KWayland::Server::ShellSurfaceInterface *);
 
 private:
     friend class Display;
@@ -233,11 +232,11 @@ Q_SIGNALS:
     /**
      * Emitted whenever the title changes.
      **/
-    void titleChanged(const QString&);
+    void titleChanged(const QString &);
     /**
      * Emitted whenever the window class changes.
      **/
-    void windowClassChanged(const QByteArray&);
+    void windowClassChanged(const QByteArray &);
     /**
      * Emitted when the ping timed out.
      * @see ping
@@ -263,7 +262,7 @@ Q_SIGNALS:
     /**
      * @since 5.5
      **/
-    void transientOffsetChanged(const QPoint&);
+    void transientOffsetChanged(const QPoint &);
     /**
      * @since 5.5
      **/

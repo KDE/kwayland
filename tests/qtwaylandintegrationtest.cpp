@@ -24,13 +24,7 @@
 
 using namespace KWayland::Client;
 
-static Qt::GlobalColor s_colors[] = {
-    Qt::white,
-    Qt::red,
-    Qt::green,
-    Qt::blue,
-    Qt::black
-};
+static Qt::GlobalColor s_colors[] = {Qt::white, Qt::red, Qt::green, Qt::blue, Qt::black};
 static int s_colorIndex = 0;
 
 WaylandClientTest::WaylandClientTest(QObject *parent)
@@ -49,12 +43,10 @@ WaylandClientTest::~WaylandClientTest() = default;
 
 void WaylandClientTest::init()
 {
-    connect(m_timer, &QTimer::timeout, this,
-        [this]() {
-            s_colorIndex = (s_colorIndex + 1) % 5;
-            render();
-        }
-    );
+    connect(m_timer, &QTimer::timeout, this, [this]() {
+        s_colorIndex = (s_colorIndex + 1) % 5;
+        render();
+    });
     m_timer->setInterval(1000);
     m_timer->start();
 
@@ -65,19 +57,15 @@ void WaylandClientTest::init()
 
 void WaylandClientTest::setupRegistry(Registry *registry)
 {
-    connect(registry, &Registry::shellAnnounced, this,
-        [this, registry](quint32 name) {
-            Shell *shell = registry->createShell(name, 1, this);
-            m_shellSurface = shell->createSurface(m_surface, m_surface);
-            connect(m_shellSurface, &ShellSurface::sizeChanged, this, static_cast<void(WaylandClientTest::*)(const QSize&)>(&WaylandClientTest::render));
-            render(QSize(200, 200));
-        }
-    );
-    connect(registry, &Registry::shmAnnounced, this,
-        [this, registry](quint32 name) {
-            m_shm = registry->createShmPool(name, 1, this);
-        }
-    );
+    connect(registry, &Registry::shellAnnounced, this, [this, registry](quint32 name) {
+        Shell *shell = registry->createShell(name, 1, this);
+        m_shellSurface = shell->createSurface(m_surface, m_surface);
+        connect(m_shellSurface, &ShellSurface::sizeChanged, this, static_cast<void (WaylandClientTest::*)(const QSize &)>(&WaylandClientTest::render));
+        render(QSize(200, 200));
+    });
+    connect(registry, &Registry::shmAnnounced, this, [this, registry](quint32 name) {
+        m_shm = registry->createShmPool(name, 1, this);
+    });
     registry->create(m_connectionThreadObject->display());
     registry->setup();
 }

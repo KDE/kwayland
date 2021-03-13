@@ -9,8 +9,8 @@
 #include "global.h"
 #include "resource.h"
 
-#include <QObject>
 #include <QMarginsF>
+#include <QObject>
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class BufferInterface;
 class Display;
 

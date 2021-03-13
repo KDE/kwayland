@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ShadowManagerInterface::Private : public Global::Private
 {
 public:
@@ -31,8 +30,9 @@ private:
     static void unsetCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     ShadowManagerInterface *q;
@@ -43,11 +43,7 @@ private:
 const quint32 ShadowManagerInterface::Private::s_version = 2;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_shadow_manager_interface ShadowManagerInterface::Private::s_interface = {
-    createCallback,
-    unsetCallback,
-    destroyCallback
-};
+const struct org_kde_kwin_shadow_manager_interface ShadowManagerInterface::Private::s_interface = {createCallback, unsetCallback, destroyCallback};
 #endif
 
 ShadowManagerInterface::Private::Private(ShadowManagerInterface *q, Display *d)
@@ -148,7 +144,7 @@ public:
         BufferInterface *bottom = nullptr;
         BufferInterface *bottomLeft = nullptr;
         QMarginsF offset;
-        Flags flags  = Flags::None;
+        Flags flags = Flags::None;
     };
     State current;
     State pending;
@@ -156,7 +152,8 @@ public:
 private:
     void commit();
     void attach(State::Flags flag, wl_resource *buffer);
-    ShadowInterface *q_func() {
+    ShadowInterface *q_func()
+    {
         return reinterpret_cast<ShadowInterface *>(q);
     }
 
@@ -178,22 +175,20 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_shadow_interface ShadowInterface::Private::s_interface = {
-    commitCallback,
-    attachLeftCallback,
-    attachTopLeftCallback,
-    attachTopCallback,
-    attachTopRightCallback,
-    attachRightCallback,
-    attachBottomRightCallback,
-    attachBottomCallback,
-    attachBottomLeftCallback,
-    offsetLeftCallback,
-    offsetTopCallback,
-    offsetRightCallback,
-    offsetBottomCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_shadow_interface ShadowInterface::Private::s_interface = {commitCallback,
+                                                                                    attachLeftCallback,
+                                                                                    attachTopLeftCallback,
+                                                                                    attachTopCallback,
+                                                                                    attachTopRightCallback,
+                                                                                    attachRightCallback,
+                                                                                    attachBottomRightCallback,
+                                                                                    attachBottomCallback,
+                                                                                    attachBottomLeftCallback,
+                                                                                    offsetLeftCallback,
+                                                                                    offsetTopCallback,
+                                                                                    offsetRightCallback,
+                                                                                    offsetBottomCallback,
+                                                                                    resourceDestroyedCallback};
 #endif
 
 void ShadowInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
@@ -390,7 +385,7 @@ BUFFER(bottomLeft)
 
 ShadowInterface::Private *ShadowInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

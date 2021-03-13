@@ -7,8 +7,8 @@
 #include <QSignalSpy>
 #include <QTest>
 // client
-#include "../../src/client/connection_thread.h"
 #include "../../src/client/compositor.h"
+#include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/pointer.h"
 #include "../../src/client/pointerconstraints.h"
@@ -16,8 +16,8 @@
 #include "../../src/client/seat.h"
 #include "../../src/client/surface.h"
 // server
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/pointerconstraints_interface.h"
 #include "../../src/server/seat_interface.h"
 #include "../../src/server/surface_interface.h"
@@ -103,12 +103,14 @@ void TestPointerConstraints::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
+    m_compositor =
+        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
     QVERIFY(m_compositor);
     QVERIFY(m_compositor->isValid());
 
     m_pointerConstraints = registry.createPointerConstraints(registry.interface(Registry::Interface::PointerConstraintsUnstableV1).name,
-                                                             registry.interface(Registry::Interface::PointerConstraintsUnstableV1).version, this);
+                                                             registry.interface(Registry::Interface::PointerConstraintsUnstableV1).version,
+                                                             this);
     QVERIFY(m_pointerConstraints);
     QVERIFY(m_pointerConstraints->isValid());
 
@@ -124,10 +126,10 @@ void TestPointerConstraints::init()
 
 void TestPointerConstraints::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_compositor)
     CLEANUP(m_pointerConstraints)
@@ -173,7 +175,7 @@ void TestPointerConstraints::testLockPointer()
     QVERIFY(surface->isValid());
     QVERIFY(surfaceCreatedSpy.wait());
 
-    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->lockedPointer().isNull());
     QVERIFY(serverSurface->confinedPointer().isNull());
@@ -287,7 +289,7 @@ void TestPointerConstraints::testConfinePointer()
     QVERIFY(surface->isValid());
     QVERIFY(surfaceCreatedSpy.wait());
 
-    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->lockedPointer().isNull());
     QVERIFY(serverSurface->confinedPointer().isNull());

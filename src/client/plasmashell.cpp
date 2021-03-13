@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN PlasmaShell::Private
 {
 public:
@@ -42,11 +41,11 @@ private:
     static void autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface);
 
     PlasmaShellSurface *q;
-    static QVector<Private*> s_surfaces;
+    static QVector<Private *> s_surfaces;
     static const org_kde_plasma_surface_listener s_listener;
 };
 
-QVector<PlasmaShellSurface::Private*> PlasmaShellSurface::Private::s_surfaces;
+QVector<PlasmaShellSurface::Private *> PlasmaShellSurface::Private::s_surfaces;
 
 PlasmaShell::PlasmaShell(QObject *parent)
     : QObject(parent)
@@ -125,19 +124,19 @@ bool PlasmaShell::isValid() const
     return d->shell.isValid();
 }
 
-PlasmaShell::operator org_kde_plasma_shell*()
+PlasmaShell::operator org_kde_plasma_shell *()
 {
     return d->shell;
 }
 
-PlasmaShell::operator org_kde_plasma_shell*() const
+PlasmaShell::operator org_kde_plasma_shell *() const
 {
     return d->shell;
 }
 
 PlasmaShellSurface::Private::Private(PlasmaShellSurface *q)
-    : role(PlasmaShellSurface::Role::Normal),
-      q(q)
+    : role(PlasmaShellSurface::Role::Normal)
+    , q(q)
 {
     s_surfaces << this;
 }
@@ -168,21 +167,18 @@ void PlasmaShellSurface::Private::setup(org_kde_plasma_surface *s)
     org_kde_plasma_surface_add_listener(surface, &s_listener, this);
 }
 
-const org_kde_plasma_surface_listener PlasmaShellSurface::Private::s_listener = {
-    autoHidingPanelHiddenCallback,
-    autoHidingPanelShownCallback
-};
+const org_kde_plasma_surface_listener PlasmaShellSurface::Private::s_listener = {autoHidingPanelHiddenCallback, autoHidingPanelShownCallback};
 
 void PlasmaShellSurface::Private::autoHidingPanelHiddenCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface)
 {
-    auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
+    auto p = reinterpret_cast<PlasmaShellSurface::Private *>(data);
     Q_ASSERT(p->surface == org_kde_plasma_surface);
     Q_EMIT p->q->autoHidePanelHidden();
 }
 
 void PlasmaShellSurface::Private::autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface)
 {
-    auto p = reinterpret_cast<PlasmaShellSurface::Private*>(data);
+    auto p = reinterpret_cast<PlasmaShellSurface::Private *>(data);
     Q_ASSERT(p->surface == org_kde_plasma_surface);
     Q_EMIT p->q->autoHidePanelShown();
 }
@@ -227,17 +223,17 @@ bool PlasmaShellSurface::isValid() const
     return d->surface.isValid();
 }
 
-PlasmaShellSurface::operator org_kde_plasma_surface*()
+PlasmaShellSurface::operator org_kde_plasma_surface *()
 {
     return d->surface;
 }
 
-PlasmaShellSurface::operator org_kde_plasma_surface*() const
+PlasmaShellSurface::operator org_kde_plasma_surface *() const
 {
     return d->surface;
 }
 
-void PlasmaShellSurface::setPosition(const QPoint& point)
+void PlasmaShellSurface::setPosition(const QPoint &point)
 {
     Q_ASSERT(isValid());
     org_kde_plasma_surface_set_position(d->surface, point.x(), point.y());

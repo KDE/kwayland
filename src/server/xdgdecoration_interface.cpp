@@ -5,7 +5,6 @@
 */
 #include "xdgdecoration_interface.h"
 
-
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
@@ -14,31 +13,32 @@
 
 #include "wayland-xdg-decoration-server-protocol.h"
 
-#include <QtDebug>
 #include <QPointer>
+#include <QtDebug>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class XdgDecorationManagerInterface::Private : public Global::Private
 {
 public:
     Private(XdgDecorationManagerInterface *q, XdgShellInterface *shellInterface, Display *d);
 
-    QHash<XdgShellSurfaceInterface*, XdgDecorationInterface*> m_decorations;
+    QHash<XdgShellSurfaceInterface *, XdgDecorationInterface *> m_decorations;
     KWayland::Server::XdgShellStableInterface *m_shellInterface;
+
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void getToplevelDecorationCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * toplevel);
+    static void getToplevelDecorationCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *toplevel);
 
     XdgDecorationManagerInterface *q;
     static const struct zxdg_decoration_manager_v1_interface s_interface;
@@ -47,18 +47,17 @@ private:
 
 const quint32 XdgDecorationManagerInterface::Private::s_version = 1;
 
-XdgDecorationManagerInterface::XdgDecorationManagerInterface(Display *display, XdgShellInterface *shellInterface, QObject *parent):
-    Global(new Private(this, shellInterface, display), parent)
+XdgDecorationManagerInterface::XdgDecorationManagerInterface(Display *display, XdgShellInterface *shellInterface, QObject *parent)
+    : Global(new Private(this, shellInterface, display), parent)
 {
 }
 
-XdgDecorationManagerInterface::~XdgDecorationManagerInterface() {}
+XdgDecorationManagerInterface::~XdgDecorationManagerInterface()
+{
+}
 
 #ifndef K_DOXYGEN
-const struct zxdg_decoration_manager_v1_interface XdgDecorationManagerInterface::Private::s_interface = {
-    destroyCallback,
-    getToplevelDecorationCallback
-};
+const struct zxdg_decoration_manager_v1_interface XdgDecorationManagerInterface::Private::s_interface = {destroyCallback, getToplevelDecorationCallback};
 #endif
 
 void XdgDecorationManagerInterface::Private::destroyCallback(wl_client *client, wl_resource *resource)
@@ -67,9 +66,9 @@ void XdgDecorationManagerInterface::Private::destroyCallback(wl_client *client, 
     wl_resource_destroy(resource);
 }
 
-void XdgDecorationManagerInterface::Private::getToplevelDecorationCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * toplevel)
+void XdgDecorationManagerInterface::Private::getToplevelDecorationCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *toplevel)
 {
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     auto shell = p->m_shellInterface->getSurface(toplevel);
@@ -100,7 +99,7 @@ XdgDecorationManagerInterface::Private::Private(XdgDecorationManagerInterface *q
     : Global::Private(d, &zxdg_decoration_manager_v1_interface, s_version)
     , q(q)
 {
-    m_shellInterface = qobject_cast<XdgShellStableInterface*>(shellInterface);
+    m_shellInterface = qobject_cast<XdgShellStableInterface *>(shellInterface);
     Q_ASSERT(m_shellInterface);
 }
 
@@ -126,13 +125,14 @@ public:
     Private(XdgDecorationInterface *q, XdgDecorationManagerInterface *c, XdgShellSurfaceInterface *s, wl_resource *parentResource);
     ~Private();
     Mode m_requestedMode = Mode::Undefined;
-    XdgShellSurfaceInterface* m_shell;
+    XdgShellSurfaceInterface *m_shell;
 
 private:
     static void setModeCallback(wl_client *client, wl_resource *resource, uint32_t mode);
     static void unsetModeCallback(wl_client *client, wl_resource *resource);
 
-    XdgDecorationInterface *q_func() {
+    XdgDecorationInterface *q_func()
+    {
         return reinterpret_cast<XdgDecorationInterface *>(q);
     }
 
@@ -140,17 +140,15 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct zxdg_toplevel_decoration_v1_interface XdgDecorationInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    setModeCallback,
-    unsetModeCallback
-};
+const struct zxdg_toplevel_decoration_v1_interface XdgDecorationInterface::Private::s_interface = {resourceDestroyedCallback,
+                                                                                                   setModeCallback,
+                                                                                                   unsetModeCallback};
 #endif
 
 void XdgDecorationInterface::Private::setModeCallback(wl_client *client, wl_resource *resource, uint32_t mode_raw)
 {
     Q_UNUSED(client);
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     Mode mode = Mode::Undefined;
@@ -172,14 +170,17 @@ void XdgDecorationInterface::Private::setModeCallback(wl_client *client, wl_reso
 void XdgDecorationInterface::Private::unsetModeCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client);
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     p->m_requestedMode = Mode::Undefined;
     Q_EMIT p->q_func()->modeRequested(p->m_requestedMode);
 }
 
-XdgDecorationInterface::Private::Private(XdgDecorationInterface *q, XdgDecorationManagerInterface *c, XdgShellSurfaceInterface *shell, wl_resource *parentResource)
+XdgDecorationInterface::Private::Private(XdgDecorationInterface *q,
+                                         XdgDecorationManagerInterface *c,
+                                         XdgShellSurfaceInterface *shell,
+                                         wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &zxdg_toplevel_decoration_v1_interface, &s_interface)
     , m_shell(shell)
 {
@@ -198,11 +199,13 @@ XdgDecorationInterface::XdgDecorationInterface(XdgDecorationManagerInterface *pa
 {
 }
 
-XdgDecorationInterface::~XdgDecorationInterface() {}
+XdgDecorationInterface::~XdgDecorationInterface()
+{
+}
 
 void XdgDecorationInterface::configure(XdgDecorationInterface::Mode mode)
 {
-    switch(mode) {
+    switch (mode) {
     case Mode::ClientSide:
         zxdg_toplevel_decoration_v1_send_configure(resource(), ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
         break;
@@ -210,7 +213,7 @@ void XdgDecorationInterface::configure(XdgDecorationInterface::Mode mode)
         zxdg_toplevel_decoration_v1_send_configure(resource(), ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
         break;
     default:
-        //configure(Mode::Undefined) should no-op, as it semantically makes no sense
+        // configure(Mode::Undefined) should no-op, as it semantically makes no sense
         break;
     }
 }
@@ -221,7 +224,7 @@ XdgDecorationInterface::Mode XdgDecorationInterface::requestedMode() const
     return d->m_requestedMode;
 }
 
-XdgShellSurfaceInterface* XdgDecorationInterface::surface() const
+XdgShellSurfaceInterface *XdgDecorationInterface::surface() const
 {
     Q_D();
     return d->m_shell;
@@ -229,10 +232,8 @@ XdgShellSurfaceInterface* XdgDecorationInterface::surface() const
 
 XdgDecorationInterface::Private *XdgDecorationInterface::d_func() const
 {
-    return reinterpret_cast<XdgDecorationInterface::Private*>(d.data());
+    return reinterpret_cast<XdgDecorationInterface::Private *>(d.data());
 }
 
-
 }
 }
-

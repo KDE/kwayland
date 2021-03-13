@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Pointer;
 class RelativePointer;
@@ -107,8 +106,8 @@ public:
      **/
     RelativePointer *createRelativePointer(Pointer *pointer, QObject *parent = nullptr);
 
-    operator zwp_relative_pointer_manager_v1*();
-    operator zwp_relative_pointer_manager_v1*() const;
+    operator zwp_relative_pointer_manager_v1 *();
+    operator zwp_relative_pointer_manager_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -171,8 +170,8 @@ public:
      **/
     void destroy();
 
-    operator zwp_relative_pointer_v1*();
-    operator zwp_relative_pointer_v1*() const;
+    operator zwp_relative_pointer_v1 *();
+    operator zwp_relative_pointer_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -214,7 +213,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

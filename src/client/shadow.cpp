@@ -14,10 +14,8 @@
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 class Q_DECL_HIDDEN ShadowManager::Private
 {
 public:
@@ -88,12 +86,12 @@ void ShadowManager::removeShadow(Surface *surface)
     org_kde_kwin_shadow_manager_unset(d->manager, *surface);
 }
 
-ShadowManager::operator org_kde_kwin_shadow_manager*()
+ShadowManager::operator org_kde_kwin_shadow_manager *()
 {
     return d->manager;
 }
 
-ShadowManager::operator org_kde_kwin_shadow_manager*() const
+ShadowManager::operator org_kde_kwin_shadow_manager *() const
 {
     return d->manager;
 }
@@ -173,24 +171,18 @@ void Shadow::attach##__PART__(Buffer::Ptr buffer) \
 }
 // clang-format on
 
-attach(Left, left)
-attach(TopLeft, top_left)
-attach(Top, top)
-attach(TopRight, top_right)
-attach(Right, right)
-attach(BottomRight, bottom_right)
-attach(Bottom, bottom)
-attach(BottomLeft, bottom_left)
+attach(Left, left) attach(TopLeft, top_left) attach(Top, top) attach(TopRight, top_right) attach(Right, right) attach(BottomRight, bottom_right)
+    attach(Bottom, bottom) attach(BottomLeft, bottom_left)
 
 #undef attach
 #endif
 
-Shadow::operator org_kde_kwin_shadow*()
+        Shadow::operator org_kde_kwin_shadow *()
 {
     return d->shadow;
 }
 
-Shadow::operator org_kde_kwin_shadow*() const
+Shadow::operator org_kde_kwin_shadow *() const
 {
     return d->shadow;
 }

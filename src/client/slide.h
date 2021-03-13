@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Slide;
 class Surface;
@@ -110,8 +109,8 @@ public:
 
     void removeSlide(Surface *surface);
 
-    operator org_kde_kwin_slide_manager*();
-    operator org_kde_kwin_slide_manager*() const;
+    operator org_kde_kwin_slide_manager *();
+    operator org_kde_kwin_slide_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -193,8 +192,8 @@ public:
      */
     void setOffset(qint32 offset);
 
-    operator org_kde_kwin_slide*();
-    operator org_kde_kwin_slide*() const;
+    operator org_kde_kwin_slide *();
+    operator org_kde_kwin_slide *() const;
 
 private:
     friend class SlideManager;
@@ -202,7 +201,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

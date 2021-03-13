@@ -8,8 +8,8 @@
 #include "dataoffer_interface_p.h"
 #include "datasource_interface.h"
 #include "display.h"
-#include "resource_p.h"
 #include "pointer_interface.h"
+#include "resource_p.h"
 #include "seat_interface.h"
 #include "surface_interface.h"
 // Wayland
@@ -19,7 +19,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceInterface::Private : public Resource::Private
 {
 public:
@@ -50,8 +49,9 @@ public:
     QPointer<SurfaceInterface> proxyRemoteSurface;
 
 private:
-    DataDeviceInterface *q_func() {
-        return reinterpret_cast<DataDeviceInterface*>(q);
+    DataDeviceInterface *q_func()
+    {
+        return reinterpret_cast<DataDeviceInterface *>(q);
     }
     void startDrag(DataSourceInterface *dataSource, SurfaceInterface *origin, SurfaceInterface *icon, quint32 serial);
     void setSelection(DataSourceInterface *dataSource);
@@ -62,11 +62,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_data_device_interface DataDeviceInterface::Private::s_interface = {
-    startDragCallback,
-    setSelectionCallback,
-    resourceDestroyedCallback
-};
+const struct wl_data_device_interface DataDeviceInterface::Private::s_interface = {startDragCallback, setSelectionCallback, resourceDestroyedCallback};
 #endif
 
 DataDeviceInterface::Private::Private(SeatInterface *seat, DataDeviceInterface *q, DataDeviceManagerInterface *manager, wl_resource *parentResource)
@@ -77,7 +73,12 @@ DataDeviceInterface::Private::Private(SeatInterface *seat, DataDeviceInterface *
 
 DataDeviceInterface::Private::~Private() = default;
 
-void DataDeviceInterface::Private::startDragCallback(wl_client *client, wl_resource *resource, wl_resource *source, wl_resource *origin, wl_resource *icon, uint32_t serial)
+void DataDeviceInterface::Private::startDragCallback(wl_client *client,
+                                                     wl_resource *resource,
+                                                     wl_resource *source,
+                                                     wl_resource *origin,
+                                                     wl_resource *icon,
+                                                     uint32_t serial)
 {
     Q_UNUSED(client)
     Q_UNUSED(serial)
@@ -105,7 +106,9 @@ void DataDeviceInterface::Private::startDrag(DataSourceInterface *dataSource, Su
     Q_Q(DataDeviceInterface);
     source = dataSource;
     if (dataSource) {
-        QObject::connect(dataSource, &Resource::aboutToBeUnbound, q, [this] { source = nullptr; });
+        QObject::connect(dataSource, &Resource::aboutToBeUnbound, q, [this] {
+            source = nullptr;
+        });
     }
     surface = origin;
     icon = i;
@@ -294,48 +297,44 @@ void DataDeviceInterface::updateDragTarget(SurfaceInterface *surface, quint32 se
     DataOfferInterface *offer = d->createDataOffer(source);
     d->drag.surface = surface;
     if (d->seat->isDragPointer()) {
-        d->drag.posConnection = connect(d->seat, &SeatInterface::pointerPosChanged, this,
-            [this] {
-                Q_D();
-                const QPointF pos = d->seat->dragSurfaceTransformation().map(d->seat->pointerPos());
-                wl_data_device_send_motion(d->resource, d->seat->timestamp(),
-                                        wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
-                client()->flush();
-            }
-        );
-    } else if (d->seat->isDragTouch()) {
-        d->drag.posConnection = connect(d->seat, &SeatInterface::touchMoved, this,
-            [this](qint32 id, quint32 serial, const QPointF &globalPosition) {
-                Q_D();
-                Q_UNUSED(id);
-                if (serial != d->drag.serial) {
-                    // different touch down has been moved
-                    return;
-                }
-                const QPointF pos = d->seat->dragSurfaceTransformation().map(globalPosition);
-                wl_data_device_send_motion(d->resource, d->seat->timestamp(),
-                                        wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
-                client()->flush();
-            }
-        );
-    }
-    d->drag.destroyConnection = connect(d->drag.surface, &QObject::destroyed, this,
-        [this] {
+        d->drag.posConnection = connect(d->seat, &SeatInterface::pointerPosChanged, this, [this] {
             Q_D();
-            if (d->resource) {
-                wl_data_device_send_leave(d->resource);
+            const QPointF pos = d->seat->dragSurfaceTransformation().map(d->seat->pointerPos());
+            wl_data_device_send_motion(d->resource, d->seat->timestamp(), wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
+            client()->flush();
+        });
+    } else if (d->seat->isDragTouch()) {
+        d->drag.posConnection = connect(d->seat, &SeatInterface::touchMoved, this, [this](qint32 id, quint32 serial, const QPointF &globalPosition) {
+            Q_D();
+            Q_UNUSED(id);
+            if (serial != d->drag.serial) {
+                // different touch down has been moved
+                return;
             }
-            if (d->drag.posConnection) {
-                disconnect(d->drag.posConnection);
-            }
-            d->drag = Private::Drag();
+            const QPointF pos = d->seat->dragSurfaceTransformation().map(globalPosition);
+            wl_data_device_send_motion(d->resource, d->seat->timestamp(), wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()));
+            client()->flush();
+        });
+    }
+    d->drag.destroyConnection = connect(d->drag.surface, &QObject::destroyed, this, [this] {
+        Q_D();
+        if (d->resource) {
+            wl_data_device_send_leave(d->resource);
         }
-    );
+        if (d->drag.posConnection) {
+            disconnect(d->drag.posConnection);
+        }
+        d->drag = Private::Drag();
+    });
 
     // TODO: handle touch position
     const QPointF pos = d->seat->dragSurfaceTransformation().map(d->seat->pointerPos());
-    wl_data_device_send_enter(d->resource, serial, surface->resource(),
-                              wl_fixed_from_double(pos.x()), wl_fixed_from_double(pos.y()), offer ? offer->resource() : nullptr);
+    wl_data_device_send_enter(d->resource,
+                              serial,
+                              surface->resource(),
+                              wl_fixed_from_double(pos.x()),
+                              wl_fixed_from_double(pos.y()),
+                              offer ? offer->resource() : nullptr);
     if (offer) {
         offer->d_func()->sendSourceActions();
         auto matchOffers = [source, offer] {
@@ -343,14 +342,14 @@ void DataDeviceInterface::updateDragTarget(SurfaceInterface *surface, quint32 se
             if (source->supportedDragAndDropActions().testFlag(offer->preferredDragAndDropAction())) {
                 action = offer->preferredDragAndDropAction();
             } else {
-                if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Copy) &&
-                    offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Copy)) {
+                if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Copy)
+                    && offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Copy)) {
                     action = DataDeviceManagerInterface::DnDAction::Copy;
-                } else if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Move) &&
-                    offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Move)) {
+                } else if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Move)
+                           && offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Move)) {
                     action = DataDeviceManagerInterface::DnDAction::Move;
-                } else if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Ask) &&
-                    offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Ask)) {
+                } else if (source->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Ask)
+                           && offer->supportedDragAndDropActions().testFlag(DataDeviceManagerInterface::DnDAction::Ask)) {
                     action = DataDeviceManagerInterface::DnDAction::Ask;
                 }
             }
@@ -378,7 +377,7 @@ void DataDeviceInterface::updateProxy(SurfaceInterface *remote)
 
 DataDeviceInterface::Private *DataDeviceInterface::d_func() const
 {
-    return reinterpret_cast<DataDeviceInterface::Private*>(d.data());
+    return reinterpret_cast<DataDeviceInterface::Private *>(d.data());
 }
 
 }

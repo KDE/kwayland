@@ -15,11 +15,8 @@ namespace KWayland
 {
 namespace Client
 {
-
 #ifndef K_DOXYGEN
-const struct wl_buffer_listener Buffer::Private::s_listener = {
-    Buffer::Private::releasedCallback
-};
+const struct wl_buffer_listener Buffer::Private::s_listener = {Buffer::Private::releasedCallback};
 #endif
 
 Buffer::Private::Private(Buffer *q, ShmPool *parent, wl_buffer *nativeBuffer, const QSize &size, int32_t stride, size_t offset, Format format)
@@ -48,7 +45,7 @@ void Buffer::Private::destroy()
 
 void Buffer::Private::releasedCallback(void *data, wl_buffer *buffer)
 {
-    auto b = reinterpret_cast<Buffer::Private*>(data);
+    auto b = reinterpret_cast<Buffer::Private *>(data);
     Q_ASSERT(b->nativeBuffer == buffer);
     b->q->setReleased(true);
 }
@@ -62,12 +59,12 @@ Buffer::~Buffer() = default;
 
 void Buffer::copy(const void *src)
 {
-    memcpy(address(), src, d->size.height()*d->stride);
+    memcpy(address(), src, d->size.height() * d->stride);
 }
 
 uchar *Buffer::address()
 {
-    return reinterpret_cast<uchar*>(d->shm->poolAddress()) + d->offset;
+    return reinterpret_cast<uchar *>(d->shm->poolAddress()) + d->offset;
 }
 
 wl_buffer *Buffer::buffer() const
@@ -75,12 +72,12 @@ wl_buffer *Buffer::buffer() const
     return d->nativeBuffer;
 }
 
-Buffer::operator wl_buffer*()
+Buffer::operator wl_buffer *()
 {
     return d->nativeBuffer;
 }
 
-Buffer::operator wl_buffer*() const
+Buffer::operator wl_buffer *() const
 {
     return d->nativeBuffer;
 }
@@ -122,7 +119,7 @@ Buffer::Format Buffer::format() const
 
 quint32 Buffer::getId(wl_buffer *b)
 {
-    return wl_proxy_get_id(reinterpret_cast<wl_proxy*>(b));
+    return wl_proxy_get_id(reinterpret_cast<wl_proxy *>(b));
 }
 
 }

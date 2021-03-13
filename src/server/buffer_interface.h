@@ -157,7 +157,7 @@ public:
     static BufferInterface *get(wl_resource *r);
 
 Q_SIGNALS:
-    void aboutToBeDestroyed(KWayland::Server::BufferInterface*);
+    void aboutToBeDestroyed(KWayland::Server::BufferInterface *);
     /**
      * Emitted when the size of the Buffer changes.
      * @since 5.3
@@ -174,6 +174,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::BufferInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::BufferInterface *)
 
 #endif

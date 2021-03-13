@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class OutputInterface;
 
 class DpmsManagerInterface::Private : public Global::Private
@@ -26,8 +25,9 @@ public:
 
 private:
     static void getDpmsCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *output);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 

@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Dpms;
 class Output;
@@ -102,8 +101,8 @@ public:
 
     Dpms *getDpms(Output *output, QObject *parent = nullptr);
 
-    operator org_kde_kwin_dpms_manager*();
-    operator org_kde_kwin_dpms_manager*() const;
+    operator org_kde_kwin_dpms_manager *();
+    operator org_kde_kwin_dpms_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -203,8 +202,8 @@ public:
      **/
     void requestMode(Mode mode);
 
-    operator org_kde_kwin_dpms*();
-    operator org_kde_kwin_dpms*() const;
+    operator org_kde_kwin_dpms *();
+    operator org_kde_kwin_dpms *() const;
 
 Q_SIGNALS:
     /**

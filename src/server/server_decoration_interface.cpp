@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ServerSideDecorationManagerInterface::Private : public Global::Private
 {
 public:
@@ -26,18 +25,19 @@ public:
 
     Mode defaultMode = Mode::None;
 
-    QVector<wl_resource*> resources;
+    QVector<wl_resource *> resources;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
-    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
-    void create(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
+    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
+    void create(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
 
     ServerSideDecorationManagerInterface *q;
     static const struct org_kde_kwin_server_decoration_manager_interface s_interface;
@@ -47,14 +47,12 @@ private:
 const quint32 ServerSideDecorationManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_server_decoration_manager_interface ServerSideDecorationManagerInterface::Private::s_interface = {
-    createCallback
-};
+const struct org_kde_kwin_server_decoration_manager_interface ServerSideDecorationManagerInterface::Private::s_interface = {createCallback};
 #endif
 
 void ServerSideDecorationManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    reinterpret_cast<Private*>(wl_resource_get_user_data(resource))->create(client, resource, id, surface);
+    reinterpret_cast<Private *>(wl_resource_get_user_data(resource))->create(client, resource, id, surface);
 }
 
 void ServerSideDecorationManagerInterface::Private::create(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
@@ -87,7 +85,8 @@ ServerSideDecorationManagerInterface::Private::Private(ServerSideDecorationManag
 {
 }
 
-namespace {
+namespace
+{
 static uint32_t modeWayland(ServerSideDecorationManagerInterface::Mode mode)
 {
     switch (mode) {
@@ -136,7 +135,7 @@ ServerSideDecorationManagerInterface::~ServerSideDecorationManagerInterface() = 
 
 ServerSideDecorationManagerInterface::Private *ServerSideDecorationManagerInterface::d_func() const
 {
-    return reinterpret_cast<ServerSideDecorationManagerInterface::Private*>(d.data());
+    return reinterpret_cast<ServerSideDecorationManagerInterface::Private *>(d.data());
 }
 
 void ServerSideDecorationManagerInterface::setDefaultMode(Mode mode)
@@ -152,7 +151,7 @@ void ServerSideDecorationManagerInterface::setDefaultMode(Mode mode)
 class ServerSideDecorationInterface::Private : public Resource::Private
 {
 public:
-    Private(ServerSideDecorationInterface *q, ServerSideDecorationManagerInterface *c, SurfaceInterface *surface,  wl_resource *parentResource);
+    Private(ServerSideDecorationInterface *q, ServerSideDecorationManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
     ~Private();
 
     ServerSideDecorationManagerInterface::Mode mode = ServerSideDecorationManagerInterface::Mode::None;
@@ -163,20 +162,18 @@ public:
 private:
     static void requestModeCallback(wl_client *client, wl_resource *resource, uint32_t mode);
 
-    ServerSideDecorationInterface *q_func() {
+    ServerSideDecorationInterface *q_func()
+    {
         return reinterpret_cast<ServerSideDecorationInterface *>(q);
     }
 
     static const struct org_kde_kwin_server_decoration_interface s_interface;
-    static QVector<Private*> s_all;
+    static QVector<Private *> s_all;
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_server_decoration_interface ServerSideDecorationInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    requestModeCallback
-};
-QVector<ServerSideDecorationInterface::Private*> ServerSideDecorationInterface::Private::s_all;
+const struct org_kde_kwin_server_decoration_interface ServerSideDecorationInterface::Private::s_interface = {resourceDestroyedCallback, requestModeCallback};
+QVector<ServerSideDecorationInterface::Private *> ServerSideDecorationInterface::Private::s_all;
 #endif
 
 void ServerSideDecorationInterface::Private::requestModeCallback(wl_client *client, wl_resource *resource, uint32_t mode)
@@ -203,14 +200,19 @@ void ServerSideDecorationInterface::Private::requestModeCallback(wl_client *clie
 
 ServerSideDecorationInterface *ServerSideDecorationInterface::Private::get(SurfaceInterface *s)
 {
-    auto it = std::find_if(s_all.constBegin(), s_all.constEnd(), [s] (Private *p) { return p->surface == s; });
+    auto it = std::find_if(s_all.constBegin(), s_all.constEnd(), [s](Private *p) {
+        return p->surface == s;
+    });
     if (it == s_all.constEnd()) {
         return nullptr;
     }
     return (*it)->q_func();
 }
 
-ServerSideDecorationInterface::Private::Private(ServerSideDecorationInterface *q, ServerSideDecorationManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource)
+ServerSideDecorationInterface::Private::Private(ServerSideDecorationInterface *q,
+                                                ServerSideDecorationManagerInterface *c,
+                                                SurfaceInterface *surface,
+                                                wl_resource *parentResource)
     : Resource::Private(q, c, parentResource, &org_kde_kwin_server_decoration_interface, &s_interface)
     , surface(surface)
 {
@@ -222,7 +224,9 @@ ServerSideDecorationInterface::Private::~Private()
     s_all.removeAll(this);
 }
 
-ServerSideDecorationInterface::ServerSideDecorationInterface(ServerSideDecorationManagerInterface *parent, SurfaceInterface *surface, wl_resource *parentResource)
+ServerSideDecorationInterface::ServerSideDecorationInterface(ServerSideDecorationManagerInterface *parent,
+                                                             SurfaceInterface *surface,
+                                                             wl_resource *parentResource)
     : Resource(new Private(this, parent, surface, parentResource))
 {
 }
@@ -251,7 +255,7 @@ SurfaceInterface *ServerSideDecorationInterface::surface() const
 
 ServerSideDecorationInterface::Private *ServerSideDecorationInterface::d_func() const
 {
-    return reinterpret_cast<ServerSideDecorationInterface::Private*>(d.data());
+    return reinterpret_cast<ServerSideDecorationInterface::Private *>(d.data());
 }
 
 ServerSideDecorationInterface *ServerSideDecorationInterface::get(SurfaceInterface *s)

@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /**

@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class PlasmaVirtualDesktop;
 
@@ -127,7 +126,7 @@ public:
     /**
      * @returns All the existent virtual desktops
      */
-    QList <PlasmaVirtualDesktop *> desktops() const;
+    QList<PlasmaVirtualDesktop *> desktops() const;
 
     /**
      * @returns How many rows the virtual desktops should be laid out into
@@ -135,8 +134,8 @@ public:
      */
     quint32 rows() const;
 
-    operator org_kde_plasma_virtual_desktop_management*();
-    operator org_kde_plasma_virtual_desktop_management*() const;
+    operator org_kde_plasma_virtual_desktop_management *();
+    operator org_kde_plasma_virtual_desktop_management *() const;
 
 Q_SIGNALS:
     void removed();
@@ -225,7 +224,6 @@ public:
      */
     QString id() const;
 
-
     /**
      * @returns User readable name for the desktop.
      */
@@ -239,8 +237,8 @@ public:
      */
     bool isActive() const;
 
-    operator org_kde_plasma_virtual_desktop*();
-    operator org_kde_plasma_virtual_desktop*() const;
+    operator org_kde_plasma_virtual_desktop *();
+    operator org_kde_plasma_virtual_desktop *() const;
 
 Q_SIGNALS:
     /**
@@ -276,7 +274,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

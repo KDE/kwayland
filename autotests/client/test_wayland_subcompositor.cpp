@@ -76,7 +76,7 @@ void TestSubCompositor::init()
     QVERIFY(m_queue->isValid());
 
     KWayland::Client::Registry registry;
-    QSignalSpy subCompositorSpy(&registry, SIGNAL(subCompositorAnnounced(quint32,quint32)));
+    QSignalSpy subCompositorSpy(&registry, SIGNAL(subCompositorAnnounced(quint32, quint32)));
     QVERIFY(subCompositorSpy.isValid());
     QVERIFY(!registry.eventQueue());
     registry.setEventQueue(m_queue);
@@ -141,7 +141,7 @@ void TestSubCompositor::testCast()
 {
     using namespace KWayland::Client;
     Registry registry;
-    QSignalSpy subCompositorSpy(&registry, SIGNAL(subCompositorAnnounced(quint32,quint32)));
+    QSignalSpy subCompositorSpy(&registry, SIGNAL(subCompositorAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -151,10 +151,10 @@ void TestSubCompositor::testCast()
     SubCompositor c;
     auto wlSubComp = registry.bindSubCompositor(subCompositorSpy.first().first().value<quint32>(), subCompositorSpy.first().last().value<quint32>());
     c.setup(wlSubComp);
-    QCOMPARE((wl_subcompositor*)c, wlSubComp);
+    QCOMPARE((wl_subcompositor *)c, wlSubComp);
 
     const SubCompositor &c2(c);
-    QCOMPARE((wl_subcompositor*)c2, wlSubComp);
+    QCOMPARE((wl_subcompositor *)c2, wlSubComp);
 }
 
 QTEST_GUILESS_MAIN(TestSubCompositor)

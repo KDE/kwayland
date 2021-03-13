@@ -5,8 +5,8 @@
 */
 #include "remote_access.h"
 #include "event_queue.h"
-#include "wayland_pointer_p.h"
 #include "logging.h"
+#include "wayland_pointer_p.h"
 // Wayland
 #include <wayland-remote-access-client-protocol.h>
 
@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class RemoteAccessManager::Private
 {
 public:
@@ -23,6 +22,7 @@ public:
 
     WaylandPointer<org_kde_kwin_remote_access_manager, org_kde_kwin_remote_access_manager_release> ram;
     EventQueue *queue = nullptr;
+
 private:
     static const struct org_kde_kwin_remote_access_manager_listener s_listener;
     static void bufferReadyCallback(void *data, org_kde_kwin_remote_access_manager *interface, qint32 buffer_id, wl_output *output);
@@ -35,13 +35,11 @@ RemoteAccessManager::Private::Private(RemoteAccessManager *q)
 {
 }
 
-const org_kde_kwin_remote_access_manager_listener RemoteAccessManager::Private::s_listener = {
-    bufferReadyCallback
-};
+const org_kde_kwin_remote_access_manager_listener RemoteAccessManager::Private::s_listener = {bufferReadyCallback};
 
 void RemoteAccessManager::Private::bufferReadyCallback(void *data, org_kde_kwin_remote_access_manager *interface, qint32 buffer_id, wl_output *output)
 {
-    auto ramp = reinterpret_cast<RemoteAccessManager::Private*>(data);
+    auto ramp = reinterpret_cast<RemoteAccessManager::Private *>(data);
     Q_ASSERT(ramp->ram == interface);
 
     // handle it fully internally, get the buffer immediately
@@ -97,11 +95,13 @@ EventQueue *RemoteAccessManager::eventQueue()
     return d->queue;
 }
 
-RemoteAccessManager::operator org_kde_kwin_remote_access_manager*() {
+RemoteAccessManager::operator org_kde_kwin_remote_access_manager *()
+{
     return d->ram;
 }
 
-RemoteAccessManager::operator org_kde_kwin_remote_access_manager*() const {
+RemoteAccessManager::operator org_kde_kwin_remote_access_manager *() const
+{
     return d->ram;
 }
 
@@ -117,8 +117,7 @@ public:
     void setup(org_kde_kwin_remote_buffer *buffer);
 
     static struct org_kde_kwin_remote_buffer_listener s_listener;
-    static void paramsCallback(void *data, org_kde_kwin_remote_buffer *rbuf,
-            qint32 fd, quint32 width, quint32 height, quint32 stride, quint32 format);
+    static void paramsCallback(void *data, org_kde_kwin_remote_buffer *rbuf, qint32 fd, quint32 width, quint32 height, quint32 stride, quint32 format);
 
     WaylandPointer<org_kde_kwin_remote_buffer, org_kde_kwin_remote_buffer_release> remotebuffer;
     RemoteBuffer *q;
@@ -135,8 +134,13 @@ RemoteBuffer::Private::Private(RemoteBuffer *q)
 {
 }
 
-void RemoteBuffer::Private::paramsCallback(void *data, org_kde_kwin_remote_buffer *rbuf,
-        qint32 fd, quint32 width, quint32 height, quint32 stride, quint32 format)
+void RemoteBuffer::Private::paramsCallback(void *data,
+                                           org_kde_kwin_remote_buffer *rbuf,
+                                           qint32 fd,
+                                           quint32 width,
+                                           quint32 height,
+                                           quint32 stride,
+                                           quint32 format)
 {
     Q_UNUSED(rbuf)
     Private *p = reinterpret_cast<Private *>(data);
@@ -149,9 +153,7 @@ void RemoteBuffer::Private::paramsCallback(void *data, org_kde_kwin_remote_buffe
 }
 
 #ifndef K_DOXYGEN
-org_kde_kwin_remote_buffer_listener RemoteBuffer::Private::s_listener = {
-    paramsCallback
-};
+org_kde_kwin_remote_buffer_listener RemoteBuffer::Private::s_listener = {paramsCallback};
 #endif
 
 void RemoteBuffer::Private::setup(org_kde_kwin_remote_buffer *rbuffer)
@@ -189,11 +191,13 @@ void RemoteBuffer::destroy()
     d->remotebuffer.destroy();
 }
 
-RemoteBuffer::operator org_kde_kwin_remote_buffer*() {
+RemoteBuffer::operator org_kde_kwin_remote_buffer *()
+{
     return d->remotebuffer;
 }
 
-RemoteBuffer::operator org_kde_kwin_remote_buffer*() const {
+RemoteBuffer::operator org_kde_kwin_remote_buffer *() const
+{
     return d->remotebuffer;
 }
 
@@ -226,7 +230,6 @@ quint32 RemoteBuffer::format() const
 {
     return d->format;
 }
-
 
 }
 }

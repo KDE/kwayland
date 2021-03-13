@@ -5,8 +5,8 @@
 */
 #include "slide.h"
 #include "event_queue.h"
-#include "wayland_pointer_p.h"
 #include "surface.h"
+#include "wayland_pointer_p.h"
 
 #include <wayland-slide-client-protocol.h>
 
@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN SlideManager::Private
 {
 public:
@@ -62,11 +61,13 @@ EventQueue *SlideManager::eventQueue()
     return d->queue;
 }
 
-SlideManager::operator org_kde_kwin_slide_manager*() {
+SlideManager::operator org_kde_kwin_slide_manager *()
+{
     return d->slidemanager;
 }
 
-SlideManager::operator org_kde_kwin_slide_manager*() const {
+SlideManager::operator org_kde_kwin_slide_manager *() const
+{
     return d->slidemanager;
 }
 
@@ -128,11 +129,13 @@ void Slide::destroy()
     d->slide.destroy();
 }
 
-Slide::operator org_kde_kwin_slide*() {
+Slide::operator org_kde_kwin_slide *()
+{
     return d->slide;
 }
 
-Slide::operator org_kde_kwin_slide*() const {
+Slide::operator org_kde_kwin_slide *() const
+{
     return d->slide;
 }
 
@@ -157,7 +160,5 @@ void Slide::setOffset(qint32 offset)
     org_kde_kwin_slide_set_offset(d->slide, offset);
 }
 
-
 }
 }
-

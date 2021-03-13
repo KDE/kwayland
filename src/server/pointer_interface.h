@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Cursor;
 class PointerGesturesUnstableV1Interface;
 class RelativePointerManagerUnstableV1Interface;
@@ -115,6 +114,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::PointerInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::PointerInterface *)
 
 #endif

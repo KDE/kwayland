@@ -6,15 +6,14 @@
 #ifndef KWAYLAND_SERVER_IDLE_INTERFACE_H
 #define KWAYLAND_SERVER_IDLE_INTERFACE_H
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
 #include "resource.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SeatInterface;
 

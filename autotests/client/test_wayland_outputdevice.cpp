@@ -5,8 +5,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
@@ -59,7 +59,6 @@ private:
     KWayland::Client::ConnectionThread *m_connection;
     KWayland::Client::EventQueue *m_queue;
     QThread *m_thread;
-
 };
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-output-0");
@@ -86,7 +85,6 @@ void TestWaylandOutputDevice::init()
     m_serverOutputDevice = m_display->createOutputDevice(this);
     m_serverOutputDevice->setUuid("1337");
 
-
     OutputDeviceInterface::Mode m0;
     m0.id = 0;
     m0.size = QSize(800, 600);
@@ -106,7 +104,10 @@ void TestWaylandOutputDevice::init()
 
     m_serverOutputDevice->setCurrentMode(1);
 
-    m_edid = QByteArray::fromBase64("AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHowK0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==");
+    m_edid = QByteArray::fromBase64(
+        "AP///////wAQrBbwTExLQQ4WAQOANCB46h7Frk80sSYOUFSlSwCBgKlA0QBxTwEBAQEBAQEBKDyAoHCwI0AwIDYABkQhAAAaAAAA/wBGNTI1TTI0NUFLTEwKAAAA/ABERUxMIFUyNDEwCiAgAAAA/"
+        "QA4TB5REQAKICAgICAgAToCAynxUJAFBAMCBxYBHxITFCAVEQYjCQcHZwMMABAAOC2DAQAA4wUDAQI6gBhxOC1AWCxFAAZEIQAAHgEdgBhxHBYgWCwlAAZEIQAAngEdAHJR0B4gbihVAAZEIQAAHow"
+        "K0Iog4C0QED6WAAZEIQAAGAAAAAAAAAAAAAAAAAAAPg==");
     m_serverOutputDevice->setEdid(m_edid);
 
     m_serialNumber = "23498723948723";
@@ -120,8 +121,8 @@ void TestWaylandOutputDevice::init()
     // 8 bit color ramps
     for (int i = 0; i < 256; i++) {
         quint16 val = (double)i / 255 * UINT16_MAX;
-        m_initColorCurves.red << val ;
-        m_initColorCurves.green << val ;
+        m_initColorCurves.red << val;
+        m_initColorCurves.green << val;
     }
     // 10 bit color ramp
     for (int i = 0; i < 320; i++) {
@@ -309,7 +310,8 @@ void TestWaylandOutputDevice::testModeChanges()
     // the one which got the current flag
     QCOMPARE(modeChangedSpy.last().first().value<OutputDevice::Mode>().size, QSize(800, 600));
     QCOMPARE(modeChangedSpy.last().first().value<OutputDevice::Mode>().refreshRate, 60000);
-    QCOMPARE(modeChangedSpy.last().first().value<OutputDevice::Mode>().flags, OutputDevice::Mode::Flags(OutputDevice::Mode::Flag::Current | OutputDevice::Mode::Flag::Preferred));
+    QCOMPARE(modeChangedSpy.last().first().value<OutputDevice::Mode>().flags,
+             OutputDevice::Mode::Flags(OutputDevice::Mode::Flag::Current | OutputDevice::Mode::Flag::Preferred));
     QVERIFY(!outputChanged.isEmpty());
     QCOMPARE(output.pixelSize(), QSize(800, 600));
     const QList<OutputDevice::Mode> &modes2 = output.modes();
@@ -369,8 +371,7 @@ void TestWaylandOutputDevice::testScaleChange_legacy()
     m_serverOutputDevice->setScale(2);
     QVERIFY(outputChanged.wait());
     QCOMPARE(output.scale(), 2);
-    QCOMPARE(output.scaleF(), 2.0); //check we're forward compatible
-
+    QCOMPARE(output.scaleF(), 2.0); // check we're forward compatible
 
     // change once more
     outputChanged.clear();
@@ -407,7 +408,7 @@ void TestWaylandOutputDevice::testScaleChange()
     m_serverOutputDevice->setScaleF(2.2);
     QVERIFY(outputChanged.wait());
 #if KWAYLANDSERVER_ENABLE_DEPRECATED_SINCE(5, 50)
-    QCOMPARE(output.scale(), 2); //check backwards compatibility works
+    QCOMPARE(output.scale(), 2); // check backwards compatibility works
 #endif
     QCOMPARE(wl_fixed_from_double(output.scaleF()), wl_fixed_from_double(2.2));
 
@@ -523,11 +524,11 @@ void TestWaylandOutputDevice::testTransform_data()
     QTest::addColumn<KWayland::Client::OutputDevice::Transform>("expected");
     QTest::addColumn<KWayland::Server::OutputDeviceInterface::Transform>("actual");
 
-    QTest::newRow("90")          << OutputDevice::Transform::Rotated90  << OutputDeviceInterface::Transform::Rotated90;
-    QTest::newRow("180")         << OutputDevice::Transform::Rotated180 << OutputDeviceInterface::Transform::Rotated180;
-    QTest::newRow("270")         << OutputDevice::Transform::Rotated270 << OutputDeviceInterface::Transform::Rotated270;
-    QTest::newRow("Flipped")     << OutputDevice::Transform::Flipped    << OutputDeviceInterface::Transform::Flipped;
-    QTest::newRow("Flipped 90")  << OutputDevice::Transform::Flipped90  << OutputDeviceInterface::Transform::Flipped90;
+    QTest::newRow("90") << OutputDevice::Transform::Rotated90 << OutputDeviceInterface::Transform::Rotated90;
+    QTest::newRow("180") << OutputDevice::Transform::Rotated180 << OutputDeviceInterface::Transform::Rotated180;
+    QTest::newRow("270") << OutputDevice::Transform::Rotated270 << OutputDeviceInterface::Transform::Rotated270;
+    QTest::newRow("Flipped") << OutputDevice::Transform::Flipped << OutputDeviceInterface::Transform::Flipped;
+    QTest::newRow("Flipped 90") << OutputDevice::Transform::Flipped90 << OutputDeviceInterface::Transform::Flipped90;
     QTest::newRow("Flipped 180") << OutputDevice::Transform::Flipped180 << OutputDeviceInterface::Transform::Flipped180;
     QTest::newRow("Flipped 280") << OutputDevice::Transform::Flipped270 << OutputDeviceInterface::Transform::Flipped270;
 }
@@ -550,7 +551,8 @@ void TestWaylandOutputDevice::testTransform()
     wl_display_flush(m_connection->display());
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    KWayland::Client::OutputDevice *output = registry.createOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>(), &registry);
+    KWayland::Client::OutputDevice *output =
+        registry.createOutputDevice(announced.first().first().value<quint32>(), announced.first().last().value<quint32>(), &registry);
     QSignalSpy outputChanged(output, &KWayland::Client::OutputDevice::done);
     QVERIFY(outputChanged.isValid());
     wl_display_flush(m_connection->display());
@@ -691,7 +693,6 @@ void TestWaylandOutputDevice::testDone()
     wl_display_flush(m_connection->display());
     QVERIFY(outputDone.wait());
 }
-
 
 QTEST_GUILESS_MAIN(TestWaylandOutputDevice)
 #include "test_wayland_outputdevice.moc"

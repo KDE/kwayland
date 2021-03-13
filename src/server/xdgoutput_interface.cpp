@@ -6,8 +6,8 @@
 #include "xdgoutput_interface.h"
 #include "display.h"
 #include "global_p.h"
-#include "resource_p.h"
 #include "output_interface.h"
+#include "resource_p.h"
 
 #include <wayland-xdg-output-server-protocol.h>
 
@@ -17,23 +17,23 @@ namespace KWayland
 {
 namespace Server
 {
-
 class XdgOutputManagerInterface::Private : public Global::Private
 {
 public:
     Private(XdgOutputManagerInterface *q, Display *d);
-    QHash<OutputInterface*, XdgOutputInterface*> outputs;
+    QHash<OutputInterface *, XdgOutputInterface *> outputs;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void getXdgOutputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * output);
+    static void getXdgOutputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *output);
 
     XdgOutputManagerInterface *q;
     static const struct zxdg_output_manager_v1_interface s_interface;
@@ -43,13 +43,10 @@ private:
 const quint32 XdgOutputManagerInterface::Private::s_version = 2;
 
 #ifndef K_DOXYGEN
-const struct zxdg_output_manager_v1_interface XdgOutputManagerInterface::Private::s_interface = {
-    destroyCallback,
-    getXdgOutputCallback
-};
+const struct zxdg_output_manager_v1_interface XdgOutputManagerInterface::Private::s_interface = {destroyCallback, getXdgOutputCallback};
 #endif
 
-class XdgOutputV1Interface: public Resource
+class XdgOutputV1Interface : public Resource
 {
 public:
     XdgOutputV1Interface(XdgOutputManagerInterface *parent, wl_resource *parentResource);
@@ -59,6 +56,7 @@ public:
     void setName(const QString &name);
     void setDescription(const QString &description);
     void done();
+
 private:
     class Private;
 };
@@ -74,9 +72,8 @@ public:
     QString description;
     bool dirty = false;
     bool doneOnce = false;
-    QList<XdgOutputV1Interface*> resources;
+    QList<XdgOutputV1Interface *> resources;
 };
-
 
 XdgOutputManagerInterface::XdgOutputManagerInterface(Display *display, QObject *parent)
     : Global(new XdgOutputManagerInterface::Private(this, display), parent)
@@ -84,16 +81,17 @@ XdgOutputManagerInterface::XdgOutputManagerInterface(Display *display, QObject *
 }
 
 XdgOutputManagerInterface::~XdgOutputManagerInterface()
-{}
+{
+}
 
-XdgOutputInterface* XdgOutputManagerInterface::createXdgOutput(OutputInterface *output, QObject *parent)
+XdgOutputInterface *XdgOutputManagerInterface::createXdgOutput(OutputInterface *output, QObject *parent)
 {
     Q_D();
     if (!d->outputs.contains(output)) {
         auto xdgOutput = new XdgOutputInterface(parent);
         d->outputs[output] = xdgOutput;
-        //as XdgOutput lifespan is managed by user, delete our mapping when either
-        //it or the relevant Output gets deleted
+        // as XdgOutput lifespan is managed by user, delete our mapping when either
+        // it or the relevant Output gets deleted
         connect(output, &QObject::destroyed, this, [this, output]() {
             Q_D();
             d->outputs.remove(output);
@@ -102,14 +100,13 @@ XdgOutputInterface* XdgOutputManagerInterface::createXdgOutput(OutputInterface *
             Q_D();
             d->outputs.remove(output);
         });
-
     }
     return d->outputs[output];
 }
 
-XdgOutputManagerInterface::Private* XdgOutputManagerInterface::d_func() const
+XdgOutputManagerInterface::Private *XdgOutputManagerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 void XdgOutputManagerInterface::Private::destroyCallback(wl_client *client, wl_resource *resource)
@@ -118,7 +115,7 @@ void XdgOutputManagerInterface::Private::destroyCallback(wl_client *client, wl_r
     wl_resource_destroy(resource);
 }
 
-void XdgOutputManagerInterface::Private::getXdgOutputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * outputResource)
+void XdgOutputManagerInterface::Private::getXdgOutputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *outputResource)
 {
     auto d = cast(resource);
     auto output = OutputInterface::get(outputResource);
@@ -126,7 +123,7 @@ void XdgOutputManagerInterface::Private::getXdgOutputCallback(wl_client *client,
         return;
     }
     if (!d->outputs.contains(output)) {
-        return; //server hasn't created an XdgOutput for this output yet, give the client nothing
+        return; // server hasn't created an XdgOutput for this output yet, give the client nothing
     }
     auto iface = new XdgOutputV1Interface(d->q, resource);
     iface->create(d->display->getConnection(client), wl_resource_get_version(resource), id);
@@ -165,14 +162,15 @@ void XdgOutputManagerInterface::Private::unbind(wl_resource *resource)
     Q_UNUSED(resource)
 }
 
-XdgOutputInterface::XdgOutputInterface(QObject *parent):
-    QObject(parent),
-    d(new XdgOutputInterface::Private)
+XdgOutputInterface::XdgOutputInterface(QObject *parent)
+    : QObject(parent)
+    , d(new XdgOutputInterface::Private)
 {
 }
 
 XdgOutputInterface::~XdgOutputInterface()
-{}
+{
+}
 
 void XdgOutputInterface::setLogicalSize(const QSize &size)
 {
@@ -181,7 +179,7 @@ void XdgOutputInterface::setLogicalSize(const QSize &size)
     }
     d->size = size;
     d->dirty = true;
-    for(auto resource: d->resources) {
+    for (auto resource : d->resources) {
         resource->setLogicalSize(size);
     }
 }
@@ -198,7 +196,7 @@ void XdgOutputInterface::setLogicalPosition(const QPoint &pos)
     }
     d->pos = pos;
     d->dirty = true;
-    for(auto resource: d->resources) {
+    for (auto resource : d->resources) {
         resource->setLogicalPosition(pos);
     }
 }
@@ -225,7 +223,7 @@ void XdgOutputInterface::done()
         return;
     }
     d->dirty = false;
-    for(auto resource: d->resources) {
+    for (auto resource : d->resources) {
         resource->done();
     }
 }
@@ -251,7 +249,6 @@ void XdgOutputInterface::Private::resourceDisconnected(XdgOutputV1Interface *res
     resources.removeOne(resource);
 }
 
-
 class XdgOutputV1Interface::Private : public Resource::Private
 {
 public:
@@ -259,8 +256,8 @@ public:
     ~Private();
 
 private:
-
-    XdgOutputV1Interface *q_func() {
+    XdgOutputV1Interface *q_func()
+    {
         return reinterpret_cast<XdgOutputV1Interface *>(q);
     }
 
@@ -268,11 +265,13 @@ private:
 };
 
 XdgOutputV1Interface::XdgOutputV1Interface(XdgOutputManagerInterface *parent, wl_resource *parentResource)
-    :Resource(new XdgOutputV1Interface::Private(this, parent, parentResource))
-{}
+    : Resource(new XdgOutputV1Interface::Private(this, parent, parentResource))
+{
+}
 
 XdgOutputV1Interface::~XdgOutputV1Interface()
-{}
+{
+}
 
 void XdgOutputV1Interface::setLogicalSize(const QSize &size)
 {
@@ -321,9 +320,7 @@ void XdgOutputV1Interface::done()
 }
 
 #ifndef K_DOXYGEN
-const struct zxdg_output_v1_interface XdgOutputV1Interface::Private::s_interface = {
-    resourceDestroyedCallback
-};
+const struct zxdg_output_v1_interface XdgOutputV1Interface::Private::s_interface = {resourceDestroyedCallback};
 #endif
 
 XdgOutputV1Interface::Private::Private(XdgOutputV1Interface *q, XdgOutputManagerInterface *c, wl_resource *parentResource)
@@ -341,4 +338,3 @@ XdgOutputV1Interface::Private::~Private()
 
 }
 }
-

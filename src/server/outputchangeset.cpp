@@ -11,7 +11,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 OutputChangeSet::Private::Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent)
     : q(parent)
     , o(outputdevice)
@@ -36,7 +35,7 @@ OutputChangeSet::~OutputChangeSet() = default;
 
 OutputChangeSet::Private *OutputChangeSet::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 bool OutputChangeSet::enabledChanged() const

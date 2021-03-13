@@ -3,15 +3,14 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "idleinhibit_interface_p.h"
 #include "display.h"
+#include "idleinhibit_interface_p.h"
 #include "surface_interface_p.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 class Q_DECL_HIDDEN IdleInhibitManagerUnstableV1Interface::Private : public IdleInhibitManagerInterface::Private
 {
 public:
@@ -21,12 +20,13 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void createInhibitorCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
+    static void createInhibitorCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
 
     static const struct zwp_idle_inhibit_manager_v1_interface s_interface;
     static const quint32 s_version;
@@ -35,10 +35,7 @@ private:
 const quint32 IdleInhibitManagerUnstableV1Interface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct zwp_idle_inhibit_manager_v1_interface IdleInhibitManagerUnstableV1Interface::Private::s_interface = {
-    destroyCallback,
-    createInhibitorCallback
-};
+const struct zwp_idle_inhibit_manager_v1_interface IdleInhibitManagerUnstableV1Interface::Private::s_interface = {destroyCallback, createInhibitorCallback};
 #endif
 
 IdleInhibitManagerUnstableV1Interface::Private::Private(IdleInhibitManagerUnstableV1Interface *q, Display *d)
@@ -91,9 +88,7 @@ IdleInhibitManagerUnstableV1Interface::IdleInhibitManagerUnstableV1Interface(Dis
 IdleInhibitManagerUnstableV1Interface::~IdleInhibitManagerUnstableV1Interface() = default;
 
 #ifndef K_DOXYGEN
-const struct zwp_idle_inhibitor_v1_interface IdleInhibitorInterface::Private::s_interface = {
-    resourceDestroyedCallback
-};
+const struct zwp_idle_inhibitor_v1_interface IdleInhibitorInterface::Private::s_interface = {resourceDestroyedCallback};
 #endif
 
 IdleInhibitorInterface::Private::Private(IdleInhibitorInterface *q, IdleInhibitManagerInterface *c, wl_resource *parentResource)
@@ -118,7 +113,7 @@ IdleInhibitorInterface::~IdleInhibitorInterface() = default;
 
 IdleInhibitorInterface::Private *IdleInhibitorInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

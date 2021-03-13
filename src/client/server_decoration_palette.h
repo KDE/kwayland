@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Surface;
 class ServerSideDecorationPalette;
@@ -103,8 +102,8 @@ public:
 
     ServerSideDecorationPalette *create(Surface *surface, QObject *parent = nullptr);
 
-    operator org_kde_kwin_server_decoration_palette_manager*();
-    operator org_kde_kwin_server_decoration_palette_manager*() const;
+    operator org_kde_kwin_server_decoration_palette_manager *();
+    operator org_kde_kwin_server_decoration_palette_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -167,8 +166,8 @@ public:
      */
     void setPalette(const QString &palette);
 
-    operator org_kde_kwin_server_decoration_palette*();
-    operator org_kde_kwin_server_decoration_palette*() const;
+    operator org_kde_kwin_server_decoration_palette *();
+    operator org_kde_kwin_server_decoration_palette *() const;
 
 private:
     friend class ServerSideDecorationPaletteManager;
@@ -176,7 +175,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

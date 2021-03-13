@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 /**
  * Enum describing the interface versions the PointerGesturesInterface can support.
  *

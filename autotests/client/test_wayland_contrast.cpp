@@ -5,20 +5,20 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
+#include "../../src/client/contrast.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/region.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/surface.h"
-#include "../../src/client/contrast.h"
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
-#include "../../src/server/region_interface.h"
 #include "../../src/server/contrast_interface.h"
+#include "../../src/server/display.h"
+#include "../../src/server/region_interface.h"
 
 #include <wayland-util.h>
 
@@ -117,10 +117,10 @@ void TestContrast::init()
 
 void TestContrast::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_compositor)
     CLEANUP(m_contrastManager)
@@ -143,13 +143,13 @@ void TestContrast::cleanup()
 
 void TestContrast::testCreate()
 {
-    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
     QVERIFY(serverSurfaceCreated.isValid());
 
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
     QSignalSpy contrastChanged(serverSurface, SIGNAL(contrastChanged()));
 
     auto contrast = m_contrastManager->createContrast(surface.data(), surface.data());
@@ -183,7 +183,7 @@ void TestContrast::testSurfaceDestroy()
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
     QSignalSpy contrastChanged(serverSurface, &KWayland::Server::SurfaceInterface::contrastChanged);
     QVERIFY(contrastChanged.isValid());
 

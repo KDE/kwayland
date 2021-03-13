@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN DataSource::Private
 {
 public:
@@ -38,14 +37,8 @@ private:
     DataSource *q;
 };
 
-const wl_data_source_listener DataSource::Private::s_listener = {
-    targetCallback,
-    sendCallback,
-    cancelledCallback,
-    dndDropPerformedCallback,
-    dndFinishedCallback,
-    actionCallback
-};
+const wl_data_source_listener DataSource::Private::s_listener =
+    {targetCallback, sendCallback, cancelledCallback, dndDropPerformedCallback, dndFinishedCallback, actionCallback};
 
 DataSource::Private::Private(DataSource *q)
     : q(q)
@@ -54,21 +47,21 @@ DataSource::Private::Private(DataSource *q)
 
 void DataSource::Private::targetCallback(void *data, wl_data_source *dataSource, const char *mimeType)
 {
-    auto d = reinterpret_cast<DataSource::Private*>(data);
+    auto d = reinterpret_cast<DataSource::Private *>(data);
     Q_ASSERT(d->source == dataSource);
     Q_EMIT d->q->targetAccepts(QString::fromUtf8(mimeType));
 }
 
 void DataSource::Private::sendCallback(void *data, wl_data_source *dataSource, const char *mimeType, int32_t fd)
 {
-    auto d = reinterpret_cast<DataSource::Private*>(data);
+    auto d = reinterpret_cast<DataSource::Private *>(data);
     Q_ASSERT(d->source == dataSource);
     Q_EMIT d->q->sendDataRequested(QString::fromUtf8(mimeType), fd);
 }
 
 void DataSource::Private::cancelledCallback(void *data, wl_data_source *dataSource)
 {
-    auto d = reinterpret_cast<DataSource::Private*>(data);
+    auto d = reinterpret_cast<DataSource::Private *>(data);
     Q_ASSERT(d->source == dataSource);
     Q_EMIT d->q->cancelled();
 }
@@ -76,22 +69,22 @@ void DataSource::Private::cancelledCallback(void *data, wl_data_source *dataSour
 void DataSource::Private::dndDropPerformedCallback(void *data, wl_data_source *wl_data_source)
 {
     Q_UNUSED(wl_data_source)
-    auto d = reinterpret_cast<DataSource::Private*>(data);
+    auto d = reinterpret_cast<DataSource::Private *>(data);
     Q_EMIT d->q->dragAndDropPerformed();
 }
 
 void DataSource::Private::dndFinishedCallback(void *data, wl_data_source *wl_data_source)
 {
     Q_UNUSED(wl_data_source)
-    auto d = reinterpret_cast<DataSource::Private*>(data);
+    auto d = reinterpret_cast<DataSource::Private *>(data);
     Q_EMIT d->q->dragAndDropFinished();
 }
 
 void DataSource::Private::actionCallback(void *data, wl_data_source *wl_data_source, uint32_t dnd_action)
 {
     Q_UNUSED(wl_data_source)
-    auto d = reinterpret_cast<Private*>(data);
-    switch(dnd_action) {
+    auto d = reinterpret_cast<Private *>(data);
+    switch (dnd_action) {
     case WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY:
         d->setAction(DataDeviceManager::DnDAction::Copy);
         break;
@@ -170,12 +163,12 @@ void DataSource::offer(const QMimeType &mimeType)
     offer(mimeType.name());
 }
 
-DataSource::operator wl_data_source*() const
+DataSource::operator wl_data_source *() const
 {
     return d->source;
 }
 
-DataSource::operator wl_data_source*()
+DataSource::operator wl_data_source *()
 {
     return d->source;
 }

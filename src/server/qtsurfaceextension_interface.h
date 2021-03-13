@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 class QtExtendedSurfaceInterface;
@@ -35,7 +34,7 @@ public:
     virtual ~QtSurfaceExtensionInterface();
 
 Q_SIGNALS:
-    void surfaceCreated(KWayland::Server::QtExtendedSurfaceInterface*);
+    void surfaceCreated(KWayland::Server::QtExtendedSurfaceInterface *);
 
 private:
     friend class Display;

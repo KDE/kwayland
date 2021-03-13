@@ -3,9 +3,9 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "pointerconstraints_interface_p.h"
 #include "display.h"
 #include "pointer_interface.h"
+#include "pointerconstraints_interface_p.h"
 #include "region_interface.h"
 #include "surface_interface_p.h"
 
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class PointerConstraintsUnstableV1Interface::Private : public PointerConstraintsInterface::Private
 {
 public:
@@ -24,17 +23,31 @@ public:
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
-    template <class T>
-    void createConstraint(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *pointer, wl_resource *region, uint32_t lifetime);
+    template<class T>
+    void
+    createConstraint(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *pointer, wl_resource *region, uint32_t lifetime);
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void lockPointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface, wl_resource * pointer, wl_resource * region, uint32_t lifetime);
-    static void confinePointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface, wl_resource * pointer, wl_resource * region, uint32_t lifetime);
+    static void lockPointerCallback(wl_client *client,
+                                    wl_resource *resource,
+                                    uint32_t id,
+                                    wl_resource *surface,
+                                    wl_resource *pointer,
+                                    wl_resource *region,
+                                    uint32_t lifetime);
+    static void confinePointerCallback(wl_client *client,
+                                       wl_resource *resource,
+                                       uint32_t id,
+                                       wl_resource *surface,
+                                       wl_resource *pointer,
+                                       wl_resource *region,
+                                       uint32_t lifetime);
 
     PointerConstraintsUnstableV1Interface *q;
     static const struct zwp_pointer_constraints_v1_interface s_interface;
@@ -51,9 +64,10 @@ public:
 
 private:
     static void setCursorPositionHintCallback(wl_client *client, wl_resource *resource, wl_fixed_t surface_x, wl_fixed_t surface_y);
-    static void setRegionCallback(wl_client *client, wl_resource *resource, wl_resource * region);
+    static void setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region);
 
-    LockedPointerUnstableV1Interface *q_func() {
+    LockedPointerUnstableV1Interface *q_func()
+    {
         return reinterpret_cast<LockedPointerUnstableV1Interface *>(q);
     }
 
@@ -63,11 +77,9 @@ private:
 const quint32 PointerConstraintsUnstableV1Interface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct zwp_pointer_constraints_v1_interface PointerConstraintsUnstableV1Interface::Private::s_interface = {
-    destroyCallback,
-    lockPointerCallback,
-    confinePointerCallback
-};
+const struct zwp_pointer_constraints_v1_interface PointerConstraintsUnstableV1Interface::Private::s_interface = {destroyCallback,
+                                                                                                                 lockPointerCallback,
+                                                                                                                 confinePointerCallback};
 #endif
 
 void PointerConstraintsUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
@@ -76,8 +88,14 @@ void PointerConstraintsUnstableV1Interface::Private::destroyCallback(wl_client *
     wl_resource_destroy(resource);
 }
 
-template <class T>
-void PointerConstraintsUnstableV1Interface::Private::createConstraint(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *pointer, wl_resource *region, uint32_t lifetime)
+template<class T>
+void PointerConstraintsUnstableV1Interface::Private::createConstraint(wl_client *client,
+                                                                      wl_resource *resource,
+                                                                      uint32_t id,
+                                                                      wl_resource *surface,
+                                                                      wl_resource *pointer,
+                                                                      wl_resource *region,
+                                                                      uint32_t lifetime)
 {
     auto s = SurfaceInterface::get(surface);
     auto p = PointerInterface::get(pointer);
@@ -105,12 +123,24 @@ void PointerConstraintsUnstableV1Interface::Private::createConstraint(wl_client 
     s->d_func()->installPointerConstraint(constraint);
 }
 
-void PointerConstraintsUnstableV1Interface::Private::lockPointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *pointer, wl_resource *region, uint32_t lifetime)
+void PointerConstraintsUnstableV1Interface::Private::lockPointerCallback(wl_client *client,
+                                                                         wl_resource *resource,
+                                                                         uint32_t id,
+                                                                         wl_resource *surface,
+                                                                         wl_resource *pointer,
+                                                                         wl_resource *region,
+                                                                         uint32_t lifetime)
 {
     cast(resource)->createConstraint<LockedPointerUnstableV1Interface>(client, resource, id, surface, pointer, region, lifetime);
 }
 
-void PointerConstraintsUnstableV1Interface::Private::confinePointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *pointer, wl_resource *region, uint32_t lifetime)
+void PointerConstraintsUnstableV1Interface::Private::confinePointerCallback(wl_client *client,
+                                                                            wl_resource *resource,
+                                                                            uint32_t id,
+                                                                            wl_resource *surface,
+                                                                            wl_resource *pointer,
+                                                                            wl_resource *region,
+                                                                            uint32_t lifetime)
 {
     cast(resource)->createConstraint<ConfinedPointerUnstableV1Interface>(client, resource, id, surface, pointer, region, lifetime);
 }
@@ -147,14 +177,15 @@ PointerConstraintsUnstableV1Interface::PointerConstraintsUnstableV1Interface(Dis
 PointerConstraintsUnstableV1Interface::~PointerConstraintsUnstableV1Interface() = default;
 
 #ifndef K_DOXYGEN
-const struct zwp_locked_pointer_v1_interface LockedPointerUnstableV1Interface::Private::s_interface = {
-    resourceDestroyedCallback,
-    setCursorPositionHintCallback,
-    setRegionCallback
-};
+const struct zwp_locked_pointer_v1_interface LockedPointerUnstableV1Interface::Private::s_interface = {resourceDestroyedCallback,
+                                                                                                       setCursorPositionHintCallback,
+                                                                                                       setRegionCallback};
 #endif
 
-void LockedPointerUnstableV1Interface::Private::setCursorPositionHintCallback(wl_client *client, wl_resource *resource, wl_fixed_t surface_x, wl_fixed_t surface_y)
+void LockedPointerUnstableV1Interface::Private::setCursorPositionHintCallback(wl_client *client,
+                                                                              wl_resource *resource,
+                                                                              wl_fixed_t surface_x,
+                                                                              wl_fixed_t surface_y)
 {
     Q_UNUSED(client)
     auto p = cast<Private>(resource);
@@ -162,7 +193,7 @@ void LockedPointerUnstableV1Interface::Private::setCursorPositionHintCallback(wl
     p->hintIsSet = true;
 }
 
-void LockedPointerUnstableV1Interface::Private::setRegionCallback(wl_client *client, wl_resource *resource, wl_resource * region)
+void LockedPointerUnstableV1Interface::Private::setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region)
 {
     Q_UNUSED(client)
     auto p = cast<Private>(resource);
@@ -199,7 +230,7 @@ LockedPointerUnstableV1Interface::~LockedPointerUnstableV1Interface() = default;
 
 LockedPointerUnstableV1Interface::Private *LockedPointerUnstableV1Interface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 class ConfinedPointerUnstableV1Interface::Private : public ConfinedPointerInterface::Private
@@ -211,9 +242,10 @@ public:
     void updateConfined() override;
 
 private:
-    static void setRegionCallback(wl_client *client, wl_resource *resource, wl_resource * region);
+    static void setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region);
 
-    ConfinedPointerUnstableV1Interface *q_func() {
+    ConfinedPointerUnstableV1Interface *q_func()
+    {
         return reinterpret_cast<ConfinedPointerUnstableV1Interface *>(q);
     }
 
@@ -221,10 +253,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct zwp_confined_pointer_v1_interface ConfinedPointerUnstableV1Interface::Private::s_interface = {
-    resourceDestroyedCallback,
-    setRegionCallback
-};
+const struct zwp_confined_pointer_v1_interface ConfinedPointerUnstableV1Interface::Private::s_interface = {resourceDestroyedCallback, setRegionCallback};
 #endif
 
 void ConfinedPointerUnstableV1Interface::Private::setRegionCallback(wl_client *client, wl_resource *resource, wl_resource *region)
@@ -236,7 +265,9 @@ void ConfinedPointerUnstableV1Interface::Private::setRegionCallback(wl_client *c
     p->regionIsSet = true;
 }
 
-ConfinedPointerUnstableV1Interface::Private::Private(ConfinedPointerUnstableV1Interface *q, PointerConstraintsUnstableV1Interface *c, wl_resource *parentResource)
+ConfinedPointerUnstableV1Interface::Private::Private(ConfinedPointerUnstableV1Interface *q,
+                                                     PointerConstraintsUnstableV1Interface *c,
+                                                     wl_resource *parentResource)
     : ConfinedPointerInterface::Private(PointerConstraintsInterfaceVersion::UnstableV1, q, c, parentResource, &zwp_confined_pointer_v1_interface, &s_interface)
 {
 }
@@ -264,7 +295,7 @@ void ConfinedPointerUnstableV1Interface::Private::updateConfined()
 
 ConfinedPointerUnstableV1Interface::Private *ConfinedPointerUnstableV1Interface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

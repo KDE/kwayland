@@ -6,9 +6,9 @@
 #ifndef KWAYLAND_TOOLS_GENERATOR_H
 #define KWAYLAND_TOOLS_GENERATOR_H
 
-#include <QObject>
 #include <QMap>
 #include <QMutex>
+#include <QObject>
 #include <QThreadStorage>
 #include <QWaitCondition>
 #include <QXmlStreamReader>
@@ -19,7 +19,6 @@ namespace KWayland
 {
 namespace Tools
 {
-
 class Argument
 {
 public:
@@ -39,16 +38,20 @@ public:
         String,
     };
 
-    QString name() const {
+    QString name() const
+    {
         return m_name;
     }
-    Type type() const {
+    Type type() const
+    {
         return m_type;
     }
-    bool isNullAllowed() const {
+    bool isNullAllowed() const
+    {
         return m_allowNull;
     }
-    QString interface() const {
+    QString interface() const
+    {
         return m_inteface;
     }
     QString typeAsQt() const;
@@ -69,24 +72,29 @@ public:
     explicit Request(const QString &name);
     ~Request();
 
-    void addArgument(const Argument &arg) {
+    void addArgument(const Argument &arg)
+    {
         m_arguments << arg;
     }
 
-    QString name() const {
+    QString name() const
+    {
         return m_name;
     }
 
-    QVector<Argument> arguments() const {
+    QVector<Argument> arguments() const
+    {
         return m_arguments;
     }
 
-    bool isDestructor() const {
+    bool isDestructor() const
+    {
         return m_destructor;
     }
     bool isFactory() const;
 
-    void markAsDestructor() {
+    void markAsDestructor()
+    {
         m_destructor = true;
     }
 
@@ -103,15 +111,18 @@ public:
     explicit Event(const QString &name);
     ~Event();
 
-    void addArgument(const Argument &arg) {
+    void addArgument(const Argument &arg)
+    {
         m_arguments << arg;
     }
 
-    QString name() const {
+    QString name() const
+    {
         return m_name;
     }
 
-    QVector<Argument> arguments() const {
+    QVector<Argument> arguments() const
+    {
         return m_arguments;
     }
 
@@ -127,48 +138,61 @@ public:
     explicit Interface(const QXmlStreamAttributes &attributes);
     virtual ~Interface();
 
-    void addRequest(const Request &request) {
+    void addRequest(const Request &request)
+    {
         m_requests << request;
     }
-    void addEvent(const Event &event) {
+    void addEvent(const Event &event)
+    {
         m_events << event;
     }
 
-    QString name() const {
+    QString name() const
+    {
         return m_name;
     }
-    quint32 version() const {
+    quint32 version() const
+    {
         return m_version;
     }
-    QString kwaylandClientName() const {
+    QString kwaylandClientName() const
+    {
         return m_clientName;
     }
-    QString kwaylandServerName() const {
+    QString kwaylandServerName() const
+    {
         return m_clientName + QStringLiteral("Interface");
     }
 
-    QVector<Request> requests() const {
+    QVector<Request> requests() const
+    {
         return m_requests;
     }
 
-    QVector<Event> events() const {
+    QVector<Event> events() const
+    {
         return m_events;
     }
 
-    void markAsGlobal() {
+    void markAsGlobal()
+    {
         m_global = true;
     }
-    bool isGlobal() const {
+    bool isGlobal() const
+    {
         return m_global;
     }
-    void setFactory(Interface *factory) {
+    void setFactory(Interface *factory)
+    {
         m_factory = factory;
     }
-    Interface *factory() const {
+    Interface *factory() const
+    {
         return m_factory;
     }
 
-    bool isUnstableInterface() const {
+    bool isUnstableInterface() const
+    {
         return m_name.startsWith(QLatin1String("zwp"));
     }
 
@@ -182,7 +206,6 @@ private:
     Interface *m_factory;
 };
 
-
 class Generator : public QObject
 {
     Q_OBJECT
@@ -190,10 +213,12 @@ public:
     explicit Generator(QObject *parent = nullptr);
     virtual ~Generator();
 
-    void setXmlFileName(const QString &name) {
+    void setXmlFileName(const QString &name)
+    {
         m_xmlFileName = name;
     }
-    void setBaseFileName(const QString &name) {
+    void setBaseFileName(const QString &name)
+    {
         m_baseFileName = name;
     }
     void start();
@@ -259,7 +284,7 @@ private:
 
     QString projectToName() const;
 
-    QThreadStorage<QTextStream*> m_stream;
+    QThreadStorage<QTextStream *> m_stream;
     QString m_xmlFileName;
     enum class Project {
         Client,

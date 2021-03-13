@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "surface.h"
-#include "region.h"
 #include "output.h"
+#include "region.h"
 #include "wayland_pointer_p.h"
 
 #include <QGuiApplication>
@@ -19,7 +19,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Surface::Private
 {
 public:
@@ -35,7 +34,8 @@ public:
 
     void setup(wl_surface *s);
 
-    static QList<Surface*> s_surfaces;
+    static QList<Surface *> s_surfaces;
+
 private:
     void handleFrameCallback();
     static void frameCallback(void *data, wl_callback *callback, uint32_t time);
@@ -47,7 +47,7 @@ private:
     static const wl_surface_listener s_surfaceListener;
 };
 
-QList<Surface*> Surface::Private::s_surfaces = QList<Surface*>();
+QList<Surface *> Surface::Private::s_surfaces = QList<Surface *>();
 
 Surface::Private::Private(Surface *q)
     : q(q)
@@ -77,7 +77,7 @@ Surface *Surface::fromWindow(QWindow *window)
         return nullptr;
     }
     window->create();
-    wl_surface *s = reinterpret_cast<wl_surface*>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
+    wl_surface *s = reinterpret_cast<wl_surface *>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
     if (!s) {
         return nullptr;
     }
@@ -132,7 +132,7 @@ void Surface::Private::setup(wl_surface *s)
 void Surface::Private::frameCallback(void *data, wl_callback *callback, uint32_t time)
 {
     Q_UNUSED(time)
-    auto s = reinterpret_cast<Surface::Private*>(data);
+    auto s = reinterpret_cast<Surface::Private *>(data);
     if (callback) {
         wl_callback_destroy(callback);
     }
@@ -146,20 +146,15 @@ void Surface::Private::handleFrameCallback()
 }
 
 #ifndef K_DOXYGEN
-const struct wl_callback_listener Surface::Private::s_listener = {
-        frameCallback
-};
+const struct wl_callback_listener Surface::Private::s_listener = {frameCallback};
 
-const struct wl_surface_listener Surface::Private::s_surfaceListener = {
-        enterCallback,
-        leaveCallback
-};
+const struct wl_surface_listener Surface::Private::s_surfaceListener = {enterCallback, leaveCallback};
 #endif
 
 void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output *output)
 {
     Q_UNUSED(surface);
-    auto s = reinterpret_cast<Surface::Private*>(data);
+    auto s = reinterpret_cast<Surface::Private *>(data);
     Output *o = Output::get(output);
     if (!o) {
         return;
@@ -178,7 +173,7 @@ void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output 
 void Surface::Private::leaveCallback(void *data, wl_surface *surface, wl_output *output)
 {
     Q_UNUSED(surface);
-    auto s = reinterpret_cast<Surface::Private*>(data);
+    auto s = reinterpret_cast<Surface::Private *>(data);
     Output *o = Output::get(output);
     if (!o) {
         return;
@@ -283,18 +278,16 @@ void Surface::setSize(const QSize &size)
 
 Surface *Surface::get(wl_surface *native)
 {
-    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(),
-        [native](Surface *s) {
-            return s->d->surface == native;
-        }
-    );
+    auto it = std::find_if(Private::s_surfaces.constBegin(), Private::s_surfaces.constEnd(), [native](Surface *s) {
+        return s->d->surface == native;
+    });
     if (it != Private::s_surfaces.constEnd()) {
         return *(it);
     }
     return nullptr;
 }
 
-const QList< Surface* > &Surface::all()
+const QList<Surface *> &Surface::all()
 {
     return Private::s_surfaces;
 }
@@ -309,12 +302,12 @@ QSize Surface::size() const
     return d->size;
 }
 
-Surface::operator wl_surface*()
+Surface::operator wl_surface *()
 {
     return d->surface;
 }
 
-Surface::operator wl_surface*() const
+Surface::operator wl_surface *() const
 {
     return d->surface;
 }
@@ -322,7 +315,7 @@ Surface::operator wl_surface*() const
 quint32 Surface::id() const
 {
     wl_surface *s = *this;
-    return wl_proxy_get_id(reinterpret_cast<wl_proxy*>(s));
+    return wl_proxy_get_id(reinterpret_cast<wl_proxy *>(s));
 }
 
 qint32 Surface::scale() const

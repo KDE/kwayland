@@ -7,14 +7,13 @@
 #include "event_queue.h"
 #include "pointer.h"
 #include "wayland_pointer_p.h"
-#include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <QSizeF>
+#include <wayland-relativepointer-unstable-v1-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN RelativePointerManager::Private
 {
 public:
@@ -62,11 +61,13 @@ EventQueue *RelativePointerManager::eventQueue()
     return d->queue;
 }
 
-RelativePointerManager::operator zwp_relative_pointer_manager_v1*() {
+RelativePointerManager::operator zwp_relative_pointer_manager_v1 *()
+{
     return d->relativepointermanagerunstablev1;
 }
 
-RelativePointerManager::operator zwp_relative_pointer_manager_v1*() const {
+RelativePointerManager::operator zwp_relative_pointer_manager_v1 *() const
+{
     return d->relativepointermanagerunstablev1;
 }
 
@@ -97,10 +98,14 @@ public:
     WaylandPointer<zwp_relative_pointer_v1, zwp_relative_pointer_v1_destroy> relativepointerunstablev1;
 
 private:
-    static void relativeMotionCallback(void *data, zwp_relative_pointer_v1 *zwp_relative_pointer_v1,
-                                       uint32_t utime_hi, uint32_t utime_lo,
-                                       wl_fixed_t dx, wl_fixed_t dy,
-                                       wl_fixed_t dx_unaccel, wl_fixed_t dy_unaccel);
+    static void relativeMotionCallback(void *data,
+                                       zwp_relative_pointer_v1 *zwp_relative_pointer_v1,
+                                       uint32_t utime_hi,
+                                       uint32_t utime_lo,
+                                       wl_fixed_t dx,
+                                       wl_fixed_t dy,
+                                       wl_fixed_t dx_unaccel,
+                                       wl_fixed_t dy_unaccel);
 
     RelativePointer *q;
 
@@ -112,16 +117,18 @@ RelativePointer::Private::Private(RelativePointer *q)
 {
 }
 
-const zwp_relative_pointer_v1_listener RelativePointer::Private::s_listener = {
-    relativeMotionCallback
-};
+const zwp_relative_pointer_v1_listener RelativePointer::Private::s_listener = {relativeMotionCallback};
 
-void RelativePointer::Private::relativeMotionCallback(void *data, zwp_relative_pointer_v1 *zwp_relative_pointer_v1,
-                                                                uint32_t utime_hi, uint32_t utime_lo,
-                                                                wl_fixed_t dx, wl_fixed_t dy,
-                                                                wl_fixed_t dx_unaccel, wl_fixed_t dy_unaccel)
+void RelativePointer::Private::relativeMotionCallback(void *data,
+                                                      zwp_relative_pointer_v1 *zwp_relative_pointer_v1,
+                                                      uint32_t utime_hi,
+                                                      uint32_t utime_lo,
+                                                      wl_fixed_t dx,
+                                                      wl_fixed_t dy,
+                                                      wl_fixed_t dx_unaccel,
+                                                      wl_fixed_t dy_unaccel)
 {
-    auto p = reinterpret_cast<RelativePointer::Private*>(data);
+    auto p = reinterpret_cast<RelativePointer::Private *>(data);
     Q_ASSERT(p->relativepointerunstablev1 == zwp_relative_pointer_v1);
     const QSizeF delta(wl_fixed_to_double(dx), wl_fixed_to_double(dy));
     const QSizeF deltaNonAccel(wl_fixed_to_double(dx_unaccel), wl_fixed_to_double(dy_unaccel));
@@ -163,11 +170,13 @@ void RelativePointer::destroy()
     d->relativepointerunstablev1.destroy();
 }
 
-RelativePointer::operator zwp_relative_pointer_v1*() {
+RelativePointer::operator zwp_relative_pointer_v1 *()
+{
     return d->relativepointerunstablev1;
 }
 
-RelativePointer::operator zwp_relative_pointer_v1*() const {
+RelativePointer::operator zwp_relative_pointer_v1 *() const
+{
     return d->relativepointerunstablev1;
 }
 

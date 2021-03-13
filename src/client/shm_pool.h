@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 
 /**

@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ClientConnection::Private
 {
 public:
@@ -33,10 +32,10 @@ private:
     static void destroyListenerCallback(wl_listener *listener, void *data);
     ClientConnection *q;
     wl_listener listener;
-    static QVector<Private*> s_allClients;
+    static QVector<Private *> s_allClients;
 };
 
-QVector<ClientConnection::Private*> ClientConnection::Private::s_allClients;
+QVector<ClientConnection::Private *> ClientConnection::Private::s_allClients;
 
 ClientConnection::Private::Private(wl_client *c, Display *display, ClientConnection *q)
     : client(c)
@@ -61,12 +60,10 @@ ClientConnection::Private::~Private()
 void ClientConnection::Private::destroyListenerCallback(wl_listener *listener, void *data)
 {
     Q_UNUSED(listener)
-    wl_client *client = reinterpret_cast<wl_client*>(data);
-    auto it = std::find_if(s_allClients.constBegin(), s_allClients.constEnd(),
-        [client](Private *c) {
-            return c->client == client;
-        }
-    );
+    wl_client *client = reinterpret_cast<wl_client *>(data);
+    auto it = std::find_if(s_allClients.constBegin(), s_allClients.constEnd(), [client](Private *c) {
+        return c->client == client;
+    });
     Q_ASSERT(it != s_allClients.constEnd());
     auto p = (*it);
     auto q = p->q;
@@ -121,12 +118,12 @@ wl_client *ClientConnection::client()
     return d->client;
 }
 
-ClientConnection::operator wl_client*()
+ClientConnection::operator wl_client *()
 {
     return d->client;
 }
 
-ClientConnection::operator wl_client*() const
+ClientConnection::operator wl_client *() const
 {
     return d->client;
 }

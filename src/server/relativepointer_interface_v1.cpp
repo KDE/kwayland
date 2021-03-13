@@ -3,17 +3,16 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "relativepointer_interface_p.h"
 #include "display.h"
 #include "pointer_interface_p.h"
-#include <wayland-relativepointer-unstable-v1-server-protocol.h>
+#include "relativepointer_interface_p.h"
 #include <QSizeF>
+#include <wayland-relativepointer-unstable-v1-server-protocol.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class RelativePointerManagerUnstableV1Interface::Private : public RelativePointerManagerInterface::Private
 {
 public:
@@ -23,12 +22,13 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void getRelativePointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * pointer);
+    static void getRelativePointerCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *pointer);
 
     RelativePointerManagerUnstableV1Interface *q;
 
@@ -39,10 +39,8 @@ private:
 const quint32 RelativePointerManagerUnstableV1Interface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct zwp_relative_pointer_manager_v1_interface RelativePointerManagerUnstableV1Interface::Private::s_interface = {
-    destroyCallback,
-    getRelativePointerCallback
-};
+const struct zwp_relative_pointer_manager_v1_interface RelativePointerManagerUnstableV1Interface::Private::s_interface = {destroyCallback,
+                                                                                                                          getRelativePointerCallback};
 #endif
 
 void RelativePointerManagerUnstableV1Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
@@ -103,7 +101,8 @@ public:
     void relativeMotion(const QSizeF &delta, const QSizeF &deltaNonAccelerated, quint64 microseconds) override;
 
 private:
-    RelativePointerUnstableV1Interface *q_func() {
+    RelativePointerUnstableV1Interface *q_func()
+    {
         return reinterpret_cast<RelativePointerUnstableV1Interface *>(q);
     }
 
@@ -111,12 +110,12 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct zwp_relative_pointer_v1_interface RelativePointerUnstableV1Interface::Private::s_interface = {
-    resourceDestroyedCallback
-};
+const struct zwp_relative_pointer_v1_interface RelativePointerUnstableV1Interface::Private::s_interface = {resourceDestroyedCallback};
 #endif
 
-RelativePointerUnstableV1Interface::Private::Private(RelativePointerUnstableV1Interface *q, RelativePointerManagerUnstableV1Interface *c, wl_resource *parentResource)
+RelativePointerUnstableV1Interface::Private::Private(RelativePointerUnstableV1Interface *q,
+                                                     RelativePointerManagerUnstableV1Interface *c,
+                                                     wl_resource *parentResource)
     : RelativePointerInterface::Private(q, c, parentResource, &zwp_relative_pointer_v1_interface, &s_interface)
 {
 }
@@ -128,7 +127,9 @@ void RelativePointerUnstableV1Interface::Private::relativeMotion(const QSizeF &d
     if (!resource) {
         return;
     }
-    zwp_relative_pointer_v1_send_relative_motion(resource, (microseconds >> 32), microseconds,
+    zwp_relative_pointer_v1_send_relative_motion(resource,
+                                                 (microseconds >> 32),
+                                                 microseconds,
                                                  wl_fixed_from_double(delta.width()),
                                                  wl_fixed_from_double(delta.height()),
                                                  wl_fixed_from_double(deltaNonAccelerated.width()),

@@ -4,10 +4,10 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "shell_interface.h"
+#include "display.h"
 #include "generic_shell_surface_p.h"
 #include "global_p.h"
 #include "resource_p.h"
-#include "display.h"
 #include "surface_interface.h"
 
 #include <QTimer>
@@ -18,13 +18,12 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ShellInterface::Private : public Global::Private
 {
 public:
     Private(ShellInterface *q, Display *d);
 
-    QList<ShellSurfaceInterface*> surfaces;
+    QList<ShellSurfaceInterface *> surfaces;
 
 private:
     static void createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
@@ -45,11 +44,8 @@ ShellInterface::Private::Private(ShellInterface *q, Display *d)
 }
 
 #ifndef K_DOXYGEN
-const struct wl_shell_interface ShellInterface::Private::s_interface = {
-    createSurfaceCallback
-};
+const struct wl_shell_interface ShellInterface::Private::s_interface = {createSurfaceCallback};
 #endif
-
 
 class ShellSurfaceInterface::Private : public Resource::Private, public GenericShellSurface<ShellSurfaceInterface>
 {
@@ -73,7 +69,8 @@ public:
     bool acceptsKeyboardFocus = true;
     void setWindowMode(WindowMode newWindowMode);
 
-    ShellSurfaceInterface *q_func() {
+    ShellSurfaceInterface *q_func()
+    {
         return reinterpret_cast<ShellSurfaceInterface *>(q);
     }
 
@@ -81,12 +78,10 @@ private:
     // interface callbacks
     static void pongCallback(wl_client *client, wl_resource *resource, uint32_t serial);
     static void setToplevelCallback(wl_client *client, wl_resource *resource);
-    static void setTransientCallback(wl_client *client, wl_resource *resource, wl_resource *parent,
-                                     int32_t x, int32_t y, uint32_t flags);
-    static void setFullscreenCallback(wl_client *client, wl_resource *resource, uint32_t method,
-                                      uint32_t framerate, wl_resource *output);
-    static void setPopupCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial,
-                                wl_resource *parent, int32_t x, int32_t y, uint32_t flags);
+    static void setTransientCallback(wl_client *client, wl_resource *resource, wl_resource *parent, int32_t x, int32_t y, uint32_t flags);
+    static void setFullscreenCallback(wl_client *client, wl_resource *resource, uint32_t method, uint32_t framerate, wl_resource *output);
+    static void
+    setPopupCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, wl_resource *parent, int32_t x, int32_t y, uint32_t flags);
     static void setMaximizedCallback(wl_client *client, wl_resource *resource, wl_resource *output);
 
     void pong(quint32 serial);
@@ -115,28 +110,24 @@ void ShellInterface::Private::bind(wl_client *client, uint32_t version, uint32_t
 
 void ShellInterface::Private::createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    auto s = reinterpret_cast<ShellInterface::Private*>(wl_resource_get_user_data(resource));
+    auto s = reinterpret_cast<ShellInterface::Private *>(wl_resource_get_user_data(resource));
     s->createSurface(client, wl_resource_get_version(resource), id, SurfaceInterface::get(surface), resource);
 }
 
 void ShellInterface::Private::createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource)
 {
-    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(),
-        [surface](ShellSurfaceInterface *s) {
-            return surface == s->surface();
-        }
-    );
+    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(), [surface](ShellSurfaceInterface *s) {
+        return surface == s->surface();
+    });
     if (it != surfaces.constEnd()) {
         wl_resource_post_error(surface->resource(), WL_SHELL_ERROR_ROLE, "ShellSurface already created");
         return;
     }
     ShellSurfaceInterface *shellSurface = new ShellSurfaceInterface(q, surface, parentResource);
     surfaces << shellSurface;
-    QObject::connect(shellSurface, &ShellSurfaceInterface::destroyed, q,
-        [this, shellSurface] {
-            surfaces.removeAll(shellSurface);
-        }
-    );
+    QObject::connect(shellSurface, &ShellSurfaceInterface::destroyed, q, [this, shellSurface] {
+        surfaces.removeAll(shellSurface);
+    });
     shellSurface->d->create(display->getConnection(client), version, id);
     Q_EMIT q->surfaceCreated(shellSurface);
 }
@@ -154,18 +145,16 @@ ShellSurfaceInterface::Private::Private(ShellSurfaceInterface *q, ShellInterface
 }
 
 #ifndef K_DOXYGEN
-const struct wl_shell_surface_interface ShellSurfaceInterface::Private::s_interface = {
-    pongCallback,
-    moveCallback,
-    resizeCallback<wl_shell_surface_resize>,
-    setToplevelCallback,
-    setTransientCallback,
-    setFullscreenCallback,
-    setPopupCallback,
-    setMaximizedCallback,
-    setTitleCallback,
-    setAppIdCallback
-};
+const struct wl_shell_surface_interface ShellSurfaceInterface::Private::s_interface = {pongCallback,
+                                                                                       moveCallback,
+                                                                                       resizeCallback<wl_shell_surface_resize>,
+                                                                                       setToplevelCallback,
+                                                                                       setTransientCallback,
+                                                                                       setFullscreenCallback,
+                                                                                       setPopupCallback,
+                                                                                       setMaximizedCallback,
+                                                                                       setTitleCallback,
+                                                                                       setAppIdCallback};
 #endif
 
 ShellSurfaceInterface::ShellSurfaceInterface(ShellInterface *shell, SurfaceInterface *parent, wl_resource *parentResource)
@@ -246,8 +235,9 @@ void ShellSurfaceInterface::requestSize(const QSize &size)
     d->client->flush();
 }
 
-namespace {
-template <>
+namespace
+{
+template<>
 Qt::Edges edgesToQtEdges(wl_shell_surface_resize edges)
 {
     Qt::Edges qtEdges;
@@ -293,8 +283,7 @@ void ShellSurfaceInterface::Private::setToplevelCallback(wl_client *client, wl_r
     s->setWindowMode(WindowMode::Toplevel);
 }
 
-void ShellSurfaceInterface::Private::setTransientCallback(wl_client *client, wl_resource *resource, wl_resource *parent,
-                                                 int32_t x, int32_t y, uint32_t flags)
+void ShellSurfaceInterface::Private::setTransientCallback(wl_client *client, wl_resource *resource, wl_resource *parent, int32_t x, int32_t y, uint32_t flags)
 {
     Q_UNUSED(flags)
     auto s = cast<Private>(resource);
@@ -322,8 +311,7 @@ void ShellSurfaceInterface::Private::setAcceptsFocus(quint32 flags)
     }
 }
 
-void ShellSurfaceInterface::Private::setFullscreenCallback(wl_client *client, wl_resource *resource, uint32_t method,
-                                                  uint32_t framerate, wl_resource *output)
+void ShellSurfaceInterface::Private::setFullscreenCallback(wl_client *client, wl_resource *resource, uint32_t method, uint32_t framerate, wl_resource *output)
 {
     Q_UNUSED(method)
     Q_UNUSED(framerate)
@@ -356,8 +344,14 @@ void ShellSurfaceInterface::Private::setWindowMode(WindowMode newWindowMode)
     }
 }
 
-void ShellSurfaceInterface::Private::setPopupCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial,
-                                            wl_resource *parent, int32_t x, int32_t y, uint32_t flags)
+void ShellSurfaceInterface::Private::setPopupCallback(wl_client *client,
+                                                      wl_resource *resource,
+                                                      wl_resource *seat,
+                                                      uint32_t serial,
+                                                      wl_resource *parent,
+                                                      int32_t x,
+                                                      int32_t y,
+                                                      uint32_t flags)
 {
     Q_UNUSED(seat)
     Q_UNUSED(serial)
@@ -385,37 +379,44 @@ void ShellSurfaceInterface::Private::setMaximizedCallback(wl_client *client, wl_
     s->setWindowMode(WindowMode::Maximized);
 }
 
-SurfaceInterface *ShellSurfaceInterface::surface() const {
+SurfaceInterface *ShellSurfaceInterface::surface() const
+{
     Q_D();
     return d->surface;
 }
 
-ShellInterface *ShellSurfaceInterface::shell() const {
+ShellInterface *ShellSurfaceInterface::shell() const
+{
     Q_D();
-    return reinterpret_cast<ShellInterface*>(d->global);
+    return reinterpret_cast<ShellInterface *>(d->global);
 }
 
-QString ShellSurfaceInterface::title() const {
+QString ShellSurfaceInterface::title() const
+{
     Q_D();
     return d->title;
 }
 
-QByteArray ShellSurfaceInterface::windowClass() const {
+QByteArray ShellSurfaceInterface::windowClass() const
+{
     Q_D();
     return d->windowClass;
 }
 
-bool ShellSurfaceInterface::isFullscreen() const {
+bool ShellSurfaceInterface::isFullscreen() const
+{
     Q_D();
     return d->windowMode == Private::WindowMode::Fullscreen;
 }
 
-bool ShellSurfaceInterface::isToplevel() const {
+bool ShellSurfaceInterface::isToplevel() const
+{
     Q_D();
     return d->windowMode == Private::WindowMode::Toplevel;
 }
 
-bool ShellSurfaceInterface::isMaximized() const {
+bool ShellSurfaceInterface::isMaximized() const
+{
     Q_D();
     return d->windowMode == Private::WindowMode::Maximized;
 }
@@ -452,7 +453,7 @@ void ShellSurfaceInterface::popupDone()
     }
 }
 
-QPointer< SurfaceInterface > ShellSurfaceInterface::transientFor() const
+QPointer<SurfaceInterface> ShellSurfaceInterface::transientFor() const
 {
     Q_D();
     return d->transientFor;
@@ -460,7 +461,7 @@ QPointer< SurfaceInterface > ShellSurfaceInterface::transientFor() const
 
 ShellSurfaceInterface::Private *ShellSurfaceInterface::d_func() const
 {
-    return reinterpret_cast<ShellSurfaceInterface::Private*>(d.data());
+    return reinterpret_cast<ShellSurfaceInterface::Private *>(d.data());
 }
 
 }

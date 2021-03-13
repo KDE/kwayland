@@ -3,19 +3,18 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "xdgshell_p.h"
+#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
 #include "event_queue.h"
 #include "output.h"
 #include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
-#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
+#include "xdgshell_p.h"
 
 namespace KWayland
 {
 namespace Client
 {
-
 class XdgShellUnstableV5::Private : public XdgShell::Private
 {
 public:
@@ -26,12 +25,14 @@ public:
     XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) override;
 
-    using XdgShell::Private::operator xdg_wm_base*;
-    using XdgShell::Private::operator zxdg_shell_v6*;
-    operator xdg_shell*() override {
+    using XdgShell::Private::operator xdg_wm_base *;
+    using XdgShell::Private::operator zxdg_shell_v6 *;
+    operator xdg_shell *() override
+    {
         return xdgshellv5;
     }
-    operator xdg_shell*() const override {
+    operator xdg_shell *() const override
+    {
         return xdgshellv5;
     }
 
@@ -87,7 +88,8 @@ XdgShellSurface *XdgShellUnstableV5::Private::getXdgSurface(Surface *surface, QO
     return s;
 }
 
-XdgShellPopup *XdgShellUnstableV5::Private::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+XdgShellPopup *
+XdgShellUnstableV5::Private::getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
 {
     Q_ASSERT(isValid());
     XdgShellPopup *s = new XdgShellPopupUnstableV5(parent);
@@ -100,7 +102,7 @@ XdgShellPopup *XdgShellUnstableV5::Private::getXdgPopup(Surface *surface, Surfac
 }
 
 XdgShellUnstableV5::XdgShellUnstableV5(QObject *parent)
-    : XdgShell(new Private,  parent)
+    : XdgShell(new Private, parent)
 {
 }
 
@@ -117,13 +119,15 @@ public:
     void destroy() override;
     bool isValid() const override;
 
-    using XdgShellSurface::Private::operator zxdg_surface_v6*;
-    using XdgShellSurface::Private::operator zxdg_toplevel_v6*;
-    using XdgShellSurface::Private::operator xdg_toplevel*;
-    operator xdg_surface*() override {
+    using XdgShellSurface::Private::operator zxdg_surface_v6 *;
+    using XdgShellSurface::Private::operator zxdg_toplevel_v6 *;
+    using XdgShellSurface::Private::operator xdg_toplevel *;
+    operator xdg_surface *() override
+    {
         return xdgsurfacev5;
     }
-    operator xdg_surface*() const override {
+    operator xdg_surface *() const override
+    {
         return xdgsurfacev5;
     }
 
@@ -149,16 +153,18 @@ private:
     static const struct zxdg_surface_v5_listener s_listener;
 };
 
-const struct zxdg_surface_v5_listener XdgShellSurfaceUnstableV5::Private::s_listener = {
-    configureCallback,
-    closeCallback
-};
+const struct zxdg_surface_v5_listener XdgShellSurfaceUnstableV5::Private::s_listener = {configureCallback, closeCallback};
 
-void XdgShellSurfaceUnstableV5::Private::configureCallback(void *data, xdg_surface *xdg_surface, int32_t width, int32_t height, wl_array *wlStates, uint32_t serial)
+void XdgShellSurfaceUnstableV5::Private::configureCallback(void *data,
+                                                           xdg_surface *xdg_surface,
+                                                           int32_t width,
+                                                           int32_t height,
+                                                           wl_array *wlStates,
+                                                           uint32_t serial)
 {
-    auto s = reinterpret_cast<XdgShellSurfaceUnstableV5::Private*>(data);
+    auto s = reinterpret_cast<XdgShellSurfaceUnstableV5::Private *>(data);
     Q_ASSERT(s->xdgsurfacev5 == xdg_surface);
-    uint32_t *state = reinterpret_cast<uint32_t*>(wlStates->data);
+    uint32_t *state = reinterpret_cast<uint32_t *>(wlStates->data);
     size_t numStates = wlStates->size / sizeof(uint32_t);
     States states;
     for (size_t i = 0; i < numStates; i++) {
@@ -186,7 +192,7 @@ void XdgShellSurfaceUnstableV5::Private::configureCallback(void *data, xdg_surfa
 
 void XdgShellSurfaceUnstableV5::Private::closeCallback(void *data, xdg_surface *xdg_surface)
 {
-    auto s = reinterpret_cast<XdgShellSurfaceUnstableV5::Private*>(data);
+    auto s = reinterpret_cast<XdgShellSurfaceUnstableV5::Private *>(data);
     Q_ASSERT(s->xdgsurfacev5 == xdg_surface);
     Q_EMIT s->q->closeRequested();
 }
@@ -219,7 +225,6 @@ bool XdgShellSurfaceUnstableV5::Private::isValid() const
     return xdgsurfacev5.isValid();
 }
 
-
 void XdgShellSurfaceUnstableV5::Private::setTransientFor(XdgShellSurface *parent)
 {
     xdg_surface *parentSurface = nullptr;
@@ -229,12 +234,12 @@ void XdgShellSurfaceUnstableV5::Private::setTransientFor(XdgShellSurface *parent
     zxdg_surface_v5_set_parent(xdgsurfacev5, parentSurface);
 }
 
-void XdgShellSurfaceUnstableV5::Private::setTitle(const QString & title)
+void XdgShellSurfaceUnstableV5::Private::setTitle(const QString &title)
 {
     zxdg_surface_v5_set_title(xdgsurfacev5, title.toUtf8().constData());
 }
 
-void XdgShellSurfaceUnstableV5::Private::setAppId(const QByteArray & appId)
+void XdgShellSurfaceUnstableV5::Private::setAppId(const QByteArray &appId)
 {
     zxdg_surface_v5_set_app_id(xdgsurfacev5, appId.constData());
 }
@@ -313,13 +318,13 @@ void XdgShellSurfaceUnstableV5::Private::setMinimized()
 void XdgShellSurfaceUnstableV5::Private::setMaxSize(const QSize &size)
 {
     Q_UNUSED(size)
-    //TODO: notify an error?
+    // TODO: notify an error?
 }
 
 void XdgShellSurfaceUnstableV5::Private::setMinSize(const QSize &size)
 {
     Q_UNUSED(size)
-    //TODO: notify an error?
+    // TODO: notify an error?
 }
 
 XdgShellSurfaceUnstableV5::XdgShellSurfaceUnstableV5(QObject *parent)
@@ -339,13 +344,15 @@ public:
     void destroy() override;
     bool isValid() const override;
 
-    using XdgShellPopup::Private::operator xdg_surface*;
-    using XdgShellPopup::Private::operator zxdg_popup_v6*;
-    using XdgShellPopup::Private::operator zxdg_surface_v6*;
-    operator xdg_popup*() override {
+    using XdgShellPopup::Private::operator xdg_surface *;
+    using XdgShellPopup::Private::operator zxdg_popup_v6 *;
+    using XdgShellPopup::Private::operator zxdg_surface_v6 *;
+    operator xdg_popup *() override
+    {
         return xdgpopupv5;
     }
-    operator xdg_popup*() const override {
+    operator xdg_popup *() const override
+    {
         return xdgpopupv5;
     }
     WaylandPointer<xdg_popup, zxdg_popup_v5_destroy> xdgpopupv5;
@@ -355,13 +362,11 @@ private:
     static const struct zxdg_popup_v5_listener s_listener;
 };
 
-const struct zxdg_popup_v5_listener XdgShellPopupUnstableV5::Private::s_listener = {
-    popupDoneCallback
-};
+const struct zxdg_popup_v5_listener XdgShellPopupUnstableV5::Private::s_listener = {popupDoneCallback};
 
 void XdgShellPopupUnstableV5::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
 {
-    auto s = reinterpret_cast<XdgShellPopupUnstableV5::Private*>(data);
+    auto s = reinterpret_cast<XdgShellPopupUnstableV5::Private *>(data);
     Q_ASSERT(s->xdgpopupv5 == xdg_popup);
     Q_EMIT s->q->popupDone();
 }

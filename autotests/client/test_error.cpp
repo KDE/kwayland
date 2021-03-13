@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 // client
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
@@ -15,14 +15,14 @@
 #include "../../src/client/shell.h"
 #include "../../src/client/surface.h"
 // server
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
-#include "../../src/server/shell_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/plasmashell_interface.h"
+#include "../../src/server/shell_interface.h"
 
 #include <wayland-client-protocol.h>
 
-#include <errno.h>  // For EPROTO
+#include <errno.h> // For EPROTO
 
 using namespace KWayland::Client;
 using namespace KWayland::Server;
@@ -94,13 +94,10 @@ void ErrorTest::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name,
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    m_compositor =
+        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
     QVERIFY(m_compositor);
-    m_shell = registry.createShell(registry.interface(Registry::Interface::Shell).name,
-                                   registry.interface(Registry::Interface::Shell).version,
-                                   this);
+    m_shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, this);
     QVERIFY(m_shell);
     m_plasmaShell = registry.createPlasmaShell(registry.interface(Registry::Interface::PlasmaShell).name,
                                                registry.interface(Registry::Interface::PlasmaShell).version,
@@ -110,10 +107,10 @@ void ErrorTest::init()
 
 void ErrorTest::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_plasmaShell)
     CLEANUP(m_shell)

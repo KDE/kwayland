@@ -12,7 +12,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 /**
  * @class RemoteBufferInterface
  * @brief Internally used class. Holds data of passed buffer and client resource. Also controls buffer lifecycle.

@@ -4,20 +4,19 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "fullscreen_shell.h"
-#include "surface.h"
 #include "output.h"
+#include "surface.h"
 #include "wayland_pointer_p.h"
 
 #include <QDebug>
 // wayland
-#include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-client-protocol.h>
+#include <wayland-fullscreen-shell-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN FullscreenShell::Private
 {
 public:
@@ -36,9 +35,7 @@ private:
     FullscreenShell *q;
 };
 
-_wl_fullscreen_shell_listener FullscreenShell::Private::s_fullscreenShellListener = {
-    FullscreenShell::Private::capabilitiesAnnounce
-};
+_wl_fullscreen_shell_listener FullscreenShell::Private::s_fullscreenShellListener = {FullscreenShell::Private::capabilitiesAnnounce};
 
 FullscreenShell::Private::Private(FullscreenShell *q)
     : q(q)
@@ -55,7 +52,7 @@ void FullscreenShell::Private::setup(_wl_fullscreen_shell *s)
 
 void FullscreenShell::Private::capabilitiesAnnounce(void *data, _wl_fullscreen_shell *shell, uint32_t capability)
 {
-    auto s = reinterpret_cast<FullscreenShell::Private*>(data);
+    auto s = reinterpret_cast<FullscreenShell::Private *>(data);
     Q_ASSERT(shell == s->shell);
     s->handleCapabilities(capability);
 }

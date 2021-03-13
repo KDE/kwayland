@@ -6,8 +6,8 @@
 #ifndef WAYLAND_BUFFER_H
 #define WAYLAND_BUFFER_H
 
-#include <QSize>
 #include <QScopedPointer>
+#include <QSize>
 #include <QWeakPointer>
 
 #include <KWayland/Client/kwaylandclient_export.h>
@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class ShmPool;
 
 /**
@@ -91,8 +90,8 @@ public:
      **/
     Format format() const;
 
-    operator wl_buffer*();
-    operator wl_buffer*() const;
+    operator wl_buffer *();
+    operator wl_buffer *() const;
 
     typedef QWeakPointer<Buffer> Ptr;
 

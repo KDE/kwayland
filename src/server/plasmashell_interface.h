@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 class PlasmaShellSurfaceInterface;
@@ -47,7 +46,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a PlasmaShellSurfaceInterface got created.
      **/
-    void surfaceCreated(KWayland::Server::PlasmaShellSurfaceInterface*);
+    void surfaceCreated(KWayland::Server::PlasmaShellSurfaceInterface *);
 
 private:
     friend class Display;
@@ -161,7 +160,7 @@ public:
      * pass focus to the surface.
      * @since 5.28
      **/
-    //TODO KF6 rename to something generic
+    // TODO KF6 rename to something generic
     bool panelTakesFocus() const;
 
     /**

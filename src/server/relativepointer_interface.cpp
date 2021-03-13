@@ -9,8 +9,11 @@ namespace KWayland
 {
 namespace Server
 {
-
-RelativePointerManagerInterface::Private::Private(RelativePointerInterfaceVersion interfaceVersion, RelativePointerManagerInterface *q, Display *d, const wl_interface *interface, quint32 version)
+RelativePointerManagerInterface::Private::Private(RelativePointerInterfaceVersion interfaceVersion,
+                                                  RelativePointerManagerInterface *q,
+                                                  Display *d,
+                                                  const wl_interface *interface,
+                                                  quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
     , q(q)
@@ -32,10 +35,14 @@ RelativePointerInterfaceVersion RelativePointerManagerInterface::interfaceVersio
 
 RelativePointerManagerInterface::Private *RelativePointerManagerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
-RelativePointerInterface::Private::Private(RelativePointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
+RelativePointerInterface::Private::Private(RelativePointerInterface *q,
+                                           Global *c,
+                                           wl_resource *parentResource,
+                                           const wl_interface *interface,
+                                           const void *implementation)
     : Resource::Private(q, c, parentResource, interface, implementation)
 {
 }
@@ -63,7 +70,7 @@ void RelativePointerInterface::relativeMotion(const QSizeF &delta, const QSizeF 
 
 RelativePointerInterface::Private *RelativePointerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

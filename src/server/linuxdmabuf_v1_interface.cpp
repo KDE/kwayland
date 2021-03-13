@@ -14,7 +14,6 @@
 #include "wayland-linux-dmabuf-unstable-v1-server-protocol.h"
 #include "wayland-server-protocol.h"
 
-
 #include <QVector>
 
 #include <array>
@@ -25,11 +24,12 @@ namespace KWayland
 {
 namespace Server
 {
-
 class LinuxDmabufBuffer::Private
 {
 public:
-    Private(LinuxDmabufBuffer *_q) : q(_q) {
+    Private(LinuxDmabufBuffer *_q)
+        : q(_q)
+    {
         q->d = this;
     }
     virtual ~Private() = default;
@@ -64,10 +64,12 @@ public:
     }
     ~Private() override = default;
 
-    uint32_t format() const override {
+    uint32_t format() const override
+    {
         return m_format;
     }
-    QSize size() const override {
+    QSize size() const override
+    {
         return m_size;
     }
 
@@ -93,10 +95,13 @@ public:
     Private(V1Iface *q, Display *display);
     ~Private();
 
-    static const struct wl_buffer_interface *bufferImplementation() { return &s_bufferImplementation; }
+    static const struct wl_buffer_interface *bufferImplementation()
+    {
+        return &s_bufferImplementation;
+    }
     V1Iface::Impl *impl;
-    QHash<uint32_t, QSet<uint64_t> > supportedFormatsWithModifiers;
-    V1Iface * const q;
+    QHash<uint32_t, QSet<uint64_t>> supportedFormatsWithModifiers;
+    V1Iface *const q;
     static const uint32_t s_version;
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override final;
@@ -112,15 +117,22 @@ private:
         Params(V1Iface::Private *dmabufInterface, wl_client *client, uint32_t version, uint32_t id);
         ~Params();
 
-        void postNoMemory() { wl_resource_post_no_memory(m_resource); }
+        void postNoMemory()
+        {
+            wl_resource_post_no_memory(m_resource);
+        }
 
-        wl_resource *resource() const { return m_resource; }
+        wl_resource *resource() const
+        {
+            return m_resource;
+        }
 
         void add(int fd, uint32_t plane_idx, uint32_t offset, uint32_t stride, uint64_t modifier);
         void create(wl_client *client, uint32_t bufferId, const QSize &size, uint32_t format, uint32_t flags);
 
         static void destroy(wl_client *client, wl_resource *resource);
-        static void add(wl_client *client, wl_resource *resource, int fd, uint32_t plane_idx, uint32_t offset, uint32_t stride, uint32_t modifier_hi, uint32_t modifier_lo);
+        static void
+        add(wl_client *client, wl_resource *resource, int fd, uint32_t plane_idx, uint32_t offset, uint32_t stride, uint32_t modifier_hi, uint32_t modifier_lo);
         static void create(wl_client *client, wl_resource *resource, int width, int height, uint32_t format, uint32_t flags);
         static void createImmed(wl_client *client, wl_resource *resource, uint32_t new_id, int width, int height, uint32_t format, uint32_t flags);
 
@@ -138,8 +150,7 @@ private:
     static const struct wl_buffer_interface s_bufferImplementation;
 };
 
-void V1Iface::Private::Params::create(wl_client *client, wl_resource *resource,
-                               int width, int height, uint32_t format, uint32_t flags)
+void V1Iface::Private::Params::create(wl_client *client, wl_resource *resource, int width, int height, uint32_t format, uint32_t flags)
 {
     Q_UNUSED(client)
 
@@ -148,9 +159,7 @@ void V1Iface::Private::Params::create(wl_client *client, wl_resource *resource,
     params->create(client, 0, QSize(width, height), format, flags);
 }
 
-void V1Iface::Private::Params::createImmed(wl_client *client, wl_resource *resource,
-                                    uint32_t new_id, int width, int height,
-                                    uint32_t format, uint32_t flags)
+void V1Iface::Private::Params::createImmed(wl_client *client, wl_resource *resource, uint32_t new_id, int width, int height, uint32_t format, uint32_t flags)
 {
     Q_UNUSED(client)
 
@@ -160,22 +169,19 @@ void V1Iface::Private::Params::createImmed(wl_client *client, wl_resource *resou
 }
 
 #ifndef K_DOXYGEN
-const struct zwp_linux_dmabuf_v1_interface V1Iface::Private::s_implementation = {
-    [](wl_client *, wl_resource *resource) { wl_resource_destroy(resource); }, // unbind
-    createParamsCallback
-};
+const struct zwp_linux_dmabuf_v1_interface V1Iface::Private::s_implementation = {[](wl_client *, wl_resource *resource) {
+                                                                                     wl_resource_destroy(resource);
+                                                                                 }, // unbind
+                                                                                 createParamsCallback};
 
 const struct wl_buffer_interface V1Iface::Private::s_bufferImplementation = {
-    [](wl_client *, wl_resource *resource) { wl_resource_destroy(resource); } // destroy
+    [](wl_client *, wl_resource *resource) {
+        wl_resource_destroy(resource);
+    } // destroy
 };
 
 #ifndef K_DOXYGEN
-const struct zwp_linux_buffer_params_v1_interface V1Iface::Private::Params::s_interface = {
-    destroy,
-    add,
-    create,
-    createImmed
-};
+const struct zwp_linux_buffer_params_v1_interface V1Iface::Private::Params::s_interface = {destroy, add, create, createImmed};
 #endif
 
 V1Iface::Private::Params::Params(V1Iface::Private *dmabufInterface, wl_client *client, uint32_t version, uint32_t id)
@@ -186,10 +192,9 @@ V1Iface::Private::Params::Params(V1Iface::Private *dmabufInterface, wl_client *c
         return;
     }
 
-    wl_resource_set_implementation(m_resource, &s_interface, this,
-                                   [](wl_resource *resource) {
-                                       delete static_cast<V1Iface::Private::Params *>(wl_resource_get_user_data(resource));
-                                   });
+    wl_resource_set_implementation(m_resource, &s_interface, this, [](wl_resource *resource) {
+        delete static_cast<V1Iface::Private::Params *>(wl_resource_get_user_data(resource));
+    });
 
     for (auto &plane : m_planes) {
         plane.fd = -1;
@@ -217,17 +222,13 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
     const uint32_t height = size.height();
 
     if (m_createRequested) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_ALREADY_USED,
-                               "params was already used to create a wl_buffer");
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_ALREADY_USED, "params was already used to create a wl_buffer");
         return;
     }
     m_createRequested = true;
 
     if (m_planeCount == 0) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INCOMPLETE,
-                               "no dmabuf has been added to the params");
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INCOMPLETE, "no dmabuf has been added to the params");
         return;
     }
 
@@ -236,16 +237,12 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
         if (m_planes[i].fd != -1)
             continue;
 
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INCOMPLETE,
-                               "no dmabuf has been added for plane %i", i);
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INCOMPLETE, "no dmabuf has been added for plane %i", i);
         return;
     }
 
     if (width < 1 || height < 1) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INVALID_DIMENSIONS,
-                               "invalid width %d or height %d", width, height);
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INVALID_DIMENSIONS, "invalid width %d or height %d", width, height);
         return;
     }
 
@@ -253,16 +250,12 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
         auto &plane = m_planes[i];
 
         if (uint64_t(plane.offset) + plane.stride > UINT32_MAX) {
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS,
-                                   "size overflow for plane %i", i);
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "size overflow for plane %i", i);
             return;
         }
 
         if (i == 0 && uint64_t(plane.offset) + plane.stride * height > UINT32_MAX) {
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS,
-                                   "size overflow for plane %i", i);
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "size overflow for plane %i", i);
             return;
         }
 
@@ -272,27 +265,19 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
             continue;
 
         if (plane.offset >= size) {
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS,
-                                   "invalid offset %i for plane %i",
-                                   plane.offset, i);
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "invalid offset %i for plane %i", plane.offset, i);
             return;
         }
 
         if (plane.offset + plane.stride > size) {
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS,
-                                   "invalid stride %i for plane %i",
-                                   plane.stride, i);
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "invalid stride %i for plane %i", plane.stride, i);
             return;
         }
 
         // Only valid for first plane as other planes might be
         // sub-sampled according to fourcc format
         if (i == 0 && plane.offset + plane.stride * height > size) {
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS,
-                                   "invalid buffer stride or height for plane %i", i);
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "invalid buffer stride or height for plane %i", i);
             return;
         }
     }
@@ -304,10 +289,7 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
     for (uint32_t i = 0; i < m_planeCount; i++)
         planes << m_planes[i];
 
-    LinuxDmabufUnstableV1Buffer *buffer = m_dmabufInterface->impl->importBuffer(planes,
-                                                                                format,
-                                                                                size,
-                                                                                (V1Iface::Flags) flags);
+    LinuxDmabufUnstableV1Buffer *buffer = m_dmabufInterface->impl->importBuffer(planes, format, size, (V1Iface::Flags)flags);
     if (buffer) {
         // The buffer has ownership of the file descriptors now
         for (auto &plane : m_planes) {
@@ -315,19 +297,21 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
         }
 
         wl_resource *resource = wl_resource_create(client, &wl_buffer_interface, 1, bufferId);
-        if (!resource ) {
+        if (!resource) {
             postNoMemory();
             delete buffer;
             return;
         }
 
-        wl_resource_set_implementation(resource, m_dmabufInterface->q->bufferImplementation(), buffer,
+        wl_resource_set_implementation(resource,
+                                       m_dmabufInterface->q->bufferImplementation(),
+                                       buffer,
                                        [](wl_resource *resource) { // Destructor
-                                            delete static_cast<LinuxDmabufUnstableV1Buffer *>(wl_resource_get_user_data(resource));
+                                           delete static_cast<LinuxDmabufUnstableV1Buffer *>(wl_resource_get_user_data(resource));
                                        });
 
         // XXX Do we need this?
-        //buffer->setResource(resource);
+        // buffer->setResource(resource);
 
         // Send a 'created' event when the request is not for an immediate import, i.e. bufferId is zero
         if (bufferId == 0) {
@@ -342,9 +326,7 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
             // we choose to treat it as a fatal error and immediately kill the
             // client instead of creating an invalid handle and waiting for it
             // to be used.
-            wl_resource_post_error(m_resource,
-                                   ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INVALID_WL_BUFFER,
-                                   "importing the supplied dmabufs failed");
+            wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INVALID_WL_BUFFER, "importing the supplied dmabufs failed");
         }
     }
 }
@@ -352,17 +334,13 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
 void V1Iface::Private::Params::add(int fd, uint32_t plane_idx, uint32_t offset, uint32_t stride, uint64_t modifier)
 {
     if (m_createRequested) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_ALREADY_USED,
-                               "params was already used to create a wl_buffer");
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_ALREADY_USED, "params was already used to create a wl_buffer");
         ::close(fd);
         return;
     }
 
     if (plane_idx >= m_planes.size()) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_PLANE_IDX,
-                               "plane index %u is too high", plane_idx);
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_PLANE_IDX, "plane index %u is too high", plane_idx);
         ::close(fd);
         return;
     }
@@ -370,10 +348,7 @@ void V1Iface::Private::Params::add(int fd, uint32_t plane_idx, uint32_t offset, 
     auto &plane = m_planes[plane_idx];
 
     if (plane.fd != -1) {
-        wl_resource_post_error(m_resource,
-                               ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_PLANE_SET,
-                               "a dmabuf has already been added for plane %u",
-                               plane_idx);
+        wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_PLANE_SET, "a dmabuf has already been added for plane %u", plane_idx);
         ::close(fd);
         return;
     }
@@ -392,10 +367,14 @@ void V1Iface::Private::Params::destroy(wl_client *client, wl_resource *resource)
     wl_resource_destroy(resource);
 }
 
-void V1Iface::Private::Params::add(wl_client *client, wl_resource *resource,
-                            int fd, uint32_t plane_idx,
-                            uint32_t offset, uint32_t stride,
-                            uint32_t modifier_hi, uint32_t modifier_lo)
+void V1Iface::Private::Params::add(wl_client *client,
+                                   wl_resource *resource,
+                                   int fd,
+                                   uint32_t plane_idx,
+                                   uint32_t offset,
+                                   uint32_t stride,
+                                   uint32_t modifier_hi,
+                                   uint32_t modifier_lo)
 {
     Q_UNUSED(client)
 
@@ -408,8 +387,8 @@ const uint32_t V1Iface::Private::s_version = 3;
 #endif
 
 V1Iface::Private::Private(V1Iface *q, Display *display)
-    : Global::Private(display, &zwp_linux_dmabuf_v1_interface, s_version),
-      q(q)
+    : Global::Private(display, &zwp_linux_dmabuf_v1_interface, s_version)
+    , q(q)
 {
 }
 
@@ -463,7 +442,6 @@ void V1Iface::Private::createParamsCallback(wl_client *client, wl_resource *reso
     global->createParams(client, resource, id);
 }
 
-
 V1Iface::LinuxDmabufUnstableV1Interface(Display *display, QObject *parent)
     : Global(new Private(this, display), parent)
 {
@@ -476,7 +454,7 @@ void V1Iface::setImpl(V1Iface::Impl *impl)
     d_func()->impl = impl;
 }
 
-void V1Iface::setSupportedFormatsWithModifiers(QHash<uint32_t, QSet<uint64_t> > set)
+void V1Iface::setSupportedFormatsWithModifiers(QHash<uint32_t, QSet<uint64_t>> set)
 {
     d_func()->supportedFormatsWithModifiers = set;
 }
@@ -488,7 +466,7 @@ const struct wl_buffer_interface *V1Iface::bufferImplementation()
 
 V1Iface::Private *V1Iface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

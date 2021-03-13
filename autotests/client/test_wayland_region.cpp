@@ -12,8 +12,8 @@
 #include "../../src/client/event_queue.h"
 #include "../../src/client/region.h"
 #include "../../src/client/registry.h"
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/region_interface.h"
 
 class TestRegion : public QObject
@@ -82,7 +82,7 @@ void TestRegion::init()
     QVERIFY(m_queue->isValid());
 
     KWayland::Client::Registry registry;
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32,quint32)));
+    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
     QVERIFY(compositorSpy.isValid());
     QVERIFY(!registry.eventQueue());
     registry.setEventQueue(m_queue);
@@ -126,7 +126,7 @@ void TestRegion::testCreate()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface*)));
+    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface *)));
     QVERIFY(regionCreatedSpy.isValid());
 
     QScopedPointer<Region> region(m_compositor->createRegion());
@@ -134,7 +134,7 @@ void TestRegion::testCreate()
 
     QVERIFY(regionCreatedSpy.wait());
     QCOMPARE(regionCreatedSpy.count(), 1);
-    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface *>();
     QVERIFY(serverRegion);
     QCOMPARE(serverRegion->region(), QRegion());
     QCOMPARE(serverRegion->global(), m_compositorInterface);
@@ -144,7 +144,7 @@ void TestRegion::testCreateWithRegion()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface*)));
+    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface *)));
     QVERIFY(regionCreatedSpy.isValid());
 
     QScopedPointer<Region> region(m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));
@@ -152,7 +152,7 @@ void TestRegion::testCreateWithRegion()
 
     QVERIFY(regionCreatedSpy.wait());
     QCOMPARE(regionCreatedSpy.count(), 1);
-    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface *>();
     QVERIFY(serverRegion);
     QCOMPARE(serverRegion->region(), QRegion(0, 0, 10, 20));
     QVERIFY(serverRegion->parentResource());
@@ -162,7 +162,7 @@ void TestRegion::testCreateUniquePtr()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface*)));
+    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface *)));
     QVERIFY(regionCreatedSpy.isValid());
 
     std::unique_ptr<Region> region(m_compositor->createRegion(QRegion(0, 0, 10, 20)));
@@ -170,7 +170,7 @@ void TestRegion::testCreateUniquePtr()
 
     QVERIFY(regionCreatedSpy.wait());
     QCOMPARE(regionCreatedSpy.count(), 1);
-    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface *>();
     QVERIFY(serverRegion);
     QCOMPARE(serverRegion->region(), QRegion(0, 0, 10, 20));
 }
@@ -179,12 +179,12 @@ void TestRegion::testAdd()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface*)));
+    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface *)));
     QVERIFY(regionCreatedSpy.isValid());
 
     QScopedPointer<Region> region(m_compositor->createRegion());
     QVERIFY(regionCreatedSpy.wait());
-    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface *>();
 
     QSignalSpy regionChangedSpy(serverRegion, SIGNAL(regionChanged(QRegion)));
     QVERIFY(regionChangedSpy.isValid());
@@ -214,12 +214,12 @@ void TestRegion::testRemove()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface*)));
+    QSignalSpy regionCreatedSpy(m_compositorInterface, SIGNAL(regionCreated(KWayland::Server::RegionInterface *)));
     QVERIFY(regionCreatedSpy.isValid());
 
     std::unique_ptr<Region> region(m_compositor->createRegion(QRegion(0, 0, 100, 200)));
     QVERIFY(regionCreatedSpy.wait());
-    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<KWayland::Server::RegionInterface *>();
 
     QSignalSpy regionChangedSpy(serverRegion, SIGNAL(regionChanged(QRegion)));
     QVERIFY(regionChangedSpy.isValid());
@@ -280,7 +280,7 @@ void TestRegion::testDisconnect()
     QSignalSpy regionCreatedSpy(m_compositorInterface, &CompositorInterface::regionCreated);
     QVERIFY(regionCreatedSpy.isValid());
     QVERIFY(regionCreatedSpy.wait());
-    auto serverRegion = regionCreatedSpy.first().first().value<RegionInterface*>();
+    auto serverRegion = regionCreatedSpy.first().first().value<RegionInterface *>();
 
     // destroy client
     QSignalSpy clientDisconnectedSpy(serverRegion->client(), &ClientConnection::disconnected);

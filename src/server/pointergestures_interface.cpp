@@ -9,8 +9,11 @@ namespace KWayland
 {
 namespace Server
 {
-
-PointerGesturesInterface::Private::Private(PointerGesturesInterfaceVersion interfaceVersion, PointerGesturesInterface *q, Display *d, const wl_interface *interface, quint32 version)
+PointerGesturesInterface::Private::Private(PointerGesturesInterfaceVersion interfaceVersion,
+                                           PointerGesturesInterface *q,
+                                           Display *d,
+                                           const wl_interface *interface,
+                                           quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
     , q(q)
@@ -32,10 +35,15 @@ PointerGesturesInterfaceVersion PointerGesturesInterface::interfaceVersion() con
 
 PointerGesturesInterface::Private *PointerGesturesInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
-PointerSwipeGestureInterface::Private::Private(PointerSwipeGestureInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation, PointerInterface *pointer)
+PointerSwipeGestureInterface::Private::Private(PointerSwipeGestureInterface *q,
+                                               Global *c,
+                                               wl_resource *parentResource,
+                                               const wl_interface *interface,
+                                               const void *implementation,
+                                               PointerInterface *pointer)
     : Resource::Private(q, c, parentResource, interface, implementation)
     , pointer(pointer)
 {
@@ -58,10 +66,15 @@ PointerSwipeGestureInterface::~PointerSwipeGestureInterface() = default;
 
 PointerSwipeGestureInterface::Private *PointerSwipeGestureInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
-PointerPinchGestureInterface::Private::Private(PointerPinchGestureInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation, PointerInterface *pointer)
+PointerPinchGestureInterface::Private::Private(PointerPinchGestureInterface *q,
+                                               Global *c,
+                                               wl_resource *parentResource,
+                                               const wl_interface *interface,
+                                               const void *implementation,
+                                               PointerInterface *pointer)
     : Resource::Private(q, c, parentResource, interface, implementation)
     , pointer(pointer)
 {
@@ -84,7 +97,7 @@ PointerPinchGestureInterface::~PointerPinchGestureInterface() = default;
 
 PointerPinchGestureInterface::Private *PointerPinchGestureInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

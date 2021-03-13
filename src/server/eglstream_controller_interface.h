@@ -10,14 +10,13 @@
 #include "surface_interface.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
-#include <wayland-util.h>
 #include <QObject>
+#include <wayland-util.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /**
@@ -40,6 +39,7 @@ Q_SIGNALS:
      * Emitted when a new stream attach request is received.
      */
     void streamConsumerAttached(SurfaceInterface *surface, void *eglStream, wl_array *attribs);
+
 private:
     explicit EglStreamControllerInterface(Display *display, QObject *parent = nullptr);
 

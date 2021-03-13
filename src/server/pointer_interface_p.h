@@ -29,9 +29,9 @@ public:
     QPointer<SurfaceInterface> focusedChildSurface;
     QMetaObject::Connection destroyConnection;
     Cursor *cursor = nullptr;
-    QVector<RelativePointerInterface*> relativePointers;
-    QVector<PointerSwipeGestureInterface*> swipeGestures;
-    QVector<PointerPinchGestureInterface*> pinchGestures;
+    QVector<RelativePointerInterface *> relativePointers;
+    QVector<PointerSwipeGestureInterface *> swipeGestures;
+    QVector<PointerPinchGestureInterface *> pinchGestures;
 
     void sendLeave(SurfaceInterface *surface, quint32 serial);
     void sendEnter(SurfaceInterface *surface, const QPointF &parentSurfacePosition, quint32 serial);
@@ -52,13 +52,13 @@ public:
     void cancelPinchGesture(quint32 serial);
 
 private:
-    PointerInterface *q_func() {
+    PointerInterface *q_func()
+    {
         return reinterpret_cast<PointerInterface *>(q);
     }
     void setCursor(quint32 serial, SurfaceInterface *surface, const QPoint &hotspot);
     // interface
-    static void setCursorCallback(wl_client *client, wl_resource *resource, uint32_t serial,
-                                  wl_resource *surface, int32_t hotspot_x, int32_t hotspot_y);
+    static void setCursorCallback(wl_client *client, wl_resource *resource, uint32_t serial, wl_resource *surface, int32_t hotspot_x, int32_t hotspot_y);
 
     static const struct wl_pointer_interface s_interface;
 };

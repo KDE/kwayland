@@ -4,10 +4,10 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
-#include <QSignalSpy>
-#include <QThread>
 #include <QMimeType>
+#include <QSignalSpy>
+#include <QTest>
+#include <QThread>
 // KWin
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
@@ -16,8 +16,8 @@
 // Wayland
 #include <wayland-client-protocol.h>
 // system
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 class TestWaylandConnectionThread : public QObject
@@ -100,8 +100,7 @@ void TestWaylandConnectionThread::testConnectionFailure()
     QVERIFY(!connection->display());
 }
 
-static void registryHandleGlobal(void *data, struct wl_registry *registry,
-                                 uint32_t name, const char *interface, uint32_t version)
+static void registryHandleGlobal(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
 {
     Q_UNUSED(data)
     Q_UNUSED(registry)
@@ -117,10 +116,7 @@ static void registryHandleGlobalRemove(void *data, struct wl_registry *registry,
     Q_UNUSED(name)
 }
 
-static const struct wl_registry_listener s_registryListener = {
-    registryHandleGlobal,
-    registryHandleGlobalRemove
-};
+static const struct wl_registry_listener s_registryListener = {registryHandleGlobal, registryHandleGlobalRemove};
 
 void TestWaylandConnectionThread::testConnectionThread()
 {
@@ -151,7 +147,7 @@ void TestWaylandConnectionThread::testConnectionThread()
     connect(connection, &KWayland::Client::ConnectionThread::eventsRead, queue.data(), &KWayland::Client::EventQueue::dispatch, Qt::QueuedConnection);
 
     wl_registry *registry = wl_display_get_registry(display);
-    wl_proxy_set_queue((wl_proxy*)registry, *(queue.data()));
+    wl_proxy_set_queue((wl_proxy *)registry, *(queue.data()));
 
     wl_registry_add_listener(registry, &s_registryListener, this);
     wl_display_flush(display);

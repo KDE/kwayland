@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "region_interface.h"
-#include "resource_p.h"
 #include "compositor_interface.h"
+#include "resource_p.h"
 // Wayland
 #include <wayland-server.h>
 
@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class RegionInterface::Private : public Resource::Private
 {
 public:
@@ -22,8 +21,9 @@ public:
     QRegion qtRegion;
 
 private:
-    RegionInterface *q_func() {
-        return reinterpret_cast<RegionInterface*>(q);
+    RegionInterface *q_func()
+    {
+        return reinterpret_cast<RegionInterface *>(q);
     }
     void add(const QRect &rect);
     void subtract(const QRect &rect);
@@ -35,11 +35,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_region_interface RegionInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    addCallback,
-    subtractCallback
-};
+const struct wl_region_interface RegionInterface::Private::s_interface = {resourceDestroyedCallback, addCallback, subtractCallback};
 #endif
 
 RegionInterface::Private::Private(CompositorInterface *compositor, RegionInterface *q, wl_resource *parentResource)
@@ -98,7 +94,7 @@ RegionInterface *RegionInterface::get(wl_resource *native)
 
 RegionInterface::Private *RegionInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

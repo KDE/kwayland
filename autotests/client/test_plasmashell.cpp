@@ -7,20 +7,18 @@
 #include <QSignalSpy>
 #include <QTest>
 // KWayland
-#include "../../src/client/connection_thread.h"
 #include "../../src/client/compositor.h"
+#include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
+#include "../../src/client/plasmashell.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/surface.h"
-#include "../../src/client/plasmashell.h"
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/plasmashell_interface.h"
-
 
 using namespace KWayland::Client;
 using namespace KWayland::Server;
-
 
 class TestPlasmaShell : public QObject
 {
@@ -28,7 +26,6 @@ class TestPlasmaShell : public QObject
 private Q_SLOTS:
     void init();
     void cleanup();
-
 
     void testRole_data();
     void testRole();
@@ -102,23 +99,23 @@ void TestPlasmaShell::init()
     m_registry->setup();
 
     QVERIFY(interfacesAnnouncedSpy.wait());
-#define CREATE(variable, factory, iface) \
-    variable = m_registry->create##factory(m_registry->interface(Registry::Interface::iface).name, m_registry->interface(Registry::Interface::iface).version, this); \
+#define CREATE(variable, factory, iface)                                                                                                                       \
+    variable =                                                                                                                                                 \
+        m_registry->create##factory(m_registry->interface(Registry::Interface::iface).name, m_registry->interface(Registry::Interface::iface).version, this);  \
     QVERIFY(variable);
 
     CREATE(m_compositor, Compositor, Compositor)
     CREATE(m_plasmaShell, PlasmaShell, PlasmaShell)
 
 #undef CREATE
-
 }
 
 void TestPlasmaShell::cleanup()
 {
-#define DELETE(name) \
-    if (name) { \
-        delete name; \
-        name = nullptr; \
+#define DELETE(name)                                                                                                                                           \
+    if (name) {                                                                                                                                                \
+        delete name;                                                                                                                                           \
+        name = nullptr;                                                                                                                                        \
     }
     DELETE(m_plasmaShell)
     DELETE(m_compositor)
@@ -179,10 +176,10 @@ void TestPlasmaShell::testRole()
     QCOMPARE(surfaceCreatedSpy.count(), 1);
 
     // verify that we got a plasma shell surface
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QVERIFY(sps->surface());
-    QCOMPARE(sps->surface(), surfaceCreatedSpy.first().first().value<SurfaceInterface*>());
+    QCOMPARE(sps->surface(), surfaceCreatedSpy.first().first().value<SurfaceInterface *>());
     QCOMPARE(sps->shell(), m_plasmaShellInterface);
     QCOMPARE(PlasmaShellSurfaceInterface::get(sps->resource()), sps);
     QVERIFY(!PlasmaShellSurfaceInterface::get(nullptr));
@@ -224,7 +221,7 @@ void TestPlasmaShell::testPosition()
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
 
     // verify that we got a plasma shell surface
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QVERIFY(sps->surface());
 
@@ -263,7 +260,7 @@ void TestPlasmaShell::testSkipTaskbar()
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
 
     // verify that we got a plasma shell surface
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QVERIFY(sps->surface());
     QVERIFY(!sps->skipTaskbar());
@@ -298,7 +295,7 @@ void TestPlasmaShell::testSkipSwitcher()
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
 
     // verify that we got a plasma shell surface
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QVERIFY(sps->surface());
     QVERIFY(!sps->skipSwitcher());
@@ -344,7 +341,7 @@ void TestPlasmaShell::testPanelBehavior()
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
 
     // verify that we got a plasma shell surface
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QVERIFY(sps->surface());
     QCOMPARE(sps->panelBehavior(), PlasmaShellSurfaceInterface::PanelBehavior::AlwaysVisible);
@@ -379,7 +376,7 @@ void TestPlasmaShell::testAutoHidePanel()
     ps->setPanelBehavior(PlasmaShellSurface::PanelBehavior::AutoHide);
     QVERIFY(plasmaSurfaceCreatedSpy.wait());
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
     QCOMPARE(sps->panelBehavior(), PlasmaShellSurfaceInterface::PanelBehavior::AutoHide);
 
@@ -432,7 +429,7 @@ void TestPlasmaShell::testPanelTakesFocus()
     ps->setRole(PlasmaShellSurface::Role::Panel);
     QVERIFY(plasmaSurfaceCreatedSpy.wait());
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QSignalSpy plasmaSurfaceTakesFocusSpy(sps, &PlasmaShellSurfaceInterface::panelTakesFocusChanged);
 
     QVERIFY(sps);
@@ -463,7 +460,7 @@ void TestPlasmaShell::testDisconnect()
     // and get them on the server
     QVERIFY(plasmaSurfaceCreatedSpy.wait());
     QCOMPARE(plasmaSurfaceCreatedSpy.count(), 1);
-    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface*>();
+    auto sps = plasmaSurfaceCreatedSpy.first().first().value<PlasmaShellSurfaceInterface *>();
     QVERIFY(sps);
 
     // disconnect
@@ -498,7 +495,7 @@ void TestPlasmaShell::testWhileDestroying()
     QVERIFY(surfaceCreatedSpy.isValid());
     QScopedPointer<Surface> s(m_compositor->createSurface());
     QVERIFY(surfaceCreatedSpy.wait());
-    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
     QVERIFY(serverSurface);
 
     // create ShellSurface

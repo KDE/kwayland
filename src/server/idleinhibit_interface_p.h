@@ -6,8 +6,8 @@
 #ifndef KWAYLAND_SERVER_IDLEINHIBIT_INTERFACE_P_H
 #define KWAYLAND_SERVER_IDLEINHIBIT_INTERFACE_P_H
 
-#include "idleinhibit_interface.h"
 #include "global_p.h"
+#include "idleinhibit_interface.h"
 #include "resource_p.h"
 
 #include <wayland-idle-inhibit-unstable-v1-server-protocol.h>
@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Q_DECL_HIDDEN IdleInhibitManagerUnstableV1Interface : public IdleInhibitManagerInterface
 {
     Q_OBJECT
@@ -66,17 +65,15 @@ public:
     ~Private();
 
 private:
-
-    IdleInhibitorInterface *q_func() {
+    IdleInhibitorInterface *q_func()
+    {
         return reinterpret_cast<IdleInhibitorInterface *>(q);
     }
 
     static const struct zwp_idle_inhibitor_v1_interface s_interface;
 };
 
-
 }
 }
 
 #endif
-

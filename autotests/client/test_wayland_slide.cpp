@@ -12,10 +12,10 @@
 #include "../../src/client/event_queue.h"
 #include "../../src/client/region.h"
 #include "../../src/client/registry.h"
-#include "../../src/client/surface.h"
 #include "../../src/client/slide.h"
-#include "../../src/server/display.h"
+#include "../../src/client/surface.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/region_interface.h"
 #include "../../src/server/slide_interface.h"
 
@@ -114,10 +114,10 @@ void TestSlide::init()
 
 void TestSlide::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_compositor)
     CLEANUP(m_slideManager)
@@ -140,13 +140,13 @@ void TestSlide::cleanup()
 
 void TestSlide::testCreate()
 {
-    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
     QVERIFY(serverSurfaceCreated.isValid());
 
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
     QSignalSpy slideChanged(serverSurface, SIGNAL(slideOnShowHideChanged()));
 
     auto slide = m_slideManager->createSlide(surface.data(), surface.data());
@@ -175,7 +175,7 @@ void TestSlide::testSurfaceDestroy()
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface *>();
     QSignalSpy slideChanged(serverSurface, &SurfaceInterface::slideOnShowHideChanged);
     QVERIFY(slideChanged.isValid());
 

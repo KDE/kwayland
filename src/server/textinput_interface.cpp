@@ -3,23 +3,22 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "textinput_interface_p.h"
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
 #include "seat_interface_p.h"
 #include "surface_interface.h"
+#include "textinput_interface_p.h"
 
 #include <QVector>
 
-#include <wayland-text-server-protocol.h>
 #include <wayland-text-input-unstable-v2-server-protocol.h>
+#include <wayland-text-server-protocol.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 void TextInputInterface::Private::showInputPanelCallback(wl_client *client, wl_resource *resource)
 {
     auto p = cast<Private>(resource);
@@ -34,7 +33,7 @@ void TextInputInterface::Private::hideInputPanelCallback(wl_client *client, wl_r
     Q_EMIT p->q_func()->requestHideInputPanel();
 }
 
-void TextInputInterface::Private::setSurroundingTextCallback(wl_client *client, wl_resource *resource, const char * text, int32_t cursor, int32_t anchor)
+void TextInputInterface::Private::setSurroundingTextCallback(wl_client *client, wl_resource *resource, const char *text, int32_t cursor, int32_t anchor)
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(*p->client == client);
@@ -69,7 +68,7 @@ void TextInputInterface::Private::setCursorRectangleCallback(wl_client *client, 
     }
 }
 
-void TextInputInterface::Private::setPreferredLanguageCallback(wl_client *client, wl_resource *resource, const char * language)
+void TextInputInterface::Private::setPreferredLanguageCallback(wl_client *client, wl_resource *resource, const char *language)
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(*p->client == client);
@@ -227,7 +226,7 @@ bool TextInputInterface::isEnabled() const
 
 TextInputInterface::Private *TextInputInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 TextInputInterface::TextInputInterface(Private *p, QObject *parent)
@@ -252,7 +251,7 @@ TextInputInterfaceVersion TextInputManagerInterface::interfaceVersion() const
 
 TextInputManagerInterface::Private *TextInputManagerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

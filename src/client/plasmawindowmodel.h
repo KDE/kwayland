@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class PlasmaWindowManagement;
 class Surface;
 
@@ -68,32 +67,32 @@ public:
         IsDemandingAttention,
         SkipTaskbar,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsShadeable,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsShaded,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsMovable,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsResizable,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsVirtualDesktopChangeable,
         /**
-        * @since 5.22
-        */
+         * @since 5.22
+         */
         IsCloseable,
         /**
-        * @since 5.25
-        */
+         * @since 5.25
+         */
         Geometry,
         /**
          * @since 5.35
@@ -125,8 +124,7 @@ public:
     /**
      * Returns an index with internalPointer() pointing to a PlasmaWindow instance.
      **/
-    QModelIndex	index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
-
+    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
 
     /**
      * Request the window at this model row index be activated.

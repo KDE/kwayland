@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceManagerInterface;
 class DataOfferInterface;
 class DataSourceInterface;
@@ -81,7 +80,7 @@ public:
 
 Q_SIGNALS:
     void dragStarted();
-    void selectionChanged(KWayland::Server::DataSourceInterface*);
+    void selectionChanged(KWayland::Server::DataSourceInterface *);
     void selectionCleared();
 
 private:
@@ -95,6 +94,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::DataDeviceInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::DataDeviceInterface *)
 
 #endif

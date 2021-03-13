@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN EventQueue::Private
 {
 public:
@@ -79,12 +78,12 @@ void EventQueue::addProxy(wl_proxy *proxy)
     wl_proxy_set_queue(proxy, d->queue);
 }
 
-EventQueue::operator wl_event_queue*() const
+EventQueue::operator wl_event_queue *() const
 {
     return d->queue;
 }
 
-EventQueue::operator wl_event_queue*()
+EventQueue::operator wl_event_queue *()
 {
     return d->queue;
 }

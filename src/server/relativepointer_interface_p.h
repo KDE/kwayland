@@ -5,16 +5,14 @@
 */
 #ifndef KWAYLAND_SERVER_RELATIVEPOINTER_INTERFACE_P_H
 #define KWAYLAND_SERVER_RELATIVEPOINTER_INTERFACE_P_H
+#include "global_p.h"
 #include "relativepointer_interface.h"
 #include "resource_p.h"
-#include "global_p.h"
-
 
 namespace KWayland
 {
 namespace Server
 {
-
 class RelativePointerManagerInterface::Private : public Global::Private
 {
 public:
@@ -61,7 +59,8 @@ protected:
     Private(RelativePointerInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
 
 private:
-    RelativePointerInterface *q_func() {
+    RelativePointerInterface *q_func()
+    {
         return reinterpret_cast<RelativePointerInterface *>(q);
     }
 };

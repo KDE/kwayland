@@ -3,11 +3,11 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "textinput_interface_p.h"
 #include "display.h"
 #include "resource_p.h"
 #include "seat_interface_p.h"
 #include "surface_interface.h"
+#include "textinput_interface_p.h"
 
 #include <wayland-text-server-protocol.h>
 
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class TextInputUnstableV0Interface::Private : public TextInputInterface::Private
 {
 public:
@@ -35,7 +34,8 @@ public:
     void setCursorPosition(qint32 index, qint32 anchor) override;
     void keysymPressed(quint32 keysym, Qt::KeyboardModifiers modifiers) override;
     void keysymReleased(quint32 keysym, Qt::KeyboardModifiers modifiers) override;
-    TextInputInterfaceVersion interfaceVersion() const override {
+    TextInputInterfaceVersion interfaceVersion() const override
+    {
         return TextInputInterfaceVersion::UnstableV0;
     }
     void sendInputPanelState() override;
@@ -43,14 +43,15 @@ public:
 
 private:
     static const struct wl_text_input_interface s_interface;
-    TextInputUnstableV0Interface *q_func() {
+    TextInputUnstableV0Interface *q_func()
+    {
         return reinterpret_cast<TextInputUnstableV0Interface *>(q);
     }
 
-    static void activateCallback(wl_client *client, wl_resource *resource, wl_resource * seat, wl_resource * surface);
-    static void deactivateCallback(wl_client *client, wl_resource *resource, wl_resource * seat);
+    static void activateCallback(wl_client *client, wl_resource *resource, wl_resource *seat, wl_resource *surface);
+    static void deactivateCallback(wl_client *client, wl_resource *resource, wl_resource *seat);
     static void resetCallback(wl_client *client, wl_resource *resource);
-    static void setSurroundingTextUintCallback(wl_client *client, wl_resource *resource, const char * text, uint32_t cursor, uint32_t anchor);
+    static void setSurroundingTextUintCallback(wl_client *client, wl_resource *resource, const char *text, uint32_t cursor, uint32_t anchor);
     static void commitStateCallback(wl_client *client, wl_resource *resource, uint32_t serial);
     static void invokeActionCallback(wl_client *client, wl_resource *resource, uint32_t button, uint32_t index);
 
@@ -62,19 +63,17 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_text_input_interface TextInputUnstableV0Interface::Private::s_interface = {
-    activateCallback,
-    deactivateCallback,
-    showInputPanelCallback,
-    hideInputPanelCallback,
-    resetCallback,
-    setSurroundingTextUintCallback,
-    setContentTypeCallback,
-    setCursorRectangleCallback,
-    setPreferredLanguageCallback,
-    commitStateCallback,
-    invokeActionCallback
-};
+const struct wl_text_input_interface TextInputUnstableV0Interface::Private::s_interface = {activateCallback,
+                                                                                           deactivateCallback,
+                                                                                           showInputPanelCallback,
+                                                                                           hideInputPanelCallback,
+                                                                                           resetCallback,
+                                                                                           setSurroundingTextUintCallback,
+                                                                                           setContentTypeCallback,
+                                                                                           setCursorRectangleCallback,
+                                                                                           setPreferredLanguageCallback,
+                                                                                           commitStateCallback,
+                                                                                           invokeActionCallback};
 #endif
 
 void TextInputUnstableV0Interface::Private::activate(SeatInterface *seat, SurfaceInterface *s)
@@ -237,7 +236,11 @@ void TextInputUnstableV0Interface::Private::resetCallback(wl_client *client, wl_
     Q_EMIT p->q_func()->requestReset();
 }
 
-void TextInputUnstableV0Interface::Private::setSurroundingTextUintCallback(wl_client *client, wl_resource *resource, const char * text, uint32_t cursor, uint32_t anchor)
+void TextInputUnstableV0Interface::Private::setSurroundingTextUintCallback(wl_client *client,
+                                                                           wl_resource *resource,
+                                                                           const char *text,
+                                                                           uint32_t cursor,
+                                                                           uint32_t anchor)
 {
     setSurroundingTextCallback(client, resource, text, cursor, anchor);
 }
@@ -347,8 +350,9 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void createTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id);
@@ -360,9 +364,7 @@ private:
 const quint32 TextInputManagerUnstableV0Interface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct wl_text_input_manager_interface TextInputManagerUnstableV0Interface::Private::s_interface = {
-    createTextInputCallback
-};
+const struct wl_text_input_manager_interface TextInputManagerUnstableV0Interface::Private::s_interface = {createTextInputCallback};
 #endif
 
 void TextInputManagerUnstableV0Interface::Private::createTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id)
@@ -370,22 +372,22 @@ void TextInputManagerUnstableV0Interface::Private::createTextInputCallback(wl_cl
     auto m = cast(resource);
     auto *t = new TextInputUnstableV0Interface(m->q, resource);
     m->inputs << t;
-    QObject::connect(t, &QObject::destroyed, m->q,
-        [t, m] {
-            m->inputs.removeAll(t);
-        }
-    );
-    QObject::connect(t, &TextInputUnstableV0Interface::requestActivate, m->q,
-        [t] (SeatInterface *seat) {
-            // TODO: disallow for other seat
-            seat->d_func()->registerTextInput(t);
-            t->d_func()->seat = seat;
-        }
-    );
+    QObject::connect(t, &QObject::destroyed, m->q, [t, m] {
+        m->inputs.removeAll(t);
+    });
+    QObject::connect(t, &TextInputUnstableV0Interface::requestActivate, m->q, [t](SeatInterface *seat) {
+        // TODO: disallow for other seat
+        seat->d_func()->registerTextInput(t);
+        t->d_func()->seat = seat;
+    });
     t->d->create(m->display->getConnection(client), version, id);
 }
 
-TextInputManagerInterface::Private::Private(TextInputInterfaceVersion interfaceVersion, TextInputManagerInterface *q, Display *d, const wl_interface *interface, quint32 version)
+TextInputManagerInterface::Private::Private(TextInputInterfaceVersion interfaceVersion,
+                                            TextInputManagerInterface *q,
+                                            Display *d,
+                                            const wl_interface *interface,
+                                            quint32 version)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
     , q(q)

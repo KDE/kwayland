@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Region::Private
 {
 public:
@@ -126,12 +125,12 @@ QRegion Region::region() const
     return d->qtRegion;
 }
 
-Region::operator wl_region*() const
+Region::operator wl_region *() const
 {
     return d->region;
 }
 
-Region::operator wl_region*()
+Region::operator wl_region *()
 {
     return d->region;
 }

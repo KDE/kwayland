@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class DataDevice;
 class DataSource;
@@ -115,8 +114,8 @@ public:
 
     DataDevice *getDataDevice(Seat *seat, QObject *parent = nullptr);
 
-    operator wl_data_device_manager*();
-    operator wl_data_device_manager*() const;
+    operator wl_data_device_manager *();
+    operator wl_data_device_manager *() const;
 
 Q_SIGNALS:
     /**

@@ -115,11 +115,18 @@ public:
     void sendMotion(const QPointF &pos);
 
 Q_SIGNALS:
-    void cursorChanged(TabletCursor* cursor) const;
+    void cursorChanged(TabletCursor *cursor) const;
 
 private:
     friend class TabletSeatInterface;
-    explicit TabletToolInterface(Display *display, Type type, quint32 hsh, quint32 hsl, quint32 hih, quint32 hil, const QVector<Capability> &capability, QObject *parent);
+    explicit TabletToolInterface(Display *display,
+                                 Type type,
+                                 quint32 hsh,
+                                 quint32 hsl,
+                                 quint32 hih,
+                                 quint32 hil,
+                                 const QVector<Capability> &capability,
+                                 QObject *parent);
     class Private;
     QScopedPointer<Private> d;
 };
@@ -131,7 +138,7 @@ public:
     ~TabletCursor() override;
     QPoint hotspot() const;
     quint32 enteredSerial() const;
-    SurfaceInterface* surface() const;
+    SurfaceInterface *surface() const;
 
 Q_SIGNALS:
     void changed();
@@ -171,7 +178,8 @@ public:
     virtual ~TabletSeatInterface();
 
     TabletInterface *addTablet(quint32 vendorId, quint32 productId, const QString &sysname, const QString &name, const QStringList &paths);
-    TabletToolInterface *addTool(TabletToolInterface::Type type, quint64 hardwareSerial, quint64 hardwareId, const QVector<TabletToolInterface::Capability> &capabilities);
+    TabletToolInterface *
+    addTool(TabletToolInterface::Type type, quint64 hardwareSerial, quint64 hardwareId, const QVector<TabletToolInterface::Capability> &capabilities);
 
     TabletToolInterface *toolByHardwareId(quint64 hardwareId) const;
     TabletToolInterface *toolByHardwareSerial(quint64 hardwareSerial) const;

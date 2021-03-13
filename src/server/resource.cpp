@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "resource.h"
-#include "resource_p.h"
 #include "clientconnection.h"
+#include "resource_p.h"
 
 #include <wayland-server.h>
 
@@ -13,8 +13,7 @@ namespace KWayland
 {
 namespace Server
 {
-
-QList<Resource::Private*> Resource::Private::s_allResources;
+QList<Resource::Private *> Resource::Private::s_allResources;
 
 Resource::Private::Private(Resource *q, Global *g, wl_resource *parentResource, const wl_interface *interface, const void *implementation)
     : parentResource(parentResource)
@@ -54,7 +53,6 @@ void Resource::Private::unbind(wl_resource *r)
     Q_EMIT p->q->unbound();
     p->q->deleteLater();
 }
-
 
 void Resource::Private::resourceDestroyedCallback(wl_client *client, wl_resource *resource)
 {

@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 
@@ -30,7 +29,7 @@ enum class PointerConstraintsInterfaceVersion {
     /**
      * zwp_pointer_constraints_v1
      **/
-     UnstableV1,
+    UnstableV1,
 };
 
 /**
@@ -82,7 +81,6 @@ class KWAYLANDSERVER_EXPORT LockedPointerInterface : public Resource
 {
     Q_OBJECT
 public:
-
     virtual ~LockedPointerInterface();
 
     /**
@@ -204,7 +202,6 @@ class KWAYLANDSERVER_EXPORT ConfinedPointerInterface : public Resource
 {
     Q_OBJECT
 public:
-
     virtual ~ConfinedPointerInterface();
 
     /**

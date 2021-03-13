@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class ServerSideDecorationPaletteManager::Private
 {
 public:
@@ -61,11 +60,13 @@ void ServerSideDecorationPaletteManager::destroy()
     d->serverdecomanager.destroy();
 }
 
-ServerSideDecorationPaletteManager::operator org_kde_kwin_server_decoration_palette_manager*() {
+ServerSideDecorationPaletteManager::operator org_kde_kwin_server_decoration_palette_manager *()
+{
     return d->serverdecomanager;
 }
 
-ServerSideDecorationPaletteManager::operator org_kde_kwin_server_decoration_palette_manager*() const {
+ServerSideDecorationPaletteManager::operator org_kde_kwin_server_decoration_palette_manager *() const
+{
     return d->serverdecomanager;
 }
 
@@ -138,11 +139,13 @@ void ServerSideDecorationPalette::destroy()
     d->decoration_palette.destroy();
 }
 
-ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette*() {
+ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette *()
+{
     return d->decoration_palette;
 }
 
-ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette*() const {
+ServerSideDecorationPalette::operator org_kde_kwin_server_decoration_palette *() const
+{
     return d->decoration_palette;
 }
 

@@ -4,28 +4,27 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "plasmawindowmanagement_interface.h"
-#include "global_p.h"
-#include "resource_p.h"
 #include "display.h"
-#include "surface_interface.h"
+#include "global_p.h"
 #include "plasmavirtualdesktop_interface.h"
+#include "resource_p.h"
+#include "surface_interface.h"
 
-#include <QtConcurrentRun>
 #include <QFile>
+#include <QHash>
 #include <QIcon>
 #include <QList>
-#include <QVector>
 #include <QRect>
-#include <QHash>
+#include <QVector>
+#include <QtConcurrentRun>
 
-#include <wayland-server.h>
 #include <wayland-plasma-window-management-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class PlasmaWindowManagementInterface::Private : public Global::Private
 {
 public:
@@ -34,8 +33,8 @@ public:
     void sendStackingOrderChanged();
 
     ShowingDesktopState state = ShowingDesktopState::Disabled;
-    QVector<wl_resource*> resources;
-    QList<PlasmaWindowInterface*> windows;
+    QVector<wl_resource *> resources;
+    QList<PlasmaWindowInterface *> windows;
     QPointer<PlasmaVirtualDesktopManagementInterface> plasmaVirtualDesktopManagementInterface = nullptr;
     quint32 windowIdCounter = 0;
     QVector<quint32> stackingOrder;
@@ -44,7 +43,7 @@ private:
     static void unbind(wl_resource *resource);
     static void showDesktopCallback(wl_client *client, wl_resource *resource, uint32_t state);
     static void getWindowCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t internalWindowId);
-    static void getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char* uuid);
+    static void getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char *uuid);
 
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
     void sendShowingDesktopState(wl_resource *r);
@@ -75,9 +74,9 @@ public:
     void setApplicationMenuPaths(const QString &service, const QString &object);
     wl_resource *resourceForParent(PlasmaWindowInterface *parent, wl_resource *child) const;
 
-    QVector<wl_resource*> resources;
+    QVector<wl_resource *> resources;
     quint32 windowId = 0;
-    QHash<SurfaceInterface*, QRect> minimizedGeometries;
+    QHash<SurfaceInterface *, QRect> minimizedGeometries;
     PlasmaWindowManagementInterface *wm;
 
     bool unmapped = false;
@@ -93,15 +92,17 @@ private:
     static void closeCallback(wl_client *client, wl_resource *resource);
     static void requestMoveCallback(wl_client *client, wl_resource *resource);
     static void requestResizeCallback(wl_client *client, wl_resource *resource);
-    static void setMinimizedGeometryCallback(wl_client *client, wl_resource *resource, wl_resource *panel, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    static void
+    setMinimizedGeometryCallback(wl_client *client, wl_resource *resource, wl_resource *panel, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     static void unsetMinimizedGeometryCallback(wl_client *client, wl_resource *resource, wl_resource *panel);
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void getIconCallback(wl_client *client, wl_resource *resource, int32_t fd);
     static void requestEnterVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
     static void requestEnterNewVirtualDesktopCallback(wl_client *client, wl_resource *resource);
     static void requestLeaveVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id);
-    static Private *cast(wl_resource *resource) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    static Private *cast(wl_resource *resource)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     }
 
     PlasmaWindowInterface *q;
@@ -126,11 +127,9 @@ PlasmaWindowManagementInterface::Private::Private(PlasmaWindowManagementInterfac
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_plasma_window_management_interface PlasmaWindowManagementInterface::Private::s_interface = {
-    showDesktopCallback,
-    getWindowCallback,
-    getWindowByUuidCallback
-};
+const struct org_kde_plasma_window_management_interface PlasmaWindowManagementInterface::Private::s_interface = {showDesktopCallback,
+                                                                                                                 getWindowCallback,
+                                                                                                                 getWindowByUuidCallback};
 #endif
 
 void PlasmaWindowManagementInterface::Private::sendShowingDesktopState()
@@ -194,16 +193,16 @@ void PlasmaWindowManagementInterface::Private::showDesktopCallback(wl_client *cl
         s = ShowingDesktopState::Disabled;
         break;
     }
-    Q_EMIT reinterpret_cast<Private*>(wl_resource_get_user_data(resource))->q->requestChangeShowingDesktop(s);
+    Q_EMIT reinterpret_cast<Private *>(wl_resource_get_user_data(resource))->q->requestChangeShowingDesktop(s);
 }
 
-void PlasmaWindowManagementInterface::Private::getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char* uuid)
+void PlasmaWindowManagementInterface::Private::getWindowByUuidCallback(wl_client *client, wl_resource *resource, uint32_t id, const char *uuid)
 {
     Q_UNUSED(client);
     Q_UNUSED(uuid);
     qCritical() << "window_by_uuid is unsupported, port to KWaylandServer::PlasmaWindowManagementInterface";
 
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     PlasmaWindowInterface *window = new PlasmaWindowInterface(p->q, p->q);
     window->d->unmapped = true;
     window->d->createResource(resource, id);
@@ -213,12 +212,10 @@ void PlasmaWindowManagementInterface::Private::getWindowByUuidCallback(wl_client
 void PlasmaWindowManagementInterface::Private::getWindowCallback(wl_client *client, wl_resource *resource, uint32_t id, uint32_t internalWindowId)
 {
     Q_UNUSED(client)
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
-    auto it = std::find_if(p->windows.constBegin(), p->windows.constEnd(),
-        [internalWindowId] (PlasmaWindowInterface *window) {
-            return window->d->windowId == internalWindowId;
-        }
-    );
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
+    auto it = std::find_if(p->windows.constBegin(), p->windows.constEnd(), [internalWindowId](PlasmaWindowInterface *window) {
+        return window->d->windowId == internalWindowId;
+    });
     if (it == p->windows.constEnd()) {
         // create a temp window just for the resource and directly send an unmapped
         PlasmaWindowInterface *window = new PlasmaWindowInterface(p->q, p->q);
@@ -254,7 +251,7 @@ void PlasmaWindowManagementInterface::Private::bind(wl_client *client, uint32_t 
 
 void PlasmaWindowManagementInterface::Private::unbind(wl_resource *resource)
 {
-    auto wm = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto wm = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     wm->resources.removeAll(resource);
 }
 
@@ -270,7 +267,7 @@ void PlasmaWindowManagementInterface::setShowingDesktopState(PlasmaWindowManagem
 
 PlasmaWindowManagementInterface::Private *PlasmaWindowManagementInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 PlasmaWindowInterface *PlasmaWindowManagementInterface::createWindow(QObject *parent)
@@ -283,16 +280,14 @@ PlasmaWindowInterface *PlasmaWindowManagementInterface::createWindow(QObject *pa
         org_kde_plasma_window_management_send_window(*it, window->d->windowId);
     }
     d->windows << window;
-    connect(window, &QObject::destroyed, this,
-        [this, window] {
-            Q_D();
-            d->windows.removeAll(window);
-        }
-    );
+    connect(window, &QObject::destroyed, this, [this, window] {
+        Q_D();
+        d->windows.removeAll(window);
+    });
     return window;
 }
 
-QList<PlasmaWindowInterface*> PlasmaWindowManagementInterface::windows() const
+QList<PlasmaWindowInterface *> PlasmaWindowManagementInterface::windows() const
 {
     Q_D();
     return d->windows;
@@ -309,7 +304,7 @@ void PlasmaWindowManagementInterface::unmapWindow(PlasmaWindowInterface *window)
     window->d->unmap();
 }
 
-void PlasmaWindowManagementInterface::setStackingOrder(const QVector<quint32>& stackingOrder)
+void PlasmaWindowManagementInterface::setStackingOrder(const QVector<quint32> &stackingOrder)
 {
     Q_D();
     if (d->stackingOrder == stackingOrder) {
@@ -335,20 +330,18 @@ PlasmaVirtualDesktopManagementInterface *PlasmaWindowManagementInterface::plasma
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_plasma_window_interface PlasmaWindowInterface::Private::s_interface = {
-    setStateCallback,
-    setVirtualDesktopCallback,
-    setMinimizedGeometryCallback,
-    unsetMinimizedGeometryCallback,
-    closeCallback,
-    requestMoveCallback,
-    requestResizeCallback,
-    destroyCallback,
-    getIconCallback,
-    requestEnterVirtualDesktopCallback,
-    requestEnterNewVirtualDesktopCallback,
-    requestLeaveVirtualDesktopCallback
-};
+const struct org_kde_plasma_window_interface PlasmaWindowInterface::Private::s_interface = {setStateCallback,
+                                                                                            setVirtualDesktopCallback,
+                                                                                            setMinimizedGeometryCallback,
+                                                                                            unsetMinimizedGeometryCallback,
+                                                                                            closeCallback,
+                                                                                            requestMoveCallback,
+                                                                                            requestResizeCallback,
+                                                                                            destroyCallback,
+                                                                                            getIconCallback,
+                                                                                            requestEnterVirtualDesktopCallback,
+                                                                                            requestEnterNewVirtualDesktopCallback,
+                                                                                            requestLeaveVirtualDesktopCallback};
 #endif
 
 PlasmaWindowInterface::Private::Private(PlasmaWindowManagementInterface *wm, PlasmaWindowInterface *q)
@@ -381,7 +374,7 @@ void PlasmaWindowInterface::Private::destroyCallback(wl_client *, wl_resource *r
 
 void PlasmaWindowInterface::Private::unbind(wl_resource *resource)
 {
-    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    Private *p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     p->resources.removeAll(resource);
     if (p->unmapped && p->resources.isEmpty()) {
         p->q->deleteLater();
@@ -492,14 +485,14 @@ void PlasmaWindowInterface::Private::getIconCallback(wl_client *client, wl_resou
     Q_UNUSED(client)
     Private *p = cast(resource);
     QtConcurrent::run(
-        [fd] (const QIcon &icon) {
+        [fd](const QIcon &icon) {
             QFile file;
             file.open(fd, QIODevice::WriteOnly, QFileDevice::AutoCloseHandle);
             QDataStream ds(&file);
             ds << icon;
             file.close();
-        }, p->m_icon
-    );
+        },
+        p->m_icon);
 }
 
 void PlasmaWindowInterface::Private::requestEnterVirtualDesktopCallback(wl_client *client, wl_resource *resource, const char *id)
@@ -579,11 +572,9 @@ wl_resource *PlasmaWindowInterface::Private::resourceForParent(PlasmaWindowInter
     if (!parent) {
         return nullptr;
     }
-    auto it = std::find_if(parent->d->resources.begin(), parent->d->resources.end(),
-        [child] (wl_resource *parentResource) {
-            return wl_resource_get_client(child) == wl_resource_get_client(parentResource);
-        }
-    );
+    auto it = std::find_if(parent->d->resources.begin(), parent->d->resources.end(), [child](wl_resource *parentResource) {
+        return wl_resource_get_client(child) == wl_resource_get_client(parentResource);
+    });
     if (it != parent->d->resources.end()) {
         return *it;
     }
@@ -599,15 +590,13 @@ void PlasmaWindowInterface::Private::setParentWindow(PlasmaWindowInterface *wind
     parentWindowDestroyConnection = QMetaObject::Connection();
     parentWindow = window;
     if (parentWindow) {
-        parentWindowDestroyConnection = QObject::connect(window, &QObject::destroyed, q,
-            [this] {
-                parentWindow = nullptr;
-                parentWindowDestroyConnection = QMetaObject::Connection();
-                for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
-                    org_kde_plasma_window_send_parent_window(*it, nullptr);
-                }
+        parentWindowDestroyConnection = QObject::connect(window, &QObject::destroyed, q, [this] {
+            parentWindow = nullptr;
+            parentWindowDestroyConnection = QMetaObject::Connection();
+            for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
+                org_kde_plasma_window_send_parent_window(*it, nullptr);
             }
-        );
+        });
     }
     for (auto it = resources.constBegin(); it != resources.constEnd(); ++it) {
         org_kde_plasma_window_send_parent_window(*it, resourceForParent(window, *it));
@@ -736,7 +725,13 @@ void PlasmaWindowInterface::Private::setStateCallback(wl_client *client, wl_reso
     }
 }
 
-void PlasmaWindowInterface::Private::setMinimizedGeometryCallback(wl_client *client, wl_resource *resource, wl_resource *panel, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+void PlasmaWindowInterface::Private::setMinimizedGeometryCallback(wl_client *client,
+                                                                  wl_resource *resource,
+                                                                  wl_resource *panel,
+                                                                  uint32_t x,
+                                                                  uint32_t y,
+                                                                  uint32_t width,
+                                                                  uint32_t height)
 {
     Q_UNUSED(client)
     Private *p = cast(resource);
@@ -752,7 +747,7 @@ void PlasmaWindowInterface::Private::setMinimizedGeometryCallback(wl_client *cli
 
     p->minimizedGeometries[panelSurface] = QRect(x, y, width, height);
     Q_EMIT p->q->minimizedGeometriesChanged();
-    connect(panelSurface, &QObject::destroyed, p->q, [p, panelSurface] () {
+    connect(panelSurface, &QObject::destroyed, p->q, [p, panelSurface]() {
         if (p->minimizedGeometries.remove(panelSurface)) {
             Q_EMIT p->q->minimizedGeometriesChanged();
         }
@@ -808,7 +803,7 @@ void PlasmaWindowInterface::unmap()
     d->wm->unmapWindow(this);
 }
 
-QHash<SurfaceInterface*, QRect>  PlasmaWindowInterface::minimizedGeometries() const
+QHash<SurfaceInterface *, QRect> PlasmaWindowInterface::minimizedGeometries() const
 {
     return d->minimizedGeometries;
 }
@@ -845,19 +840,19 @@ void PlasmaWindowInterface::setMinimized(bool set)
 
 void PlasmaWindowInterface::setOnAllDesktops(bool set)
 {
-    //the deprecated vd management
+    // the deprecated vd management
     d->setState(ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS, set);
 
     if (!d->wm->plasmaVirtualDesktopManagementInterface()) {
         return;
     }
 
-    //the current vd management
+    // the current vd management
     if (set) {
         if (d->plasmaVirtualDesktops.isEmpty()) {
             return;
         }
-        //leaving everything means on all desktops
+        // leaving everything means on all desktops
         for (auto desk : plasmaVirtualDesktops()) {
             for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
                 org_kde_plasma_window_send_virtual_desktop_left(*it, desk.toUtf8().constData());
@@ -868,7 +863,7 @@ void PlasmaWindowInterface::setOnAllDesktops(bool set)
         if (!d->plasmaVirtualDesktops.isEmpty()) {
             return;
         }
-        //enters the desktops which are active (usually only one  but not a given)
+        // enters the desktops which are active (usually only one  but not a given)
         for (auto desk : d->wm->plasmaVirtualDesktopManagementInterface()->desktops()) {
             if (desk->isActive() && !d->plasmaVirtualDesktops.contains(desk->id())) {
                 d->plasmaVirtualDesktops << desk->id();
@@ -927,7 +922,7 @@ void PlasmaWindowInterface::setIcon(const QIcon &icon)
 
 void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
 {
-    //don't add a desktop we're not sure it exists
+    // don't add a desktop we're not sure it exists
     if (!d->wm->plasmaVirtualDesktopManagementInterface() || d->plasmaVirtualDesktops.contains(id)) {
         return;
     }
@@ -940,9 +935,10 @@ void PlasmaWindowInterface::addPlasmaVirtualDesktop(const QString &id)
 
     d->plasmaVirtualDesktops << id;
 
-    //if the desktop dies, remove it from or list
-    connect(desktop, &QObject::destroyed,
-            this, [this, id](){removePlasmaVirtualDesktop(id);});
+    // if the desktop dies, remove it from or list
+    connect(desktop, &QObject::destroyed, this, [this, id]() {
+        removePlasmaVirtualDesktop(id);
+    });
 
     for (auto it = d->resources.constBegin(); it != d->resources.constEnd(); ++it) {
         org_kde_plasma_window_send_virtual_desktop_entered(*it, id.toUtf8().constData());
@@ -960,7 +956,7 @@ void PlasmaWindowInterface::removePlasmaVirtualDesktop(const QString &id)
         org_kde_plasma_window_send_virtual_desktop_left(*it, id.toUtf8().constData());
     }
 
-    //we went on all desktops
+    // we went on all desktops
     if (d->plasmaVirtualDesktops.isEmpty()) {
         setOnAllDesktops(true);
     }

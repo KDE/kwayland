@@ -14,8 +14,8 @@
 #include "../../src/client/registry.h"
 #include "../../src/client/server_decoration.h"
 #include "../../src/client/surface.h"
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/server_decoration_interface.h"
 
 class TestServerSideDecoration : public QObject
@@ -108,7 +108,8 @@ void TestServerSideDecoration::init()
 
     QVERIFY(serverSideDecoManagerSpy.wait());
     m_serverSideDecorationManager = m_registry->createServerSideDecorationManager(serverSideDecoManagerSpy.first().first().value<quint32>(),
-                                                                                  serverSideDecoManagerSpy.first().last().value<quint32>(), this);
+                                                                                  serverSideDecoManagerSpy.first().last().value<quint32>(),
+                                                                                  this);
 }
 
 void TestServerSideDecoration::cleanup()
@@ -149,7 +150,7 @@ void TestServerSideDecoration::testCreate_data()
     QTest::addColumn<ServerSideDecorationManagerInterface::Mode>("serverMode");
     QTest::addColumn<ServerSideDecoration::Mode>("clientMode");
 
-    QTest::newRow("none") << ServerSideDecorationManagerInterface::Mode::None     << ServerSideDecoration::Mode::None;
+    QTest::newRow("none") << ServerSideDecorationManagerInterface::Mode::None << ServerSideDecoration::Mode::None;
     QTest::newRow("client") << ServerSideDecorationManagerInterface::Mode::Client << ServerSideDecoration::Mode::Client;
     QTest::newRow("server") << ServerSideDecorationManagerInterface::Mode::Server << ServerSideDecoration::Mode::Server;
 }
@@ -171,7 +172,7 @@ void TestServerSideDecoration::testCreate()
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface *>();
     QVERIFY(!ServerSideDecorationInterface::get(serverSurface));
 
     // create server side deco
@@ -182,7 +183,7 @@ void TestServerSideDecoration::testCreate()
 
     QVERIFY(decorationCreated.wait());
 
-    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface*>();
+    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface *>();
     QVERIFY(serverDeco);
     QCOMPARE(serverDeco, ServerSideDecorationInterface::get(serverSurface));
     QCOMPARE(serverDeco->surface(), serverSurface);
@@ -249,7 +250,7 @@ void TestServerSideDecoration::testRequest()
     QVERIFY(modeChangedSpy.isValid());
     QVERIFY(decorationCreated.wait());
 
-    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface*>();
+    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface *>();
     QVERIFY(serverDeco);
     QSignalSpy modeSpy(serverDeco, &ServerSideDecorationInterface::modeRequested);
     QVERIFY(modeSpy.isValid());
@@ -293,11 +294,11 @@ void TestServerSideDecoration::testSurfaceDestroy()
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<SurfaceInterface *>();
     QScopedPointer<ServerSideDecoration> serverSideDecoration(m_serverSideDecorationManager->create(surface.data()));
     QCOMPARE(serverSideDecoration->mode(), ServerSideDecoration::Mode::None);
     QVERIFY(decorationCreated.wait());
-    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface*>();
+    auto serverDeco = decorationCreated.first().first().value<ServerSideDecorationInterface *>();
     QVERIFY(serverDeco);
 
     // destroy the parent surface

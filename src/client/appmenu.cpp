@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class AppMenuManager::Private
 {
 public:
@@ -59,11 +58,13 @@ void AppMenuManager::destroy()
     d->appmenumanager.destroy();
 }
 
-AppMenuManager::operator org_kde_kwin_appmenu_manager*() {
+AppMenuManager::operator org_kde_kwin_appmenu_manager *()
+{
     return d->appmenumanager;
 }
 
-AppMenuManager::operator org_kde_kwin_appmenu_manager*() const {
+AppMenuManager::operator org_kde_kwin_appmenu_manager *() const
+{
     return d->appmenumanager;
 }
 
@@ -135,11 +136,13 @@ void AppMenu::destroy()
     d->appmenu.destroy();
 }
 
-AppMenu::operator org_kde_kwin_appmenu*() {
+AppMenu::operator org_kde_kwin_appmenu *()
+{
     return d->appmenu;
 }
 
-AppMenu::operator org_kde_kwin_appmenu*() const {
+AppMenu::operator org_kde_kwin_appmenu *() const
+{
     return d->appmenu;
 }
 
@@ -154,7 +157,5 @@ void AppMenu::setAddress(const QString &serviceName, const QString &objectPath)
     org_kde_kwin_appmenu_set_address(d->appmenu, serviceName.toLatin1(), objectPath.toLatin1());
 }
 
-
 }
 }
-

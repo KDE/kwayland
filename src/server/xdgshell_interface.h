@@ -46,7 +46,7 @@ enum class XdgShellInterfaceVersion
       xdg_wm_base (stable)
       @since 5.48
       */
-    Stable
+    Stable,
 };
 
 /**
@@ -77,7 +77,7 @@ enum class PositionerConstraint {
     /**
      * Resize the popup in the Y axis
      */
-    ResizeY = 1 << 5
+    ResizeY = 1 << 5,
 };
 
 Q_DECLARE_FLAGS(PositionerConstraints, PositionerConstraint)
@@ -210,7 +210,7 @@ public:
         /**
          * The Surface is considered active. Does not imply keyboard focus.
          **/
-        Activated  = 1 << 3
+        Activated  = 1 << 3,
     };
     Q_DECLARE_FLAGS(States, State)
 

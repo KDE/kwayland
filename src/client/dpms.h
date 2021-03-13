@@ -138,7 +138,7 @@ public:
         On,
         Standby,
         Suspend,
-        Off
+        Off,
     };
 
     /**

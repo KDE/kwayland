@@ -220,7 +220,7 @@ public:
      **/
     enum class TransientFlag {
         Default = 0x0, ///< Default: transient surface accepts keyboard focus
-        NoFocus = 0x1 ///< Transient surface does not accept keyboard focus
+        NoFocus = 0x1, ///< Transient surface does not accept keyboard focus
     };
     Q_DECLARE_FLAGS(TransientFlags, TransientFlag)
     /**

@@ -65,7 +65,7 @@ public:
         HorizontalRGB,
         HorizontalBGR,
         VerticalRGB,
-        VerticalBGR
+        VerticalBGR,
     };
     Q_ENUM(SubPixel)
     enum class Transform {
@@ -76,19 +76,19 @@ public:
         Flipped,
         Flipped90,
         Flipped180,
-        Flipped270
+        Flipped270,
     };
     Q_ENUM(Transform)
     enum class Enablement {
         Disabled = 0,
-        Enabled = 1
+        Enabled = 1,
     };
     Q_ENUM(Enablement)
     struct Mode {
         enum class Flag {
             None = 0,
             Current = 1 << 0,
-            Preferred = 1 << 1
+            Preferred = 1 << 1,
         };
         Q_DECLARE_FLAGS(Flags, Flag)
         /**

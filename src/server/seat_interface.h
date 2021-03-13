@@ -54,7 +54,7 @@ enum class PointerAxisSource {
     Wheel,
     Finger,
     Continuous,
-    WheelTilt
+    WheelTilt,
 };
 
 /**

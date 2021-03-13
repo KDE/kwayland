@@ -27,7 +27,7 @@ enum class IdleInhibitManagerInterfaceVersion {
     /**
      * zwp_idle_inhibit_manager_v1
      **/
-     UnstableV1
+     UnstableV1,
 };
 
 /**

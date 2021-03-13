@@ -62,7 +62,7 @@ public:
         HorizontalRGB,
         HorizontalBGR,
         VerticalRGB,
-        VerticalBGR
+        VerticalBGR,
     };
     enum class Transform {
         Normal,
@@ -72,13 +72,13 @@ public:
         Flipped,
         Flipped90,
         Flipped180,
-        Flipped270
+        Flipped270,
     };
     struct Mode {
         enum class Flag {
             None = 0,
             Current = 1 << 0,
-            Preferred = 1 << 1
+            Preferred = 1 << 1,
         };
         Q_DECLARE_FLAGS(Flags, Flag)
         /**

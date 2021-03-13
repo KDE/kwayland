@@ -75,7 +75,7 @@ public:
         Finger = 0x145, ///< Finger
         Mouse = 0x146, ///< Mouse
         Lens = 0x147, ///< Lens
-        Totem
+        Totem,
     };
     Q_ENUM(Type)
 
@@ -85,7 +85,7 @@ public:
         Distance = 3, ///< Distance axis
         Rotation = 4, ///< Z-rotation axis
         Slider = 5, ///< Slider axis
-        Wheel = 6 ///< Wheel axis
+        Wheel = 6, ///< Wheel axis
     };
     Q_ENUM(Capability)
 

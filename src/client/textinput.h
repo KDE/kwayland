@@ -114,7 +114,7 @@ public:
      **/
     enum class KeyState {
         Pressed,
-        Released
+        Released,
     };
 
     /**
@@ -164,7 +164,7 @@ public:
         /**
          * the text input is multi line
          */
-        MultiLine = 1 << 9
+        MultiLine = 1 << 9,
     };
     Q_DECLARE_FLAGS(ContentHints, ContentHint)
 
@@ -226,7 +226,7 @@ public:
         /**
          * input for a terminal
          */
-        Terminal
+        Terminal,
     };
     /**
      * Sets the content @p purpose and content @p hints.

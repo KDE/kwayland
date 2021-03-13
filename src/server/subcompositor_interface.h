@@ -58,7 +58,7 @@ public:
 
     enum class Mode {
         Synchronized,
-        Desynchronized
+        Desynchronized,
     };
     Mode mode() const;
 

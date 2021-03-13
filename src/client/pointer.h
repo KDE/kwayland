@@ -35,17 +35,17 @@ class KWAYLANDCLIENT_EXPORT Pointer : public QObject
 public:
     enum class ButtonState {
         Released,
-        Pressed
+        Pressed,
     };
     enum class Axis {
         Vertical,
-        Horizontal
+        Horizontal,
     };
     enum class AxisSource {
         Wheel,
         Finger,
         Continuous,
-        WheelTilt
+        WheelTilt,
     };
     explicit Pointer(QObject *parent = nullptr);
     virtual ~Pointer();

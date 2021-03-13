@@ -36,7 +36,7 @@ public:
         Fixed,
         Uint,
         Int,
-        String
+        String,
     };
 
     QString name() const {
@@ -263,7 +263,7 @@ private:
     QString m_xmlFileName;
     enum class Project {
         Client,
-        Server
+        Server,
     };
     QThreadStorage<Project> m_project;
     QString m_authorName;

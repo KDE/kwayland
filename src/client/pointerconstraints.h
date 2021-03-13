@@ -125,7 +125,7 @@ public:
          * A persistent pointer constraint may again reactivate once it has
          * been deactivated.
          **/
-        Persistent
+        Persistent,
     };
 
     /**

@@ -44,7 +44,7 @@ public:
         Left = 0, /**< Slide from the left edge of the screen */
         Top, /**< Slide from the top edge of the screen */
         Right, /**< Slide from the bottom edge of the screen */
-        Bottom /**< Slide from the bottom edge of the screen */
+        Bottom, /**< Slide from the bottom edge of the screen */
     };
 
     virtual ~SlideInterface();

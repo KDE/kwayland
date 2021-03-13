@@ -9,7 +9,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 TextInput::Private::Private(Seat *seat)
     : seat(seat)
 {
@@ -180,22 +179,22 @@ EventQueue *TextInputManager::eventQueue()
     return d->queue;
 }
 
-TextInputManager::operator wl_text_input_manager*()
+TextInputManager::operator wl_text_input_manager *()
 {
     return *(d.data());
 }
 
-TextInputManager::operator wl_text_input_manager*() const
+TextInputManager::operator wl_text_input_manager *() const
 {
     return *(d.data());
 }
 
-TextInputManager::operator zwp_text_input_manager_v2*()
+TextInputManager::operator zwp_text_input_manager_v2 *()
 {
     return *(d.data());
 }
 
-TextInputManager::operator zwp_text_input_manager_v2*() const
+TextInputManager::operator zwp_text_input_manager_v2 *() const
 {
     return *(d.data());
 }

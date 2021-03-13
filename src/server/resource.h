@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ClientConnection;
 class Global;
 
@@ -82,7 +81,6 @@ protected:
     class Private;
     explicit Resource(Private *d, QObject *parent = nullptr);
     QScopedPointer<Private> d;
-
 };
 
 }

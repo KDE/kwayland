@@ -9,8 +9,11 @@ namespace KWayland
 {
 namespace Server
 {
-
-IdleInhibitManagerInterface::Private::Private(IdleInhibitManagerInterface *q, Display *d, const wl_interface *interface, quint32 version, IdleInhibitManagerInterfaceVersion interfaceVersion)
+IdleInhibitManagerInterface::Private::Private(IdleInhibitManagerInterface *q,
+                                              Display *d,
+                                              const wl_interface *interface,
+                                              quint32 version,
+                                              IdleInhibitManagerInterfaceVersion interfaceVersion)
     : Global::Private(d, interface, version)
     , interfaceVersion(interfaceVersion)
     , q(q)
@@ -32,7 +35,7 @@ IdleInhibitManagerInterfaceVersion IdleInhibitManagerInterface::interfaceVersion
 
 IdleInhibitManagerInterface::Private *IdleInhibitManagerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

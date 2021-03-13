@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SeatInterface;
 
 /**
@@ -42,6 +41,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::TouchInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::TouchInterface *)
 
 #endif

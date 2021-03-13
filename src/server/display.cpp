@@ -46,9 +46,9 @@
 #include "xdgshell_v5_interface_p.h"
 #include "xdgshell_v6_interface_p.h"
 
+#include <QAbstractEventDispatcher>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QAbstractEventDispatcher>
 #include <QSocketNotifier>
 #include <QThread>
 
@@ -60,7 +60,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display::Private
 {
 public:
@@ -75,10 +74,10 @@ public:
     QString socketName = QStringLiteral("wayland-0");
     bool running = false;
     bool automaticSocketNaming = false;
-    QList<OutputInterface*> outputs;
-    QList<OutputDeviceInterface*> outputdevices;
-    QVector<SeatInterface*> seats;
-    QVector<ClientConnection*> clients;
+    QList<OutputInterface *> outputs;
+    QList<OutputDeviceInterface *> outputdevices;
+    QVector<SeatInterface *> seats;
+    QVector<ClientConnection *> clients;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
 
 private:
@@ -101,8 +100,12 @@ void Display::Private::installSocketNotifier()
         return;
     }
     QSocketNotifier *m_notifier = new QSocketNotifier(fd, QSocketNotifier::Read, q);
-    QObject::connect(m_notifier, &QSocketNotifier::activated, q, [this] { dispatch(); } );
-    QObject::connect(QThread::currentThread()->eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, q, [this] { flush(); });
+    QObject::connect(m_notifier, &QSocketNotifier::activated, q, [this] {
+        dispatch();
+    });
+    QObject::connect(QThread::currentThread()->eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, q, [this] {
+        flush();
+    });
     setRunning(true);
 }
 
@@ -235,8 +238,12 @@ void Display::Private::setRunning(bool r)
 OutputInterface *Display::createOutput(QObject *parent)
 {
     OutputInterface *output = new OutputInterface(this, parent);
-    connect(output, &QObject::destroyed, this, [this,output] { d->outputs.removeAll(output); });
-    connect(this, &Display::aboutToTerminate, output, [this,output] { removeOutput(output); });
+    connect(output, &QObject::destroyed, this, [this, output] {
+        d->outputs.removeAll(output);
+    });
+    connect(this, &Display::aboutToTerminate, output, [this, output] {
+        removeOutput(output);
+    });
     d->outputs << output;
     return output;
 }
@@ -244,22 +251,30 @@ OutputInterface *Display::createOutput(QObject *parent)
 CompositorInterface *Display::createCompositor(QObject *parent)
 {
     CompositorInterface *compositor = new CompositorInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, compositor, [compositor] { delete compositor; });
+    connect(this, &Display::aboutToTerminate, compositor, [compositor] {
+        delete compositor;
+    });
     return compositor;
 }
 
 ShellInterface *Display::createShell(QObject *parent)
 {
     ShellInterface *shell = new ShellInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, shell, [shell] { delete shell; });
+    connect(this, &Display::aboutToTerminate, shell, [shell] {
+        delete shell;
+    });
     return shell;
 }
 
 OutputDeviceInterface *Display::createOutputDevice(QObject *parent)
 {
     OutputDeviceInterface *output = new OutputDeviceInterface(this, parent);
-    connect(output, &QObject::destroyed, this, [this,output] { d->outputdevices.removeAll(output); });
-    connect(this, &Display::aboutToTerminate, output, [this,output] { removeOutputDevice(output); });
+    connect(output, &QObject::destroyed, this, [this, output] {
+        d->outputdevices.removeAll(output);
+    });
+    connect(this, &Display::aboutToTerminate, output, [this, output] {
+        removeOutputDevice(output);
+    });
     d->outputdevices << output;
     return output;
 }
@@ -267,15 +282,21 @@ OutputDeviceInterface *Display::createOutputDevice(QObject *parent)
 OutputManagementInterface *Display::createOutputManagement(QObject *parent)
 {
     OutputManagementInterface *om = new OutputManagementInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, om, [om] { delete om; });
+    connect(this, &Display::aboutToTerminate, om, [om] {
+        delete om;
+    });
     return om;
 }
 
 SeatInterface *Display::createSeat(QObject *parent)
 {
     SeatInterface *seat = new SeatInterface(this, parent);
-    connect(seat, &QObject::destroyed, this, [this, seat] { d->seats.removeAll(seat); });
-    connect(this, &Display::aboutToTerminate, seat, [seat] { delete seat; });
+    connect(seat, &QObject::destroyed, this, [this, seat] {
+        d->seats.removeAll(seat);
+    });
+    connect(this, &Display::aboutToTerminate, seat, [seat] {
+        delete seat;
+    });
     d->seats << seat;
     return seat;
 }
@@ -283,98 +304,126 @@ SeatInterface *Display::createSeat(QObject *parent)
 SubCompositorInterface *Display::createSubCompositor(QObject *parent)
 {
     auto c = new SubCompositorInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, c, [c] { delete c; });
+    connect(this, &Display::aboutToTerminate, c, [c] {
+        delete c;
+    });
     return c;
 }
 
 DataDeviceManagerInterface *Display::createDataDeviceManager(QObject *parent)
 {
     auto m = new DataDeviceManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, m, [m] { delete m; });
+    connect(this, &Display::aboutToTerminate, m, [m] {
+        delete m;
+    });
     return m;
 }
 
-PlasmaShellInterface *Display::createPlasmaShell(QObject* parent)
+PlasmaShellInterface *Display::createPlasmaShell(QObject *parent)
 {
     auto s = new PlasmaShellInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, s, [s] { delete s; });
+    connect(this, &Display::aboutToTerminate, s, [s] {
+        delete s;
+    });
     return s;
 }
 
 PlasmaWindowManagementInterface *Display::createPlasmaWindowManagement(QObject *parent)
 {
     auto wm = new PlasmaWindowManagementInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, wm, [wm] { delete wm; });
+    connect(this, &Display::aboutToTerminate, wm, [wm] {
+        delete wm;
+    });
     return wm;
 }
 
 QtSurfaceExtensionInterface *Display::createQtSurfaceExtension(QObject *parent)
 {
     auto s = new QtSurfaceExtensionInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, s, [s] { delete s; });
+    connect(this, &Display::aboutToTerminate, s, [s] {
+        delete s;
+    });
     return s;
 }
 
 RemoteAccessManagerInterface *Display::createRemoteAccessManager(QObject *parent)
 {
     auto i = new RemoteAccessManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, i, [i] { delete i; });
+    connect(this, &Display::aboutToTerminate, i, [i] {
+        delete i;
+    });
     return i;
 }
 
 IdleInterface *Display::createIdle(QObject *parent)
 {
     auto i = new IdleInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, i, [i] { delete i; });
+    connect(this, &Display::aboutToTerminate, i, [i] {
+        delete i;
+    });
     return i;
 }
 
 FakeInputInterface *Display::createFakeInput(QObject *parent)
 {
     auto i = new FakeInputInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, i, [i] { delete i; });
+    connect(this, &Display::aboutToTerminate, i, [i] {
+        delete i;
+    });
     return i;
 }
 
 ShadowManagerInterface *Display::createShadowManager(QObject *parent)
 {
     auto s = new ShadowManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, s, [s] { delete s; });
+    connect(this, &Display::aboutToTerminate, s, [s] {
+        delete s;
+    });
     return s;
 }
 
 BlurManagerInterface *Display::createBlurManager(QObject *parent)
 {
     auto b = new BlurManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 ContrastManagerInterface *Display::createContrastManager(QObject *parent)
 {
     auto b = new ContrastManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 SlideManagerInterface *Display::createSlideManager(QObject *parent)
 {
     auto b = new SlideManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 DpmsManagerInterface *Display::createDpmsManager(QObject *parent)
 {
     auto d = new DpmsManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    connect(this, &Display::aboutToTerminate, d, [d] {
+        delete d;
+    });
     return d;
 }
 
 ServerSideDecorationManagerInterface *Display::createServerSideDecorationManager(QObject *parent)
 {
     auto d = new ServerSideDecorationManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    connect(this, &Display::aboutToTerminate, d, [d] {
+        delete d;
+    });
     return d;
 }
 
@@ -391,7 +440,9 @@ TextInputManagerInterface *Display::createTextInputManager(const TextInputInterf
     case TextInputInterfaceVersion::UnstableV2:
         t = new TextInputManagerUnstableV2Interface(this, parent);
     }
-    connect(this, &Display::aboutToTerminate, t, [t] { delete t; });
+    connect(this, &Display::aboutToTerminate, t, [t] {
+        delete t;
+    });
     return t;
 }
 
@@ -409,7 +460,9 @@ XdgShellInterface *Display::createXdgShell(const XdgShellInterfaceVersion &versi
         x = new XdgShellStableInterface(this, parent);
         break;
     }
-    connect(this, &Display::aboutToTerminate, x, [x] { delete x; });
+    connect(this, &Display::aboutToTerminate, x, [x] {
+        delete x;
+    });
     return x;
 }
 
@@ -421,7 +474,9 @@ RelativePointerManagerInterface *Display::createRelativePointerManager(const Rel
         r = new RelativePointerManagerUnstableV1Interface(this, parent);
         break;
     }
-    connect(this, &Display::aboutToTerminate, r, [r] { delete r; });
+    connect(this, &Display::aboutToTerminate, r, [r] {
+        delete r;
+    });
     return r;
 }
 
@@ -433,7 +488,9 @@ PointerGesturesInterface *Display::createPointerGestures(const PointerGesturesIn
         p = new PointerGesturesUnstableV1Interface(this, parent);
         break;
     }
-    connect(this, &Display::aboutToTerminate, p, [p] { delete p; });
+    connect(this, &Display::aboutToTerminate, p, [p] {
+        delete p;
+    });
     return p;
 }
 
@@ -445,14 +502,18 @@ PointerConstraintsInterface *Display::createPointerConstraints(const PointerCons
         p = new PointerConstraintsUnstableV1Interface(this, parent);
         break;
     }
-    connect(this, &Display::aboutToTerminate, p, [p] { delete p; });
+    connect(this, &Display::aboutToTerminate, p, [p] {
+        delete p;
+    });
     return p;
 }
 
 XdgForeignInterface *Display::createXdgForeignInterface(QObject *parent)
 {
     XdgForeignInterface *foreign = new XdgForeignInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, foreign, [foreign] { delete foreign; });
+    connect(this, &Display::aboutToTerminate, foreign, [foreign] {
+        delete foreign;
+    });
     return foreign;
 }
 
@@ -464,70 +525,90 @@ IdleInhibitManagerInterface *Display::createIdleInhibitManager(const IdleInhibit
         i = new IdleInhibitManagerUnstableV1Interface(this, parent);
         break;
     }
-    connect(this, &Display::aboutToTerminate, i, [i] { delete i; });
+    connect(this, &Display::aboutToTerminate, i, [i] {
+        delete i;
+    });
     return i;
 }
 
 AppMenuManagerInterface *Display::createAppMenuManagerInterface(QObject *parent)
 {
     auto b = new AppMenuManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 ServerSideDecorationPaletteManagerInterface *Display::createServerSideDecorationPaletteManager(QObject *parent)
 {
     auto b = new ServerSideDecorationPaletteManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 LinuxDmabufUnstableV1Interface *Display::createLinuxDmabufInterface(QObject *parent)
 {
     auto b = new LinuxDmabufUnstableV1Interface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 PlasmaVirtualDesktopManagementInterface *Display::createPlasmaVirtualDesktopManagement(QObject *parent)
 {
     auto b = new PlasmaVirtualDesktopManagementInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 XdgOutputManagerInterface *Display::createXdgOutputManager(QObject *parent)
 {
     auto b = new XdgOutputManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, b, [b] { delete b; });
+    connect(this, &Display::aboutToTerminate, b, [b] {
+        delete b;
+    });
     return b;
 }
 
 XdgDecorationManagerInterface *Display::createXdgDecorationManager(XdgShellInterface *shellInterface, QObject *parent)
 {
     auto d = new XdgDecorationManagerInterface(this, shellInterface, parent);
-    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    connect(this, &Display::aboutToTerminate, d, [d] {
+        delete d;
+    });
     return d;
 }
 
 EglStreamControllerInterface *Display::createEglStreamControllerInterface(QObject *parent)
 {
     EglStreamControllerInterface *e = new EglStreamControllerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, e, [e] { delete e; });
+    connect(this, &Display::aboutToTerminate, e, [e] {
+        delete e;
+    });
     return e;
 }
 
 KeyStateInterface *Display::createKeyStateInterface(QObject *parent)
 {
     auto d = new KeyStateInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    connect(this, &Display::aboutToTerminate, d, [d] {
+        delete d;
+    });
     return d;
 }
 
 TabletManagerInterface *Display::createTabletManagerInterface(QObject *parent)
 {
     auto d = new TabletManagerInterface(this, parent);
-    connect(this, &Display::aboutToTerminate, d, [d] { delete d; });
+    connect(this, &Display::aboutToTerminate, d, [d] {
+        delete d;
+    });
     return d;
 }
 
@@ -564,27 +645,27 @@ bool Display::isRunning() const
     return d->running;
 }
 
-Display::operator wl_display*()
+Display::operator wl_display *()
 {
     return d->display;
 }
 
-Display::operator wl_display*() const
+Display::operator wl_display *() const
 {
     return d->display;
 }
 
-QList< OutputInterface* > Display::outputs() const
+QList<OutputInterface *> Display::outputs() const
 {
     return d->outputs;
 }
 
-QList< OutputDeviceInterface* > Display::outputDevices() const
+QList<OutputDeviceInterface *> Display::outputDevices() const
 {
     return d->outputdevices;
 }
 
-QVector<SeatInterface*> Display::seats() const
+QVector<SeatInterface *> Display::seats() const
 {
     return d->seats;
 }
@@ -592,31 +673,27 @@ QVector<SeatInterface*> Display::seats() const
 ClientConnection *Display::getConnection(wl_client *client)
 {
     Q_ASSERT(client);
-    auto it = std::find_if(d->clients.constBegin(), d->clients.constEnd(),
-        [client](ClientConnection *c) {
-            return c->client() == client;
-        }
-    );
+    auto it = std::find_if(d->clients.constBegin(), d->clients.constEnd(), [client](ClientConnection *c) {
+        return c->client() == client;
+    });
     if (it != d->clients.constEnd()) {
         return *it;
     }
     // no ConnectionData yet, create it
     auto c = new ClientConnection(client, this);
     d->clients << c;
-    connect(c, &ClientConnection::disconnected, this,
-        [this] (ClientConnection *c) {
-            const int index = d->clients.indexOf(c);
-            Q_ASSERT(index != -1);
-            d->clients.remove(index);
-            Q_ASSERT(d->clients.indexOf(c) == -1);
-            Q_EMIT clientDisconnected(c);
-        }
-    );
+    connect(c, &ClientConnection::disconnected, this, [this](ClientConnection *c) {
+        const int index = d->clients.indexOf(c);
+        Q_ASSERT(index != -1);
+        d->clients.remove(index);
+        Q_ASSERT(d->clients.indexOf(c) == -1);
+        Q_EMIT clientDisconnected(c);
+    });
     Q_EMIT clientConnected(c);
     return c;
 }
 
-QVector< ClientConnection* > Display::connections() const
+QVector<ClientConnection *> Display::connections() const
 {
     return d->clients;
 }

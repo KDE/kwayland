@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN DataDevice::Private
 {
 public:
@@ -49,18 +48,12 @@ private:
     DataOffer *lastOffer = nullptr;
 };
 
-const wl_data_device_listener DataDevice::Private::s_listener = {
-    dataOfferCallback,
-    enterCallback,
-    leaveCallback,
-    motionCallback,
-    dropCallback,
-    selectionCallback
-};
+const wl_data_device_listener DataDevice::Private::s_listener =
+    {dataOfferCallback, enterCallback, leaveCallback, motionCallback, dropCallback, selectionCallback};
 
 void DataDevice::Private::dataOfferCallback(void *data, wl_data_device *dataDevice, wl_data_offer *id)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     d->dataOffer(id);
 }
@@ -72,9 +65,15 @@ void DataDevice::Private::dataOffer(wl_data_offer *id)
     Q_ASSERT(lastOffer->isValid());
 }
 
-void DataDevice::Private::enterCallback(void *data, wl_data_device *dataDevice, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer *id)
+void DataDevice::Private::enterCallback(void *data,
+                                        wl_data_device *dataDevice,
+                                        uint32_t serial,
+                                        wl_surface *surface,
+                                        wl_fixed_t x,
+                                        wl_fixed_t y,
+                                        wl_data_offer *id)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     d->dragEnter(serial, QPointer<Surface>(Surface::get(surface)), QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), id);
 }
@@ -90,7 +89,7 @@ void DataDevice::Private::dragEnter(quint32 serial, const QPointer<Surface> &sur
 
 void DataDevice::Private::leaveCallback(void *data, wl_data_device *dataDevice)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     d->dragLeft();
 }
@@ -106,21 +105,21 @@ void DataDevice::Private::dragLeft()
 
 void DataDevice::Private::motionCallback(void *data, wl_data_device *dataDevice, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     Q_EMIT d->q->dragMotion(QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), time);
 }
 
 void DataDevice::Private::dropCallback(void *data, wl_data_device *dataDevice)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     Q_EMIT d->q->dropped();
 }
 
 void DataDevice::Private::selectionCallback(void *data, wl_data_device *dataDevice, wl_data_offer *id)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->device == dataDevice);
     d->selection(id);
 }
@@ -190,7 +189,8 @@ void DataDevice::startDragInternally(quint32 serial, Surface *origin, Surface *i
     startDrag(serial, nullptr, origin, icon);
 }
 
-namespace {
+namespace
+{
 static wl_data_source *dataSource(const DataSource *source)
 {
     if (!source) {
@@ -202,11 +202,7 @@ static wl_data_source *dataSource(const DataSource *source)
 
 void DataDevice::startDrag(quint32 serial, DataSource *source, Surface *origin, Surface *icon)
 {
-    wl_data_device_start_drag(d->device,
-                              dataSource(source),
-                              *origin,
-                              icon ? (wl_surface*)*icon : nullptr,
-                              serial);
+    wl_data_device_start_drag(d->device, dataSource(source), *origin, icon ? (wl_surface *)*icon : nullptr, serial);
 }
 
 void DataDevice::setSelection(quint32 serial, DataSource *source)
@@ -234,12 +230,12 @@ DataOffer *DataDevice::dragOffer() const
     return d->drag.offer;
 }
 
-DataDevice::operator wl_data_device*()
+DataDevice::operator wl_data_device *()
 {
     return d->device;
 }
 
-DataDevice::operator wl_data_device*() const
+DataDevice::operator wl_data_device *() const
 {
     return d->device;
 }

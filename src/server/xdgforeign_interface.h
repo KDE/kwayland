@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 class XdgExporterUnstableV2Interface;

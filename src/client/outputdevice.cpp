@@ -17,10 +17,8 @@
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 typedef QList<OutputDevice::Mode> Modes;
 
 class Q_DECL_HIDDEN OutputDevice::Private
@@ -55,9 +53,16 @@ public:
     bool done = false;
 
 private:
-    static void geometryCallback(void *data, org_kde_kwin_outputdevice *output, int32_t x, int32_t y,
-                                 int32_t physicalWidth, int32_t physicalHeight, int32_t subPixel,
-                                 const char *make, const char *model, int32_t transform);
+    static void geometryCallback(void *data,
+                                 org_kde_kwin_outputdevice *output,
+                                 int32_t x,
+                                 int32_t y,
+                                 int32_t physicalWidth,
+                                 int32_t physicalHeight,
+                                 int32_t subPixel,
+                                 const char *make,
+                                 const char *model,
+                                 int32_t transform);
     static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
@@ -67,8 +72,7 @@ private:
     static void enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled);
     static void uuidCallback(void *data, org_kde_kwin_outputdevice *output, const char *uuid);
 
-    static void colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output,
-                                    wl_array *red, wl_array *green, wl_array *blue);
+    static void colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output, wl_array *red, wl_array *green, wl_array *blue);
 
     static void serialNumberCallback(void *data, org_kde_kwin_outputdevice *output, const char *serialNumber);
     static void eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *eisa);
@@ -105,17 +109,15 @@ void OutputDevice::Private::setup(org_kde_kwin_outputdevice *o)
 
 bool OutputDevice::Mode::operator==(const OutputDevice::Mode &m) const
 {
-    return size == m.size
-           && refreshRate == m.refreshRate
-           && flags == m.flags
-           && output == m.output;
+    return size == m.size && refreshRate == m.refreshRate && flags == m.flags && output == m.output;
 }
 
 bool OutputDevice::ColorCurves::operator==(const OutputDevice::ColorCurves &cc) const
 {
     return red == cc.red && green == cc.green && blue == cc.blue;
 }
-bool OutputDevice::ColorCurves::operator!=(const ColorCurves &cc) const {
+bool OutputDevice::ColorCurves::operator!=(const ColorCurves &cc) const
+{
     return !operator==(cc);
 }
 
@@ -146,13 +148,19 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     overscanCallback,
 };
 
-void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
-                              int32_t x, int32_t y,
-                              int32_t physicalWidth, int32_t physicalHeight,
-                              int32_t subPixel, const char *make, const char *model, int32_t transform)
+void OutputDevice::Private::geometryCallback(void *data,
+                                             org_kde_kwin_outputdevice *output,
+                                             int32_t x,
+                                             int32_t y,
+                                             int32_t physicalWidth,
+                                             int32_t physicalHeight,
+                                             int32_t subPixel,
+                                             const char *make,
+                                             const char *model,
+                                             int32_t transform)
 {
     Q_UNUSED(transform)
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
     o->setGlobalPosition(QPoint(x, y));
     o->setManufacturer(make);
@@ -200,9 +208,15 @@ void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevi
     o->setTransform(toTransform());
 }
 
-void OutputDevice::Private::modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id)
+void OutputDevice::Private::modeCallback(void *data,
+                                         org_kde_kwin_outputdevice *output,
+                                         uint32_t flags,
+                                         int32_t width,
+                                         int32_t height,
+                                         int32_t refresh,
+                                         int32_t mode_id)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
     o->addMode(flags, width, height, refresh, mode_id);
 }
@@ -254,7 +268,7 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
 
 KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
 {
-    for (const auto &m: modes()) {
+    for (const auto &m : modes()) {
         if (m.flags.testFlag(KWayland::Client::OutputDevice::Mode::Flag::Current)) {
             return m;
         }
@@ -265,38 +279,38 @@ KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
 
 void OutputDevice::Private::scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
     o->setScale(scale);
 }
 
 void OutputDevice::Private::scaleFCallback(void *data, org_kde_kwin_outputdevice *output, wl_fixed_t scale_fixed)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
     o->setScale(wl_fixed_to_double(scale_fixed));
 }
 
 void OutputDevice::Private::doneCallback(void *data, org_kde_kwin_outputdevice *output)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
     o->done = true;
     Q_EMIT o->q->changed();
     Q_EMIT o->q->done();
 }
 
-void OutputDevice::Private::edidCallback(void* data, org_kde_kwin_outputdevice* output, const char* raw)
+void OutputDevice::Private::edidCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw)
 {
     Q_UNUSED(output);
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     o->edid = QByteArray::fromBase64(raw);
 }
 
-void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevice* output, int32_t enabled)
+void OutputDevice::Private::enabledCallback(void *data, org_kde_kwin_outputdevice *output, int32_t enabled)
 {
     Q_UNUSED(output);
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
 
     OutputDevice::Enablement _enabled = OutputDevice::Enablement::Disabled;
     if (enabled == ORG_KDE_KWIN_OUTPUTDEVICE_ENABLEMENT_ENABLED) {
@@ -311,10 +325,10 @@ void OutputDevice::Private::enabledCallback(void* data, org_kde_kwin_outputdevic
     }
 }
 
-void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* output, const char *uuid)
+void OutputDevice::Private::uuidCallback(void *data, org_kde_kwin_outputdevice *output, const char *uuid)
 {
     Q_UNUSED(output);
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     if (o->uuid != uuid) {
         o->uuid = uuid;
         Q_EMIT o->q->uuidChanged(o->uuid);
@@ -324,13 +338,10 @@ void OutputDevice::Private::uuidCallback(void* data, org_kde_kwin_outputdevice* 
     }
 }
 
-void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output,
-                                                wl_array *red,
-                                                wl_array *green,
-                                                wl_array *blue)
+void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputdevice *output, wl_array *red, wl_array *green, wl_array *blue)
 {
     Q_UNUSED(output);
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
 
     auto cc = ColorCurves();
 
@@ -353,24 +364,24 @@ void OutputDevice::Private::colorcurvesCallback(void *data, org_kde_kwin_outputd
 
 void OutputDevice::Private::serialNumberCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_UNUSED(output);
     o->setSerialNumber(raw);
 }
 
 void OutputDevice::Private::eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *raw)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_UNUSED(output);
     o->setEisaId(raw);
 }
 
 void OutputDevice::Private::capabilitiesCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t capabilities)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_UNUSED(output);
     auto caps = static_cast<Capabilities>(capabilities);
-    if (o->capabilities!= caps) {
+    if (o->capabilities != caps) {
         o->capabilities = caps;
         Q_EMIT o->q->capabilitiesChanged(caps);
         if (o->done) {
@@ -381,7 +392,7 @@ void OutputDevice::Private::capabilitiesCallback(void *data, org_kde_kwin_output
 
 void OutputDevice::Private::overscanCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t overscan)
 {
-    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_UNUSED(output);
     if (o->overscan != overscan) {
         o->overscan = overscan;
@@ -521,7 +532,6 @@ qreal OutputDevice::scaleF() const
     return d->scale;
 }
 
-
 bool OutputDevice::isValid() const
 {
     return d->output.isValid();
@@ -537,16 +547,18 @@ OutputDevice::Transform OutputDevice::transform() const
     return d->transform;
 }
 
-QList< OutputDevice::Mode > OutputDevice::modes() const
+QList<OutputDevice::Mode> OutputDevice::modes() const
 {
     return d->modes;
 }
 
-OutputDevice::operator org_kde_kwin_outputdevice*() {
+OutputDevice::operator org_kde_kwin_outputdevice *()
+{
     return d->output;
 }
 
-OutputDevice::operator org_kde_kwin_outputdevice*() const {
+OutputDevice::operator org_kde_kwin_outputdevice *() const
+{
     return d->output;
 }
 
@@ -575,17 +587,14 @@ OutputDevice::Capabilities OutputDevice::capabilities() const
     return d->capabilities;
 }
 
-
 uint32_t OutputDevice::overscan() const
 {
     return d->overscan;
 }
 
-
 void OutputDevice::destroy()
 {
     d->output.destroy();
-
 }
 
 }

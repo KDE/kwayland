@@ -3,19 +3,18 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "xdgshell_p.h"
 #include "event_queue.h"
 #include "output.h"
 #include "seat.h"
 #include "surface.h"
 #include "wayland_pointer_p.h"
+#include "xdgshell_p.h"
 #include <wayland-xdg-shell-client-protocol.h>
 
 namespace KWayland
 {
 namespace Client
 {
-
 class XdgShellStable::Private : public XdgShell::Private
 {
 public:
@@ -28,12 +27,14 @@ public:
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
     XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) override;
 
-    using XdgShell::Private::operator xdg_shell*;
-    using XdgShell::Private::operator zxdg_shell_v6*;
-    operator xdg_wm_base*() override {
+    using XdgShell::Private::operator xdg_shell *;
+    using XdgShell::Private::operator zxdg_shell_v6 *;
+    operator xdg_wm_base *() override
+    {
         return xdg_shell_base;
     }
-    operator xdg_wm_base*() const override {
+    operator xdg_wm_base *() const override
+    {
         return xdg_shell_base;
     }
 
@@ -206,7 +207,7 @@ XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xd
     XdgShellPopup *s = new XdgShellPopupStable(parent);
     auto popup = xdg_surface_get_popup(ss, parentSurface, p);
     if (queue) {
-        //deliberately not adding the positioner because the positioner has no events sent to it
+        // deliberately not adding the positioner because the positioner has no events sent to it
         queue->addProxy(ss);
         queue->addProxy(popup);
     }
@@ -218,14 +219,13 @@ XdgShellPopup *XdgShellStable::Private::internalGetXdgPopup(Surface *surface, xd
 }
 
 XdgShellStable::XdgShellStable(QObject *parent)
-    : XdgShell(new Private,  parent)
+    : XdgShell(new Private, parent)
 {
 }
 
 XdgShellStable::~XdgShellStable() = default;
 
-
-//A top level wraps both xdg_surface and xdg_top_level into the public API XdgShelllSurface
+// A top level wraps both xdg_surface and xdg_top_level into the public API XdgShelllSurface
 class XdgTopLevelStable::Private : public XdgShellSurface::Private
 {
 public:
@@ -238,18 +238,22 @@ public:
     void destroy() override;
     bool isValid() const override;
 
-    using XdgShellSurface::Private::operator zxdg_toplevel_v6*;
-    using XdgShellSurface::Private::operator zxdg_surface_v6*;
-    operator xdg_surface*() override {
+    using XdgShellSurface::Private::operator zxdg_toplevel_v6 *;
+    using XdgShellSurface::Private::operator zxdg_surface_v6 *;
+    operator xdg_surface *() override
+    {
         return xdgsurface;
     }
-    operator xdg_surface*() const override {
+    operator xdg_surface *() const override
+    {
         return xdgsurface;
     }
-    operator xdg_toplevel*() override {
+    operator xdg_toplevel *() override
+    {
         return xdgtoplevel;
     }
-    operator xdg_toplevel*() const override {
+    operator xdg_toplevel *() const override
+    {
         return xdgtoplevel;
     }
 
@@ -281,19 +285,14 @@ private:
     static const struct xdg_surface_listener s_surfaceListener;
 };
 
-const struct xdg_toplevel_listener XdgTopLevelStable::Private::s_toplevelListener = {
-    configureCallback,
-    closeCallback
-};
+const struct xdg_toplevel_listener XdgTopLevelStable::Private::s_toplevelListener = {configureCallback, closeCallback};
 
-const struct xdg_surface_listener XdgTopLevelStable::Private::s_surfaceListener = {
-    surfaceConfigureCallback
-};
+const struct xdg_surface_listener XdgTopLevelStable::Private::s_surfaceListener = {surfaceConfigureCallback};
 
 void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct xdg_surface *surface, uint32_t serial)
 {
     Q_UNUSED(surface)
-    auto s = static_cast<Private*>(data);
+    auto s = static_cast<Private *>(data);
     s->q->configureRequested(s->pendingSize, s->pendingState, serial);
     if (!s->pendingSize.isNull()) {
         s->q->setSize(s->pendingSize);
@@ -305,7 +304,7 @@ void XdgTopLevelStable::Private::surfaceConfigureCallback(void *data, struct xdg
 void XdgTopLevelStable::Private::configureCallback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *state)
 {
     Q_UNUSED(xdg_toplevel)
-    auto s = static_cast<Private*>(data);
+    auto s = static_cast<Private *>(data);
     States states;
 
     uint32_t *statePtr = static_cast<uint32_t *>(state->data);
@@ -331,7 +330,7 @@ void XdgTopLevelStable::Private::configureCallback(void *data, struct xdg_toplev
 
 void XdgTopLevelStable::Private::closeCallback(void *data, xdg_toplevel *xdg_toplevel)
 {
-    auto s = static_cast<XdgTopLevelStable::Private*>(data);
+    auto s = static_cast<XdgTopLevelStable::Private *>(data);
     Q_ASSERT(s->xdgtoplevel == xdg_toplevel);
     Q_EMIT s->q->closeRequested();
 }
@@ -377,12 +376,12 @@ void XdgTopLevelStable::Private::setTransientFor(XdgShellSurface *parent)
     xdg_toplevel_set_parent(xdgtoplevel, parentSurface);
 }
 
-void XdgTopLevelStable::Private::setTitle(const QString & title)
+void XdgTopLevelStable::Private::setTitle(const QString &title)
 {
     xdg_toplevel_set_title(xdgtoplevel, title.toUtf8().constData());
 }
 
-void XdgTopLevelStable::Private::setAppId(const QByteArray & appId)
+void XdgTopLevelStable::Private::setAppId(const QByteArray &appId)
 {
     xdg_toplevel_set_app_id(xdgtoplevel, appId.constData());
 }
@@ -493,18 +492,22 @@ public:
     void ackConfigure(quint32 serial) override;
     void setWindowGeometry(const QRect &windowGeometry) override;
 
-    using XdgShellPopup::Private::operator zxdg_popup_v6*;
-    using XdgShellPopup::Private::operator zxdg_surface_v6*;
-    operator xdg_surface*() override {
+    using XdgShellPopup::Private::operator zxdg_popup_v6 *;
+    using XdgShellPopup::Private::operator zxdg_surface_v6 *;
+    operator xdg_surface *() override
+    {
         return xdgsurface;
     }
-    operator xdg_surface*() const override {
+    operator xdg_surface *() const override
+    {
         return xdgsurface;
     }
-    operator xdg_popup*() override {
+    operator xdg_popup *() override
+    {
         return xdgpopup;
     }
-    operator xdg_popup*() const override {
+    operator xdg_popup *() const override
+    {
         return xdgpopup;
     }
     WaylandPointer<xdg_surface, xdg_surface_destroy> xdgsurface;
@@ -521,10 +524,7 @@ private:
     static const struct xdg_surface_listener s_surfaceListener;
 };
 
-const struct xdg_popup_listener XdgShellPopupStable::Private::s_popupListener = {
-    configureCallback,
-    popupDoneCallback
-};
+const struct xdg_popup_listener XdgShellPopupStable::Private::s_popupListener = {configureCallback, popupDoneCallback};
 
 const struct xdg_surface_listener XdgShellPopupStable::Private::s_surfaceListener = {
     surfaceConfigureCallback,
@@ -533,21 +533,21 @@ const struct xdg_surface_listener XdgShellPopupStable::Private::s_surfaceListene
 void XdgShellPopupStable::Private::configureCallback(void *data, xdg_popup *xdg_popup, int32_t x, int32_t y, int32_t width, int32_t height)
 {
     Q_UNUSED(xdg_popup)
-    auto s = static_cast<Private*>(data);
+    auto s = static_cast<Private *>(data);
     s->pendingRect = QRect(x, y, width, height);
 }
 
 void XdgShellPopupStable::Private::surfaceConfigureCallback(void *data, struct xdg_surface *surface, uint32_t serial)
 {
     Q_UNUSED(surface)
-    auto s = static_cast<Private*>(data);
+    auto s = static_cast<Private *>(data);
     s->q->configureRequested(s->pendingRect, serial);
     s->pendingRect = QRect();
 }
 
 void XdgShellPopupStable::Private::popupDoneCallback(void *data, xdg_popup *xdg_popup)
 {
-    auto s = static_cast<XdgShellPopupStable::Private*>(data);
+    auto s = static_cast<XdgShellPopupStable::Private *>(data);
     Q_ASSERT(s->xdgpopup == xdg_popup);
     Q_EMIT s->q->popupDone();
 }

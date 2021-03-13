@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "shm_pool.h"
-#include "event_queue.h"
 #include "buffer_p.h"
+#include "event_queue.h"
 #include "logging.h"
 #include "wayland_pointer_p.h"
 // Qt
@@ -13,8 +13,8 @@
 #include <QImage>
 #include <QTemporaryFile>
 // system
-#include <unistd.h>
 #include <sys/mman.h>
+#include <unistd.h>
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -22,7 +22,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN ShmPool::Private
 {
 public:
@@ -39,6 +38,7 @@ public:
     int offset = 0;
     QList<QSharedPointer<Buffer>> buffers;
     EventQueue *queue = nullptr;
+
 private:
     ShmPool *q;
 };
@@ -48,7 +48,6 @@ ShmPool::Private::Private(ShmPool *q)
     , q(q)
 {
 }
-
 
 ShmPool::ShmPool(QObject *parent)
     : QObject(parent)
@@ -151,7 +150,8 @@ bool ShmPool::Private::resizePool(int32_t newSize)
     return true;
 }
 
-namespace {
+namespace
+{
 static Buffer::Format toBufferFormat(const QImage &image)
 {
     switch (image.format()) {
@@ -169,7 +169,7 @@ static Buffer::Format toBufferFormat(const QImage &image)
 }
 }
 
-Buffer::Ptr ShmPool::createBuffer(const QImage& image)
+Buffer::Ptr ShmPool::createBuffer(const QImage &image)
 {
     if (image.isNull() || !d->valid) {
         return QWeakPointer<Buffer>();
@@ -201,7 +201,8 @@ Buffer::Ptr ShmPool::createBuffer(const QSize &size, int32_t stride, const void 
     return QWeakPointer<Buffer>(*it);
 }
 
-namespace {
+namespace
+{
 static wl_shm_format toWaylandFormat(Buffer::Format format)
 {
     switch (format) {
@@ -243,8 +244,7 @@ QList<QSharedPointer<Buffer>>::iterator ShmPool::Private::getBuffer(const QSize 
         }
     }
     // we don't have a buffer which we could reuse - need to create a new one
-    wl_buffer *native = wl_shm_pool_create_buffer(pool, offset, s.width(), s.height(),
-                                                  stride, toWaylandFormat(format));
+    wl_buffer *native = wl_shm_pool_create_buffer(pool, offset, s.width(), s.height(), stride, toWaylandFormat(format));
     if (!native) {
         return buffers.end();
     }
@@ -262,7 +262,7 @@ bool ShmPool::isValid() const
     return d->valid;
 }
 
-void* ShmPool::poolAddress() const
+void *ShmPool::poolAddress() const
 {
     return d->poolData;
 }

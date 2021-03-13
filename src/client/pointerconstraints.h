@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class LockedPointer;
 class Surface;
@@ -198,8 +197,8 @@ public:
      **/
     ConfinedPointer *confinePointer(Surface *surface, Pointer *pointer, Region *region, LifeTime lifetime, QObject *parent = nullptr);
 
-    operator zwp_pointer_constraints_v1*();
-    operator zwp_pointer_constraints_v1*() const;
+    operator zwp_pointer_constraints_v1 *();
+    operator zwp_pointer_constraints_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -314,8 +313,8 @@ public:
      **/
     void setRegion(Region *region);
 
-    operator zwp_locked_pointer_v1*();
-    operator zwp_locked_pointer_v1*() const;
+    operator zwp_locked_pointer_v1 *();
+    operator zwp_locked_pointer_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -422,8 +421,8 @@ public:
      **/
     void setRegion(Region *region);
 
-    operator zwp_confined_pointer_v1*();
-    operator zwp_confined_pointer_v1*() const;
+    operator zwp_confined_pointer_v1 *();
+    operator zwp_confined_pointer_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -449,7 +448,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

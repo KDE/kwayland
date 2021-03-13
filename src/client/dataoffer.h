@@ -114,11 +114,11 @@ public:
      **/
     DataDeviceManager::DnDAction selectedDragAndDropAction() const;
 
-    operator wl_data_offer*();
-    operator wl_data_offer*() const;
+    operator wl_data_offer *();
+    operator wl_data_offer *() const;
 
 Q_SIGNALS:
-    void mimeTypeOffered(const QString&);
+    void mimeTypeOffered(const QString &);
     /**
      * Emitted whenever the @link{sourceDragAndDropActions} changed, e.g. on enter or when
      * the DataSource changes the supported actions.
@@ -143,6 +143,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::DataOffer*)
+Q_DECLARE_METATYPE(KWayland::Client::DataOffer *)
 
 #endif

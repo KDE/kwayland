@@ -7,10 +7,10 @@
 #include "logging.h"
 // Qt
 #include <QAbstractEventDispatcher>
-#include <QGuiApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QGuiApplication>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QSocketNotifier>
@@ -20,10 +20,8 @@
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 class Q_DECL_HIDDEN ConnectionThread::Private
 {
 public:
@@ -43,15 +41,15 @@ public:
     bool foreign = false;
     QMetaObject::Connection eventDispatcherConnection;
     int error = 0;
-    static QVector<ConnectionThread*> connections;
+    static QVector<ConnectionThread *> connections;
     static QMutex mutex;
+
 private:
     ConnectionThread *q;
 };
 
-QVector<ConnectionThread*> ConnectionThread::Private::connections = QVector<ConnectionThread*>{};
+QVector<ConnectionThread *> ConnectionThread::Private::connections = QVector<ConnectionThread *>{};
 QMutex ConnectionThread::Private::mutex{QMutex::Recursive};
-
 
 ConnectionThread::Private::Private(ConnectionThread *q)
     : socketName(QString::fromUtf8(qgetenv("WAYLAND_DISPLAY")))
@@ -107,25 +105,23 @@ void ConnectionThread::Private::setupSocketNotifier()
 {
     const int fd = wl_display_get_fd(display);
     socketNotifier.reset(new QSocketNotifier(fd, QSocketNotifier::Read));
-    QObject::connect(socketNotifier.data(), &QSocketNotifier::activated, q,
-        [this]() {
-            if (!display) {
+    QObject::connect(socketNotifier.data(), &QSocketNotifier::activated, q, [this]() {
+        if (!display) {
+            return;
+        }
+        if (wl_display_dispatch(display) == -1) {
+            error = wl_display_get_error(display);
+            if (error != 0) {
+                if (display) {
+                    free(display);
+                    display = nullptr;
+                }
+                Q_EMIT q->errorOccurred();
                 return;
             }
-            if (wl_display_dispatch(display) == -1) {
-                error = wl_display_get_error(display);
-                if (error != 0) {
-                    if (display) {
-                        free(display);
-                        display = nullptr;
-                    }
-                    Q_EMIT q->errorOccurred();
-                    return;
-                }
-            }
-            Q_EMIT q->eventsRead();
         }
-    );
+        Q_EMIT q->eventsRead();
+    });
 }
 
 void ConnectionThread::Private::setupSocketFileWatcher()
@@ -135,46 +131,45 @@ void ConnectionThread::Private::setupSocketFileWatcher()
     }
     socketWatcher.reset(new QFileSystemWatcher);
     socketWatcher->addPath(runtimeDir.absoluteFilePath(socketName));
-    QObject::connect(socketWatcher.data(), &QFileSystemWatcher::fileChanged, q,
-        [this] (const QString &file) {
-            if (QFile::exists(file) || serverDied) {
+    QObject::connect(socketWatcher.data(), &QFileSystemWatcher::fileChanged, q, [this](const QString &file) {
+        if (QFile::exists(file) || serverDied) {
+            return;
+        }
+        qCWarning(KWAYLAND_CLIENT) << "Connection to server went away";
+        serverDied = true;
+        if (display) {
+            free(display);
+            display = nullptr;
+        }
+        socketNotifier.reset();
+
+        // need a new filesystem watcher
+        socketWatcher.reset(new QFileSystemWatcher);
+        socketWatcher->addPath(runtimeDir.absolutePath());
+        QObject::connect(socketWatcher.data(), &QFileSystemWatcher::directoryChanged, q, [this]() {
+            if (!serverDied) {
                 return;
             }
-            qCWarning(KWAYLAND_CLIENT) << "Connection to server went away";
-            serverDied = true;
-            if (display) {
-                free(display);
-                display = nullptr;
+            if (runtimeDir.exists(socketName)) {
+                qCDebug(KWAYLAND_CLIENT) << "Socket reappeared";
+                socketWatcher.reset();
+                serverDied = false;
+                error = 0;
+                q->initConnection();
             }
-            socketNotifier.reset();
-
-            // need a new filesystem watcher
-            socketWatcher.reset(new QFileSystemWatcher);
-            socketWatcher->addPath(runtimeDir.absolutePath());
-            QObject::connect(socketWatcher.data(), &QFileSystemWatcher::directoryChanged, q,
-                [this]() {
-                    if (!serverDied) {
-                        return;
-                    }
-                    if (runtimeDir.exists(socketName)) {
-                        qCDebug(KWAYLAND_CLIENT) << "Socket reappeared";
-                        socketWatcher.reset();
-                        serverDied = false;
-                        error = 0;
-                        q->initConnection();
-                    }
-                }
-            );
-            Q_EMIT q->connectionDied();
-        }
-    );
+        });
+        Q_EMIT q->connectionDied();
+    });
 }
 
 ConnectionThread::ConnectionThread(QObject *parent)
     : QObject(parent)
     , d(new Private(this))
 {
-    d->eventDispatcherConnection = connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, this,
+    d->eventDispatcherConnection = connect(
+        QCoreApplication::eventDispatcher(),
+        &QAbstractEventDispatcher::aboutToBlock,
+        this,
         [this] {
             if (d->display) {
                 wl_display_flush(d->display);
@@ -202,7 +197,7 @@ ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
     if (!native) {
         return nullptr;
     }
-    wl_display *display = reinterpret_cast<wl_display*>(native->nativeResourceForIntegration(QByteArrayLiteral("wl_display")));
+    wl_display *display = reinterpret_cast<wl_display *>(native->nativeResourceForIntegration(QByteArrayLiteral("wl_display")));
     if (!display) {
         return nullptr;
     }
@@ -286,7 +281,7 @@ int ConnectionThread::errorCode() const
     return d->error;
 }
 
-QVector<ConnectionThread*> ConnectionThread::connections()
+QVector<ConnectionThread *> ConnectionThread::connections()
 {
     return Private::connections;
 }

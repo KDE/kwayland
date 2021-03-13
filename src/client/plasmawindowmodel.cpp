@@ -12,12 +12,11 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN PlasmaWindowModel::Private
 {
 public:
     Private(PlasmaWindowModel *q);
-    QList<PlasmaWindow*> windows;
+    QList<PlasmaWindow *> windows;
     PlasmaWindow *window = nullptr;
 
     void addWindow(PlasmaWindow *window);
@@ -55,109 +54,109 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
     QObject::connect(window, &PlasmaWindow::unmapped, q, removeWindow);
     QObject::connect(window, &QObject::destroyed, q, removeWindow);
 
-    QObject::connect(window, &PlasmaWindow::titleChanged, q,
-        [window, this] { this->dataChanged(window, Qt::DisplayRole); }
-    );
+    QObject::connect(window, &PlasmaWindow::titleChanged, q, [window, this] {
+        this->dataChanged(window, Qt::DisplayRole);
+    });
 
-    QObject::connect(window, &PlasmaWindow::iconChanged, q,
-        [window, this] { this->dataChanged(window, Qt::DecorationRole); }
-    );
+    QObject::connect(window, &PlasmaWindow::iconChanged, q, [window, this] {
+        this->dataChanged(window, Qt::DecorationRole);
+    });
 
-    QObject::connect(window, &PlasmaWindow::appIdChanged, q,
-        [window, this] { this->dataChanged(window, PlasmaWindowModel::AppId); }
-    );
+    QObject::connect(window, &PlasmaWindow::appIdChanged, q, [window, this] {
+        this->dataChanged(window, PlasmaWindowModel::AppId);
+    });
 
-    QObject::connect(window, &PlasmaWindow::activeChanged, q,
-        [window, this] { this->dataChanged(window, IsActive); }
-    );
+    QObject::connect(window, &PlasmaWindow::activeChanged, q, [window, this] {
+        this->dataChanged(window, IsActive);
+    });
 
-    QObject::connect(window, &PlasmaWindow::fullscreenableChanged, q,
-        [window, this] { this->dataChanged(window, IsFullscreenable); }
-    );
+    QObject::connect(window, &PlasmaWindow::fullscreenableChanged, q, [window, this] {
+        this->dataChanged(window, IsFullscreenable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::fullscreenChanged, q,
-        [window, this] { this->dataChanged(window, IsFullscreen); }
-    );
+    QObject::connect(window, &PlasmaWindow::fullscreenChanged, q, [window, this] {
+        this->dataChanged(window, IsFullscreen);
+    });
 
-    QObject::connect(window, &PlasmaWindow::maximizeableChanged, q,
-        [window, this] { this->dataChanged(window, IsMaximizable); }
-    );
+    QObject::connect(window, &PlasmaWindow::maximizeableChanged, q, [window, this] {
+        this->dataChanged(window, IsMaximizable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::maximizedChanged, q,
-        [window, this] { this->dataChanged(window, IsMaximized); }
-    );
+    QObject::connect(window, &PlasmaWindow::maximizedChanged, q, [window, this] {
+        this->dataChanged(window, IsMaximized);
+    });
 
-    QObject::connect(window, &PlasmaWindow::minimizeableChanged, q,
-        [window, this] { this->dataChanged(window, IsMinimizable); }
-    );
+    QObject::connect(window, &PlasmaWindow::minimizeableChanged, q, [window, this] {
+        this->dataChanged(window, IsMinimizable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::minimizedChanged, q,
-        [window, this] { this->dataChanged(window, IsMinimized); }
-    );
+    QObject::connect(window, &PlasmaWindow::minimizedChanged, q, [window, this] {
+        this->dataChanged(window, IsMinimized);
+    });
 
-    QObject::connect(window, &PlasmaWindow::keepAboveChanged, q,
-        [window, this] { this->dataChanged(window, IsKeepAbove); }
-    );
+    QObject::connect(window, &PlasmaWindow::keepAboveChanged, q, [window, this] {
+        this->dataChanged(window, IsKeepAbove);
+    });
 
-    QObject::connect(window, &PlasmaWindow::keepBelowChanged, q,
-        [window, this] { this->dataChanged(window, IsKeepBelow); }
-    );
+    QObject::connect(window, &PlasmaWindow::keepBelowChanged, q, [window, this] {
+        this->dataChanged(window, IsKeepBelow);
+    });
 
-    QObject::connect(window, &PlasmaWindow::virtualDesktopChanged, q,
-        [window, this] { this->dataChanged(window, VirtualDesktop); }
-    );
+    QObject::connect(window, &PlasmaWindow::virtualDesktopChanged, q, [window, this] {
+        this->dataChanged(window, VirtualDesktop);
+    });
 
-    QObject::connect(window, &PlasmaWindow::onAllDesktopsChanged, q,
-        [window, this] { this->dataChanged(window, IsOnAllDesktops); }
-    );
+    QObject::connect(window, &PlasmaWindow::onAllDesktopsChanged, q, [window, this] {
+        this->dataChanged(window, IsOnAllDesktops);
+    });
 
-    QObject::connect(window, &PlasmaWindow::demandsAttentionChanged, q,
-        [window, this] { this->dataChanged(window, IsDemandingAttention); }
-    );
+    QObject::connect(window, &PlasmaWindow::demandsAttentionChanged, q, [window, this] {
+        this->dataChanged(window, IsDemandingAttention);
+    });
 
-    QObject::connect(window, &PlasmaWindow::skipTaskbarChanged, q,
-        [window, this] { this->dataChanged(window, SkipTaskbar); }
-    );
+    QObject::connect(window, &PlasmaWindow::skipTaskbarChanged, q, [window, this] {
+        this->dataChanged(window, SkipTaskbar);
+    });
 
-    QObject::connect(window, &PlasmaWindow::skipSwitcherChanged, q,
-        [window, this] { this->dataChanged(window, SkipSwitcher); }
-    );
+    QObject::connect(window, &PlasmaWindow::skipSwitcherChanged, q, [window, this] {
+        this->dataChanged(window, SkipSwitcher);
+    });
 
-    QObject::connect(window, &PlasmaWindow::shadeableChanged, q,
-        [window, this] { this->dataChanged(window, IsShadeable); }
-    );
+    QObject::connect(window, &PlasmaWindow::shadeableChanged, q, [window, this] {
+        this->dataChanged(window, IsShadeable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::shadedChanged, q,
-        [window, this] { this->dataChanged(window, IsShaded); }
-    );
+    QObject::connect(window, &PlasmaWindow::shadedChanged, q, [window, this] {
+        this->dataChanged(window, IsShaded);
+    });
 
-    QObject::connect(window, &PlasmaWindow::movableChanged, q,
-        [window, this] { this->dataChanged(window, IsMovable); }
-    );
+    QObject::connect(window, &PlasmaWindow::movableChanged, q, [window, this] {
+        this->dataChanged(window, IsMovable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::resizableChanged, q,
-        [window, this] { this->dataChanged(window, IsResizable); }
-    );
+    QObject::connect(window, &PlasmaWindow::resizableChanged, q, [window, this] {
+        this->dataChanged(window, IsResizable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::virtualDesktopChangeableChanged, q,
-        [window, this] { this->dataChanged(window, IsVirtualDesktopChangeable); }
-    );
+    QObject::connect(window, &PlasmaWindow::virtualDesktopChangeableChanged, q, [window, this] {
+        this->dataChanged(window, IsVirtualDesktopChangeable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::closeableChanged, q,
-        [window, this] { this->dataChanged(window, IsCloseable); }
-    );
+    QObject::connect(window, &PlasmaWindow::closeableChanged, q, [window, this] {
+        this->dataChanged(window, IsCloseable);
+    });
 
-    QObject::connect(window, &PlasmaWindow::geometryChanged, q,
-        [window, this] { this->dataChanged(window, Geometry); }
-    );
+    QObject::connect(window, &PlasmaWindow::geometryChanged, q, [window, this] {
+        this->dataChanged(window, Geometry);
+    });
 
-    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopEntered, q,
-        [window, this] { this->dataChanged(window, VirtualDesktops); }
-    );
+    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopEntered, q, [window, this] {
+        this->dataChanged(window, VirtualDesktops);
+    });
 
-    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopLeft, q,
-        [window, this] { this->dataChanged(window, VirtualDesktops); }
-    );
+    QObject::connect(window, &PlasmaWindow::plasmaVirtualDesktopLeft, q, [window, this] {
+        this->dataChanged(window, VirtualDesktops);
+    });
 }
 
 void PlasmaWindowModel::Private::dataChanged(PlasmaWindow *window, int role)
@@ -170,19 +169,15 @@ PlasmaWindowModel::PlasmaWindowModel(PlasmaWindowManagement *parent)
     : QAbstractListModel(parent)
     , d(new Private(this))
 {
-    connect(parent, &PlasmaWindowManagement::interfaceAboutToBeReleased, this,
-        [this] {
-            beginResetModel();
-            d->windows.clear();
-            endResetModel();
-        }
-    );
+    connect(parent, &PlasmaWindowManagement::interfaceAboutToBeReleased, this, [this] {
+        beginResetModel();
+        d->windows.clear();
+        endResetModel();
+    });
 
-    connect(parent, &PlasmaWindowManagement::windowCreated, this,
-        [this](PlasmaWindow *window) {
-            d->addWindow(window);
-        }
-    );
+    connect(parent, &PlasmaWindowManagement::windowCreated, this, [this](PlasmaWindow *window) {
+        d->addWindow(window);
+    });
 
     for (auto it = parent->windows().constBegin(); it != parent->windows().constEnd(); ++it) {
         d->addWindow(*it);

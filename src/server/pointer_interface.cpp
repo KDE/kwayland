@@ -4,25 +4,23 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "pointer_interface.h"
+#include "datadevice_interface.h"
+#include "display.h"
 #include "pointer_interface_p.h"
 #include "pointerconstraints_interface.h"
 #include "pointergestures_interface_p.h"
-#include "resource_p.h"
 #include "relativepointer_interface_p.h"
+#include "resource_p.h"
 #include "seat_interface.h"
-#include "display.h"
 #include "subcompositor_interface.h"
 #include "surface_interface.h"
-#include "datadevice_interface.h"
 // Wayland
 #include <wayland-server.h>
 
 namespace KWayland
 {
-
 namespace Server
 {
-
 class Cursor::Private
 {
 public:
@@ -70,36 +68,31 @@ void PointerInterface::Private::sendLeave(SurfaceInterface *surface, quint32 ser
 void PointerInterface::Private::registerRelativePointer(RelativePointerInterface *relativePointer)
 {
     relativePointers << relativePointer;
-    QObject::connect(relativePointer, &QObject::destroyed, q,
-        [this, relativePointer] {
-            relativePointers.removeOne(relativePointer);
-        }
-    );
+    QObject::connect(relativePointer, &QObject::destroyed, q, [this, relativePointer] {
+        relativePointers.removeOne(relativePointer);
+    });
 }
-
 
 void PointerInterface::Private::registerSwipeGesture(PointerSwipeGestureInterface *gesture)
 {
     swipeGestures << gesture;
-    QObject::connect(gesture, &QObject::destroyed, q,
-        [this, gesture] {
-            swipeGestures.removeOne(gesture);
-        }
-    );
+    QObject::connect(gesture, &QObject::destroyed, q, [this, gesture] {
+        swipeGestures.removeOne(gesture);
+    });
 }
 
 void PointerInterface::Private::registerPinchGesture(PointerPinchGestureInterface *gesture)
 {
     pinchGestures << gesture;
-    QObject::connect(gesture, &QObject::destroyed, q,
-        [this, gesture] {
-            pinchGestures.removeOne(gesture);
-        }
-    );
+    QObject::connect(gesture, &QObject::destroyed, q, [this, gesture] {
+        pinchGestures.removeOne(gesture);
+    });
 }
 
-namespace {
-static QPointF surfacePosition(SurfaceInterface *surface) {
+namespace
+{
+static QPointF surfacePosition(SurfaceInterface *surface)
+{
     if (surface && surface->subSurface()) {
         return surface->subSurface()->position() + surfacePosition(surface->subSurface()->parentSurface().data());
     }
@@ -113,9 +106,7 @@ void PointerInterface::Private::sendEnter(SurfaceInterface *surface, const QPoin
         return;
     }
     const QPointF adjustedPos = parentSurfacePosition - surfacePosition(surface);
-    wl_pointer_send_enter(resource, serial,
-                          surface->resource(),
-                          wl_fixed_from_double(adjustedPos.x()), wl_fixed_from_double(adjustedPos.y()));
+    wl_pointer_send_enter(resource, serial, surface->resource(), wl_fixed_from_double(adjustedPos.x()), wl_fixed_from_double(adjustedPos.y()));
 }
 
 void PointerInterface::Private::startSwipeGesture(quint32 serial, quint32 fingerCount)
@@ -207,10 +198,7 @@ void PointerInterface::Private::sendFrame()
 }
 
 #ifndef K_DOXYGEN
-const struct wl_pointer_interface PointerInterface::Private::s_interface = {
-    setCursorCallback,
-    resourceDestroyedCallback
-};
+const struct wl_pointer_interface PointerInterface::Private::s_interface = {setCursorCallback, resourceDestroyedCallback};
 #endif
 
 PointerInterface::PointerInterface(SeatInterface *parent, wl_resource *parentResource)
@@ -247,8 +235,7 @@ PointerInterface::PointerInterface(SeatInterface *parent, wl_resource *parentRes
             d->client->flush();
         } else {
             const QPointF adjustedPos = pos - surfacePosition(d->focusedChildSurface);
-            wl_pointer_send_motion(d->resource, d->seat->timestamp(),
-                                   wl_fixed_from_double(adjustedPos.x()), wl_fixed_from_double(adjustedPos.y()));
+            wl_pointer_send_motion(d->resource, d->seat->timestamp(), wl_fixed_from_double(adjustedPos.x()), wl_fixed_from_double(adjustedPos.y()));
             d->sendFrame();
         }
     });
@@ -267,15 +254,13 @@ void PointerInterface::setFocusedSurface(SurfaceInterface *surface, quint32 seri
         return;
     }
     d->focusedSurface = surface;
-    d->destroyConnection = connect(d->focusedSurface, &Resource::aboutToBeUnbound, this,
-        [this] {
-            Q_D();
-            d->sendLeave(d->focusedChildSurface.data(), d->global->display()->nextSerial());
-            d->sendFrame();
-            d->focusedSurface = nullptr;
-            d->focusedChildSurface.clear();
-        }
-    );
+    d->destroyConnection = connect(d->focusedSurface, &Resource::aboutToBeUnbound, this, [this] {
+        Q_D();
+        d->sendLeave(d->focusedChildSurface.data(), d->global->display()->nextSerial());
+        d->sendFrame();
+        d->focusedSurface = nullptr;
+        d->focusedChildSurface.clear();
+    });
 
     const QPointF pos = d->seat->focusedPointerSurfaceTransformation().map(d->seat->pointerPos());
     d->focusedChildSurface = QPointer<SurfaceInterface>(d->focusedSurface->inputSurfaceAt(pos));
@@ -318,9 +303,7 @@ void PointerInterface::axis(Qt::Orientation orientation, qreal delta, qint32 dis
 
     const quint32 version = wl_resource_get_version(d->resource);
 
-    const auto wlOrientation = (orientation == Qt::Vertical)
-        ? WL_POINTER_AXIS_VERTICAL_SCROLL
-        : WL_POINTER_AXIS_HORIZONTAL_SCROLL;
+    const auto wlOrientation = (orientation == Qt::Vertical) ? WL_POINTER_AXIS_VERTICAL_SCROLL : WL_POINTER_AXIS_HORIZONTAL_SCROLL;
 
     if (source != PointerAxisSource::Unknown && version >= WL_POINTER_AXIS_SOURCE_SINCE_VERSION) {
         wl_pointer_axis_source wlSource;
@@ -363,14 +346,19 @@ void PointerInterface::axis(Qt::Orientation orientation, quint32 delta)
     if (!d->resource) {
         return;
     }
-    wl_pointer_send_axis(d->resource, d->seat->timestamp(),
+    wl_pointer_send_axis(d->resource,
+                         d->seat->timestamp(),
                          (orientation == Qt::Vertical) ? WL_POINTER_AXIS_VERTICAL_SCROLL : WL_POINTER_AXIS_HORIZONTAL_SCROLL,
                          wl_fixed_from_int(delta));
     d->sendFrame();
 }
 
-void PointerInterface::Private::setCursorCallback(wl_client *client, wl_resource *resource, uint32_t serial,
-                                         wl_resource *surface, int32_t hotspot_x, int32_t hotspot_y)
+void PointerInterface::Private::setCursorCallback(wl_client *client,
+                                                  wl_resource *resource,
+                                                  uint32_t serial,
+                                                  wl_resource *surface,
+                                                  int32_t hotspot_x,
+                                                  int32_t hotspot_y)
 {
     auto p = cast<Private>(resource);
     Q_ASSERT(p->client->client() == client);
@@ -397,7 +385,7 @@ void PointerInterface::relativeMotion(const QSizeF &delta, const QSizeF &deltaNo
 
 PointerInterface::Private *PointerInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 PointerInterface *PointerInterface::get(wl_resource *native)
@@ -411,7 +399,7 @@ Cursor::Private::Private(Cursor *q, PointerInterface *pointer)
 {
 }
 
-void Cursor::Private::update(const QPointer< SurfaceInterface > &s, quint32 serial, const QPoint &p)
+void Cursor::Private::update(const QPointer<SurfaceInterface> &s, quint32 serial, const QPoint &p)
 {
     bool emitChanged = false;
     if (enteredSerial != serial) {
@@ -463,7 +451,7 @@ PointerInterface *Cursor::pointer() const
     return d->pointer;
 }
 
-QPointer< SurfaceInterface > Cursor::surface() const
+QPointer<SurfaceInterface> Cursor::surface() const
 {
     return d->surface;
 }

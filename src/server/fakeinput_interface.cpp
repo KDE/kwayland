@@ -7,22 +7,21 @@
 #include "display.h"
 #include "global_p.h"
 
-#include <QSizeF>
 #include <QPointF>
+#include <QSizeF>
 
-#include <wayland-server.h>
 #include <wayland-fake-input-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class FakeInputInterface::Private : public Global::Private
 {
 public:
     Private(FakeInputInterface *q, Display *d);
-    QList<FakeInputDevice*> devices;
+    QList<FakeInputDevice *> devices;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
@@ -39,8 +38,9 @@ private:
     static void keyboardKeyCallback(wl_client *client, wl_resource *resource, uint32_t button, uint32_t state);
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
     static FakeInputDevice *device(wl_resource *r);
 
@@ -63,19 +63,17 @@ const quint32 FakeInputInterface::Private::s_version = 4;
 QList<quint32> FakeInputInterface::Private::touchIds = QList<quint32>();
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_fake_input_interface FakeInputInterface::Private::s_interface = {
-    authenticateCallback,
-    pointerMotionCallback,
-    buttonCallback,
-    axisCallback,
-    touchDownCallback,
-    touchMotionCallback,
-    touchUpCallback,
-    touchCancelCallback,
-    touchFrameCallback,
-    pointerMotionAbsoluteCallback,
-    keyboardKeyCallback
-};
+const struct org_kde_kwin_fake_input_interface FakeInputInterface::Private::s_interface = {authenticateCallback,
+                                                                                           pointerMotionCallback,
+                                                                                           buttonCallback,
+                                                                                           axisCallback,
+                                                                                           touchDownCallback,
+                                                                                           touchMotionCallback,
+                                                                                           touchUpCallback,
+                                                                                           touchCancelCallback,
+                                                                                           touchFrameCallback,
+                                                                                           pointerMotionAbsoluteCallback,
+                                                                                           keyboardKeyCallback};
 #endif
 
 FakeInputInterface::Private::Private(FakeInputInterface *q, Display *d)
@@ -95,7 +93,9 @@ void FakeInputInterface::Private::bind(wl_client *client, uint32_t version, uint
     wl_resource_set_implementation(resource, &s_interface, this, unbind);
     FakeInputDevice *device = new FakeInputDevice(resource, q);
     devices << device;
-    QObject::connect(device, &FakeInputDevice::destroyed, q, [device, this] { devices.removeAll(device); });
+    QObject::connect(device, &FakeInputDevice::destroyed, q, [device, this] {
+        devices.removeAll(device);
+    });
     Q_EMIT q->deviceCreated(device);
 }
 
@@ -109,7 +109,9 @@ void FakeInputInterface::Private::unbind(wl_resource *resource)
 FakeInputDevice *FakeInputInterface::Private::device(wl_resource *r)
 {
     Private *p = cast(r);
-    auto it = std::find_if(p->devices.constBegin(), p->devices.constEnd(), [r] (FakeInputDevice *device) { return device->resource() == r; } );
+    auto it = std::find_if(p->devices.constBegin(), p->devices.constEnd(), [r](FakeInputDevice *device) {
+        return device->resource() == r;
+    });
     if (it != p->devices.constEnd()) {
         return *it;
     }

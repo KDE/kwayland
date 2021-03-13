@@ -12,29 +12,29 @@
 #include <QTimer>
 
 #include <functional>
-#include <wayland-server.h>
 #include <wayland-idle-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class IdleInterface::Private : public Global::Private
 {
 public:
     Private(IdleInterface *q, Display *d);
 
     int inhibitCount = 0;
-    QVector<IdleTimeoutInterface*> idleTimeouts;
+    QVector<IdleTimeoutInterface *> idleTimeouts;
 
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
     static void getIdleTimeoutCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat, uint32_t timeout);
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     IdleInterface *q;
@@ -56,8 +56,9 @@ public:
 
 private:
     static void simulateUserActivityCallback(wl_client *client, wl_resource *resource);
-    IdleTimeoutInterface *q_func() {
-        return reinterpret_cast<IdleTimeoutInterface*>(q);
+    IdleTimeoutInterface *q_func()
+    {
+        return reinterpret_cast<IdleTimeoutInterface *>(q);
     }
     static const struct org_kde_kwin_idle_timeout_interface s_interface;
 };
@@ -65,9 +66,7 @@ private:
 const quint32 IdleInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_idle_interface IdleInterface::Private::s_interface = {
-    getIdleTimeoutCallback
-};
+const struct org_kde_kwin_idle_interface IdleInterface::Private::s_interface = {getIdleTimeoutCallback};
 #endif
 
 IdleInterface::Private::Private(IdleInterface *q, Display *d)
@@ -153,14 +152,11 @@ void IdleInterface::simulateUserActivity()
 
 IdleInterface::Private *IdleInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_idle_timeout_interface IdleTimeoutInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    simulateUserActivityCallback
-};
+const struct org_kde_kwin_idle_timeout_interface IdleTimeoutInterface::Private::s_interface = {resourceDestroyedCallback, simulateUserActivityCallback};
 #endif
 
 IdleTimeoutInterface::Private::Private(SeatInterface *seat, IdleTimeoutInterface *q, IdleInterface *manager, wl_resource *parentResource)
@@ -174,7 +170,7 @@ IdleTimeoutInterface::Private::~Private() = default;
 void IdleTimeoutInterface::Private::simulateUserActivityCallback(wl_client *client, wl_resource *resource)
 {
     Q_UNUSED(client);
-    Private *p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    Private *p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     p->simulateUserActivity();
 }
 
@@ -184,7 +180,7 @@ void IdleTimeoutInterface::Private::simulateUserActivity()
         // not yet configured
         return;
     }
-    if (qobject_cast<IdleInterface*>(global)->isInhibited()) {
+    if (qobject_cast<IdleInterface *>(global)->isInhibited()) {
         // ignored while inhibited
         return;
     }
@@ -203,14 +199,12 @@ void IdleTimeoutInterface::Private::setup(quint32 timeout)
     timer->setSingleShot(true);
     // less than 5 sec is not idle by definition
     timer->setInterval(qMax(timeout, 5000u));
-    QObject::connect(timer, &QTimer::timeout, q,
-        [this] {
-            if (resource) {
-                org_kde_kwin_idle_timeout_send_idle(resource);
-            }
+    QObject::connect(timer, &QTimer::timeout, q, [this] {
+        if (resource) {
+            org_kde_kwin_idle_timeout_send_idle(resource);
         }
-    );
-    if (qobject_cast<IdleInterface*>(global)->isInhibited()) {
+    });
+    if (qobject_cast<IdleInterface *>(global)->isInhibited()) {
         // don't start if inhibited
         return;
     }
@@ -220,36 +214,32 @@ void IdleTimeoutInterface::Private::setup(quint32 timeout)
 IdleTimeoutInterface::IdleTimeoutInterface(SeatInterface *seat, IdleInterface *parent, wl_resource *parentResource)
     : Resource(new Private(seat, this, parent, parentResource))
 {
-    connect(seat, &SeatInterface::timestampChanged, this,
-        [this] {
-            Q_D();
-            d->simulateUserActivity();
+    connect(seat, &SeatInterface::timestampChanged, this, [this] {
+        Q_D();
+        d->simulateUserActivity();
+    });
+    connect(parent, &IdleInterface::inhibitedChanged, this, [this] {
+        Q_D();
+        if (!d->timer) {
+            // not yet configured
+            return;
         }
-    );
-    connect(parent, &IdleInterface::inhibitedChanged, this,
-        [this] {
-            Q_D();
-            if (!d->timer) {
-                // not yet configured
-                return;
+        if (qobject_cast<IdleInterface *>(d->global)->isInhibited()) {
+            if (!d->timer->isActive() && d->resource) {
+                org_kde_kwin_idle_timeout_send_resumed(d->resource);
             }
-            if (qobject_cast<IdleInterface*>(d->global)->isInhibited()) {
-                if (!d->timer->isActive() && d->resource) {
-                    org_kde_kwin_idle_timeout_send_resumed(d->resource);
-                }
-                d->timer->stop();
-            } else {
-                d->timer->start();
-            }
+            d->timer->stop();
+        } else {
+            d->timer->start();
         }
-    );
+    });
 }
 
 IdleTimeoutInterface::~IdleTimeoutInterface() = default;
 
 IdleTimeoutInterface::Private *IdleTimeoutInterface::d_func() const
 {
-    return reinterpret_cast<IdleTimeoutInterface::Private*>(d.data());
+    return reinterpret_cast<IdleTimeoutInterface::Private *>(d.data());
 }
 
 }

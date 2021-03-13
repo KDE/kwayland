@@ -7,17 +7,15 @@
 #include "datadevice.h"
 #include "wayland_pointer_p.h"
 // Qt
-#include <QMimeType>
 #include <QMimeDatabase>
+#include <QMimeType>
 // Wayland
 #include <wayland-client-protocol.h>
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 class Q_DECL_HIDDEN DataOffer::Private
 {
 public:
@@ -39,11 +37,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_data_offer_listener DataOffer::Private::s_listener = {
-    offerCallback,
-    sourceActionsCallback,
-    actionCallback
-};
+const struct wl_data_offer_listener DataOffer::Private::s_listener = {offerCallback, sourceActionsCallback, actionCallback};
 #endif
 
 DataOffer::Private::Private(wl_data_offer *offer, DataOffer *q)
@@ -55,7 +49,7 @@ DataOffer::Private::Private(wl_data_offer *offer, DataOffer *q)
 
 void DataOffer::Private::offerCallback(void *data, wl_data_offer *dataOffer, const char *mimeType)
 {
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     Q_ASSERT(d->dataOffer == dataOffer);
     d->offer(QString::fromUtf8(mimeType));
 }
@@ -83,7 +77,7 @@ void DataOffer::Private::sourceActionsCallback(void *data, wl_data_offer *wl_dat
     if (source_actions & WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK) {
         actions |= DataDeviceManager::DnDAction::Ask;
     }
-    auto d = reinterpret_cast<Private*>(data);
+    auto d = reinterpret_cast<Private *>(data);
     if (d->sourceActions != actions) {
         d->sourceActions = actions;
         Q_EMIT d->q->sourceDragAndDropActionsChanged();
@@ -93,8 +87,8 @@ void DataOffer::Private::sourceActionsCallback(void *data, wl_data_offer *wl_dat
 void DataOffer::Private::actionCallback(void *data, wl_data_offer *wl_data_offer, uint32_t dnd_action)
 {
     Q_UNUSED(wl_data_offer)
-    auto d = reinterpret_cast<Private*>(data);
-    switch(dnd_action) {
+    auto d = reinterpret_cast<Private *>(data);
+    switch (dnd_action) {
     case WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY:
         d->setAction(DataDeviceManager::DnDAction::Copy);
         break;
@@ -147,7 +141,7 @@ bool DataOffer::isValid() const
     return d->dataOffer.isValid();
 }
 
-QList< QMimeType > DataOffer::offeredMimeTypes() const
+QList<QMimeType> DataOffer::offeredMimeTypes() const
 {
     return d->mimeTypes;
 }
@@ -173,12 +167,12 @@ void DataOffer::receive(const QString &mimeType, qint32 fd)
     wl_data_offer_receive(d->dataOffer, mimeType.toUtf8().constData(), fd);
 }
 
-DataOffer::operator wl_data_offer*()
+DataOffer::operator wl_data_offer *()
 {
     return d->dataOffer;
 }
 
-DataOffer::operator wl_data_offer*() const
+DataOffer::operator wl_data_offer *() const
 {
     return d->dataOffer;
 }
@@ -202,7 +196,7 @@ void DataOffer::setDragAndDropActions(DataDeviceManager::DnDActions supported, D
     if (wl_proxy_get_version(d->dataOffer) < WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION) {
         return;
     }
-    auto toWayland = [] (DataDeviceManager::DnDAction action) {
+    auto toWayland = [](DataDeviceManager::DnDAction action) {
         switch (action) {
         case DataDeviceManager::DnDAction::Copy:
             return WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;

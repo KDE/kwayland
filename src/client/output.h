@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 
 /**
@@ -115,8 +114,8 @@ public:
      * @returns @c true if managing a wl_output.
      **/
     bool isValid() const;
-    operator wl_output*();
-    operator wl_output*() const;
+    operator wl_output *();
+    operator wl_output *() const;
     wl_output *output();
     /**
      * Size in millimeters.
@@ -191,16 +190,16 @@ public:
     static Output *get(wl_output *native);
 
     /**
-    * Destroys the data hold by this Output.
-    * This method is supposed to be used when the connection to the Wayland
-    * server goes away. If the connection is not valid any more, it's not
-    * possible to call release any more as that calls into the Wayland
-    * connection and the call would fail.
-    *
-    * This method is automatically invoked when the Registry which created this
-    * Output gets destroyed.
-    *
-    **/
+     * Destroys the data hold by this Output.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail.
+     *
+     * This method is automatically invoked when the Registry which created this
+     * Output gets destroyed.
+     *
+     **/
     void destroy();
 
 Q_SIGNALS:
@@ -243,7 +242,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Output::Mode::Flags)
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::Output*)
+Q_DECLARE_METATYPE(KWayland::Client::Output *)
 Q_DECLARE_METATYPE(KWayland::Client::Output::SubPixel)
 Q_DECLARE_METATYPE(KWayland::Client::Output::Transform)
 Q_DECLARE_METATYPE(KWayland::Client::Output::Mode)

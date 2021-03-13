@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataSourceInterface::Private : public Resource::Private
 {
 public:
@@ -28,7 +27,8 @@ public:
     DataDeviceManagerInterface::DnDActions supportedDnDActions = DataDeviceManagerInterface::DnDAction::None;
 
 private:
-    DataSourceInterface *q_func() {
+    DataSourceInterface *q_func()
+    {
         return reinterpret_cast<DataSourceInterface *>(q);
     }
     void offer(const QString &mimeType);
@@ -40,11 +40,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_data_source_interface DataSourceInterface::Private::s_interface = {
-    offerCallback,
-    resourceDestroyedCallback,
-    setActionsCallback
-};
+const struct wl_data_source_interface DataSourceInterface::Private::s_interface = {offerCallback, resourceDestroyedCallback, setActionsCallback};
 #endif
 
 DataSourceInterface::Private::Private(DataSourceInterface *q, DataDeviceManagerInterface *parent, wl_resource *parentResource)
@@ -86,7 +82,7 @@ void DataSourceInterface::Private::setActionsCallback(wl_client *client, wl_reso
         return;
     }
     auto p = cast<Private>(resource);
-    if (p->supportedDnDActions!= supportedActions) {
+    if (p->supportedDnDActions != supportedActions) {
         p->supportedDnDActions = supportedActions;
         Q_EMIT p->q_func()->supportedDragAndDropActionsChanged();
     }
@@ -143,7 +139,7 @@ DataSourceInterface *DataSourceInterface::get(wl_resource *native)
 
 DataSourceInterface::Private *DataSourceInterface::d_func() const
 {
-    return reinterpret_cast<DataSourceInterface::Private*>(d.data());
+    return reinterpret_cast<DataSourceInterface::Private *>(d.data());
 }
 
 DataDeviceManagerInterface::DnDActions DataSourceInterface::supportedDragAndDropActions() const
@@ -179,7 +175,7 @@ void DataSourceInterface::dndAction(DataDeviceManagerInterface::DnDAction action
     uint32_t wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
     if (action == DataDeviceManagerInterface::DnDAction::Copy) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
-    } else if (action == DataDeviceManagerInterface::DnDAction::Move ) {
+    } else if (action == DataDeviceManagerInterface::DnDAction::Move) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
     } else if (action == DataDeviceManagerInterface::DnDAction::Ask) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK;

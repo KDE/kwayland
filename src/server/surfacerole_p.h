@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SurfaceInterface;
 
 class SurfaceRole

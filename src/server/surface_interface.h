@@ -6,8 +6,8 @@
 #ifndef WAYLAND_SERVER_SURFACE_INTERFACE_H
 #define WAYLAND_SERVER_SURFACE_INTERFACE_H
 
-#include "resource.h"
 #include "output_interface.h"
+#include "resource.h"
 
 #include <QObject>
 #include <QPointer>
@@ -285,7 +285,7 @@ public:
      * is none set.
      * @since 5.56
      **/
-    SurfaceInterface* dataProxy() const;
+    SurfaceInterface *dataProxy() const;
 
 Q_SIGNALS:
     /**
@@ -296,9 +296,9 @@ Q_SIGNALS:
      * @see buffer
      * @see damage
      **/
-    void damaged(const QRegion&);
-    void opaqueChanged(const QRegion&);
-    void inputChanged(const QRegion&);
+    void damaged(const QRegion &);
+    void opaqueChanged(const QRegion &);
+    void inputChanged(const QRegion &);
     void scaleChanged(qint32);
     void transformChanged(KWayland::Server::OutputInterface::Transform);
     /**
@@ -388,6 +388,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::SurfaceInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::SurfaceInterface *)
 
 #endif

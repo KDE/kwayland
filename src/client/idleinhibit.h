@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Surface;
 class IdleInhibitor;
@@ -111,8 +110,8 @@ public:
      **/
     IdleInhibitor *createInhibitor(Surface *surface, QObject *parent = nullptr);
 
-    operator zwp_idle_inhibit_manager_v1*();
-    operator zwp_idle_inhibit_manager_v1*() const;
+    operator zwp_idle_inhibit_manager_v1 *();
+    operator zwp_idle_inhibit_manager_v1 *() const;
 
 Q_SIGNALS:
     /**
@@ -186,8 +185,8 @@ public:
      **/
     void destroy();
 
-    operator zwp_idle_inhibitor_v1*();
-    operator zwp_idle_inhibitor_v1*() const;
+    operator zwp_idle_inhibitor_v1 *();
+    operator zwp_idle_inhibitor_v1 *() const;
 
 private:
     friend class IdleInhibitManager;
@@ -195,7 +194,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

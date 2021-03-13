@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class PlasmaVirtualDesktopInterface;
 
@@ -62,7 +61,7 @@ public:
     /**
      * @returns All tghe desktops present.
      */
-    QList <PlasmaVirtualDesktopInterface *> desktops() const;
+    QList<PlasmaVirtualDesktopInterface *> desktops() const;
 
     /**
      * Inform the clients that all the properties have been sent, and

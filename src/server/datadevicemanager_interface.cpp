@@ -5,8 +5,8 @@
 */
 #include "datadevicemanager_interface.h"
 #include "datasource_interface.h"
-#include "global_p.h"
 #include "display.h"
+#include "global_p.h"
 #include "seat_interface_p.h"
 // Wayland
 #include <wayland-server.h>
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceManagerInterface::Private : public Global::Private
 {
 public:
@@ -29,8 +28,9 @@ private:
     static void unbind(wl_resource *resource);
     static void createDataSourceCallback(wl_client *client, wl_resource *resource, uint32_t id);
     static void getDataDeviceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     DataDeviceManagerInterface *q;
@@ -45,10 +45,7 @@ const qint32 DataDeviceManagerInterface::Private::s_dataDeviceVersion = 3;
 const qint32 DataDeviceManagerInterface::Private::s_dataSourceVersion = 3;
 
 #ifndef K_DOXYGEN
-const struct wl_data_device_manager_interface DataDeviceManagerInterface::Private::s_interface = {
-    createDataSourceCallback,
-    getDataDeviceCallback
-};
+const struct wl_data_device_manager_interface DataDeviceManagerInterface::Private::s_interface = {createDataSourceCallback, getDataDeviceCallback};
 #endif
 
 DataDeviceManagerInterface::Private::Private(DataDeviceManagerInterface *q, Display *d)
@@ -82,7 +79,7 @@ void DataDeviceManagerInterface::Private::createDataSourceCallback(wl_client *cl
 void DataDeviceManagerInterface::Private::createDataSource(wl_client *client, wl_resource *resource, uint32_t id)
 {
     DataSourceInterface *dataSource = new DataSourceInterface(q, resource);
-    dataSource->create(display->getConnection(client), qMin(wl_resource_get_version(resource), s_dataSourceVersion) , id);
+    dataSource->create(display->getConnection(client), qMin(wl_resource_get_version(resource), s_dataSourceVersion), id);
     if (!dataSource->resource()) {
         wl_resource_post_no_memory(resource);
         delete dataSource;

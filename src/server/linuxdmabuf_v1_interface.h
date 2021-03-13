@@ -80,9 +80,9 @@ class KWAYLANDSERVER_EXPORT LinuxDmabufUnstableV1Interface : public Global
     Q_OBJECT
 public:
     enum Flag {
-        YInverted           = (1 << 0),    /// Contents are y-inverted
-        Interlaced          = (1 << 1),    /// Content is interlaced
-        BottomFieldFirst    = (1 << 2),    /// Bottom field first
+        YInverted = (1 << 0), /// Contents are y-inverted
+        Interlaced = (1 << 1), /// Content is interlaced
+        BottomFieldFirst = (1 << 2), /// Bottom field first
     };
 
     Q_DECLARE_FLAGS(Flags, Flag)
@@ -91,16 +91,17 @@ public:
      * Represents a plane in a buffer
      */
     struct Plane {
-        int fd;             /// The dmabuf file descriptor
-        uint32_t offset;    /// The offset from the start of buffer
-        uint32_t stride;    /// The distance from the start of a row to the next row in bytes
-        uint64_t modifier;  /// The layout modifier
+        int fd; /// The dmabuf file descriptor
+        uint32_t offset; /// The offset from the start of buffer
+        uint32_t stride; /// The distance from the start of a row to the next row in bytes
+        uint64_t modifier; /// The layout modifier
     };
 
     /**
      * The Iface class provides an interface from the LinuxDmabufInterface into the compositor
      */
-    class Impl {
+    class Impl
+    {
     public:
         Impl() = default;
         virtual ~Impl() = default;
@@ -119,10 +120,7 @@ public:
          *
          * @return The imported buffer on success, and nullptr otherwise.
          */
-        virtual LinuxDmabufUnstableV1Buffer *importBuffer(const QVector<Plane> &planes,
-                                                          uint32_t format,
-                                                          const QSize &size,
-                                                          Flags flags) = 0;
+        virtual LinuxDmabufUnstableV1Buffer *importBuffer(const QVector<Plane> &planes, uint32_t format, const QSize &size, Flags flags) = 0;
     };
 
     /**
@@ -137,7 +135,7 @@ public:
      */
     void setImpl(Impl *impl);
 
-    void setSupportedFormatsWithModifiers(QHash<uint32_t, QSet<uint64_t> > set);
+    void setSupportedFormatsWithModifiers(QHash<uint32_t, QSet<uint64_t>> set);
 
     /**
      * Returns the LinuxDmabufInterface for the given resource.
@@ -167,6 +165,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(LinuxDmabufUnstableV1Interface::Flags)
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::LinuxDmabufUnstableV1Interface*)
+Q_DECLARE_METATYPE(KWayland::Server::LinuxDmabufUnstableV1Interface *)
 
 #endif // WAYLAND_SERVER_LINUXDMABUF_INTERFACE_H

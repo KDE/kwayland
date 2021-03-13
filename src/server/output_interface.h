@@ -10,8 +10,8 @@
 #include <QPoint>
 #include <QSize>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 struct wl_global;
 struct wl_client;
@@ -21,7 +21,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class ClientConnection;
 class Display;
 
@@ -121,11 +120,11 @@ public:
     static OutputInterface *get(wl_resource *native);
 
 Q_SIGNALS:
-    void physicalSizeChanged(const QSize&);
-    void globalPositionChanged(const QPoint&);
-    void manufacturerChanged(const QString&);
-    void modelChanged(const QString&);
-    void pixelSizeChanged(const QSize&);
+    void physicalSizeChanged(const QSize &);
+    void globalPositionChanged(const QPoint &);
+    void manufacturerChanged(const QString &);
+    void modelChanged(const QString &);
+    void pixelSizeChanged(const QSize &);
     void refreshRateChanged(int);
     void scaleChanged(int);
     void subPixelChanged(SubPixel);

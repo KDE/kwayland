@@ -35,13 +35,13 @@ public:
     };
     Q_ENUM(State)
 
-    Keystate(QObject* parent);
+    Keystate(QObject *parent);
     ~Keystate() override;
 
     void setEventQueue(EventQueue *queue);
 
     void destroy();
-    void setup(org_kde_kwin_keystate* keystate);
+    void setup(org_kde_kwin_keystate *keystate);
 
     void fetchStates();
 

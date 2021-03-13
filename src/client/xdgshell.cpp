@@ -3,19 +3,18 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "xdgshell_p.h"
+#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
 #include "event_queue.h"
-#include "wayland_pointer_p.h"
+#include "output.h"
 #include "seat.h"
 #include "surface.h"
-#include "output.h"
-#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
+#include "wayland_pointer_p.h"
+#include "xdgshell_p.h"
 
 namespace KWayland
 {
 namespace Client
 {
-
 XdgShell::Private::~Private() = default;
 
 XdgShell::XdgShell(Private *p, QObject *parent)
@@ -64,30 +63,35 @@ EventQueue *XdgShell::eventQueue()
     return d->queue;
 }
 
-XdgShell::operator xdg_shell*() {
+XdgShell::operator xdg_shell *()
+{
     return *(d.data());
 }
 
-XdgShell::operator xdg_shell*() const {
+XdgShell::operator xdg_shell *() const
+{
     return *(d.data());
 }
 
-XdgShell::operator zxdg_shell_v6*() {
+XdgShell::operator zxdg_shell_v6 *()
+{
     return *(d.data());
 }
 
-XdgShell::operator zxdg_shell_v6*() const {
+XdgShell::operator zxdg_shell_v6 *() const
+{
     return *(d.data());
 }
 
-XdgShell::operator xdg_wm_base*() {
+XdgShell::operator xdg_wm_base *()
+{
     return *(d.data());
 }
 
-XdgShell::operator xdg_wm_base*() const {
+XdgShell::operator xdg_wm_base *() const
+{
     return *(d.data());
 }
-
 
 bool XdgShell::isValid() const
 {
@@ -147,7 +151,6 @@ void XdgShellSurface::setup(xdg_surface *xdgsurface, xdg_toplevel *xdgtoplevel)
     d->setup(xdgsurface, xdgtoplevel);
 }
 
-
 void XdgShellSurface::release()
 {
     d->release();
@@ -168,35 +171,43 @@ EventQueue *XdgShellSurface::eventQueue()
     return d->queue;
 }
 
-XdgShellSurface::operator xdg_surface*() {
+XdgShellSurface::operator xdg_surface *()
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator xdg_surface*() const {
+XdgShellSurface::operator xdg_surface *() const
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator xdg_toplevel*() {
+XdgShellSurface::operator xdg_toplevel *()
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator xdg_toplevel*() const {
+XdgShellSurface::operator xdg_toplevel *() const
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_surface_v6*() {
+XdgShellSurface::operator zxdg_surface_v6 *()
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_surface_v6*() const {
+XdgShellSurface::operator zxdg_surface_v6 *() const
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_toplevel_v6*() {
+XdgShellSurface::operator zxdg_toplevel_v6 *()
+{
     return *(d.data());
 }
 
-XdgShellSurface::operator zxdg_toplevel_v6*() const {
+XdgShellSurface::operator zxdg_toplevel_v6 *() const
+{
     return *(d.data());
 }
 
@@ -294,7 +305,6 @@ QSize XdgShellSurface::size() const
 
 XdgShellPopup::Private::~Private() = default;
 
-
 XdgShellPopup::Private::Private(XdgShellPopup *q)
     : q(q)
 {
@@ -346,7 +356,7 @@ EventQueue *XdgShellPopup::eventQueue()
     return d->queue;
 }
 
-void XdgShellPopup::requestGrab(KWayland::Client::Seat* seat, quint32 serial)
+void XdgShellPopup::requestGrab(KWayland::Client::Seat *seat, quint32 serial)
 {
     d->requestGrab(seat, serial);
 }
@@ -361,35 +371,43 @@ void XdgShellPopup::setWindowGeometry(const QRect &windowGeometry)
     d->setWindowGeometry(windowGeometry);
 }
 
-XdgShellPopup::operator xdg_surface*() {
+XdgShellPopup::operator xdg_surface *()
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator xdg_surface*() const {
+XdgShellPopup::operator xdg_surface *() const
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator xdg_popup*() {
+XdgShellPopup::operator xdg_popup *()
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator xdg_popup*() const {
+XdgShellPopup::operator xdg_popup *() const
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator zxdg_surface_v6*() {
+XdgShellPopup::operator zxdg_surface_v6 *()
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator zxdg_surface_v6*() const {
+XdgShellPopup::operator zxdg_surface_v6 *() const
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator zxdg_popup_v6*() {
+XdgShellPopup::operator zxdg_popup_v6 *()
+{
     return *(d.data());
 }
 
-XdgShellPopup::operator zxdg_popup_v6*() const {
+XdgShellPopup::operator zxdg_popup_v6 *() const
+{
     return *(d.data());
 }
 
@@ -398,16 +416,15 @@ bool XdgShellPopup::isValid() const
     return d->isValid();
 }
 
-XdgPositioner::XdgPositioner(const QSize& initialSize, const QRect& anchor)
-:d (new Private)
+XdgPositioner::XdgPositioner(const QSize &initialSize, const QRect &anchor)
+    : d(new Private)
 {
     d->initialSize = initialSize;
     d->anchorRect = anchor;
 }
 
-
 XdgPositioner::XdgPositioner(const XdgPositioner &other)
-:d (new Private)
+    : d(new Private)
 {
     *d = *other.d;
 }
@@ -416,7 +433,7 @@ XdgPositioner::~XdgPositioner()
 {
 }
 
-void XdgPositioner::setInitialSize(const QSize& size)
+void XdgPositioner::setInitialSize(const QSize &size)
 {
     d->initialSize = size;
 }
@@ -426,7 +443,7 @@ QSize XdgPositioner::initialSize() const
     return d->initialSize;
 }
 
-void XdgPositioner::setAnchorRect(const QRect& anchor)
+void XdgPositioner::setAnchorRect(const QRect &anchor)
 {
     d->anchorRect = anchor;
 }
@@ -446,7 +463,7 @@ Qt::Edges XdgPositioner::anchorEdge() const
     return d->anchorEdge;
 }
 
-void XdgPositioner::setAnchorOffset(const QPoint& offset)
+void XdgPositioner::setAnchorOffset(const QPoint &offset)
 {
     d->anchorOffset = offset;
 }
@@ -476,7 +493,5 @@ XdgPositioner::Constraints XdgPositioner::constraints() const
     return d->constraints;
 }
 
-
 }
 }
-

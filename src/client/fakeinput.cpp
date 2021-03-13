@@ -21,7 +21,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN FakeInput::Private
 {
 public:
@@ -222,13 +221,12 @@ void FakeInput::requestKeyboardKeyRelease(quint32 linuxKey)
     org_kde_kwin_fake_input_keyboard_key(d->manager, linuxKey, WL_KEYBOARD_KEY_STATE_RELEASED);
 }
 
-
-FakeInput::operator org_kde_kwin_fake_input*() const
+FakeInput::operator org_kde_kwin_fake_input *() const
 {
     return d->manager;
 }
 
-FakeInput::operator org_kde_kwin_fake_input*()
+FakeInput::operator org_kde_kwin_fake_input *()
 {
     return d->manager;
 }

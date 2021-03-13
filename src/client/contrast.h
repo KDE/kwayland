@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Contrast;
 class Surface;
@@ -93,8 +92,8 @@ public:
     Contrast *createContrast(Surface *surface, QObject *parent = nullptr);
     void removeContrast(Surface *surface);
 
-    operator org_kde_kwin_contrast_manager*();
-    operator org_kde_kwin_contrast_manager*() const;
+    operator org_kde_kwin_contrast_manager *();
+    operator org_kde_kwin_contrast_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -176,8 +175,8 @@ public:
     void setIntensity(qreal intensity);
     void setSaturation(qreal saturation);
 
-    operator org_kde_kwin_contrast*();
-    operator org_kde_kwin_contrast*() const;
+    operator org_kde_kwin_contrast *();
+    operator org_kde_kwin_contrast *() const;
 
 private:
     friend class ContrastManager;
@@ -190,4 +189,3 @@ private:
 }
 
 #endif
-

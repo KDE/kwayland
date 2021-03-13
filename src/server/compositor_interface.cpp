@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class CompositorInterface::Private : public Global::Private
 {
 public:
@@ -27,8 +26,9 @@ private:
     static void unbind(wl_resource *resource);
     static void createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id);
     static void createRegionCallback(wl_client *client, wl_resource *resource, uint32_t id);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     CompositorInterface *q;
@@ -45,10 +45,7 @@ CompositorInterface::Private::Private(CompositorInterface *q, Display *d)
 }
 
 #ifndef K_DOXYGEN
-const struct wl_compositor_interface CompositorInterface::Private::s_interface = {
-    createSurfaceCallback,
-    createRegionCallback
-};
+const struct wl_compositor_interface CompositorInterface::Private::s_interface = {createSurfaceCallback, createRegionCallback};
 #endif
 
 CompositorInterface::CompositorInterface(Display *display, QObject *parent)

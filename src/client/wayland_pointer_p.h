@@ -12,26 +12,31 @@ namespace KWayland
 {
 namespace Client
 {
-
 template<typename Pointer, void (*deleter)(Pointer *)>
 class WaylandPointer
 {
 public:
     WaylandPointer() = default;
-    WaylandPointer(Pointer *p) : m_pointer(p) {}
+    WaylandPointer(Pointer *p)
+        : m_pointer(p)
+    {
+    }
     WaylandPointer(const WaylandPointer &other) = delete;
-    virtual ~WaylandPointer() {
+    virtual ~WaylandPointer()
+    {
         release();
     }
 
-    void setup(Pointer *pointer, bool foreign = false) {
+    void setup(Pointer *pointer, bool foreign = false)
+    {
         Q_ASSERT(pointer);
         Q_ASSERT(!m_pointer);
         m_pointer = pointer;
         m_foreign = foreign;
     }
 
-    void release() {
+    void release()
+    {
         if (!m_pointer) {
             return;
         }
@@ -41,7 +46,8 @@ public:
         m_pointer = nullptr;
     }
 
-    void destroy() {
+    void destroy()
+    {
         if (!m_pointer) {
             return;
         }
@@ -51,31 +57,38 @@ public:
         m_pointer = nullptr;
     }
 
-    bool isValid() const {
+    bool isValid() const
+    {
         return m_pointer != nullptr;
     }
 
-    operator Pointer*() {
+    operator Pointer *()
+    {
         return m_pointer;
     }
 
-    operator Pointer*() const {
+    operator Pointer *() const
+    {
         return m_pointer;
     }
 
-    operator wl_proxy*() {
-        return reinterpret_cast<wl_proxy*>(m_pointer);
+    operator wl_proxy *()
+    {
+        return reinterpret_cast<wl_proxy *>(m_pointer);
     }
 
-    Pointer *operator->() {
+    Pointer *operator->()
+    {
         return m_pointer;
     }
 
-    operator bool() {
+    operator bool()
+    {
         return isValid();
     }
 
-    operator bool() const {
+    operator bool() const
+    {
         return isValid();
     }
 

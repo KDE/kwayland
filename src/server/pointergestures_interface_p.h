@@ -6,15 +6,14 @@
 #ifndef KWAYLAND_SERVER_POINTERGESTURES_INTERFACE_P_H
 #define KWAYLAND_SERVER_POINTERGESTURES_INTERFACE_P_H
 
+#include "global_p.h"
 #include "pointergestures_interface.h"
 #include "resource_p.h"
-#include "global_p.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 class PointerInterface;
 
 class PointerGesturesInterface::Private : public Global::Private
@@ -65,10 +64,16 @@ public:
     PointerInterface *pointer;
 
 protected:
-    Private(PointerSwipeGestureInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation, PointerInterface *pointer);
+    Private(PointerSwipeGestureInterface *q,
+            Global *c,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation,
+            PointerInterface *pointer);
 
 private:
-    PointerSwipeGestureInterface *q_func() {
+    PointerSwipeGestureInterface *q_func()
+    {
         return reinterpret_cast<PointerSwipeGestureInterface *>(q);
     }
 };
@@ -100,10 +105,16 @@ public:
     PointerInterface *pointer;
 
 protected:
-    Private(PointerPinchGestureInterface *q, Global *c, wl_resource *parentResource, const wl_interface *interface, const void *implementation, PointerInterface *pointer);
+    Private(PointerPinchGestureInterface *q,
+            Global *c,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation,
+            PointerInterface *pointer);
 
 private:
-    PointerPinchGestureInterface *q_func() {
+    PointerPinchGestureInterface *q_func()
+    {
         return reinterpret_cast<PointerPinchGestureInterface *>(q);
     }
 };

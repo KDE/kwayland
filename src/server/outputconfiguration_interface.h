@@ -6,10 +6,10 @@
 #ifndef KWAYLAND_SERVER_OUTPUTCONFIGURATION_INTERFACE_H
 #define KWAYLAND_SERVER_OUTPUTCONFIGURATION_INTERFACE_H
 
-#include "resource.h"
-#include "outputmanagement_interface.h"
-#include "outputdevice_interface.h"
 #include "outputchangeset.h"
+#include "outputdevice_interface.h"
+#include "outputmanagement_interface.h"
+#include "resource.h"
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
@@ -59,7 +59,7 @@ public:
      * @see OutputDeviceInterface
      * @see OutputManagement
      */
-    QHash<OutputDeviceInterface*, OutputChangeSet*> changes() const;
+    QHash<OutputDeviceInterface *, OutputChangeSet *> changes() const;
 
 public Q_SLOTS:
     /**
@@ -87,10 +87,9 @@ private:
     Private *d_func() const;
 };
 
-
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::OutputConfigurationInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::OutputConfigurationInterface *)
 
 #endif

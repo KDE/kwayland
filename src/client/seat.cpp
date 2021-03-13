@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Seat::Private
 {
 public:
@@ -57,10 +56,7 @@ void Seat::Private::setup(wl_seat *s)
     wl_seat_add_listener(seat, &s_listener, this);
 }
 
-const wl_seat_listener Seat::Private::s_listener = {
-    capabilitiesCallback,
-    nameCallback
-};
+const wl_seat_listener Seat::Private::s_listener = {capabilitiesCallback, nameCallback};
 
 Seat::Seat(QObject *parent)
     : QObject(parent)
@@ -145,14 +141,14 @@ void Seat::setup(wl_seat *seat)
 
 void Seat::Private::capabilitiesCallback(void *data, wl_seat *seat, uint32_t capabilities)
 {
-    auto s = reinterpret_cast<Seat::Private*>(data);
+    auto s = reinterpret_cast<Seat::Private *>(data);
     Q_ASSERT(s->seat == seat);
     s->capabilitiesChanged(capabilities);
 }
 
 void Seat::Private::nameCallback(void *data, wl_seat *seat, const char *name)
 {
-    auto s = reinterpret_cast<Seat::Private*>(data);
+    auto s = reinterpret_cast<Seat::Private *>(data);
     Q_ASSERT(s->seat == seat);
     s->setName(QString::fromUtf8(name));
 }
@@ -243,12 +239,12 @@ QString Seat::name() const
     return d->name;
 }
 
-Seat::operator wl_seat*()
+Seat::operator wl_seat *()
 {
     return d->seat;
 }
 
-Seat::operator wl_seat*() const
+Seat::operator wl_seat *() const
 {
     return d->seat;
 }

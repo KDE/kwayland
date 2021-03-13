@@ -125,8 +125,8 @@ public:
      **/
     ShellSurface *createSurface(Surface *surface, QObject *parent = nullptr);
 
-    operator wl_shell*();
-    operator wl_shell*() const;
+    operator wl_shell *();
+    operator wl_shell *() const;
 
 Q_SIGNALS:
     /**
@@ -251,7 +251,8 @@ public:
      * @param flags The flags for the transient
      * @since 5.33
      **/
-    void setTransientPopup(Surface *parent, Seat *grabbedSeat, quint32 grabSerial, const QPoint &offset = QPoint(), TransientFlags flags = TransientFlag::Default);
+    void
+    setTransientPopup(Surface *parent, Seat *grabbedSeat, quint32 grabSerial, const QPoint &offset = QPoint(), TransientFlags flags = TransientFlag::Default);
 
     bool isValid() const;
 
@@ -324,8 +325,8 @@ public:
      **/
     static ShellSurface *get(wl_shell_surface *native);
 
-    operator wl_shell_surface*();
-    operator wl_shell_surface*() const;
+    operator wl_shell_surface *();
+    operator wl_shell_surface *() const;
 
 Q_SIGNALS:
     /**

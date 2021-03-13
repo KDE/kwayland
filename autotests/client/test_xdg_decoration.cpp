@@ -11,13 +11,13 @@
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/registry.h"
-#include "../../src/client/xdgshell.h"
-#include "../../src/client/xdgdecoration.h"
 #include "../../src/client/surface.h"
-#include "../../src/server/display.h"
+#include "../../src/client/xdgdecoration.h"
+#include "../../src/client/xdgshell.h"
 #include "../../src/server/compositor_interface.h"
-#include "../../src/server/xdgshell_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/xdgdecoration_interface.h"
+#include "../../src/server/xdgshell_interface.h"
 
 class TestXdgDecoration : public QObject
 {
@@ -109,8 +109,7 @@ void TestXdgDecoration::init()
     m_xdgShellInterface->create();
     QVERIFY(m_xdgShellInterface->isValid());
     QVERIFY(xdgShellSpy.wait());
-    m_xdgShell = m_registry->createXdgShell(xdgShellSpy.first().first().value<quint32>(),
-                                            xdgShellSpy.first().last().value<quint32>(), this);
+    m_xdgShell = m_registry->createXdgShell(xdgShellSpy.first().first().value<quint32>(), xdgShellSpy.first().last().value<quint32>(), this);
 
     m_xdgDecorationManagerInterface = m_display->createXdgDecorationManager(m_xdgShellInterface, m_display);
     m_xdgDecorationManagerInterface->create();
@@ -118,7 +117,8 @@ void TestXdgDecoration::init()
 
     QVERIFY(xdgDecorationManagerSpy.wait());
     m_xdgDecorationManager = m_registry->createXdgDecorationManager(xdgDecorationManagerSpy.first().first().value<quint32>(),
-                                                                    xdgDecorationManagerSpy.first().last().value<quint32>(), this);
+                                                                    xdgDecorationManagerSpy.first().last().value<quint32>(),
+                                                                    this);
 }
 
 void TestXdgDecoration::cleanup()
@@ -156,7 +156,6 @@ void TestXdgDecoration::cleanup()
     m_display = nullptr;
 }
 
-
 void TestXdgDecoration::testDecoration_data()
 {
     using namespace KWayland::Client;
@@ -187,7 +186,6 @@ void TestXdgDecoration::testDecoration()
     QFETCH(KWayland::Client::XdgDecoration::Mode, setMode);
     QFETCH(KWayland::Server::XdgDecorationInterface::Mode, setModeExp);
 
-
     QSignalSpy surfaceCreatedSpy(m_compositorInterface, &CompositorInterface::surfaceCreated);
     QSignalSpy shellSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
     QSignalSpy decorationCreatedSpy(m_xdgDecorationManagerInterface, &XdgDecorationManagerInterface::xdgDecorationInterfaceCreated);
@@ -197,13 +195,13 @@ void TestXdgDecoration::testDecoration()
     QScopedPointer<XdgShellSurface> shellSurface(m_xdgShell->createSurface(surface.data()));
     QScopedPointer<XdgDecoration> decoration(m_xdgDecorationManager->getToplevelDecoration(shellSurface.data()));
 
-    //and receive all these on the "server"
+    // and receive all these on the "server"
     QVERIFY(surfaceCreatedSpy.count() || surfaceCreatedSpy.wait());
     QVERIFY(shellSurfaceCreatedSpy.count() || shellSurfaceCreatedSpy.wait());
     QVERIFY(decorationCreatedSpy.count() || decorationCreatedSpy.wait());
 
-    auto shellSurfaceIface = shellSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
-    auto decorationIface = decorationCreatedSpy.first().first().value<XdgDecorationInterface*>();
+    auto shellSurfaceIface = shellSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
+    auto decorationIface = decorationCreatedSpy.first().first().value<XdgDecorationInterface *>();
 
     QVERIFY(decorationIface);
     QVERIFY(shellSurfaceIface);
@@ -213,7 +211,7 @@ void TestXdgDecoration::testDecoration()
     QSignalSpy clientConfiguredSpy(decoration.data(), &XdgDecoration::modeChanged);
     QSignalSpy modeRequestedSpy(decorationIface, &XdgDecorationInterface::modeRequested);
 
-    //server configuring a client
+    // server configuring a client
     decorationIface->configure(configuredMode);
     quint32 serial = shellSurfaceIface->configure({});
     QVERIFY(clientConfiguredSpy.wait());
@@ -221,7 +219,7 @@ void TestXdgDecoration::testDecoration()
 
     shellSurface->ackConfigure(serial);
 
-    //client requesting another mode
+    // client requesting another mode
     decoration->setMode(setMode);
     QVERIFY(modeRequestedSpy.wait());
     QCOMPARE(modeRequestedSpy.first().first().value<XdgDecorationInterface::Mode>(), setModeExp);

@@ -10,14 +10,13 @@
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
-#include "resource.h"
 #include "datadevicemanager_interface.h"
+#include "resource.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceInterface;
 class DataSourceInterface;
 
@@ -70,6 +69,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::DataOfferInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::DataOfferInterface *)
 
 #endif

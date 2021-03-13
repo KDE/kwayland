@@ -4,27 +4,26 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "plasmashell_interface.h"
+#include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
-#include "display.h"
 #include "surface_interface.h"
 
 #include <QTimer>
 
-#include <wayland-server.h>
 #include <wayland-plasma-shell-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class PlasmaShellInterface::Private : public Global::Private
 {
 public:
     Private(PlasmaShellInterface *q, Display *d);
 
-    QList<PlasmaShellSurfaceInterface*> surfaces;
+    QList<PlasmaShellSurfaceInterface *> surfaces;
 
 private:
     static void createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
@@ -45,11 +44,8 @@ PlasmaShellInterface::Private::Private(PlasmaShellInterface *q, Display *d)
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_plasma_shell_interface PlasmaShellInterface::Private::s_interface = {
-    createSurfaceCallback
-};
+const struct org_kde_plasma_shell_interface PlasmaShellInterface::Private::s_interface = {createSurfaceCallback};
 #endif
-
 
 class PlasmaShellSurfaceInterface::Private : public Resource::Private
 {
@@ -81,7 +77,8 @@ private:
     void setRole(uint32_t role);
     void setPanelBehavior(org_kde_plasma_surface_panel_behavior behavior);
 
-    PlasmaShellSurfaceInterface *q_func() {
+    PlasmaShellSurfaceInterface *q_func()
+    {
         return reinterpret_cast<PlasmaShellSurfaceInterface *>(q);
     }
 
@@ -108,28 +105,24 @@ void PlasmaShellInterface::Private::bind(wl_client *client, uint32_t version, ui
 
 void PlasmaShellInterface::Private::createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    auto s = reinterpret_cast<PlasmaShellInterface::Private*>(wl_resource_get_user_data(resource));
+    auto s = reinterpret_cast<PlasmaShellInterface::Private *>(wl_resource_get_user_data(resource));
     s->createSurface(client, wl_resource_get_version(resource), id, SurfaceInterface::get(surface), resource);
 }
 
 void PlasmaShellInterface::Private::createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource)
 {
-    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(),
-        [surface](PlasmaShellSurfaceInterface *s) {
-            return surface == s->surface();
-        }
-    );
+    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(), [surface](PlasmaShellSurfaceInterface *s) {
+        return surface == s->surface();
+    });
     if (it != surfaces.constEnd()) {
         wl_resource_post_error(surface->resource(), WL_DISPLAY_ERROR_INVALID_OBJECT, "PlasmaShellSurface already created");
         return;
     }
     PlasmaShellSurfaceInterface *shellSurface = new PlasmaShellSurfaceInterface(q, surface, parentResource);
     surfaces << shellSurface;
-    QObject::connect(shellSurface, &PlasmaShellSurfaceInterface::destroyed, q,
-        [this, shellSurface] {
-            surfaces.removeAll(shellSurface);
-        }
-    );
+    QObject::connect(shellSurface, &PlasmaShellSurfaceInterface::destroyed, q, [this, shellSurface] {
+        surfaces.removeAll(shellSurface);
+    });
     shellSurface->d->create(display->getConnection(client), version, id);
     Q_EMIT q->surfaceCreated(shellSurface);
 }
@@ -137,25 +130,26 @@ void PlasmaShellInterface::Private::createSurface(wl_client *client, uint32_t ve
 /*********************************
  * ShellSurfaceInterface
  *********************************/
-PlasmaShellSurfaceInterface::Private::Private(PlasmaShellSurfaceInterface *q, PlasmaShellInterface *shell, SurfaceInterface *surface, wl_resource *parentResource)
+PlasmaShellSurfaceInterface::Private::Private(PlasmaShellSurfaceInterface *q,
+                                              PlasmaShellInterface *shell,
+                                              SurfaceInterface *surface,
+                                              wl_resource *parentResource)
     : Resource::Private(q, shell, parentResource, &org_kde_plasma_surface_interface, &s_interface)
     , surface(surface)
 {
 }
 
 #ifndef K_DOXYGEN
-const struct org_kde_plasma_surface_interface PlasmaShellSurfaceInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    setOutputCallback,
-    setPositionCallback,
-    setRoleCallback,
-    setPanelBehaviorCallback,
-    setSkipTaskbarCallback,
-    panelAutoHideHideCallback,
-    panelAutoHideShowCallback,
-    panelTakesFocusCallback,
-    setSkipSwitcherCallback
-};
+const struct org_kde_plasma_surface_interface PlasmaShellSurfaceInterface::Private::s_interface = {resourceDestroyedCallback,
+                                                                                                   setOutputCallback,
+                                                                                                   setPositionCallback,
+                                                                                                   setRoleCallback,
+                                                                                                   setPanelBehaviorCallback,
+                                                                                                   setSkipTaskbarCallback,
+                                                                                                   panelAutoHideHideCallback,
+                                                                                                   panelAutoHideShowCallback,
+                                                                                                   panelTakesFocusCallback,
+                                                                                                   setSkipSwitcherCallback};
 #endif
 
 PlasmaShellSurfaceInterface::PlasmaShellSurfaceInterface(PlasmaShellInterface *shell, SurfaceInterface *parent, wl_resource *parentResource)
@@ -171,19 +165,21 @@ PlasmaShellSurfaceInterface::PlasmaShellSurfaceInterface(PlasmaShellInterface *s
 
 PlasmaShellSurfaceInterface::~PlasmaShellSurfaceInterface() = default;
 
-SurfaceInterface *PlasmaShellSurfaceInterface::surface() const {
+SurfaceInterface *PlasmaShellSurfaceInterface::surface() const
+{
     Q_D();
     return d->surface;
 }
 
-PlasmaShellInterface *PlasmaShellSurfaceInterface::shell() const {
+PlasmaShellInterface *PlasmaShellSurfaceInterface::shell() const
+{
     Q_D();
-    return reinterpret_cast<PlasmaShellInterface*>(d->global);
+    return reinterpret_cast<PlasmaShellInterface *>(d->global);
 }
 
 PlasmaShellSurfaceInterface::Private *PlasmaShellSurfaceInterface::d_func() const
 {
-    return reinterpret_cast<PlasmaShellSurfaceInterface::Private*>(d.data());
+    return reinterpret_cast<PlasmaShellSurfaceInterface::Private *>(d.data());
 }
 
 void PlasmaShellSurfaceInterface::Private::setOutputCallback(wl_client *client, wl_resource *resource, wl_resource *output)

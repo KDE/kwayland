@@ -6,8 +6,8 @@
 #ifndef WAYLAND_SERVER_SUBSURFACE_INTERFACE_P_H
 #define WAYLAND_SERVER_SUBSURFACE_INTERFACE_P_H
 
-#include "subcompositor_interface.h"
 #include "resource_p.h"
+#include "subcompositor_interface.h"
 // Qt
 #include <QPoint>
 // Wayland
@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SubSurfaceInterface::Private : public Resource::Private
 {
 public:
@@ -36,7 +35,8 @@ public:
     QPointer<SurfaceInterface> parent;
 
 private:
-    SubSurfaceInterface *q_func() {
+    SubSurfaceInterface *q_func()
+    {
         return reinterpret_cast<SubSurfaceInterface *>(q);
     }
     void setMode(Mode mode);

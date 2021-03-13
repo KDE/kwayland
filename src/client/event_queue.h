@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class ConnectionThread;
 
 /**
@@ -108,16 +107,16 @@ public:
     /**
      * Adds the @p proxy of type wl_interface (e.g. wl_compositor) to the EventQueue.
      **/
-    template <typename wl_interface>
+    template<typename wl_interface>
     void addProxy(wl_interface *proxy);
     /**
      * Adds the @p proxy wrapper class of type T referencing the wl_interface to the EventQueue.
      **/
-    template <typename wl_interface, typename T>
+    template<typename wl_interface, typename T>
     void addProxy(T *proxy);
 
-    operator wl_event_queue*();
-    operator wl_event_queue*() const;
+    operator wl_event_queue *();
+    operator wl_event_queue *() const;
 
 public Q_SLOTS:
     /**
@@ -130,18 +129,16 @@ private:
     QScopedPointer<Private> d;
 };
 
-template <typename wl_interface>
-inline
-void EventQueue::addProxy(wl_interface *proxy)
+template<typename wl_interface>
+inline void EventQueue::addProxy(wl_interface *proxy)
 {
-    addProxy(reinterpret_cast<wl_proxy*>(proxy));
+    addProxy(reinterpret_cast<wl_proxy *>(proxy));
 }
 
-template <typename wl_interface, typename T>
-inline
-void EventQueue::addProxy(T *proxy)
+template<typename wl_interface, typename T>
+inline void EventQueue::addProxy(T *proxy)
 {
-    addProxy(reinterpret_cast<wl_proxy*>((wl_interface*)*(proxy)));
+    addProxy(reinterpret_cast<wl_proxy *>((wl_interface *)*(proxy)));
 }
 
 }

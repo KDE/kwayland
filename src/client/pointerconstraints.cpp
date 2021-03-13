@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN PointerConstraints::Private
 {
 public:
@@ -61,11 +60,13 @@ void PointerConstraints::destroy()
     d->pointerconstraints.destroy();
 }
 
-PointerConstraints::operator zwp_pointer_constraints_v1*() {
+PointerConstraints::operator zwp_pointer_constraints_v1 *()
+{
     return d->pointerconstraints;
 }
 
-PointerConstraints::operator zwp_pointer_constraints_v1*() const {
+PointerConstraints::operator zwp_pointer_constraints_v1 *() const
+{
     return d->pointerconstraints;
 }
 
@@ -159,21 +160,18 @@ private:
     static const zwp_locked_pointer_v1_listener s_listener;
 };
 
-const zwp_locked_pointer_v1_listener LockedPointer::Private::s_listener = {
-    lockedCallback,
-    unlockedCallback
-};
+const zwp_locked_pointer_v1_listener LockedPointer::Private::s_listener = {lockedCallback, unlockedCallback};
 
 void LockedPointer::Private::lockedCallback(void *data, zwp_locked_pointer_v1 *zwp_locked_pointer_v1)
 {
-    auto p = reinterpret_cast<LockedPointer::Private*>(data);
+    auto p = reinterpret_cast<LockedPointer::Private *>(data);
     Q_ASSERT(p->lockedpointer == zwp_locked_pointer_v1);
     Q_EMIT p->q->locked();
 }
 
 void LockedPointer::Private::unlockedCallback(void *data, zwp_locked_pointer_v1 *zwp_locked_pointer_v1)
 {
-    auto p = reinterpret_cast<LockedPointer::Private*>(data);
+    auto p = reinterpret_cast<LockedPointer::Private *>(data);
     Q_ASSERT(p->lockedpointer == zwp_locked_pointer_v1);
     Q_EMIT p->q->unlocked();
 }
@@ -217,11 +215,13 @@ void LockedPointer::destroy()
     d->lockedpointer.destroy();
 }
 
-LockedPointer::operator zwp_locked_pointer_v1*() {
+LockedPointer::operator zwp_locked_pointer_v1 *()
+{
     return d->lockedpointer;
 }
 
-LockedPointer::operator zwp_locked_pointer_v1*() const {
+LockedPointer::operator zwp_locked_pointer_v1 *() const
+{
     return d->lockedpointer;
 }
 
@@ -265,21 +265,18 @@ private:
     static const zwp_confined_pointer_v1_listener s_listener;
 };
 
-const zwp_confined_pointer_v1_listener ConfinedPointer::Private::s_listener = {
-    confinedCallback,
-    unconfinedCallback
-};
+const zwp_confined_pointer_v1_listener ConfinedPointer::Private::s_listener = {confinedCallback, unconfinedCallback};
 
 void ConfinedPointer::Private::confinedCallback(void *data, zwp_confined_pointer_v1 *zwp_confined_pointer_v1)
 {
-    auto p = reinterpret_cast<ConfinedPointer::Private*>(data);
+    auto p = reinterpret_cast<ConfinedPointer::Private *>(data);
     Q_ASSERT(p->confinedpointer == zwp_confined_pointer_v1);
     Q_EMIT p->q->confined();
 }
 
 void ConfinedPointer::Private::unconfinedCallback(void *data, zwp_confined_pointer_v1 *zwp_confined_pointer_v1)
 {
-    auto p = reinterpret_cast<ConfinedPointer::Private*>(data);
+    auto p = reinterpret_cast<ConfinedPointer::Private *>(data);
     Q_ASSERT(p->confinedpointer == zwp_confined_pointer_v1);
     Q_EMIT p->q->unconfined();
 }
@@ -323,11 +320,13 @@ void ConfinedPointer::destroy()
     d->confinedpointer.destroy();
 }
 
-ConfinedPointer::operator zwp_confined_pointer_v1*() {
+ConfinedPointer::operator zwp_confined_pointer_v1 *()
+{
     return d->confinedpointer;
 }
 
-ConfinedPointer::operator zwp_confined_pointer_v1*() const {
+ConfinedPointer::operator zwp_confined_pointer_v1 *() const
+{
     return d->confinedpointer;
 }
 

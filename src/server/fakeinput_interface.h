@@ -6,8 +6,8 @@
 #ifndef KWAYLAND_SERVER_FAKEINPUT_INTERFACE_H
 #define KWAYLAND_SERVER_FAKEINPUT_INTERFACE_H
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 struct wl_resource;
 
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class FakeInputDevice;
 
@@ -147,7 +146,7 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void touchFrameRequested();
-     /**
+    /**
      * Requests a keyboard key pressed for @p key.
      *
      * @since 5.63
@@ -170,6 +169,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::FakeInputDevice*)
+Q_DECLARE_METATYPE(KWayland::Server::FakeInputDevice *)
 
 #endif

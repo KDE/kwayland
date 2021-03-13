@@ -5,10 +5,10 @@
 */
 #ifndef KWAYLAND_SERVER_XDGSHELL_INTERFACE_P_H
 #define KWAYLAND_SERVER_XDGSHELL_INTERFACE_P_H
-#include "xdgshell_interface.h"
-#include "global_p.h"
 #include "generic_shell_surface_p.h"
+#include "global_p.h"
 #include "resource_p.h"
+#include "xdgshell_interface.h"
 
 #include <QTimer>
 
@@ -16,16 +16,15 @@ namespace KWayland
 {
 namespace Server
 {
-
 class XdgShellInterface::Private : public Global::Private
 {
 public:
     XdgShellInterfaceVersion interfaceVersion;
 
-    virtual quint32 ping(XdgShellSurfaceInterface * surface) = 0;
+    virtual quint32 ping(XdgShellSurfaceInterface *surface) = 0;
     void setupTimer(quint32 serial);
-    //pingserial/timer correspondence
-    QHash <quint32, QTimer *> pingTimers;
+    // pingserial/timer correspondence
+    QHash<quint32, QTimer *> pingTimers;
 
 protected:
     Private(XdgShellInterfaceVersion interfaceVersion, XdgShellInterface *q, Display *d, const wl_interface *interface, quint32 version);
@@ -43,7 +42,8 @@ public:
     virtual QSize minimumSize() const = 0;
     virtual QSize maximumSize() const = 0;
 
-    XdgShellSurfaceInterface *q_func() {
+    XdgShellSurfaceInterface *q_func()
+    {
         return reinterpret_cast<XdgShellSurfaceInterface *>(q);
     }
 
@@ -52,7 +52,13 @@ public:
     XdgShellInterfaceVersion interfaceVersion;
 
 protected:
-    Private(XdgShellInterfaceVersion interfaceVersion, XdgShellSurfaceInterface *q, Global *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
+    Private(XdgShellInterfaceVersion interfaceVersion,
+            XdgShellSurfaceInterface *q,
+            Global *c,
+            SurfaceInterface *surface,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation);
 };
 
 class XdgShellPopupInterface::Private : public Resource::Private, public GenericShellSurface<XdgShellPopupInterface>
@@ -62,11 +68,13 @@ public:
     virtual void popupDone() = 0;
     virtual QRect windowGeometry() const = 0;
 
-    XdgShellPopupInterface *q_func() {
+    XdgShellPopupInterface *q_func()
+    {
         return reinterpret_cast<XdgShellPopupInterface *>(q);
     }
 
-    virtual quint32 configure(const QRect &rect) {
+    virtual quint32 configure(const QRect &rect)
+    {
         Q_UNUSED(rect)
         return 0;
     };
@@ -87,8 +95,13 @@ public:
     XdgShellInterfaceVersion interfaceVersion;
 
 protected:
-    Private(XdgShellInterfaceVersion interfaceVersion, XdgShellPopupInterface *q, XdgShellInterface *c, SurfaceInterface *surface, wl_resource *parentResource, const wl_interface *interface, const void *implementation);
-
+    Private(XdgShellInterfaceVersion interfaceVersion,
+            XdgShellPopupInterface *q,
+            XdgShellInterface *c,
+            SurfaceInterface *surface,
+            wl_resource *parentResource,
+            const wl_interface *interface,
+            const void *implementation);
 };
 
 }

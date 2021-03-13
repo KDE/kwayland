@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Surface;
 
 /**
@@ -164,8 +163,8 @@ public:
 
     static QPointer<SubSurface> get(wl_subsurface *native);
 
-    operator wl_subsurface*();
-    operator wl_subsurface*() const;
+    operator wl_subsurface *();
+    operator wl_subsurface *() const;
 
 private:
     class Private;

@@ -3,11 +3,11 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "textinput_interface_p.h"
 #include "display.h"
 #include "resource_p.h"
 #include "seat_interface_p.h"
 #include "surface_interface.h"
+#include "textinput_interface_p.h"
 
 #include <wayland-text-input-unstable-v2-server-protocol.h>
 
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class TextInputUnstableV2Interface::Private : public TextInputInterface::Private
 {
 public:
@@ -32,7 +31,8 @@ public:
     void setCursorPosition(qint32 index, qint32 anchor) override;
     void keysymPressed(quint32 keysym, Qt::KeyboardModifiers modifiers) override;
     void keysymReleased(quint32 keysym, Qt::KeyboardModifiers modifiers) override;
-    TextInputInterfaceVersion interfaceVersion() const override {
+    TextInputInterfaceVersion interfaceVersion() const override
+    {
         return TextInputInterfaceVersion::UnstableV2;
     }
     void sendInputPanelState() override;
@@ -40,12 +40,13 @@ public:
 
 private:
     static const struct zwp_text_input_v2_interface s_interface;
-    TextInputUnstableV2Interface *q_func() {
+    TextInputUnstableV2Interface *q_func()
+    {
         return reinterpret_cast<TextInputUnstableV2Interface *>(q);
     }
 
-    static void enableCallback(wl_client *client, wl_resource *resource, wl_resource * surface);
-    static void disableCallback(wl_client *client, wl_resource *resource, wl_resource * surface);
+    static void enableCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
+    static void disableCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
     static void updateStateCallback(wl_client *client, wl_resource *resource, uint32_t serial, uint32_t reason);
 
     // helpers
@@ -57,18 +58,16 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct zwp_text_input_v2_interface TextInputUnstableV2Interface::Private::s_interface = {
-    resourceDestroyedCallback,
-    enableCallback,
-    disableCallback,
-    showInputPanelCallback,
-    hideInputPanelCallback,
-    setSurroundingTextCallback,
-    setContentTypeCallback,
-    setCursorRectangleCallback,
-    setPreferredLanguageCallback,
-    updateStateCallback
-};
+const struct zwp_text_input_v2_interface TextInputUnstableV2Interface::Private::s_interface = {resourceDestroyedCallback,
+                                                                                               enableCallback,
+                                                                                               disableCallback,
+                                                                                               showInputPanelCallback,
+                                                                                               hideInputPanelCallback,
+                                                                                               setSurroundingTextCallback,
+                                                                                               setContentTypeCallback,
+                                                                                               setCursorRectangleCallback,
+                                                                                               setPreferredLanguageCallback,
+                                                                                               updateStateCallback};
 #endif
 
 void TextInputUnstableV2Interface::Private::enable(SurfaceInterface *s)
@@ -188,8 +187,12 @@ void TextInputUnstableV2Interface::Private::sendInputPanelState()
         return;
     }
     zwp_text_input_v2_send_input_panel_state(resource,
-                                             inputPanelVisible ? ZWP_TEXT_INPUT_V2_INPUT_PANEL_VISIBILITY_VISIBLE : ZWP_TEXT_INPUT_V2_INPUT_PANEL_VISIBILITY_HIDDEN,
-                                             overlappedSurfaceArea.x(), overlappedSurfaceArea.y(), overlappedSurfaceArea.width(), overlappedSurfaceArea.height());
+                                             inputPanelVisible ? ZWP_TEXT_INPUT_V2_INPUT_PANEL_VISIBILITY_VISIBLE
+                                                               : ZWP_TEXT_INPUT_V2_INPUT_PANEL_VISIBILITY_HIDDEN,
+                                             overlappedSurfaceArea.x(),
+                                             overlappedSurfaceArea.y(),
+                                             overlappedSurfaceArea.width(),
+                                             overlappedSurfaceArea.height());
 }
 
 void TextInputUnstableV2Interface::Private::sendLanguage()
@@ -322,12 +325,13 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     static void destroyCallback(wl_client *client, wl_resource *resource);
-    static void getTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * seat);
+    static void getTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat);
 
     TextInputManagerUnstableV2Interface *q;
     static const struct zwp_text_input_manager_v2_interface s_interface;
@@ -336,10 +340,7 @@ private:
 const quint32 TextInputManagerUnstableV2Interface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct zwp_text_input_manager_v2_interface TextInputManagerUnstableV2Interface::Private::s_interface = {
-    destroyCallback,
-    getTextInputCallback
-};
+const struct zwp_text_input_manager_v2_interface TextInputManagerUnstableV2Interface::Private::s_interface = {destroyCallback, getTextInputCallback};
 #endif
 
 void TextInputManagerUnstableV2Interface::Private::destroyCallback(wl_client *client, wl_resource *resource)
@@ -348,7 +349,7 @@ void TextInputManagerUnstableV2Interface::Private::destroyCallback(wl_client *cl
     wl_resource_destroy(resource);
 }
 
-void TextInputManagerUnstableV2Interface::Private::getTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * seat)
+void TextInputManagerUnstableV2Interface::Private::getTextInputCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *seat)
 {
     SeatInterface *s = SeatInterface::get(seat);
     if (!s) {
@@ -359,11 +360,9 @@ void TextInputManagerUnstableV2Interface::Private::getTextInputCallback(wl_clien
     auto *t = new TextInputUnstableV2Interface(m->q, resource);
     t->d_func()->seat = s;
     m->inputs << t;
-    QObject::connect(t, &QObject::destroyed, m->q,
-        [t, m] {
-            m->inputs.removeAll(t);
-        }
-    );
+    QObject::connect(t, &QObject::destroyed, m->q, [t, m] {
+        m->inputs.removeAll(t);
+    });
     t->d->create(m->display->getConnection(client), version, id);
     s->d_func()->registerTextInput(t);
 }

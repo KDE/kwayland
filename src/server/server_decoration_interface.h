@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class ServerSideDecorationInterface;
 class SurfaceInterface;
@@ -65,7 +64,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever a new ServerSideDecorationInterface is created.
      **/
-    void decorationCreated(KWayland::Server::ServerSideDecorationInterface*);
+    void decorationCreated(KWayland::Server::ServerSideDecorationInterface *);
 
 private:
     explicit ServerSideDecorationManagerInterface(Display *display, QObject *parent = nullptr);
@@ -131,7 +130,7 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::ServerSideDecorationInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::ServerSideDecorationInterface *)
 Q_DECLARE_METATYPE(KWayland::Server::ServerSideDecorationManagerInterface::Mode)
 
 #endif

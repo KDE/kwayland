@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Buffer::Private
 {
 public:
@@ -30,6 +29,7 @@ public:
     size_t offset;
     bool used;
     Format format;
+
 private:
     Buffer *q;
     static const struct wl_buffer_listener s_listener;

@@ -4,19 +4,17 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "outputconfiguration.h"
-#include "outputmanagement.h"
 #include "event_queue.h"
+#include "outputmanagement.h"
 #include "wayland_pointer_p.h"
 
-#include "wayland-output-management-client-protocol.h"
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
+#include "wayland-output-management-client-protocol.h"
 
 namespace KWayland
 {
 namespace Client
 {
-
-
 class Q_DECL_HIDDEN OutputConfiguration::Private
 {
 public:
@@ -36,8 +34,8 @@ private:
 };
 
 OutputConfiguration::OutputConfiguration(QObject *parent)
-: QObject(parent)
-, d(new Private)
+    : QObject(parent)
+    , d(new Private)
 {
     d->q = this;
 }
@@ -55,11 +53,10 @@ void OutputConfiguration::setup(org_kde_kwin_outputconfiguration *outputconfigur
     d->setup(outputconfiguration);
 }
 
-void OutputConfiguration::Private::setup(org_kde_kwin_outputconfiguration* outputconfiguration)
+void OutputConfiguration::Private::setup(org_kde_kwin_outputconfiguration *outputconfiguration)
 {
     org_kde_kwin_outputconfiguration_add_listener(outputconfiguration, &s_outputconfigurationListener, this);
 }
-
 
 void OutputConfiguration::release()
 {
@@ -81,11 +78,13 @@ EventQueue *OutputConfiguration::eventQueue()
     return d->queue;
 }
 
-OutputConfiguration::operator org_kde_kwin_outputconfiguration*() {
+OutputConfiguration::operator org_kde_kwin_outputconfiguration *()
+{
     return d->outputconfiguration;
 }
 
-OutputConfiguration::operator org_kde_kwin_outputconfiguration*() const {
+OutputConfiguration::operator org_kde_kwin_outputconfiguration *() const
+{
     return d->outputconfiguration;
 }
 
@@ -106,11 +105,10 @@ void OutputConfiguration::setEnabled(OutputDevice *outputdevice, OutputDevice::E
     org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, _enable);
 }
 
-void OutputConfiguration::setMode(OutputDevice* outputdevice, const int modeId)
+void OutputConfiguration::setMode(OutputDevice *outputdevice, const int modeId)
 {
     org_kde_kwin_outputdevice *od = outputdevice->output();
-    org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od,
-                                          modeId);
+    org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od, modeId);
 }
 
 void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform)
@@ -118,22 +116,22 @@ void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Cli
     auto toTransform = [transform]() {
         switch (transform) {
             using KWayland::Client::OutputDevice;
-            case KWayland::Client::OutputDevice::Transform::Normal:
-                return WL_OUTPUT_TRANSFORM_NORMAL;
-            case KWayland::Client::OutputDevice::Transform::Rotated90:
-                return WL_OUTPUT_TRANSFORM_90;
-            case KWayland::Client::OutputDevice::Transform::Rotated180:
-                return WL_OUTPUT_TRANSFORM_180;
-            case KWayland::Client::OutputDevice::Transform::Rotated270:
-                return WL_OUTPUT_TRANSFORM_270;
-            case KWayland::Client::OutputDevice::Transform::Flipped:
-                return WL_OUTPUT_TRANSFORM_FLIPPED;
-            case KWayland::Client::OutputDevice::Transform::Flipped90:
-                return WL_OUTPUT_TRANSFORM_FLIPPED_90;
-            case KWayland::Client::OutputDevice::Transform::Flipped180:
-                return WL_OUTPUT_TRANSFORM_FLIPPED_180;
-            case KWayland::Client::OutputDevice::Transform::Flipped270:
-                return WL_OUTPUT_TRANSFORM_FLIPPED_270;
+        case KWayland::Client::OutputDevice::Transform::Normal:
+            return WL_OUTPUT_TRANSFORM_NORMAL;
+        case KWayland::Client::OutputDevice::Transform::Rotated90:
+            return WL_OUTPUT_TRANSFORM_90;
+        case KWayland::Client::OutputDevice::Transform::Rotated180:
+            return WL_OUTPUT_TRANSFORM_180;
+        case KWayland::Client::OutputDevice::Transform::Rotated270:
+            return WL_OUTPUT_TRANSFORM_270;
+        case KWayland::Client::OutputDevice::Transform::Flipped:
+            return WL_OUTPUT_TRANSFORM_FLIPPED;
+        case KWayland::Client::OutputDevice::Transform::Flipped90:
+            return WL_OUTPUT_TRANSFORM_FLIPPED_90;
+        case KWayland::Client::OutputDevice::Transform::Flipped180:
+            return WL_OUTPUT_TRANSFORM_FLIPPED_180;
+        case KWayland::Client::OutputDevice::Transform::Flipped270:
+            return WL_OUTPUT_TRANSFORM_FLIPPED_270;
         }
         abort();
     };
@@ -162,8 +160,7 @@ void OutputConfiguration::setScaleF(OutputDevice *outputdevice, qreal scale)
     }
 }
 
-void OutputConfiguration::setColorCurves(OutputDevice *outputdevice,
-                                         QVector<quint16> red, QVector<quint16> green, QVector<quint16> blue)
+void OutputConfiguration::setColorCurves(OutputDevice *outputdevice, QVector<quint16> red, QVector<quint16> green, QVector<quint16> blue)
 {
     org_kde_kwin_outputdevice *od = outputdevice->output();
 
@@ -200,26 +197,21 @@ void OutputConfiguration::apply()
 }
 
 // Callbacks
-org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_outputconfigurationListener = {
-    appliedCallback,
-    failedCallback
-};
+org_kde_kwin_outputconfiguration_listener OutputConfiguration::Private::s_outputconfigurationListener = {appliedCallback, failedCallback};
 
-void OutputConfiguration::Private::appliedCallback(void* data, org_kde_kwin_outputconfiguration* config)
+void OutputConfiguration::Private::appliedCallback(void *data, org_kde_kwin_outputconfiguration *config)
 {
     Q_UNUSED(config);
-    auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
+    auto o = reinterpret_cast<OutputConfiguration::Private *>(data);
     Q_EMIT o->q->applied();
 }
 
-void OutputConfiguration::Private::failedCallback(void* data, org_kde_kwin_outputconfiguration* config)
+void OutputConfiguration::Private::failedCallback(void *data, org_kde_kwin_outputconfiguration *config)
 {
     Q_UNUSED(config);
-    auto o = reinterpret_cast<OutputConfiguration::Private*>(data);
+    auto o = reinterpret_cast<OutputConfiguration::Private *>(data);
     Q_EMIT o->q->failed();
 }
 
-
 }
 }
-

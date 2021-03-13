@@ -6,8 +6,8 @@
 #ifndef WAYLAND_SERVER_SEAT_INTERFACE_P_H
 #define WAYLAND_SERVER_SEAT_INTERFACE_P_H
 // KWayland
-#include "seat_interface.h"
 #include "global_p.h"
+#include "seat_interface.h"
 // Qt
 #include <QHash>
 #include <QMap>
@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceInterface;
 class TextInputInterface;
 
@@ -45,13 +44,13 @@ public:
     bool pointer = false;
     bool keyboard = false;
     bool touch = false;
-    QList<wl_resource*> resources;
+    QList<wl_resource *> resources;
     quint32 timestamp = 0;
-    QVector<PointerInterface*> pointers;
-    QVector<KeyboardInterface*> keyboards;
-    QVector<TouchInterface*> touchs;
-    QVector<DataDeviceInterface*> dataDevices;
-    QVector<TextInputInterface*> textInputs;
+    QVector<PointerInterface *> pointers;
+    QVector<KeyboardInterface *> keyboards;
+    QVector<TouchInterface *> touchs;
+    QVector<DataDeviceInterface *> dataDevices;
+    QVector<TextInputInterface *> textInputs;
     DataDeviceInterface *currentSelection = nullptr;
 
     // Pointer related members
@@ -100,7 +99,7 @@ public:
         Modifiers modifiers;
         struct Focus {
             SurfaceInterface *surface = nullptr;
-            QVector<KeyboardInterface*> keyboards;
+            QVector<KeyboardInterface *> keyboards;
             QMetaObject::Connection destroyConnection;
             quint32 serial = 0;
             DataDeviceInterface *selection = nullptr;
@@ -130,7 +129,7 @@ public:
     struct Touch {
         struct Focus {
             SurfaceInterface *surface = nullptr;
-            QVector<TouchInterface*> touchs;
+            QVector<TouchInterface *> touchs;
             QMetaObject::Connection destroyConnection;
             QPointF offset = QPointF();
             QPointF firstTouchPos;
@@ -158,7 +157,8 @@ public:
     };
     Drag drag;
 
-    static SeatInterface *get(wl_resource *native) {
+    static SeatInterface *get(wl_resource *native)
+    {
         auto s = cast(native);
         return s ? s->q : nullptr;
     }

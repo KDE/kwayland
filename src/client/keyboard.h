@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Surface;
 
 /**
@@ -108,8 +107,8 @@ public:
      **/
     qint32 keyRepeatDelay() const;
 
-    operator wl_keyboard*();
-    operator wl_keyboard*() const;
+    operator wl_keyboard *();
+    operator wl_keyboard *() const;
 
 Q_SIGNALS:
     /**

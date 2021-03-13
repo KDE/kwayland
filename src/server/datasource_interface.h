@@ -10,14 +10,13 @@
 
 #include <KWayland/Server/kwaylandserver_export.h>
 
-#include "resource.h"
 #include "datadevicemanager_interface.h"
+#include "resource.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 /**
  * @brief Represents the Resource for the wl_data_source interface.
  **/
@@ -59,7 +58,7 @@ public:
     void dndAction(DataDeviceManagerInterface::DnDAction action);
 
 Q_SIGNALS:
-    void mimeTypeOffered(const QString&);
+    void mimeTypeOffered(const QString &);
     /**
      * Emitted whenever this DataSourceInterface changes the supported drag and drop actions
      * @since 5.42
@@ -77,6 +76,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::DataSourceInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::DataSourceInterface *)
 
 #endif

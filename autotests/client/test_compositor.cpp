@@ -9,9 +9,9 @@
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
-#include "../../src/client/surface.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/shm_pool.h"
+#include "../../src/client/surface.h"
 #include "../../src/server/buffer_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"
@@ -71,7 +71,7 @@ void TestCompositor::init()
     QVERIFY(connectedSpy.wait());
 
     KWayland::Client::Registry registry;
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32,quint32)));
+    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -128,7 +128,7 @@ void TestCompositor::testCast()
 {
     using namespace KWayland::Client;
     Registry registry;
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32,quint32)));
+    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -138,10 +138,10 @@ void TestCompositor::testCast()
     Compositor c;
     auto wlComp = registry.bindCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>());
     c.setup(wlComp);
-    QCOMPARE((wl_compositor*)c, wlComp);
+    QCOMPARE((wl_compositor *)c, wlComp);
 
     const Compositor &c2(c);
-    QCOMPARE((wl_compositor*)c2, wlComp);
+    QCOMPARE((wl_compositor *)c2, wlComp);
 }
 
 QTEST_GUILESS_MAIN(TestCompositor)

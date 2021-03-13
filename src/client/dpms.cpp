@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN DpmsManager::Private
 {
 public:
@@ -79,16 +78,15 @@ Dpms *DpmsManager::getDpms(Output *output, QObject *parent)
     return dpms;
 }
 
-DpmsManager::operator org_kde_kwin_dpms_manager*() const
+DpmsManager::operator org_kde_kwin_dpms_manager *() const
 {
     return d->manager;
 }
 
-DpmsManager::operator org_kde_kwin_dpms_manager*()
+DpmsManager::operator org_kde_kwin_dpms_manager *()
 {
     return d->manager;
 }
-
 
 class Q_DECL_HIDDEN Dpms::Private
 {
@@ -116,19 +114,14 @@ private:
     Dpms *q;
 };
 
-
 #ifndef K_DOXYGEN
-const org_kde_kwin_dpms_listener Dpms::Private::s_listener = {
-    supportedCallback,
-    modeCallback,
-    doneCallback
-};
+const org_kde_kwin_dpms_listener Dpms::Private::s_listener = {supportedCallback, modeCallback, doneCallback};
 #endif
 
 void Dpms::Private::supportedCallback(void *data, org_kde_kwin_dpms *org_kde_kwin_dpms, uint32_t supported)
 {
     Q_UNUSED(org_kde_kwin_dpms)
-    Private *p = reinterpret_cast<Private*>(data);
+    Private *p = reinterpret_cast<Private *>(data);
     p->pending.supported = supported == 0 ? false : true;
     p->pending.supportedChanged = true;
 }
@@ -153,7 +146,7 @@ void Dpms::Private::modeCallback(void *data, org_kde_kwin_dpms *org_kde_kwin_dpm
     default:
         return;
     }
-    Private *p = reinterpret_cast<Private*>(data);
+    Private *p = reinterpret_cast<Private *>(data);
     p->pending.mode = m;
     p->pending.modeChanged = true;
 }
@@ -161,7 +154,7 @@ void Dpms::Private::modeCallback(void *data, org_kde_kwin_dpms *org_kde_kwin_dpm
 void Dpms::Private::doneCallback(void *data, org_kde_kwin_dpms *org_kde_kwin_dpms)
 {
     Q_UNUSED(org_kde_kwin_dpms)
-    Private *p = reinterpret_cast<Private*>(data);
+    Private *p = reinterpret_cast<Private *>(data);
     const bool supportedChanged = p->pending.supportedChanged && p->pending.supported != p->current.supported;
     const bool modeChanged = p->pending.modeChanged && p->pending.mode != p->current.mode;
     if (supportedChanged) {
@@ -252,17 +245,17 @@ void Dpms::requestMode(Dpms::Mode mode)
     org_kde_kwin_dpms_set(d->dpms, wlMode);
 }
 
-QPointer< Output > Dpms::output() const
+QPointer<Output> Dpms::output() const
 {
     return d->output;
 }
 
-Dpms::operator org_kde_kwin_dpms*()
+Dpms::operator org_kde_kwin_dpms *()
 {
     return d->dpms;
 }
 
-Dpms::operator org_kde_kwin_dpms*() const
+Dpms::operator org_kde_kwin_dpms *() const
 {
     return d->dpms;
 }

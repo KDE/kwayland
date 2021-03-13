@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 /**
  * @brief Holds a set of changes to an OutputInterface or OutputDeviceInterface.
  *
@@ -41,7 +40,7 @@ public:
      * @returns @c true if the enabled property of the outputdevice has changed.
      *    bool modeChanged() const;
      */
-     /** Whether the transform() property of the outputdevice changed. */
+    /** Whether the transform() property of the outputdevice changed. */
     bool transformChanged() const;
     /** Whether the currentModeId() property of the outputdevice changed.
      * @returns @c true if the currentModeId() property of the outputdevice has changed.
@@ -87,7 +86,6 @@ public:
 private:
     friend class OutputConfigurationInterface;
     explicit OutputChangeSet(OutputDeviceInterface *outputdevice, QObject *parent = nullptr);
-
 
     class Private;
     QScopedPointer<Private> d;

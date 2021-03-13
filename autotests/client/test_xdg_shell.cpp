@@ -9,9 +9,10 @@
 
 #include <QSignalSpy>
 
-XdgShellTest::XdgShellTest(XdgShellInterfaceVersion version):
-    m_version(version)
-{}
+XdgShellTest::XdgShellTest(XdgShellInterfaceVersion version)
+    : m_version(version)
+{
+}
 
 static const QString s_socketName = QStringLiteral("kwayland-test-xdg_shell-0");
 
@@ -64,9 +65,9 @@ void XdgShellTest::init()
     QSignalSpy outputAnnouncedSpy(&registry, &Registry::outputAnnounced);
     QVERIFY(outputAnnouncedSpy.isValid());
 
-    auto shellAnnouncedSignal =  m_version == XdgShellInterfaceVersion::UnstableV5 ? &Registry::xdgShellUnstableV5Announced :
-                                 m_version == XdgShellInterfaceVersion::UnstableV6 ? &Registry::xdgShellUnstableV6Announced :
-                                 &Registry::xdgShellStableAnnounced;
+    auto shellAnnouncedSignal = m_version == XdgShellInterfaceVersion::UnstableV5 ? &Registry::xdgShellUnstableV5Announced
+        : m_version == XdgShellInterfaceVersion::UnstableV6                       ? &Registry::xdgShellUnstableV6Announced
+                                                                                  : &Registry::xdgShellStableAnnounced;
 
     QSignalSpy xdgShellAnnouncedSpy(&registry, shellAnnouncedSignal);
     QVERIFY(xdgShellAnnouncedSpy.isValid());
@@ -84,7 +85,8 @@ void XdgShellTest::init()
     QVERIFY(m_shmPool);
     QVERIFY(m_shmPool->isValid());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
+    m_compositor =
+        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
     QVERIFY(m_compositor);
     QVERIFY(m_compositor->isValid());
 
@@ -107,19 +109,17 @@ void XdgShellTest::init()
         break;
     }
 
-    m_xdgShell = registry.createXdgShell(registry.interface(iface).name,
-                                         registry.interface(iface).version,
-                                         this);
+    m_xdgShell = registry.createXdgShell(registry.interface(iface).name, registry.interface(iface).version, this);
     QVERIFY(m_xdgShell);
     QVERIFY(m_xdgShell->isValid());
 }
 
 void XdgShellTest::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_xdgShell)
     CLEANUP(m_compositor)
@@ -161,7 +161,7 @@ void XdgShellTest::testCreateSurface()
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QVERIFY(!surface.isNull());
     QVERIFY(surfaceCreatedSpy.wait());
-    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
     QVERIFY(serverSurface);
 
     // create shell surface
@@ -169,7 +169,7 @@ void XdgShellTest::testCreateSurface()
     QVERIFY(!xdgSurface.isNull());
     QVERIFY(xdgSurfaceCreatedSpy.wait());
     // verify base things
-    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
     QVERIFY(serverXdgSurface);
     QCOMPARE(serverXdgSurface->isConfigurePending(), false);
     QCOMPARE(serverXdgSurface->title(), QString());
@@ -257,14 +257,14 @@ void XdgShellTest::testMinimize()
 
 void XdgShellTest::testFullscreen()
 {
-    qRegisterMetaType<OutputInterface*>();
+    qRegisterMetaType<OutputInterface *>();
     // this test verifies going to/from fullscreen
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data()));
     QVERIFY(xdgSurfaceCreatedSpy.wait());
-    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
     QVERIFY(serverXdgSurface);
 
     QSignalSpy fullscreenSpy(serverXdgSurface, &XdgShellSurfaceInterface::fullscreenChanged);
@@ -275,33 +275,33 @@ void XdgShellTest::testFullscreen()
     QVERIFY(fullscreenSpy.wait());
     QCOMPARE(fullscreenSpy.count(), 1);
     QCOMPARE(fullscreenSpy.last().at(0).toBool(), true);
-    QVERIFY(!fullscreenSpy.last().at(1).value<OutputInterface*>());
+    QVERIFY(!fullscreenSpy.last().at(1).value<OutputInterface *>());
 
     // unset
     xdgSurface->setFullscreen(false);
     QVERIFY(fullscreenSpy.wait());
     QCOMPARE(fullscreenSpy.count(), 2);
     QCOMPARE(fullscreenSpy.last().at(0).toBool(), false);
-    QVERIFY(!fullscreenSpy.last().at(1).value<OutputInterface*>());
+    QVERIFY(!fullscreenSpy.last().at(1).value<OutputInterface *>());
 
     // with outputs
     xdgSurface->setFullscreen(true, m_output1);
     QVERIFY(fullscreenSpy.wait());
     QCOMPARE(fullscreenSpy.count(), 3);
     QCOMPARE(fullscreenSpy.last().at(0).toBool(), true);
-    QCOMPARE(fullscreenSpy.last().at(1).value<OutputInterface*>(), m_o1Interface);
+    QCOMPARE(fullscreenSpy.last().at(1).value<OutputInterface *>(), m_o1Interface);
 
     // now other output
     xdgSurface->setFullscreen(true, m_output2);
     QVERIFY(fullscreenSpy.wait());
     QCOMPARE(fullscreenSpy.count(), 4);
     QCOMPARE(fullscreenSpy.last().at(0).toBool(), true);
-    QCOMPARE(fullscreenSpy.last().at(1).value<OutputInterface*>(), m_o2Interface);
+    QCOMPARE(fullscreenSpy.last().at(1).value<OutputInterface *>(), m_o2Interface);
 }
 
 void XdgShellTest::testShowWindowMenu()
 {
-    qRegisterMetaType<SeatInterface*>();
+    qRegisterMetaType<SeatInterface *>();
     // this test verifies that the show window menu request works
     SURFACE
 
@@ -312,14 +312,14 @@ void XdgShellTest::testShowWindowMenu()
     xdgSurface->requestShowWindowMenu(m_seat, 20, QPoint(30, 40));
     QVERIFY(windowMenuSpy.wait());
     QCOMPARE(windowMenuSpy.count(), 1);
-    QCOMPARE(windowMenuSpy.first().at(0).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(windowMenuSpy.first().at(0).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(windowMenuSpy.first().at(1).value<quint32>(), 20u);
     QCOMPARE(windowMenuSpy.first().at(2).toPoint(), QPoint(30, 40));
 }
 
 void XdgShellTest::testMove()
 {
-    qRegisterMetaType<SeatInterface*>();
+    qRegisterMetaType<SeatInterface *>();
     // this test verifies that the move request works
     SURFACE
 
@@ -330,7 +330,7 @@ void XdgShellTest::testMove()
     xdgSurface->requestMove(m_seat, 50);
     QVERIFY(moveSpy.wait());
     QCOMPARE(moveSpy.count(), 1);
-    QCOMPARE(moveSpy.first().at(0).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(moveSpy.first().at(0).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(moveSpy.first().at(1).value<quint32>(), 50u);
 }
 
@@ -338,20 +338,20 @@ void XdgShellTest::testResize_data()
 {
     QTest::addColumn<Qt::Edges>("edges");
 
-    QTest::newRow("none")         << Qt::Edges();
-    QTest::newRow("top")          << Qt::Edges(Qt::TopEdge);
-    QTest::newRow("bottom")       << Qt::Edges(Qt::BottomEdge);
-    QTest::newRow("left")         << Qt::Edges(Qt::LeftEdge);
-    QTest::newRow("top left")     << Qt::Edges(Qt::TopEdge | Qt::LeftEdge);
-    QTest::newRow("bottom left")  << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge);
-    QTest::newRow("right")        << Qt::Edges(Qt::RightEdge);
-    QTest::newRow("top right")    << Qt::Edges(Qt::TopEdge | Qt::RightEdge);
+    QTest::newRow("none") << Qt::Edges();
+    QTest::newRow("top") << Qt::Edges(Qt::TopEdge);
+    QTest::newRow("bottom") << Qt::Edges(Qt::BottomEdge);
+    QTest::newRow("left") << Qt::Edges(Qt::LeftEdge);
+    QTest::newRow("top left") << Qt::Edges(Qt::TopEdge | Qt::LeftEdge);
+    QTest::newRow("bottom left") << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge);
+    QTest::newRow("right") << Qt::Edges(Qt::RightEdge);
+    QTest::newRow("top right") << Qt::Edges(Qt::TopEdge | Qt::RightEdge);
     QTest::newRow("bottom right") << Qt::Edges(Qt::BottomEdge | Qt::RightEdge);
 }
 
 void XdgShellTest::testResize()
 {
-    qRegisterMetaType<SeatInterface*>();
+    qRegisterMetaType<SeatInterface *>();
     // this test verifies that the resize request works
     SURFACE
 
@@ -363,7 +363,7 @@ void XdgShellTest::testResize()
     xdgSurface->requestResize(m_seat, 60, edges);
     QVERIFY(resizeSpy.wait());
     QCOMPARE(resizeSpy.count(), 1);
-    QCOMPARE(resizeSpy.first().at(0).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(resizeSpy.first().at(0).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(resizeSpy.first().at(1).value<quint32>(), 60u);
     QCOMPARE(resizeSpy.first().at(2).value<Qt::Edges>(), edges);
 }
@@ -375,7 +375,7 @@ void XdgShellTest::testTransient()
     QScopedPointer<Surface> surface2(m_compositor->createSurface());
     QScopedPointer<XdgShellSurface> xdgSurface2(m_xdgShell->createSurface(surface2.data()));
     QVERIFY(xdgSurfaceCreatedSpy.wait());
-    auto serverXdgSurface2 = xdgSurfaceCreatedSpy.last().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgSurface2 = xdgSurfaceCreatedSpy.last().first().value<XdgShellSurfaceInterface *>();
     QVERIFY(serverXdgSurface2);
 
     QVERIFY(!serverXdgSurface->isTransient());
@@ -458,24 +458,24 @@ void XdgShellTest::testConfigureStates_data()
     const auto cf = XdgShellSurface::States(XdgShellSurface::State::Fullscreen);
     const auto cr = XdgShellSurface::States(XdgShellSurface::State::Resizing);
 
-    QTest::newRow("none")       << XdgShellSurfaceInterface::States()   << XdgShellSurface::States();
-    QTest::newRow("Active")     << sa << ca;
-    QTest::newRow("Maximize")   << sm << cm;
+    QTest::newRow("none") << XdgShellSurfaceInterface::States() << XdgShellSurface::States();
+    QTest::newRow("Active") << sa << ca;
+    QTest::newRow("Maximize") << sm << cm;
     QTest::newRow("Fullscreen") << sf << cf;
-    QTest::newRow("Resizing")   << sr << cr;
+    QTest::newRow("Resizing") << sr << cr;
 
-    QTest::newRow("Active/Maximize")       << (sa | sm) << (ca | cm);
-    QTest::newRow("Active/Fullscreen")     << (sa | sf) << (ca | cf);
-    QTest::newRow("Active/Resizing")       << (sa | sr) << (ca | cr);
-    QTest::newRow("Maximize/Fullscreen")   << (sm | sf) << (cm | cf);
-    QTest::newRow("Maximize/Resizing")     << (sm | sr) << (cm | cr);
-    QTest::newRow("Fullscreen/Resizing")   << (sf | sr) << (cf | cr);
+    QTest::newRow("Active/Maximize") << (sa | sm) << (ca | cm);
+    QTest::newRow("Active/Fullscreen") << (sa | sf) << (ca | cf);
+    QTest::newRow("Active/Resizing") << (sa | sr) << (ca | cr);
+    QTest::newRow("Maximize/Fullscreen") << (sm | sf) << (cm | cf);
+    QTest::newRow("Maximize/Resizing") << (sm | sr) << (cm | cr);
+    QTest::newRow("Fullscreen/Resizing") << (sf | sr) << (cf | cr);
 
-    QTest::newRow("Active/Maximize/Fullscreen")   << (sa | sm | sf) << (ca | cm | cf);
-    QTest::newRow("Active/Maximize/Resizing")     << (sa | sm | sr) << (ca | cm | cr);
+    QTest::newRow("Active/Maximize/Fullscreen") << (sa | sm | sf) << (ca | cm | cf);
+    QTest::newRow("Active/Maximize/Resizing") << (sa | sm | sr) << (ca | cm | cr);
     QTest::newRow("Maximize/Fullscreen|Resizing") << (sm | sf | sr) << (cm | cf | cr);
 
-    QTest::newRow("Active/Maximize/Fullscreen/Resizing")   << (sa | sm | sf | sr) << (ca | cm | cf | cr);
+    QTest::newRow("Active/Maximize/Fullscreen/Resizing") << (sa | sm | sf | sr) << (ca | cm | cf | cr);
 }
 
 void XdgShellTest::testConfigureStates()

@@ -19,9 +19,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 *********************************************************************/
 // Qt
 #include <QHash>
-#include <QThread>
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
+#include <QThread>
 // WaylandServer
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"
@@ -235,9 +235,9 @@ void TestTabletInterface::testAdd()
     QVERIFY(toolSpy.wait() || toolSpy.count() == 1);
     QCOMPARE(m_tabletSeatClient->m_tools.count(), 1);
 
-    QVERIFY(!m_tool->isClientSupported()); //There's no surface in it yet
+    QVERIFY(!m_tool->isClientSupported()); // There's no surface in it yet
     m_tool->setCurrentSurface(nullptr);
-    QVERIFY(!m_tool->isClientSupported()); //There's no surface in it
+    QVERIFY(!m_tool->isClientSupported()); // There's no surface in it
 
     QCOMPARE(m_surfaces.count(), 3);
     for (SurfaceInterface *surface : m_surfaces) {

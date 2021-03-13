@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /**
@@ -27,7 +26,7 @@ enum class IdleInhibitManagerInterfaceVersion {
     /**
      * zwp_idle_inhibit_manager_v1
      **/
-     UnstableV1,
+    UnstableV1,
 };
 
 /**
@@ -55,7 +54,6 @@ protected:
 private:
     Private *d_func() const;
 };
-
 
 }
 }

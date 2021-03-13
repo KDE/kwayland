@@ -47,7 +47,7 @@ Q_SIGNALS:
     /**
      * Emitted whenever the region changes.
      **/
-    void regionChanged(const QRegion&);
+    void regionChanged(const QRegion &);
 
 private:
     friend class CompositorInterface;
@@ -59,6 +59,6 @@ private:
 
 }
 }
-Q_DECLARE_METATYPE(KWayland::Server::RegionInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::RegionInterface *)
 
 #endif

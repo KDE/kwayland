@@ -8,15 +8,14 @@
 
 #include <QObject>
 
-#include <KWayland/Server/kwaylandserver_export.h>
-#include "global.h"
 #include "datadevice_interface.h"
+#include "global.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class DataSourceInterface;
 
@@ -43,8 +42,8 @@ public:
     Q_DECLARE_FLAGS(DnDActions, DnDAction)
 
 Q_SIGNALS:
-    void dataSourceCreated(KWayland::Server::DataSourceInterface*);
-    void dataDeviceCreated(KWayland::Server::DataDeviceInterface*);
+    void dataSourceCreated(KWayland::Server::DataSourceInterface *);
+    void dataDeviceCreated(KWayland::Server::DataDeviceInterface *);
 
 private:
     explicit DataDeviceManagerInterface(Display *display, QObject *parent = nullptr);

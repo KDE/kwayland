@@ -9,11 +9,14 @@
 
 #include <QSignalSpy>
 
-class XdgShellTestV5 : public XdgShellTest {
+class XdgShellTestV5 : public XdgShellTest
+{
     Q_OBJECT
 public:
-    XdgShellTestV5() :
-        XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::UnstableV5) {}
+    XdgShellTestV5()
+        : XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::UnstableV5)
+    {
+    }
 private Q_SLOTS:
     void testPopup();
 };
@@ -26,9 +29,8 @@ void XdgShellTestV5::testPopup()
     QVERIFY(surfaceCreatedSpy.isValid());
     QSignalSpy xdgPopupSpy(m_xdgShellInterface, &XdgShellInterface::popupCreated);
 
-    //check as well as the compat signal, the new signal is also fired
+    // check as well as the compat signal, the new signal is also fired
     QSignalSpy xdgPopupSpyNew(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
-
 
     QVERIFY(xdgPopupSpy.isValid());
 
@@ -41,13 +43,12 @@ void XdgShellTestV5::testPopup()
     QCOMPARE(xdgPopupSpy.count(), 1);
     QCOMPARE(xdgPopupSpyNew.count(), 1);
 
-
-    QCOMPARE(xdgPopupSpy.first().at(1).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(xdgPopupSpy.first().at(1).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(xdgPopupSpy.first().at(2).value<quint32>(), 120u);
-    auto serverXdgPopup = xdgPopupSpy.first().first().value<XdgShellPopupInterface*>();
+    auto serverXdgPopup = xdgPopupSpy.first().first().value<XdgShellPopupInterface *>();
     QVERIFY(serverXdgPopup);
 
-    QCOMPARE(serverXdgPopup->surface(), surfaceCreatedSpy.first().first().value<SurfaceInterface*>());
+    QCOMPARE(serverXdgPopup->surface(), surfaceCreatedSpy.first().first().value<SurfaceInterface *>());
     QCOMPARE(serverXdgPopup->transientFor().data(), serverXdgSurface->surface());
     QCOMPARE(serverXdgPopup->transientOffset(), QPoint(10, 20));
 
@@ -56,12 +57,12 @@ void XdgShellTestV5::testPopup()
     QScopedPointer<XdgShellPopup> xdgPopup2(m_xdgShell->createPopup(popup2Surface.data(), popupSurface.data(), m_seat, 121, QPoint(5, 7)));
     QVERIFY(xdgPopupSpy.wait());
     QCOMPARE(xdgPopupSpy.count(), 2);
-    QCOMPARE(xdgPopupSpy.last().at(1).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(xdgPopupSpy.last().at(1).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(xdgPopupSpy.last().at(2).value<quint32>(), 121u);
-    auto serverXdgPopup2 = xdgPopupSpy.last().first().value<XdgShellPopupInterface*>();
+    auto serverXdgPopup2 = xdgPopupSpy.last().first().value<XdgShellPopupInterface *>();
     QVERIFY(serverXdgPopup2);
 
-    QCOMPARE(serverXdgPopup2->surface(), surfaceCreatedSpy.last().first().value<SurfaceInterface*>());
+    QCOMPARE(serverXdgPopup2->surface(), surfaceCreatedSpy.last().first().value<SurfaceInterface *>());
     QCOMPARE(serverXdgPopup2->transientFor().data(), serverXdgPopup->surface());
     QCOMPARE(serverXdgPopup2->transientOffset(), QPoint(5, 7));
 
@@ -72,10 +73,6 @@ void XdgShellTestV5::testPopup()
     // TODO: test that this sends also the done to all parents
 }
 
-
-
-
 QTEST_GUILESS_MAIN(XdgShellTestV5)
 
 #include "test_xdg_shell_v5.moc"
-

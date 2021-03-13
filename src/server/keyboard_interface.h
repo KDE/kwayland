@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SeatInterface;
 class SurfaceInterface;
 
@@ -51,6 +50,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::KeyboardInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::KeyboardInterface *)
 
 #endif

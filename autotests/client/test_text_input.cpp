@@ -122,9 +122,7 @@ void TextInputTest::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name,
-                                 registry.interface(Registry::Interface::Seat).version,
-                                 this);
+    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, registry.interface(Registry::Interface::Seat).version, this);
     QVERIFY(m_seat->isValid());
     QSignalSpy hasKeyboardSpy(m_seat, &Seat::hasKeyboardChanged);
     QVERIFY(hasKeyboardSpy.isValid());
@@ -132,9 +130,8 @@ void TextInputTest::init()
     m_keyboard = m_seat->createKeyboard(this);
     QVERIFY(m_keyboard->isValid());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name,
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    m_compositor =
+        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
     QVERIFY(m_compositor->isValid());
 
     m_textInputManagerV0 = registry.createTextInputManager(registry.interface(Registry::Interface::TextInputManagerUnstableV0).name,
@@ -150,10 +147,10 @@ void TextInputTest::init()
 
 void TextInputTest::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_textInputManagerV0)
     CLEANUP(m_textInputManagerV2)
@@ -192,7 +189,7 @@ SurfaceInterface *TextInputTest::waitForSurface()
     if (surfaceCreatedSpy.count() != 1) {
         return nullptr;
     }
-    return surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    return surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
 }
 
 TextInput *TextInputTest::createTextInput(TextInputInterfaceVersion version)
@@ -293,18 +290,18 @@ void TextInputTest::testEnterLeave()
     QCOMPARE(textInputChangedSpy.count(), 3);
     // should still be the same text input
     QCOMPARE(m_seatInterface->focusedTextInput(), serverTextInput);
-    //reset
+    // reset
     textInput->enable(surface.data());
     QVERIFY(enabledChangedSpy.wait());
 
-    //trigger an enter again and leave, but this
-    //time we try sending an event after the surface is unbound
-    //but not yet destroyed. It should work without errors
+    // trigger an enter again and leave, but this
+    // time we try sending an event after the surface is unbound
+    // but not yet destroyed. It should work without errors
     QCOMPARE(textInput->enteredSurface(), surface.data());
     connect(serverSurface, &Resource::unbound, [=]() {
         m_seatInterface->setFocusedKeyboardSurface(nullptr);
     });
-    //delete the client and wait for the server to catch up
+    // delete the client and wait for the server to catch up
     QSignalSpy unboundSpy(serverSurface, &QObject::destroyed);
     surface.reset();
     QVERIFY(unboundSpy.wait());
@@ -502,83 +499,83 @@ void TextInputTest::testContentHints_data()
     QTest::addColumn<TextInput::ContentHints>("clientHints");
     QTest::addColumn<TextInputInterface::ContentHints>("serverHints");
 
-    QTest::newRow("completion/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCompletion) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCompletion);
-    QTest::newRow("Correction/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCorrection) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCorrection);
-    QTest::newRow("Capitalization/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCapitalization) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCapitalization);
-    QTest::newRow("Lowercase/v0")      << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::LowerCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::LowerCase);
-    QTest::newRow("Uppercase/v0")      << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::UpperCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::UpperCase);
-    QTest::newRow("Titlecase/v0")      << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::TitleCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::TitleCase);
-    QTest::newRow("HiddenText/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::HiddenText) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::HiddenText);
-    QTest::newRow("SensitiveData/v0")  << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::SensitiveData) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::SensitiveData);
-    QTest::newRow("Latin/v0")          << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::Latin) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::Latin);
-    QTest::newRow("Multiline/v0")      << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::MultiLine) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::MultiLine);
+    QTest::newRow("completion/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCompletion)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCompletion);
+    QTest::newRow("Correction/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCorrection)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCorrection);
+    QTest::newRow("Capitalization/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::AutoCapitalization)
+                                       << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCapitalization);
+    QTest::newRow("Lowercase/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::LowerCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::LowerCase);
+    QTest::newRow("Uppercase/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::UpperCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::UpperCase);
+    QTest::newRow("Titlecase/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::TitleCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::TitleCase);
+    QTest::newRow("HiddenText/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::HiddenText)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::HiddenText);
+    QTest::newRow("SensitiveData/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::SensitiveData)
+                                      << TextInputInterface::ContentHints(TextInputInterface::ContentHint::SensitiveData);
+    QTest::newRow("Latin/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::Latin)
+                              << TextInputInterface::ContentHints(TextInputInterface::ContentHint::Latin);
+    QTest::newRow("Multiline/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentHints(TextInput::ContentHint::MultiLine)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::MultiLine);
 
     QTest::newRow("autos/v0") << TextInputInterfaceVersion::UnstableV0
                               << (TextInput::ContentHint::AutoCompletion | TextInput::ContentHint::AutoCorrection | TextInput::ContentHint::AutoCapitalization)
-                              << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection | TextInputInterface::ContentHint::AutoCapitalization);
+                              << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection
+                                  | TextInputInterface::ContentHint::AutoCapitalization);
 
     // all has combinations which don't make sense - what's both lowercase and uppercase?
     QTest::newRow("all/v0") << TextInputInterfaceVersion::UnstableV0
-                            << (TextInput::ContentHint::AutoCompletion |
-                                TextInput::ContentHint::AutoCorrection |
-                                TextInput::ContentHint::AutoCapitalization |
-                                TextInput::ContentHint::LowerCase |
-                                TextInput::ContentHint::UpperCase |
-                                TextInput::ContentHint::TitleCase |
-                                TextInput::ContentHint::HiddenText |
-                                TextInput::ContentHint::SensitiveData |
-                                TextInput::ContentHint::Latin |
-                                TextInput::ContentHint::MultiLine)
-                            << (TextInputInterface::ContentHint::AutoCompletion |
-                                TextInputInterface::ContentHint::AutoCorrection |
-                                TextInputInterface::ContentHint::AutoCapitalization |
-                                TextInputInterface::ContentHint::LowerCase |
-                                TextInputInterface::ContentHint::UpperCase |
-                                TextInputInterface::ContentHint::TitleCase |
-                                TextInputInterface::ContentHint::HiddenText |
-                                TextInputInterface::ContentHint::SensitiveData |
-                                TextInputInterface::ContentHint::Latin |
-                                TextInputInterface::ContentHint::MultiLine);
+                            << (TextInput::ContentHint::AutoCompletion | TextInput::ContentHint::AutoCorrection | TextInput::ContentHint::AutoCapitalization
+                                | TextInput::ContentHint::LowerCase | TextInput::ContentHint::UpperCase | TextInput::ContentHint::TitleCase
+                                | TextInput::ContentHint::HiddenText | TextInput::ContentHint::SensitiveData | TextInput::ContentHint::Latin
+                                | TextInput::ContentHint::MultiLine)
+                            << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection
+                                | TextInputInterface::ContentHint::AutoCapitalization | TextInputInterface::ContentHint::LowerCase
+                                | TextInputInterface::ContentHint::UpperCase | TextInputInterface::ContentHint::TitleCase
+                                | TextInputInterface::ContentHint::HiddenText | TextInputInterface::ContentHint::SensitiveData
+                                | TextInputInterface::ContentHint::Latin | TextInputInterface::ContentHint::MultiLine);
 
     // same for version 2
 
-    QTest::newRow("completion/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCompletion) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCompletion);
-    QTest::newRow("Correction/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCorrection) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCorrection);
-    QTest::newRow("Capitalization/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCapitalization) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCapitalization);
-    QTest::newRow("Lowercase/v2")      << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::LowerCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::LowerCase);
-    QTest::newRow("Uppercase/v2")      << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::UpperCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::UpperCase);
-    QTest::newRow("Titlecase/v2")      << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::TitleCase) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::TitleCase);
-    QTest::newRow("HiddenText/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::HiddenText) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::HiddenText);
-    QTest::newRow("SensitiveData/v2")  << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::SensitiveData) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::SensitiveData);
-    QTest::newRow("Latin/v2")          << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::Latin) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::Latin);
-    QTest::newRow("Multiline/v2")      << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::MultiLine) << TextInputInterface::ContentHints(TextInputInterface::ContentHint::MultiLine);
+    QTest::newRow("completion/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCompletion)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCompletion);
+    QTest::newRow("Correction/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCorrection)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCorrection);
+    QTest::newRow("Capitalization/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::AutoCapitalization)
+                                       << TextInputInterface::ContentHints(TextInputInterface::ContentHint::AutoCapitalization);
+    QTest::newRow("Lowercase/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::LowerCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::LowerCase);
+    QTest::newRow("Uppercase/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::UpperCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::UpperCase);
+    QTest::newRow("Titlecase/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::TitleCase)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::TitleCase);
+    QTest::newRow("HiddenText/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::HiddenText)
+                                   << TextInputInterface::ContentHints(TextInputInterface::ContentHint::HiddenText);
+    QTest::newRow("SensitiveData/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::SensitiveData)
+                                      << TextInputInterface::ContentHints(TextInputInterface::ContentHint::SensitiveData);
+    QTest::newRow("Latin/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::Latin)
+                              << TextInputInterface::ContentHints(TextInputInterface::ContentHint::Latin);
+    QTest::newRow("Multiline/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentHints(TextInput::ContentHint::MultiLine)
+                                  << TextInputInterface::ContentHints(TextInputInterface::ContentHint::MultiLine);
 
     QTest::newRow("autos/v2") << TextInputInterfaceVersion::UnstableV2
                               << (TextInput::ContentHint::AutoCompletion | TextInput::ContentHint::AutoCorrection | TextInput::ContentHint::AutoCapitalization)
-                              << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection | TextInputInterface::ContentHint::AutoCapitalization);
+                              << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection
+                                  | TextInputInterface::ContentHint::AutoCapitalization);
 
     // all has combinations which don't make sense - what's both lowercase and uppercase?
     QTest::newRow("all/v2") << TextInputInterfaceVersion::UnstableV2
-                            << (TextInput::ContentHint::AutoCompletion |
-                                TextInput::ContentHint::AutoCorrection |
-                                TextInput::ContentHint::AutoCapitalization |
-                                TextInput::ContentHint::LowerCase |
-                                TextInput::ContentHint::UpperCase |
-                                TextInput::ContentHint::TitleCase |
-                                TextInput::ContentHint::HiddenText |
-                                TextInput::ContentHint::SensitiveData |
-                                TextInput::ContentHint::Latin |
-                                TextInput::ContentHint::MultiLine)
-                            << (TextInputInterface::ContentHint::AutoCompletion |
-                                TextInputInterface::ContentHint::AutoCorrection |
-                                TextInputInterface::ContentHint::AutoCapitalization |
-                                TextInputInterface::ContentHint::LowerCase |
-                                TextInputInterface::ContentHint::UpperCase |
-                                TextInputInterface::ContentHint::TitleCase |
-                                TextInputInterface::ContentHint::HiddenText |
-                                TextInputInterface::ContentHint::SensitiveData |
-                                TextInputInterface::ContentHint::Latin |
-                                TextInputInterface::ContentHint::MultiLine);
+                            << (TextInput::ContentHint::AutoCompletion | TextInput::ContentHint::AutoCorrection | TextInput::ContentHint::AutoCapitalization
+                                | TextInput::ContentHint::LowerCase | TextInput::ContentHint::UpperCase | TextInput::ContentHint::TitleCase
+                                | TextInput::ContentHint::HiddenText | TextInput::ContentHint::SensitiveData | TextInput::ContentHint::Latin
+                                | TextInput::ContentHint::MultiLine)
+                            << (TextInputInterface::ContentHint::AutoCompletion | TextInputInterface::ContentHint::AutoCorrection
+                                | TextInputInterface::ContentHint::AutoCapitalization | TextInputInterface::ContentHint::LowerCase
+                                | TextInputInterface::ContentHint::UpperCase | TextInputInterface::ContentHint::TitleCase
+                                | TextInputInterface::ContentHint::HiddenText | TextInputInterface::ContentHint::SensitiveData
+                                | TextInputInterface::ContentHint::Latin | TextInputInterface::ContentHint::MultiLine);
 }
 
 void TextInputTest::testContentHints()
@@ -622,31 +619,37 @@ void TextInputTest::testContentPurpose_data()
     QTest::addColumn<TextInput::ContentPurpose>("clientPurpose");
     QTest::addColumn<TextInputInterface::ContentPurpose>("serverPurpose");
 
-    QTest::newRow("Alpha/v0")    << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Alpha    << TextInputInterface::ContentPurpose::Alpha;
-    QTest::newRow("Digits/v0")   << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Digits   << TextInputInterface::ContentPurpose::Digits;
-    QTest::newRow("Number/v0")   << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Number   << TextInputInterface::ContentPurpose::Number;
-    QTest::newRow("Phone/v0")    << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Phone    << TextInputInterface::ContentPurpose::Phone;
-    QTest::newRow("Url/v0")      << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Url      << TextInputInterface::ContentPurpose::Url;
-    QTest::newRow("Email/v0")    << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Email    << TextInputInterface::ContentPurpose::Email;
-    QTest::newRow("Name/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Name     << TextInputInterface::ContentPurpose::Name;
-    QTest::newRow("Password/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Password << TextInputInterface::ContentPurpose::Password;
-    QTest::newRow("Date/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Date     << TextInputInterface::ContentPurpose::Date;
-    QTest::newRow("Time/v0")     << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Time     << TextInputInterface::ContentPurpose::Time;
-    QTest::newRow("Datetime/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::DateTime << TextInputInterface::ContentPurpose::DateTime;
-    QTest::newRow("Terminal/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Terminal << TextInputInterface::ContentPurpose::Terminal;
+    QTest::newRow("Alpha/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Alpha << TextInputInterface::ContentPurpose::Alpha;
+    QTest::newRow("Digits/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Digits << TextInputInterface::ContentPurpose::Digits;
+    QTest::newRow("Number/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Number << TextInputInterface::ContentPurpose::Number;
+    QTest::newRow("Phone/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Phone << TextInputInterface::ContentPurpose::Phone;
+    QTest::newRow("Url/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Url << TextInputInterface::ContentPurpose::Url;
+    QTest::newRow("Email/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Email << TextInputInterface::ContentPurpose::Email;
+    QTest::newRow("Name/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Name << TextInputInterface::ContentPurpose::Name;
+    QTest::newRow("Password/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Password
+                                 << TextInputInterface::ContentPurpose::Password;
+    QTest::newRow("Date/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Date << TextInputInterface::ContentPurpose::Date;
+    QTest::newRow("Time/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Time << TextInputInterface::ContentPurpose::Time;
+    QTest::newRow("Datetime/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::DateTime
+                                 << TextInputInterface::ContentPurpose::DateTime;
+    QTest::newRow("Terminal/v0") << TextInputInterfaceVersion::UnstableV0 << TextInput::ContentPurpose::Terminal
+                                 << TextInputInterface::ContentPurpose::Terminal;
 
-    QTest::newRow("Alpha/v2")    << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Alpha    << TextInputInterface::ContentPurpose::Alpha;
-    QTest::newRow("Digits/v2")   << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Digits   << TextInputInterface::ContentPurpose::Digits;
-    QTest::newRow("Number/v2")   << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Number   << TextInputInterface::ContentPurpose::Number;
-    QTest::newRow("Phone/v2")    << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Phone    << TextInputInterface::ContentPurpose::Phone;
-    QTest::newRow("Url/v2")      << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Url      << TextInputInterface::ContentPurpose::Url;
-    QTest::newRow("Email/v2")    << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Email    << TextInputInterface::ContentPurpose::Email;
-    QTest::newRow("Name/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Name     << TextInputInterface::ContentPurpose::Name;
-    QTest::newRow("Password/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Password << TextInputInterface::ContentPurpose::Password;
-    QTest::newRow("Date/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Date     << TextInputInterface::ContentPurpose::Date;
-    QTest::newRow("Time/v2")     << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Time     << TextInputInterface::ContentPurpose::Time;
-    QTest::newRow("Datetime/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::DateTime << TextInputInterface::ContentPurpose::DateTime;
-    QTest::newRow("Terminal/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Terminal << TextInputInterface::ContentPurpose::Terminal;
+    QTest::newRow("Alpha/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Alpha << TextInputInterface::ContentPurpose::Alpha;
+    QTest::newRow("Digits/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Digits << TextInputInterface::ContentPurpose::Digits;
+    QTest::newRow("Number/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Number << TextInputInterface::ContentPurpose::Number;
+    QTest::newRow("Phone/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Phone << TextInputInterface::ContentPurpose::Phone;
+    QTest::newRow("Url/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Url << TextInputInterface::ContentPurpose::Url;
+    QTest::newRow("Email/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Email << TextInputInterface::ContentPurpose::Email;
+    QTest::newRow("Name/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Name << TextInputInterface::ContentPurpose::Name;
+    QTest::newRow("Password/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Password
+                                 << TextInputInterface::ContentPurpose::Password;
+    QTest::newRow("Date/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Date << TextInputInterface::ContentPurpose::Date;
+    QTest::newRow("Time/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Time << TextInputInterface::ContentPurpose::Time;
+    QTest::newRow("Datetime/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::DateTime
+                                 << TextInputInterface::ContentPurpose::DateTime;
+    QTest::newRow("Terminal/v2") << TextInputInterfaceVersion::UnstableV2 << TextInput::ContentPurpose::Terminal
+                                 << TextInputInterface::ContentPurpose::Terminal;
 }
 
 void TextInputTest::testContentPurpose()

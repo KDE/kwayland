@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN XdgDecorationManager::Private
 {
 public:
@@ -62,11 +61,13 @@ void XdgDecorationManager::destroy()
     d->xdgdecorationmanager.destroy();
 }
 
-XdgDecorationManager::operator zxdg_decoration_manager_v1*() {
+XdgDecorationManager::operator zxdg_decoration_manager_v1 *()
+{
     return d->xdgdecorationmanager;
 }
 
-XdgDecorationManager::operator zxdg_decoration_manager_v1*() const {
+XdgDecorationManager::operator zxdg_decoration_manager_v1 *() const
+{
     return d->xdgdecorationmanager;
 }
 
@@ -89,7 +90,7 @@ XdgDecoration *XdgDecorationManager::getToplevelDecoration(XdgShellSurface *topl
 {
     Q_ASSERT(isValid());
     xdg_toplevel *toplevel_resource = *toplevel;
-    if (!toplevel_resource) { //i.e using XDGShellV5
+    if (!toplevel_resource) { // i.e using XDGShellV5
         qWarning() << "Trying to create an XdgDecoration without an XDGShell stable toplevel object";
         return nullptr;
     }
@@ -112,6 +113,7 @@ public:
     WaylandPointer<zxdg_toplevel_decoration_v1, zxdg_toplevel_decoration_v1_destroy> xdgdecoration;
 
     XdgDecoration::Mode m_mode = XdgDecoration::Mode::ClientSide;
+
 private:
     XdgDecoration *q;
 
@@ -121,13 +123,11 @@ private:
     static const zxdg_toplevel_decoration_v1_listener s_listener;
 };
 
-const zxdg_toplevel_decoration_v1_listener XdgDecoration::Private::s_listener = {
-    configureCallback
-};
+const zxdg_toplevel_decoration_v1_listener XdgDecoration::Private::s_listener = {configureCallback};
 
 void XdgDecoration::Private::configureCallback(void *data, zxdg_toplevel_decoration_v1 *zxdg_toplevel_decoration_v1, uint32_t m)
 {
-    auto p = reinterpret_cast<XdgDecoration::Private*>(data);
+    auto p = reinterpret_cast<XdgDecoration::Private *>(data);
     Q_ASSERT(p->xdgdecoration == zxdg_toplevel_decoration_v1);
     switch (m) {
     case ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE:
@@ -179,11 +179,13 @@ void XdgDecoration::destroy()
     d->xdgdecoration.destroy();
 }
 
-XdgDecoration::operator zxdg_toplevel_decoration_v1*() {
+XdgDecoration::operator zxdg_toplevel_decoration_v1 *()
+{
     return d->xdgdecoration;
 }
 
-XdgDecoration::operator zxdg_toplevel_decoration_v1*() const {
+XdgDecoration::operator zxdg_toplevel_decoration_v1 *() const
+{
     return d->xdgdecoration;
 }
 
@@ -218,7 +220,5 @@ XdgDecoration::Mode XdgDecoration::mode() const
     return d->m_mode;
 }
 
-
 }
 }
-

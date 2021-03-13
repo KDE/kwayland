@@ -7,17 +7,17 @@
 #include <QSignalSpy>
 #include <QTest>
 // KWin
+#include "../../src/client/blur.h"
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/region.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/surface.h"
-#include "../../src/client/blur.h"
-#include "../../src/server/display.h"
-#include "../../src/server/compositor_interface.h"
-#include "../../src/server/region_interface.h"
 #include "../../src/server/blur_interface.h"
+#include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
+#include "../../src/server/region_interface.h"
 
 using namespace KWayland::Client;
 
@@ -115,10 +115,10 @@ void TestBlur::init()
 
 void TestBlur::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_compositor)
     CLEANUP(m_blurManager)
@@ -141,13 +141,13 @@ void TestBlur::cleanup()
 
 void TestBlur::testCreate()
 {
-    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface*)));
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
     QVERIFY(serverSurfaceCreated.isValid());
 
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
     QSignalSpy blurChanged(serverSurface, SIGNAL(blurChanged()));
 
     auto blur = m_blurManager->createBlur(surface.data(), surface.data());
@@ -173,7 +173,7 @@ void TestBlur::testSurfaceDestroy()
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
-    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface*>();
+    auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
     QSignalSpy blurChanged(serverSurface, &KWayland::Server::SurfaceInterface::blurChanged);
     QVERIFY(blurChanged.isValid());
 

@@ -4,17 +4,17 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QSignalSpy>
+#include <QTest>
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
 #include "../../src/client/pointer.h"
+#include "../../src/client/registry.h"
 #include "../../src/client/seat.h"
 #include "../../src/client/shell.h"
 #include "../../src/client/surface.h"
-#include "../../src/client/registry.h"
 #include "../../src/server/buffer_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"
@@ -138,8 +138,8 @@ void TestWaylandShell::init()
     KWayland::Client::Registry registry;
     QSignalSpy interfacesAnnouncedSpy(&registry, &Registry::interfacesAnnounced);
     QVERIFY(interfacesAnnouncedSpy.isValid());
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32,quint32)));
-    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32,quint32)));
+    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
+    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
     QSignalSpy seatAnnouncedSpy(&registry, &Registry::seatAnnounced);
     QVERIFY(seatAnnouncedSpy.isValid());
     QVERIFY(!registry.eventQueue());
@@ -229,7 +229,7 @@ void TestWaylandShell::testCreateMultiple()
     QVERIFY(!s2.isNull());
     QVERIFY(s2->isValid());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QScopedPointer<ShellSurface> surface1(m_shell->createSurface(s1.data()));
     QVERIFY(!surface1.isNull());
@@ -269,10 +269,10 @@ void TestWaylandShell::testFullscreen()
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->parentResource());
     QCOMPARE(serverSurface->shell(), m_shellInterface);
@@ -313,10 +313,10 @@ void TestWaylandShell::testMaximize()
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->parentResource());
 
@@ -356,10 +356,10 @@ void TestWaylandShell::testToplevel()
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->parentResource());
 
@@ -410,7 +410,7 @@ void TestWaylandShell::testTransient()
     QSignalSpy serverSurfaceSpy(m_shellInterface, &ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QSignalSpy acceptsKeyboardFocusChangedSpy(serverSurface, &ShellSurfaceInterface::acceptsKeyboardFocusChanged);
     QVERIFY(acceptsKeyboardFocusChangedSpy.isValid());
@@ -433,7 +433,7 @@ void TestWaylandShell::testTransient()
     m_shell->createSurface(s2.data(), m_shell);
     serverSurfaceSpy.clear();
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface2 = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface2 = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface2 != serverSurface);
     QVERIFY(serverSurface2);
     QVERIFY(serverSurface2->acceptsKeyboardFocus());
@@ -475,7 +475,7 @@ void TestWaylandShell::testTransientPopup()
     QSignalSpy serverSurfaceSpy(m_shellInterface, &ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QCOMPARE(serverSurface->isToplevel(), true);
     QCOMPARE(serverSurface->isPopup(), false);
@@ -495,7 +495,7 @@ void TestWaylandShell::testTransientPopup()
     m_shell->createSurface(s2.data(), m_shell);
     serverSurfaceSpy.clear();
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface2 = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface2 = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface2 != serverSurface);
     QVERIFY(serverSurface2);
     QVERIFY(serverSurface2->acceptsKeyboardFocus());
@@ -538,10 +538,10 @@ void TestWaylandShell::testPing()
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
     QSignalSpy pingSpy(surface, SIGNAL(pinged()));
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(!serverSurface->isPinged());
 
@@ -582,10 +582,10 @@ void TestWaylandShell::testTitle()
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
 
     QSignalSpy titleSpy(serverSurface, SIGNAL(titleChanged(QString)));
@@ -607,10 +607,10 @@ void TestWaylandShell::testWindowClass()
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface*)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
 
     QSignalSpy windowClassSpy(serverSurface, SIGNAL(windowClassChanged(QByteArray)));
@@ -664,7 +664,7 @@ void TestWaylandShell::testCast()
 {
     using namespace KWayland::Client;
     Registry registry;
-    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32,quint32)));
+    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
@@ -678,10 +678,10 @@ void TestWaylandShell::testCast()
     QVERIFY(!s.isValid());
     s.setup(wlShell);
     QVERIFY(s.isValid());
-    QCOMPARE((wl_shell*)s, wlShell);
+    QCOMPARE((wl_shell *)s, wlShell);
 
     const Shell &s2(s);
-    QCOMPARE((wl_shell*)s2, wlShell);
+    QCOMPARE((wl_shell *)s2, wlShell);
 }
 
 void TestWaylandShell::testMove()
@@ -696,7 +696,7 @@ void TestWaylandShell::testMove()
     QSignalSpy serverSurfaceSpy(m_shellInterface, &ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QSignalSpy moveRequestedSpy(serverSurface, &ShellSurfaceInterface::moveRequested);
     QVERIFY(moveRequestedSpy.isValid());
@@ -711,7 +711,7 @@ void TestWaylandShell::testMove()
     surface->requestMove(m_seat, pointerButtonChangedSpy.first().first().value<quint32>());
     QVERIFY(moveRequestedSpy.wait());
     QCOMPARE(moveRequestedSpy.count(), 1);
-    QCOMPARE(moveRequestedSpy.first().at(0).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(moveRequestedSpy.first().at(0).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(moveRequestedSpy.first().at(1).value<quint32>(), m_seatInterface->pointerButtonSerial(Qt::LeftButton));
 }
 
@@ -722,22 +722,22 @@ void TestWaylandShell::testResize_data()
 
     QTest::newRow("None") << Qt::Edges() << Qt::Edges();
 
-    QTest::newRow("Top")    << Qt::Edges(Qt::TopEdge)    << Qt::Edges(Qt::TopEdge);
+    QTest::newRow("Top") << Qt::Edges(Qt::TopEdge) << Qt::Edges(Qt::TopEdge);
     QTest::newRow("Bottom") << Qt::Edges(Qt::BottomEdge) << Qt::Edges(Qt::BottomEdge);
-    QTest::newRow("Left")   << Qt::Edges(Qt::LeftEdge)   << Qt::Edges(Qt::LeftEdge);
-    QTest::newRow("Right")  << Qt::Edges(Qt::RightEdge)  << Qt::Edges(Qt::RightEdge);
+    QTest::newRow("Left") << Qt::Edges(Qt::LeftEdge) << Qt::Edges(Qt::LeftEdge);
+    QTest::newRow("Right") << Qt::Edges(Qt::RightEdge) << Qt::Edges(Qt::RightEdge);
 
-    QTest::newRow("Top Left")     << Qt::Edges(Qt::TopEdge | Qt::LeftEdge)     << Qt::Edges(Qt::TopEdge | Qt::LeftEdge);
-    QTest::newRow("Top Right")    << Qt::Edges(Qt::TopEdge | Qt::RightEdge)    << Qt::Edges(Qt::TopEdge | Qt::RightEdge);
-    QTest::newRow("Bottom Left")  << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge)  << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge);
+    QTest::newRow("Top Left") << Qt::Edges(Qt::TopEdge | Qt::LeftEdge) << Qt::Edges(Qt::TopEdge | Qt::LeftEdge);
+    QTest::newRow("Top Right") << Qt::Edges(Qt::TopEdge | Qt::RightEdge) << Qt::Edges(Qt::TopEdge | Qt::RightEdge);
+    QTest::newRow("Bottom Left") << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge) << Qt::Edges(Qt::BottomEdge | Qt::LeftEdge);
     QTest::newRow("Bottom Right") << Qt::Edges(Qt::BottomEdge | Qt::RightEdge) << Qt::Edges(Qt::BottomEdge | Qt::RightEdge);
 
     // invalid combinations
     QTest::newRow("Top Bottom") << Qt::Edges(Qt::TopEdge | Qt::BottomEdge) << Qt::Edges();
     QTest::newRow("Left Right") << Qt::Edges(Qt::RightEdge | Qt::LeftEdge) << Qt::Edges();
-    QTest::newRow("Top Bottom Right")  << Qt::Edges(Qt::TopEdge | Qt::BottomEdge | Qt::RightEdge)  << Qt::Edges();
-    QTest::newRow("Top Bottom Left")   << Qt::Edges(Qt::TopEdge | Qt::BottomEdge | Qt::LeftEdge)   << Qt::Edges();
-    QTest::newRow("Left Right Top")    << Qt::Edges(Qt::RightEdge | Qt::LeftEdge | Qt::TopEdge)    << Qt::Edges();
+    QTest::newRow("Top Bottom Right") << Qt::Edges(Qt::TopEdge | Qt::BottomEdge | Qt::RightEdge) << Qt::Edges();
+    QTest::newRow("Top Bottom Left") << Qt::Edges(Qt::TopEdge | Qt::BottomEdge | Qt::LeftEdge) << Qt::Edges();
+    QTest::newRow("Left Right Top") << Qt::Edges(Qt::RightEdge | Qt::LeftEdge | Qt::TopEdge) << Qt::Edges();
     QTest::newRow("Left Right Bottom") << Qt::Edges(Qt::RightEdge | Qt::LeftEdge | Qt::BottomEdge) << Qt::Edges();
     QTest::newRow("All") << Qt::Edges(Qt::RightEdge | Qt::LeftEdge | Qt::BottomEdge | Qt::TopEdge) << Qt::Edges();
 }
@@ -754,7 +754,7 @@ void TestWaylandShell::testResize()
     QSignalSpy serverSurfaceSpy(m_shellInterface, &ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QSignalSpy resizeRequestedSpy(serverSurface, &ShellSurfaceInterface::resizeRequested);
     QVERIFY(resizeRequestedSpy.isValid());
@@ -770,7 +770,7 @@ void TestWaylandShell::testResize()
     surface->requestResize(m_seat, pointerButtonChangedSpy.first().first().value<quint32>(), resizeEdge);
     QVERIFY(resizeRequestedSpy.wait());
     QCOMPARE(resizeRequestedSpy.count(), 1);
-    QCOMPARE(resizeRequestedSpy.first().at(0).value<SeatInterface*>(), m_seatInterface);
+    QCOMPARE(resizeRequestedSpy.first().at(0).value<SeatInterface *>(), m_seatInterface);
     QCOMPARE(resizeRequestedSpy.first().at(1).value<quint32>(), m_seatInterface->pointerButtonSerial(Qt::LeftButton));
     QTEST(resizeRequestedSpy.first().at(2).value<Qt::Edges>(), "expectedEdge");
 }
@@ -787,7 +787,7 @@ void TestWaylandShell::testDisconnect()
     QSignalSpy serverSurfaceSpy(m_shellInterface, &ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
-    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface*>();
+    ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
 
     // destroy client
@@ -830,7 +830,7 @@ void TestWaylandShell::testWhileDestroying()
     QVERIFY(surfaceCreatedSpy.isValid());
     QScopedPointer<Surface> s(m_compositor->createSurface());
     QVERIFY(surfaceCreatedSpy.wait());
-    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface*>();
+    auto serverSurface = surfaceCreatedSpy.first().first().value<SurfaceInterface *>();
     QVERIFY(serverSurface);
 
     // create ShellSurface
@@ -867,7 +867,7 @@ void TestWaylandShell::testClientDisconnecting()
     QScopedPointer<ShellSurface> ps(m_shell->createSurface(s.data()));
     QVERIFY(shellSurfaceCreatedSpy.wait());
 
-    auto serverShellSurface = shellSurfaceCreatedSpy.first().first().value<ShellSurfaceInterface*>();
+    auto serverShellSurface = shellSurfaceCreatedSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverShellSurface);
 
     QSignalSpy shellSurfaceUnboundSpy(serverShellSurface, &Resource::unbound);
@@ -876,14 +876,12 @@ void TestWaylandShell::testClientDisconnecting()
     QScopedPointer<Surface> s2(m_compositor->createSurface());
     QScopedPointer<ShellSurface> ps2(m_shell->createSurface(s2.data()));
     QVERIFY(shellSurfaceCreatedSpy.wait());
-    auto serverShellSurface2 = shellSurfaceCreatedSpy.last().first().value<ShellSurfaceInterface*>();
+    auto serverShellSurface2 = shellSurfaceCreatedSpy.last().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverShellSurface2);
 
-    connect(serverShellSurface, &Resource::unbound, this,
-        [serverShellSurface2] {
-            serverShellSurface2->requestSize(QSize(100, 200));
-        }
-    );
+    connect(serverShellSurface, &Resource::unbound, this, [serverShellSurface2] {
+        serverShellSurface2->requestSize(QSize(100, 200));
+    });
 
     m_connection->deleteLater();
     m_connection = nullptr;

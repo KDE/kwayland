@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class XdgExportedUnstableV2;
 class XdgImportedUnstableV2;
 
@@ -41,7 +40,7 @@ public:
     Private();
     virtual ~Private();
 
-    virtual XdgImported *importTopLevelV2(const QString & handle, QObject *parent) = 0;
+    virtual XdgImported *importTopLevelV2(const QString &handle, QObject *parent) = 0;
 
     virtual void setupV2(zxdg_importer_v2 *arg) = 0;
     virtual zxdg_importer_v2 *importerV2() = 0;
@@ -52,7 +51,6 @@ public:
 
     EventQueue *queue = nullptr;
 };
-
 
 class Q_DECL_HIDDEN XdgExported::Private
 {
@@ -71,9 +69,7 @@ public:
 
 protected:
     XdgExported *q;
-
 };
-
 
 class Q_DECL_HIDDEN XdgImported::Private
 {

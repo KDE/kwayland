@@ -6,8 +6,8 @@
 #ifndef WAYLAND_SERVER_SURFACE_INTERFACE_P_H
 #define WAYLAND_SERVER_SURFACE_INTERFACE_P_H
 
-#include "surface_interface.h"
 #include "resource_p.h"
+#include "surface_interface.h"
 // Qt
 #include <QHash>
 #include <QVector>
@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class IdleInhibitorInterface;
 class SurfaceRole;
 
@@ -43,7 +42,7 @@ public:
         bool transformIsSet = false;
         qint32 scale = 1;
         OutputInterface::Transform transform = OutputInterface::Transform::Normal;
-        QList<wl_resource*> callbacks = QList<wl_resource*>();
+        QList<wl_resource *> callbacks = QList<wl_resource *>();
         QPoint offset = QPoint();
         BufferInterface *buffer = nullptr;
         // stacking order: bottom (first) -> top (last)
@@ -91,8 +90,8 @@ public:
 
     QPointer<LockedPointerInterface> lockedPointer;
     QPointer<ConfinedPointerInterface> confinedPointer;
-    QHash<OutputInterface*, QMetaObject::Connection> outputDestroyedConnections;
-    QVector<IdleInhibitorInterface*> idleInhibitors;
+    QHash<OutputInterface *, QMetaObject::Connection> outputDestroyedConnections;
+    QVector<IdleInhibitorInterface *> idleInhibitors;
 
     SurfaceInterface *dataProxy = nullptr;
 
@@ -100,7 +99,8 @@ private:
     QMetaObject::Connection constrainsOneShotConnection;
     QMetaObject::Connection constrainsUnboundConnection;
 
-    SurfaceInterface *q_func() {
+    SurfaceInterface *q_func()
+    {
         return reinterpret_cast<SurfaceInterface *>(q);
     }
     void swapStates(State *source, State *target, bool emitChanged);

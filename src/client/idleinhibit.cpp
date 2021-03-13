@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN IdleInhibitManager::Private
 {
 public:
@@ -59,11 +58,13 @@ void IdleInhibitManager::destroy()
     d->idleinhibitmanager.destroy();
 }
 
-IdleInhibitManager::operator zwp_idle_inhibit_manager_v1*() {
+IdleInhibitManager::operator zwp_idle_inhibit_manager_v1 *()
+{
     return d->idleinhibitmanager;
 }
 
-IdleInhibitManager::operator zwp_idle_inhibit_manager_v1*() const {
+IdleInhibitManager::operator zwp_idle_inhibit_manager_v1 *() const
+{
     return d->idleinhibitmanager;
 }
 
@@ -135,11 +136,13 @@ void IdleInhibitor::destroy()
     d->idleinhibitor.destroy();
 }
 
-IdleInhibitor::operator zwp_idle_inhibitor_v1*() {
+IdleInhibitor::operator zwp_idle_inhibitor_v1 *()
+{
     return d->idleinhibitor;
 }
 
-IdleInhibitor::operator zwp_idle_inhibitor_v1*() const {
+IdleInhibitor::operator zwp_idle_inhibitor_v1 *() const
+{
     return d->idleinhibitor;
 }
 

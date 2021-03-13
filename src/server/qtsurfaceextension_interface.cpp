@@ -4,28 +4,27 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "qtsurfaceextension_interface.h"
+#include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
-#include "display.h"
 #include "surface_interface.h"
 
 #include <QTimer>
 #include <QVariant>
 
-#include <wayland-server.h>
 #include <wayland-qt-surface-extension-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class QtSurfaceExtensionInterface::Private : public Global::Private
 {
 public:
     Private(QtSurfaceExtensionInterface *q, Display *d);
 
-    QList<QtExtendedSurfaceInterface*> surfaces;
+    QList<QtExtendedSurfaceInterface *> surfaces;
 
 private:
     static void createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
@@ -46,11 +45,8 @@ QtSurfaceExtensionInterface::Private::Private(QtSurfaceExtensionInterface *q, Di
 }
 
 #ifndef K_DOXYGEN
-const struct qt_surface_extension_interface QtSurfaceExtensionInterface::Private::s_interface = {
-    createSurfaceCallback
-};
+const struct qt_surface_extension_interface QtSurfaceExtensionInterface::Private::s_interface = {createSurfaceCallback};
 #endif
-
 
 class QtExtendedSurfaceInterface::Private : public Resource::Private
 {
@@ -67,7 +63,8 @@ private:
     static void raiseCallback(wl_client *client, wl_resource *resource);
     static void lowerCallback(wl_client *client, wl_resource *resource);
 
-    QtExtendedSurfaceInterface *q_func() {
+    QtExtendedSurfaceInterface *q_func()
+    {
         return reinterpret_cast<QtExtendedSurfaceInterface *>(q);
     }
 
@@ -94,28 +91,28 @@ void QtSurfaceExtensionInterface::Private::bind(wl_client *client, uint32_t vers
 
 void QtSurfaceExtensionInterface::Private::createSurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    auto s = reinterpret_cast<QtSurfaceExtensionInterface::Private*>(wl_resource_get_user_data(resource));
+    auto s = reinterpret_cast<QtSurfaceExtensionInterface::Private *>(wl_resource_get_user_data(resource));
     s->createSurface(client, wl_resource_get_version(resource), id, SurfaceInterface::get(surface), resource);
 }
 
-void QtSurfaceExtensionInterface::Private::createSurface(wl_client *client, uint32_t version, uint32_t id, SurfaceInterface *surface, wl_resource *parentResource)
+void QtSurfaceExtensionInterface::Private::createSurface(wl_client *client,
+                                                         uint32_t version,
+                                                         uint32_t id,
+                                                         SurfaceInterface *surface,
+                                                         wl_resource *parentResource)
 {
-    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(),
-        [surface](QtExtendedSurfaceInterface *s) {
-            return surface == s->surface();
-        }
-    );
+    auto it = std::find_if(surfaces.constBegin(), surfaces.constEnd(), [surface](QtExtendedSurfaceInterface *s) {
+        return surface == s->surface();
+    });
     if (it != surfaces.constEnd()) {
         wl_resource_post_error(surface->resource(), WL_DISPLAY_ERROR_INVALID_OBJECT, "Qt Surface Extension already created");
         return;
     }
     QtExtendedSurfaceInterface *shellSurface = new QtExtendedSurfaceInterface(q, surface, parentResource);
     surfaces << shellSurface;
-    QObject::connect(shellSurface, &QtExtendedSurfaceInterface::destroyed, q,
-        [this, shellSurface] {
-            surfaces.removeAll(shellSurface);
-        }
-    );
+    QObject::connect(shellSurface, &QtExtendedSurfaceInterface::destroyed, q, [this, shellSurface] {
+        surfaces.removeAll(shellSurface);
+    });
     shellSurface->d->create(display->getConnection(client), version, id);
     Q_EMIT q->surfaceCreated(shellSurface);
 }
@@ -123,20 +120,21 @@ void QtSurfaceExtensionInterface::Private::createSurface(wl_client *client, uint
 /*********************************
  * ShellSurfaceInterface
  *********************************/
-QtExtendedSurfaceInterface::Private::Private(QtExtendedSurfaceInterface *q, QtSurfaceExtensionInterface *shell, SurfaceInterface *surface, wl_resource *parentResource)
+QtExtendedSurfaceInterface::Private::Private(QtExtendedSurfaceInterface *q,
+                                             QtSurfaceExtensionInterface *shell,
+                                             SurfaceInterface *surface,
+                                             wl_resource *parentResource)
     : Resource::Private(q, shell, parentResource, &qt_extended_surface_interface, &s_interface)
     , surface(surface)
 {
 }
 
 #ifndef K_DOXYGEN
-const struct qt_extended_surface_interface QtExtendedSurfaceInterface::Private::s_interface = {
-    updateGenericPropertyCallback,
-    setContentOrientationMaskCallback,
-    setWindowFlagsCallback,
-    raiseCallback,
-    lowerCallback
-};
+const struct qt_extended_surface_interface QtExtendedSurfaceInterface::Private::s_interface = {updateGenericPropertyCallback,
+                                                                                               setContentOrientationMaskCallback,
+                                                                                               setWindowFlagsCallback,
+                                                                                               raiseCallback,
+                                                                                               lowerCallback};
 #endif
 
 void QtExtendedSurfaceInterface::Private::lowerCallback(wl_client *client, wl_resource *resource)
@@ -198,12 +196,12 @@ SurfaceInterface *QtExtendedSurfaceInterface::surface() const
 QtSurfaceExtensionInterface *QtExtendedSurfaceInterface::shell() const
 {
     Q_D();
-    return reinterpret_cast<QtSurfaceExtensionInterface*>(d->global);
+    return reinterpret_cast<QtSurfaceExtensionInterface *>(d->global);
 }
 
 QtExtendedSurfaceInterface::Private *QtExtendedSurfaceInterface::d_func() const
 {
-    return reinterpret_cast<QtExtendedSurfaceInterface::Private*>(d.data());
+    return reinterpret_cast<QtExtendedSurfaceInterface::Private *>(d.data());
 }
 
 void QtExtendedSurfaceInterface::close()

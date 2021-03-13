@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class TextInputUnstableV0;
 class Surface;
@@ -68,23 +67,29 @@ public:
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() = 0;
-    virtual void setupV0(wl_text_input_manager *textinputmanagerunstablev0) {
+    virtual void setupV0(wl_text_input_manager *textinputmanagerunstablev0)
+    {
         Q_UNUSED(textinputmanagerunstablev0)
     }
-    virtual void setupV2(zwp_text_input_manager_v2 *textinputmanagerunstablev2) {
+    virtual void setupV2(zwp_text_input_manager_v2 *textinputmanagerunstablev2)
+    {
         Q_UNUSED(textinputmanagerunstablev2)
     }
     virtual TextInput *createTextInput(Seat *seat, QObject *parent = nullptr) = 0;
-    virtual operator wl_text_input_manager*() {
+    virtual operator wl_text_input_manager *()
+    {
         return nullptr;
     }
-    virtual operator wl_text_input_manager*() const {
+    virtual operator wl_text_input_manager *() const
+    {
         return nullptr;
     }
-    virtual operator zwp_text_input_manager_v2*() {
+    virtual operator zwp_text_input_manager_v2 *()
+    {
         return nullptr;
     }
-    virtual operator zwp_text_input_manager_v2*() const {
+    virtual operator zwp_text_input_manager_v2 *() const
+    {
         return nullptr;
     }
 
@@ -172,8 +177,8 @@ public:
      **/
     void destroy();
 
-    operator wl_text_input*();
-    operator wl_text_input*() const;
+    operator wl_text_input *();
+    operator wl_text_input *() const;
 
 private:
     class Private;
@@ -217,8 +222,8 @@ public:
      **/
     void destroy();
 
-    operator zwp_text_input_v2*();
-    operator zwp_text_input_v2*() const;
+    operator zwp_text_input_v2 *();
+    operator zwp_text_input_v2 *() const;
 
 private:
     class Private;

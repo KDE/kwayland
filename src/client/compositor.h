@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Region;
 class Surface;
@@ -156,8 +155,8 @@ public:
      **/
     std::unique_ptr<Region> createRegion(const QRegion &region);
 
-    operator wl_compositor*();
-    operator wl_compositor*() const;
+    operator wl_compositor *();
+    operator wl_compositor *() const;
 
 Q_SIGNALS:
     /**

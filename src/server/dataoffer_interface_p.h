@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Q_DECL_HIDDEN DataOfferInterface::Private : public Resource::Private
 {
 public:
@@ -29,7 +28,8 @@ public:
     void sendSourceActions();
 
 private:
-    DataOfferInterface *q_func() {
+    DataOfferInterface *q_func()
+    {
         return reinterpret_cast<DataOfferInterface *>(q);
     }
     void receive(const QString &mimeType, qint32 fd);

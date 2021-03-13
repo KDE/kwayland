@@ -10,26 +10,25 @@
 
 namespace KWayland
 {
-    namespace Server
-    {
+namespace Server
+{
+class OutputChangeSet::Private
+{
+public:
+    Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent);
+    ~Private();
 
-        class OutputChangeSet::Private
-        {
-        public:
-            Private(OutputDeviceInterface *outputdevice, OutputChangeSet *parent);
-            ~Private();
+    OutputChangeSet *q;
+    OutputDeviceInterface *o;
 
-            OutputChangeSet *q;
-            OutputDeviceInterface *o;
-
-            OutputDeviceInterface::Enablement enabled;
-            int modeId;
-            OutputDeviceInterface::Transform transform;
-            QPoint position;
-            qreal scale;
-            OutputDeviceInterface::ColorCurves colorCurves;
-        };
-    }
+    OutputDeviceInterface::Enablement enabled;
+    int modeId;
+    OutputDeviceInterface::Transform transform;
+    QPoint position;
+    qreal scale;
+    OutputDeviceInterface::ColorCurves colorCurves;
+};
+}
 }
 
 #endif

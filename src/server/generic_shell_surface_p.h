@@ -13,11 +13,9 @@
 
 namespace KWayland
 {
-
 namespace Server
 {
-
-template <class T>
+template<class T>
 class GenericShellSurface : public SurfaceRole
 {
 public:
@@ -25,7 +23,8 @@ public:
         : SurfaceRole(surface)
         , surface(surface)
         , shellSurface(shellSurface)
-    {}
+    {
+    }
 
     SurfaceInterface *surface;
     QString title;
@@ -36,22 +35,24 @@ protected:
     void setWindowClass(const QByteArray &wc);
 
     static void moveCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial);
-    template <typename U>
-    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource * seat, uint32_t serial, uint32_t edges);
+    template<typename U>
+    static void resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges);
     static void setTitleCallback(wl_client *client, wl_resource *resource, const char *title);
     static void setAppIdCallback(wl_client *client, wl_resource *resource, const char *app_id);
 
 private:
-    T *q_func() {
+    T *q_func()
+    {
         return shellSurface;
     }
-    static typename T::Private *userData(wl_resource *resource) {
-        return reinterpret_cast<typename T::Private*>(wl_resource_get_user_data(resource));
+    static typename T::Private *userData(wl_resource *resource)
+    {
+        return reinterpret_cast<typename T::Private *>(wl_resource_get_user_data(resource));
     }
     T *shellSurface;
 };
 
-template <class T>
+template<class T>
 void GenericShellSurface<T>::setTitleCallback(wl_client *client, wl_resource *resource, const char *title)
 {
     auto s = userData(resource);
@@ -59,7 +60,7 @@ void GenericShellSurface<T>::setTitleCallback(wl_client *client, wl_resource *re
     s->setTitle(QString::fromUtf8(title));
 }
 
-template <class T>
+template<class T>
 void GenericShellSurface<T>::setAppIdCallback(wl_client *client, wl_resource *resource, const char *app_id)
 {
     auto s = userData(resource);
@@ -67,7 +68,7 @@ void GenericShellSurface<T>::setAppIdCallback(wl_client *client, wl_resource *re
     s->setWindowClass(QByteArray(app_id));
 }
 
-template <class T>
+template<class T>
 void GenericShellSurface<T>::setTitle(const QString &t)
 {
     if (title == t) {
@@ -78,7 +79,7 @@ void GenericShellSurface<T>::setTitle(const QString &t)
     Q_EMIT q->titleChanged(title);
 }
 
-template <class T>
+template<class T>
 void GenericShellSurface<T>::setWindowClass(const QByteArray &wc)
 {
     if (windowClass == wc) {
@@ -89,7 +90,7 @@ void GenericShellSurface<T>::setWindowClass(const QByteArray &wc)
     Q_EMIT q->windowClassChanged(windowClass);
 }
 
-template <class T>
+template<class T>
 void GenericShellSurface<T>::moveCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial)
 {
     auto s = userData(resource);
@@ -97,14 +98,15 @@ void GenericShellSurface<T>::moveCallback(wl_client *client, wl_resource *resour
     Q_EMIT s->q_func()->moveRequested(SeatInterface::get(seat), serial);
 }
 
-namespace {
-template <typename T>
+namespace
+{
+template<typename T>
 Qt::Edges edgesToQtEdges(T edges);
 }
 
-template <class T>
-template <typename U>
-void GenericShellSurface<T>::resizeCallback(wl_client *client, wl_resource *resource, wl_resource * seat, uint32_t serial, uint32_t edges)
+template<class T>
+template<typename U>
+void GenericShellSurface<T>::resizeCallback(wl_client *client, wl_resource *resource, wl_resource *seat, uint32_t serial, uint32_t edges)
 {
     auto s = userData(resource);
     Q_ASSERT(client == *s->client);

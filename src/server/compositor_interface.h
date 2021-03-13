@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SurfaceInterface;
 
@@ -36,11 +35,11 @@ Q_SIGNALS:
     /**
      * Emitted whenever this CompositorInterface created a SurfaceInterface.
      **/
-    void surfaceCreated(KWayland::Server::SurfaceInterface*);
+    void surfaceCreated(KWayland::Server::SurfaceInterface *);
     /**
      * Emitted whenever this CompositorInterface created a RegionInterface.
      **/
-    void regionCreated(KWayland::Server::RegionInterface*);
+    void regionCreated(KWayland::Server::RegionInterface *);
 
 private:
     explicit CompositorInterface(Display *display, QObject *parent = nullptr);

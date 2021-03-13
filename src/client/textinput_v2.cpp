@@ -3,10 +3,10 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "textinput_p.h"
 #include "event_queue.h"
 #include "seat.h"
 #include "surface.h"
+#include "textinput_p.h"
 #include "wayland_pointer_p.h"
 
 #include <wayland-text-input-v2-client-protocol.h>
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class TextInputUnstableV2::Private : public TextInput::Private
 {
 public:
@@ -25,7 +24,7 @@ public:
 
     bool isValid() const override;
     void enable(Surface *surface) override;
-    void disable(Surface * surface) override;
+    void disable(Surface *surface) override;
     void showInputPanel() override;
     void hideInputPanel() override;
     void setCursorRectangle(const QRect &rect) override;
@@ -58,27 +57,25 @@ private:
     static const zwp_text_input_v2_listener s_listener;
 };
 
-const zwp_text_input_v2_listener TextInputUnstableV2::Private::s_listener = {
-    enterCallback,
-    leaveCallback,
-    inputPanelStateCallback,
-    preeditStringCallback,
-    preeditStylingCallback,
-    preeditCursorCallback,
-    commitStringCallback,
-    cursorPositionCallback,
-    deleteSurroundingTextCallback,
-    modifiersMapCallback,
-    keysymCallback,
-    languageCallback,
-    textDirectionCallback,
-    configureSurroundingTextCallback,
-    inputMethodChangedCallback
-};
+const zwp_text_input_v2_listener TextInputUnstableV2::Private::s_listener = {enterCallback,
+                                                                             leaveCallback,
+                                                                             inputPanelStateCallback,
+                                                                             preeditStringCallback,
+                                                                             preeditStylingCallback,
+                                                                             preeditCursorCallback,
+                                                                             commitStringCallback,
+                                                                             cursorPositionCallback,
+                                                                             deleteSurroundingTextCallback,
+                                                                             modifiersMapCallback,
+                                                                             keysymCallback,
+                                                                             languageCallback,
+                                                                             textDirectionCallback,
+                                                                             configureSurroundingTextCallback,
+                                                                             inputMethodChangedCallback};
 
 void TextInputUnstableV2::Private::enterCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t serial, wl_surface *surface)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->latestSerial = serial;
     t->enteredSurface = Surface::get(surface);
@@ -88,20 +85,26 @@ void TextInputUnstableV2::Private::enterCallback(void *data, zwp_text_input_v2 *
 void TextInputUnstableV2::Private::leaveCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t serial, wl_surface *surface)
 {
     Q_UNUSED(surface)
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->enteredSurface = nullptr;
     t->latestSerial = serial;
     Q_EMIT t->q->left();
 }
 
-void TextInputUnstableV2::Private::inputPanelStateCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t state, int32_t x, int32_t y, int32_t width, int32_t height)
+void TextInputUnstableV2::Private::inputPanelStateCallback(void *data,
+                                                           zwp_text_input_v2 *zwp_text_input_v2,
+                                                           uint32_t state,
+                                                           int32_t x,
+                                                           int32_t y,
+                                                           int32_t width,
+                                                           int32_t height)
 {
     Q_UNUSED(x)
     Q_UNUSED(y)
     Q_UNUSED(width)
     Q_UNUSED(height)
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     // TODO: add rect
     if (t->inputPanelVisible != state) {
@@ -112,7 +115,7 @@ void TextInputUnstableV2::Private::inputPanelStateCallback(void *data, zwp_text_
 
 void TextInputUnstableV2::Private::preeditStringCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, const char *text, const char *commit)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->pendingPreEdit.commitText = QByteArray(commit);
     t->pendingPreEdit.text = QByteArray(text);
@@ -130,13 +133,13 @@ void TextInputUnstableV2::Private::preeditStylingCallback(void *data, zwp_text_i
     Q_UNUSED(length)
     Q_UNUSED(style)
     // TODO: implement
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
 }
 
 void TextInputUnstableV2::Private::preeditCursorCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, int32_t index)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->pendingPreEdit.cursor = index;
     t->pendingPreEdit.cursorSet = true;
@@ -144,7 +147,7 @@ void TextInputUnstableV2::Private::preeditCursorCallback(void *data, zwp_text_in
 
 void TextInputUnstableV2::Private::commitStringCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, const char *text)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->pendingCommit.text = QByteArray(text);
     t->currentCommit = t->pendingCommit;
@@ -157,15 +160,18 @@ void TextInputUnstableV2::Private::commitStringCallback(void *data, zwp_text_inp
 
 void TextInputUnstableV2::Private::cursorPositionCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, int32_t index, int32_t anchor)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->pendingCommit.cursor = index;
     t->pendingCommit.anchor = anchor;
 }
 
-void TextInputUnstableV2::Private::deleteSurroundingTextCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t before_length, uint32_t after_length)
+void TextInputUnstableV2::Private::deleteSurroundingTextCallback(void *data,
+                                                                 zwp_text_input_v2 *zwp_text_input_v2,
+                                                                 uint32_t before_length,
+                                                                 uint32_t after_length)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     t->pendingCommit.deleteSurrounding.beforeLength = before_length;
     t->pendingCommit.deleteSurrounding.afterLength = after_length;
@@ -175,15 +181,20 @@ void TextInputUnstableV2::Private::modifiersMapCallback(void *data, zwp_text_inp
 {
     // TODO: implement
     Q_UNUSED(map)
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
 }
 
-void TextInputUnstableV2::Private::keysymCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t time, uint32_t sym, uint32_t wlState, uint32_t modifiers)
+void TextInputUnstableV2::Private::keysymCallback(void *data,
+                                                  zwp_text_input_v2 *zwp_text_input_v2,
+                                                  uint32_t time,
+                                                  uint32_t sym,
+                                                  uint32_t wlState,
+                                                  uint32_t modifiers)
 {
     // TODO: add support for modifiers
     Q_UNUSED(modifiers)
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     TextInput::KeyState state;
     switch (wlState) {
@@ -202,7 +213,7 @@ void TextInputUnstableV2::Private::keysymCallback(void *data, zwp_text_input_v2 
 
 void TextInputUnstableV2::Private::languageCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, const char *language)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     if (qstrcmp(t->language, language) != 0) {
         t->language = QByteArray(language);
@@ -212,7 +223,7 @@ void TextInputUnstableV2::Private::languageCallback(void *data, zwp_text_input_v
 
 void TextInputUnstableV2::Private::textDirectionCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, uint32_t wlDirection)
 {
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
     Qt::LayoutDirection direction;
     switch (wlDirection) {
@@ -235,12 +246,15 @@ void TextInputUnstableV2::Private::textDirectionCallback(void *data, zwp_text_in
     }
 }
 
-void TextInputUnstableV2::Private::configureSurroundingTextCallback(void *data, zwp_text_input_v2 *zwp_text_input_v2, int32_t before_cursor, int32_t after_cursor)
+void TextInputUnstableV2::Private::configureSurroundingTextCallback(void *data,
+                                                                    zwp_text_input_v2 *zwp_text_input_v2,
+                                                                    int32_t before_cursor,
+                                                                    int32_t after_cursor)
 {
     // TODO: implement
     Q_UNUSED(before_cursor)
     Q_UNUSED(after_cursor)
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
 }
 
@@ -249,7 +263,7 @@ void TextInputUnstableV2::Private::inputMethodChangedCallback(void *data, zwp_te
     Q_UNUSED(serial)
     Q_UNUSED(flags)
     // TODO: implement
-    auto t = reinterpret_cast<TextInputUnstableV2::Private*>(data);
+    auto t = reinterpret_cast<TextInputUnstableV2::Private *>(data);
     Q_ASSERT(t->textinputunstablev2 == zwp_text_input_v2);
 }
 
@@ -277,7 +291,7 @@ void TextInputUnstableV2::Private::enable(Surface *surface)
     zwp_text_input_v2_enable(textinputunstablev2, *surface);
 }
 
-void TextInputUnstableV2::Private::disable(Surface * surface)
+void TextInputUnstableV2::Private::disable(Surface *surface)
 {
     zwp_text_input_v2_disable(textinputunstablev2, *surface);
 }
@@ -304,7 +318,8 @@ void TextInputUnstableV2::Private::setPreferredLanguage(const QString &lang)
 
 void TextInputUnstableV2::Private::setSurroundingText(const QString &text, quint32 cursor, quint32 anchor)
 {
-    zwp_text_input_v2_set_surrounding_text(textinputunstablev2, text.toUtf8().constData(),
+    zwp_text_input_v2_set_surrounding_text(textinputunstablev2,
+                                           text.toUtf8().constData(),
                                            text.leftRef(cursor).toUtf8().length(),
                                            text.leftRef(anchor).toUtf8().length());
 }
@@ -404,7 +419,7 @@ TextInputUnstableV2::~TextInputUnstableV2()
 
 TextInputUnstableV2::Private *TextInputUnstableV2::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 void TextInputUnstableV2::setup(zwp_text_input_v2 *textinputunstablev2)
@@ -425,13 +440,13 @@ void TextInputUnstableV2::destroy()
     d->textinputunstablev2.destroy();
 }
 
-TextInputUnstableV2::operator zwp_text_input_v2*()
+TextInputUnstableV2::operator zwp_text_input_v2 *()
 {
     Q_D();
     return d->textinputunstablev2;
 }
 
-TextInputUnstableV2::operator zwp_text_input_v2*() const
+TextInputUnstableV2::operator zwp_text_input_v2 *() const
 {
     Q_D();
     return d->textinputunstablev2;
@@ -447,11 +462,13 @@ public:
     bool isValid() override;
     void setupV2(zwp_text_input_manager_v2 *ti) override;
     TextInput *createTextInput(Seat *seat, QObject *parent = nullptr) override;
-    using TextInputManager::Private::operator wl_text_input_manager*;
-    operator zwp_text_input_manager_v2*() override {
+    using TextInputManager::Private::operator wl_text_input_manager *;
+    operator zwp_text_input_manager_v2 *() override
+    {
         return textinputmanagerunstablev2;
     }
-    operator zwp_text_input_manager_v2*() const override {
+    operator zwp_text_input_manager_v2 *() const override
+    {
         return textinputmanagerunstablev2;
     }
 

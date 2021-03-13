@@ -6,15 +6,15 @@
 #ifndef WAYLAND_SERVER_SEAT_INTERFACE_H
 #define WAYLAND_SERVER_SEAT_INTERFACE_H
 
+#include <QMatrix4x4>
 #include <QObject>
 #include <QPoint>
-#include <QMatrix4x4>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
 #include "keyboard_interface.h"
 #include "pointer_interface.h"
 #include "touch_interface.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 struct wl_client;
 struct wl_resource;
@@ -23,7 +23,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class DataDeviceInterface;
 class Display;
 class SurfaceInterface;
@@ -714,7 +713,7 @@ public:
     static SeatInterface *get(wl_resource *native);
 
 Q_SIGNALS:
-    void nameChanged(const QString&);
+    void nameChanged(const QString &);
     void hasPointerChanged(bool);
     void hasKeyboardChanged(bool);
     void hasTouchChanged(bool);
@@ -722,15 +721,15 @@ Q_SIGNALS:
     void touchMoved(qint32 id, quint32 serial, const QPointF &globalPosition);
     void timestampChanged(quint32);
 
-    void pointerCreated(KWayland::Server::PointerInterface*);
-    void keyboardCreated(KWayland::Server::KeyboardInterface*);
-    void touchCreated(KWayland::Server::TouchInterface*);
+    void pointerCreated(KWayland::Server::PointerInterface *);
+    void keyboardCreated(KWayland::Server::KeyboardInterface *);
+    void touchCreated(KWayland::Server::TouchInterface *);
 
     /**
      * Emitted whenever the focused pointer changes
      * @since 5.6
      **/
-    void focusedPointerChanged(KWayland::Server::PointerInterface*);
+    void focusedPointerChanged(KWayland::Server::PointerInterface *);
 
     /**
      * Emitted whenever the selection changes
@@ -738,7 +737,7 @@ Q_SIGNALS:
      * @see selection
      * @see setSelection
      **/
-    void selectionChanged(DataDeviceInterface*);
+    void selectionChanged(DataDeviceInterface *);
 
     /**
      * Emitted when a drag'n'drop operation is started
@@ -779,6 +778,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Server::SeatInterface*)
+Q_DECLARE_METATYPE(KWayland::Server::SeatInterface *)
 
 #endif

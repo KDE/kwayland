@@ -13,7 +13,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN SubSurface::Private
 {
 public:
@@ -32,7 +31,7 @@ private:
     SubSurface *q;
 };
 
-SubSurface::Private::Private(QPointer< Surface > surface, QPointer< Surface > parentSurface, SubSurface *q)
+SubSurface::Private::Private(QPointer<Surface> surface, QPointer<Surface> parentSurface, SubSurface *q)
     : surface(surface)
     , parentSurface(parentSurface)
     , q(q)
@@ -49,10 +48,10 @@ void SubSurface::Private::setup(wl_subsurface *subsurface)
 
 SubSurface *SubSurface::Private::cast(wl_subsurface *native)
 {
-    return reinterpret_cast<Private*>(wl_subsurface_get_user_data(native))->q;
+    return reinterpret_cast<Private *>(wl_subsurface_get_user_data(native))->q;
 }
 
-SubSurface::SubSurface(QPointer< Surface > surface, QPointer< Surface > parentSurface, QObject *parent)
+SubSurface::SubSurface(QPointer<Surface> surface, QPointer<Surface> parentSurface, QObject *parent)
     : QObject(parent)
     , d(new Private(surface, parentSurface, this))
 {
@@ -83,12 +82,12 @@ bool SubSurface::isValid() const
     return d->subSurface.isValid();
 }
 
-QPointer< Surface > SubSurface::surface() const
+QPointer<Surface> SubSurface::surface() const
 {
     return d->surface;
 }
 
-QPointer< Surface > SubSurface::parentSurface() const
+QPointer<Surface> SubSurface::parentSurface() const
 {
     return d->parentSurface;
 }
@@ -133,7 +132,7 @@ void SubSurface::raise()
     placeAbove(d->parentSurface);
 }
 
-void SubSurface::placeAbove(QPointer< SubSurface > sibling)
+void SubSurface::placeAbove(QPointer<SubSurface> sibling)
 {
     if (sibling.isNull()) {
         return;
@@ -141,7 +140,7 @@ void SubSurface::placeAbove(QPointer< SubSurface > sibling)
     placeAbove(sibling->surface());
 }
 
-void SubSurface::placeAbove(QPointer< Surface > sibling)
+void SubSurface::placeAbove(QPointer<Surface> sibling)
 {
     if (sibling.isNull()) {
         return;
@@ -154,7 +153,7 @@ void SubSurface::lower()
     placeBelow(d->parentSurface);
 }
 
-void SubSurface::placeBelow(QPointer< Surface > sibling)
+void SubSurface::placeBelow(QPointer<Surface> sibling)
 {
     if (sibling.isNull()) {
         return;
@@ -162,7 +161,7 @@ void SubSurface::placeBelow(QPointer< Surface > sibling)
     wl_subsurface_place_below(d->subSurface, *sibling);
 }
 
-void SubSurface::placeBelow(QPointer< SubSurface > sibling)
+void SubSurface::placeBelow(QPointer<SubSurface> sibling)
 {
     if (sibling.isNull()) {
         return;
@@ -170,17 +169,17 @@ void SubSurface::placeBelow(QPointer< SubSurface > sibling)
     placeBelow(sibling->surface());
 }
 
-QPointer< SubSurface > SubSurface::get(wl_subsurface *native)
+QPointer<SubSurface> SubSurface::get(wl_subsurface *native)
 {
     return QPointer<SubSurface>(Private::cast(native));
 }
 
-SubSurface::operator wl_subsurface*() const
+SubSurface::operator wl_subsurface *() const
 {
     return d->subSurface;
 }
 
-SubSurface::operator wl_subsurface*()
+SubSurface::operator wl_subsurface *()
 {
     return d->subSurface;
 }

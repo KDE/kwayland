@@ -3,21 +3,18 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "dpms_interface_p.h"
 #include "display.h"
+#include "dpms_interface_p.h"
 #include "output_interface.h"
 
 namespace KWayland
 {
 namespace Server
 {
-
 const quint32 DpmsManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_dpms_manager_interface DpmsManagerInterface::Private::s_interface = {
-    getDpmsCallback
-};
+const struct org_kde_kwin_dpms_manager_interface DpmsManagerInterface::Private::s_interface = {getDpmsCallback};
 #endif
 
 DpmsManagerInterface::Private::Private(DpmsManagerInterface *qptr, Display *d)
@@ -60,12 +57,8 @@ DpmsManagerInterface::DpmsManagerInterface(Display *display, QObject *parent)
 
 DpmsManagerInterface::~DpmsManagerInterface() = default;
 
-
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_dpms_interface DpmsInterface::Private::s_interface = {
-    setCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_dpms_interface DpmsInterface::Private::s_interface = {setCallback, resourceDestroyedCallback};
 #endif
 
 DpmsInterface::Private::Private(DpmsInterface *q, DpmsManagerInterface *g, wl_resource *parentResource, OutputInterface *outputInterface)
@@ -100,18 +93,14 @@ void DpmsInterface::Private::setCallback(wl_client *client, wl_resource *resourc
 DpmsInterface::DpmsInterface(OutputInterface *output, wl_resource *parentResource, DpmsManagerInterface *manager)
     : Resource(new Private(this, manager, parentResource, output))
 {
-    connect(output, &OutputInterface::dpmsSupportedChanged, this,
-        [this] {
-            sendSupported();
-            sendDone();
-        }
-    );
-    connect(output, &OutputInterface::dpmsModeChanged, this,
-        [this] {
-            sendMode();
-            sendDone();
-        }
-    );
+    connect(output, &OutputInterface::dpmsSupportedChanged, this, [this] {
+        sendSupported();
+        sendDone();
+    });
+    connect(output, &OutputInterface::dpmsModeChanged, this, [this] {
+        sendMode();
+        sendDone();
+    });
 }
 
 DpmsInterface::~DpmsInterface() = default;
@@ -155,7 +144,7 @@ void DpmsInterface::sendDone()
 
 DpmsInterface::Private *DpmsInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

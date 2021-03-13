@@ -40,7 +40,6 @@ namespace KWayland
  **/
 namespace Client
 {
-
 /**
  * @short Creates and manages the connection to a Wayland server.
  *
@@ -189,7 +188,7 @@ public:
      * @returns all connections created in this application
      * @since 5.37
      **/
-    static QVector<ConnectionThread*> connections();
+    static QVector<ConnectionThread *> connections();
 
 public Q_SLOTS:
     /**
@@ -238,6 +237,7 @@ Q_SIGNALS:
      * @since 5.23
      **/
     void errorOccurred();
+
 protected:
     /*
      * Creates a connection thread from an existing wl_display object
@@ -257,6 +257,5 @@ private:
 };
 }
 }
-
 
 #endif

@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class FakeInputTimeout;
 class Seat;
@@ -211,8 +210,8 @@ public:
      **/
     void requestKeyboardKeyRelease(quint32 linuxKey);
 
-    operator org_kde_kwin_fake_input*();
-    operator org_kde_kwin_fake_input*() const;
+    operator org_kde_kwin_fake_input *();
+    operator org_kde_kwin_fake_input *() const;
 
 Q_SIGNALS:
     /**

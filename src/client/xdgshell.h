@@ -6,12 +6,12 @@
 #ifndef KWAYLAND_CLIENT_XDG_SHELL_H
 #define KWAYLAND_CLIENT_XDG_SHELL_H
 
-#include <QObject>
-#include <QSize>
-#include <QRect>
 #include <KWayland/Client/kwaylandclient_export.h>
+#include <QObject>
+#include <QRect>
+#include <QSize>
 
-//This is a mix of structs for both xdgshell unstable v5 AND xdg wm base stable
+// This is a mix of structs for both xdgshell unstable v5 AND xdg wm base stable
 struct xdg_wm_base;
 struct xdg_shell;
 struct xdg_surface;
@@ -28,7 +28,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Output;
 class Surface;
@@ -46,32 +45,32 @@ class KWAYLANDCLIENT_EXPORT XdgPositioner
 {
 public:
     /*
-    * Flags describing how a popup should be reposition if constrained
-    */
+     * Flags describing how a popup should be reposition if constrained
+     */
     enum class Constraint {
         /*
-        * Slide the popup on the X axis until there is room
-        */
+         * Slide the popup on the X axis until there is room
+         */
         SlideX = 1 << 0,
         /*
-        * Slide the popup on the Y axis until there is room
-        */
+         * Slide the popup on the Y axis until there is room
+         */
         SlideY = 1 << 1,
         /*
-        * Invert the anchor and gravity on the X axis
-        */
+         * Invert the anchor and gravity on the X axis
+         */
         FlipX = 1 << 2,
         /*
-        * Invert the anchor and gravity on the Y axis
-        */
+         * Invert the anchor and gravity on the Y axis
+         */
         FlipY = 1 << 3,
         /*
-        * Resize the popup in the X axis
-        */
+         * Resize the popup in the X axis
+         */
         ResizeX = 1 << 4,
         /*
-        * Resize the popup in the Y axis
-        */
+         * Resize the popup in the Y axis
+         */
         ResizeY = 1 << 5,
     };
 
@@ -84,7 +83,7 @@ public:
     /**
      * Which edge of the anchor should the popup be positioned around
      */
-    //KF6 TODO use a better data type (enum of 8 options) rather than flags which allow invalid values
+    // KF6 TODO use a better data type (enum of 8 options) rather than flags which allow invalid values
     Qt::Edges anchorEdge() const;
     void setAnchorEdge(Qt::Edges edge);
 
@@ -94,7 +93,7 @@ public:
      * if the gravity is top, then the bottom of the popup will be at the anchor edge
      *
      */
-    //KF6 TODO use a better data type (enum of 8 options) rather than flags which allow invalid values
+    // KF6 TODO use a better data type (enum of 8 options) rather than flags which allow invalid values
     Qt::Edges gravity() const;
     void setGravity(Qt::Edges edge);
 
@@ -238,12 +237,12 @@ public:
      **/
     XdgShellPopup *createPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent = nullptr);
 
-    operator xdg_wm_base*();
-    operator xdg_wm_base*() const;
-    operator xdg_shell*();
-    operator xdg_shell*() const;
-    operator zxdg_shell_v6*();
-    operator zxdg_shell_v6*() const;
+    operator xdg_wm_base *();
+    operator xdg_wm_base *() const;
+    operator xdg_shell *();
+    operator xdg_shell *() const;
+    operator zxdg_shell_v6 *();
+    operator zxdg_shell_v6 *() const;
 
 Q_SIGNALS:
     /**
@@ -284,7 +283,7 @@ public:
         /**
          * The Surface is maximized.
          **/
-        Maximized  = 1 << 0,
+        Maximized = 1 << 0,
         /**
          * The Surface is fullscreen.
          **/
@@ -292,11 +291,11 @@ public:
         /**
          * The Surface is currently being resized by the Compositor.
          **/
-        Resizing   = 1 << 2,
+        Resizing = 1 << 2,
         /**
          * The Surface is considered active. Does not imply keyboard focus.
          **/
-        Activated  = 1 << 3
+        Activated = 1 << 3
     };
     Q_DECLARE_FLAGS(States, State)
 
@@ -462,14 +461,14 @@ public:
      */
     void setWindowGeometry(const QRect &windowGeometry);
 
-    operator xdg_surface*();
-    operator xdg_surface*() const;
-    operator xdg_toplevel*();
-    operator xdg_toplevel*() const;
-    operator zxdg_surface_v6*();
-    operator zxdg_surface_v6*() const;
-    operator zxdg_toplevel_v6*();
-    operator zxdg_toplevel_v6*() const;
+    operator xdg_surface *();
+    operator xdg_surface *() const;
+    operator xdg_toplevel *();
+    operator xdg_toplevel *() const;
+    operator zxdg_surface_v6 *();
+    operator zxdg_surface_v6 *() const;
+    operator zxdg_toplevel_v6 *();
+    operator zxdg_toplevel_v6 *() const;
 
 Q_SIGNALS:
     /**
@@ -599,15 +598,14 @@ public:
      */
     void setWindowGeometry(const QRect &windowGeometry);
 
-    operator xdg_surface*();
-    operator xdg_surface*() const;
-    operator xdg_popup*();
-    operator xdg_popup*() const;
-    operator zxdg_surface_v6*();
-    operator zxdg_surface_v6*() const;
-    operator zxdg_popup_v6*();
-    operator zxdg_popup_v6*() const;
-
+    operator xdg_surface *();
+    operator xdg_surface *() const;
+    operator xdg_popup *();
+    operator xdg_popup *() const;
+    operator zxdg_surface_v6 *();
+    operator zxdg_surface_v6 *() const;
+    operator zxdg_popup_v6 *();
+    operator zxdg_popup_v6 *() const;
 
 Q_SIGNALS:
     /**
@@ -622,7 +620,6 @@ Q_SIGNALS:
      * @since 5.39
      **/
     void configureRequested(const QRect &relativePosition, quint32 serial);
-
 
 protected:
     class Private;
@@ -640,6 +637,5 @@ Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::State)
 Q_DECLARE_METATYPE(KWayland::Client::XdgShellSurface::States)
 Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraint)
 Q_DECLARE_METATYPE(KWayland::Client::XdgPositioner::Constraints)
-
 
 #endif

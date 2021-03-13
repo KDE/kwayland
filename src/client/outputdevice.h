@@ -22,7 +22,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 
 /**
@@ -141,8 +140,8 @@ public:
      * @returns @c true if managing a org_kde_kwin_outputdevice.
      **/
     bool isValid() const;
-    operator org_kde_kwin_outputdevice*();
-    operator org_kde_kwin_outputdevice*() const;
+    operator org_kde_kwin_outputdevice *();
+    operator org_kde_kwin_outputdevice *() const;
     org_kde_kwin_outputdevice *output();
     /**
      * Size in millimeters.
@@ -231,7 +230,6 @@ public:
 
     KWayland::Client::OutputDevice::Mode currentMode() const;
 
-
     /**
      * Sets the @p queue to use for bound proxies.
      **/
@@ -269,15 +267,15 @@ public:
     uint32_t overscan() const;
 
     /**
-    * Destroys the data hold by this OutputDevice.
-    * This method is supposed to be used when the connection to the Wayland
-    * server goes away. If the connection is not valid any more, it's not
-    * possible to call release any more as that calls into the Wayland
-    * connection and the call would fail.
-    *
-    * This method is automatically invoked when the Registry which created this
-    * Output gets destroyed.
-    **/
+     * Destroys the data hold by this OutputDevice.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail.
+     *
+     * This method is automatically invoked when the Registry which created this
+     * Output gets destroyed.
+     **/
     void destroy();
 
 Q_SIGNALS:

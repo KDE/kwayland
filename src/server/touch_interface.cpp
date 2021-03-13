@@ -4,19 +4,17 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "touch_interface.h"
+#include "display.h"
 #include "resource_p.h"
 #include "seat_interface.h"
-#include "display.h"
 #include "surface_interface.h"
 // Wayland
 #include <wayland-server.h>
 
 namespace KWayland
 {
-
 namespace Server
 {
-
 class TouchInterface::Private : public Resource::Private
 {
 public:
@@ -26,7 +24,8 @@ public:
     QMetaObject::Connection destroyConnection;
 
 private:
-    TouchInterface *q_func() {
+    TouchInterface *q_func()
+    {
         return reinterpret_cast<TouchInterface *>(q);
     }
 
@@ -34,9 +33,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct wl_touch_interface TouchInterface::Private::s_interface = {
-    resourceDestroyedCallback
-};
+const struct wl_touch_interface TouchInterface::Private::s_interface = {resourceDestroyedCallback};
 #endif
 
 TouchInterface::Private::Private(SeatInterface *parent, wl_resource *parentResource, TouchInterface *q)
@@ -102,14 +99,19 @@ void TouchInterface::down(qint32 id, quint32 serial, const QPointF &localPos)
     if (!d->resource) {
         return;
     }
-    wl_touch_send_down(d->resource, serial, d->seat->timestamp(), d->seat->focusedTouchSurface()->resource(),
-                       id, wl_fixed_from_double(localPos.x()), wl_fixed_from_double(localPos.y()));
+    wl_touch_send_down(d->resource,
+                       serial,
+                       d->seat->timestamp(),
+                       d->seat->focusedTouchSurface()->resource(),
+                       id,
+                       wl_fixed_from_double(localPos.x()),
+                       wl_fixed_from_double(localPos.y()));
     d->client->flush();
 }
 
 TouchInterface::Private *TouchInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

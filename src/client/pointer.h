@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Surface;
 
 /**
@@ -112,8 +111,8 @@ public:
      **/
     Surface *enteredSurface();
 
-    operator wl_pointer*();
-    operator wl_pointer*() const;
+    operator wl_pointer *();
+    operator wl_pointer *() const;
 
 Q_SIGNALS:
     /**

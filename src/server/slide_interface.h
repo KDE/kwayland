@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /**
@@ -67,7 +66,6 @@ private:
     class Private;
     Private *d_func() const;
 };
-
 
 }
 }

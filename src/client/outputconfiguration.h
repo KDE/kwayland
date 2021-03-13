@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 
 /** @class OutputConfiguration
@@ -87,37 +86,37 @@ public:
     virtual ~OutputConfiguration();
 
     /**
-    * Setup this OutputConfiguration to manage the @p outputconfiguration.
-    * When using OutputManagement::createOutputConfiguration there is no need to call this
-    * method.
-    * @param outputconfiguration the outputconfiguration object to set up.
-    **/
+     * Setup this OutputConfiguration to manage the @p outputconfiguration.
+     * When using OutputManagement::createOutputConfiguration there is no need to call this
+     * method.
+     * @param outputconfiguration the outputconfiguration object to set up.
+     **/
     void setup(org_kde_kwin_outputconfiguration *outputconfiguration);
     /**
-    * @returns @c true if managing a org_kde_kwin_outputconfiguration.
-    **/
+     * @returns @c true if managing a org_kde_kwin_outputconfiguration.
+     **/
     bool isValid() const;
     /**
-    * Releases the org_kde_kwin_outputconfiguration interface.
-    * After the interface has been released the OutputConfiguration instance is no
-    * longer valid and can be setup with another org_kde_kwin_outputconfiguration interface.
-    **/
+     * Releases the org_kde_kwin_outputconfiguration interface.
+     * After the interface has been released the OutputConfiguration instance is no
+     * longer valid and can be setup with another org_kde_kwin_outputconfiguration interface.
+     **/
     void release();
     /**
-    * Destroys the data held by this OutputConfiguration.
-    * This method is supposed to be used when the connection to the Wayland
-    * server goes away. If the connection is not valid any more, it's not
-    * possible to call release any more as that calls into the Wayland
-    * connection and the call would fail. This method cleans up the data, so
-    * that the instance can be deleted or setup to a new org_kde_kwin_outputconfiguration interface
-    * once there is a new connection available.
-    *
-    * This method is automatically invoked when the Registry which created this
-    * OutputConfiguration gets destroyed.
-    *
-    *
-    * @see release
-    **/
+     * Destroys the data held by this OutputConfiguration.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. If the connection is not valid any more, it's not
+     * possible to call release any more as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or setup to a new org_kde_kwin_outputconfiguration interface
+     * once there is a new connection available.
+     *
+     * This method is automatically invoked when the Registry which created this
+     * OutputConfiguration gets destroyed.
+     *
+     *
+     * @see release
+     **/
     void destroy();
     /**
      * Sets the @p queue to use for creating a OutputConfiguration.
@@ -235,8 +234,8 @@ public:
      */
     void apply();
 
-    operator org_kde_kwin_outputconfiguration*();
-    operator org_kde_kwin_outputconfiguration*() const;
+    operator org_kde_kwin_outputconfiguration *();
+    operator org_kde_kwin_outputconfiguration *() const;
 
 Q_SIGNALS:
     /**
@@ -259,11 +258,9 @@ private:
     QScopedPointer<Private> d;
 };
 
-
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration*)
-
+Q_DECLARE_METATYPE(KWayland::Client::OutputConfiguration *)
 
 #endif

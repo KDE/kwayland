@@ -20,8 +20,6 @@ namespace KWayland
 {
 namespace Client
 {
-
-
 /**
  * @short Wrapper for the wl_data_source interface.
  *
@@ -91,8 +89,8 @@ public:
      **/
     DataDeviceManager::DnDAction selectedDragAndDropAction() const;
 
-    operator wl_data_source*();
-    operator wl_data_source*() const;
+    operator wl_data_source *();
+    operator wl_data_source *() const;
 
 Q_SIGNALS:
     /**

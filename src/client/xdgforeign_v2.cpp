@@ -4,9 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "xdgforeign_v2.h"
-#include "xdgforeign_p.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
+#include "xdgforeign_p.h"
 
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 
@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN XdgExporterUnstableV2::Private : public XdgExporter::Private
 {
 public:
@@ -35,7 +34,8 @@ public:
 
 XdgExporterUnstableV2::Private::Private()
     : XdgExporter::Private()
-{}
+{
+}
 
 zxdg_exporter_v2 *XdgExporterUnstableV2::Private::exporterV2()
 {
@@ -69,7 +69,6 @@ XdgExported *XdgExporterUnstableV2::Private::exportTopLevelV2(Surface *surface, 
     return p;
 }
 
-
 XdgExporterUnstableV2::XdgExporterUnstableV2(QObject *parent)
     : XdgExporter(new Private, parent)
 {
@@ -91,7 +90,7 @@ class Q_DECL_HIDDEN XdgImporterUnstableV2::Private : public XdgImporter::Private
 public:
     Private();
 
-    XdgImported *importTopLevelV2(const QString & handle, QObject *parent) override;
+    XdgImported *importTopLevelV2(const QString &handle, QObject *parent) override;
     void setupV2(zxdg_importer_v2 *arg) override;
     zxdg_importer_v2 *importerV2() override;
 
@@ -105,7 +104,8 @@ public:
 
 XdgImporterUnstableV2::Private::Private()
     : XdgImporter::Private()
-{}
+{
+}
 
 zxdg_importer_v2 *XdgImporterUnstableV2::Private::importerV2()
 {
@@ -127,7 +127,7 @@ bool XdgImporterUnstableV2::Private::isValid()
     return importer.isValid();
 }
 
-XdgImported *XdgImporterUnstableV2::Private::importTopLevelV2(const QString & handle, QObject *parent)
+XdgImported *XdgImporterUnstableV2::Private::importTopLevelV2(const QString &handle, QObject *parent)
 {
     Q_ASSERT(isValid());
     auto p = new XdgImportedUnstableV2(parent);
@@ -138,7 +138,6 @@ XdgImported *XdgImporterUnstableV2::Private::importTopLevelV2(const QString & ha
     p->setup(w);
     return p;
 }
-
 
 XdgImporterUnstableV2::XdgImporterUnstableV2(QObject *parent)
     : XdgImporter(new Private, parent)
@@ -156,7 +155,6 @@ XdgImporterUnstableV2::~XdgImporterUnstableV2()
 {
 }
 
-
 class Q_DECL_HIDDEN XdgExportedUnstableV2::Private : public XdgExported::Private
 {
 public:
@@ -172,7 +170,7 @@ public:
     WaylandPointer<zxdg_exported_v2, zxdg_exported_v2_destroy> exported;
 
 private:
-    static void handleCallback(void *data, zxdg_exported_v2 *zxdg_exported_v2, const char * handle);
+    static void handleCallback(void *data, zxdg_exported_v2 *zxdg_exported_v2, const char *handle);
 
     static const zxdg_exported_v2_listener s_listener;
 };
@@ -197,14 +195,11 @@ bool XdgExportedUnstableV2::Private::isValid()
     return exported.isValid();
 }
 
+const zxdg_exported_v2_listener XdgExportedUnstableV2::Private::s_listener = {handleCallback};
 
-const zxdg_exported_v2_listener XdgExportedUnstableV2::Private::s_listener = {
-    handleCallback
-};
-
-void XdgExportedUnstableV2::Private::handleCallback(void *data, zxdg_exported_v2 *zxdg_exported_v2, const char * handle)
+void XdgExportedUnstableV2::Private::handleCallback(void *data, zxdg_exported_v2 *zxdg_exported_v2, const char *handle)
 {
-    auto p = reinterpret_cast<XdgExportedUnstableV2::Private*>(data);
+    auto p = reinterpret_cast<XdgExportedUnstableV2::Private *>(data);
     Q_ASSERT(p->exported == zxdg_exported_v2);
 
     p->handle = handle;
@@ -285,20 +280,16 @@ void XdgImportedUnstableV2::Private::setParentOf(Surface *surface)
     zxdg_imported_v2_set_parent_of(imported, *surface);
 }
 
-const zxdg_imported_v2_listener XdgImportedUnstableV2::Private::s_listener = {
-    destroyedCallback
-};
+const zxdg_imported_v2_listener XdgImportedUnstableV2::Private::s_listener = {destroyedCallback};
 
 void XdgImportedUnstableV2::Private::destroyedCallback(void *data, zxdg_imported_v2 *zxdg_imported_v2)
 {
-    auto p = reinterpret_cast<XdgImportedUnstableV2::Private*>(data);
+    auto p = reinterpret_cast<XdgImportedUnstableV2::Private *>(data);
     Q_ASSERT(p->imported == zxdg_imported_v2);
 
     p->q->release();
     Q_EMIT p->q->importedDestroyed();
 }
-
-
 
 XdgImportedUnstableV2::XdgImportedUnstableV2(QObject *parent)
     : XdgImported(new Private(this), parent)
@@ -317,7 +308,5 @@ XdgImportedUnstableV2::~XdgImportedUnstableV2()
 {
 }
 
-
 }
 }
-

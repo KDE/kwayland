@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Surface;
 class ServerSideDecoration;
@@ -106,8 +105,8 @@ public:
     ServerSideDecoration *create(Surface *surface, QObject *parent = nullptr);
     ServerSideDecoration *create(wl_surface *surface, QObject *parent = nullptr);
 
-    operator org_kde_kwin_server_decoration_manager*();
-    operator org_kde_kwin_server_decoration_manager*() const;
+    operator org_kde_kwin_server_decoration_manager *();
+    operator org_kde_kwin_server_decoration_manager *() const;
 
 Q_SIGNALS:
     /**
@@ -213,8 +212,8 @@ public:
      **/
     Mode defaultMode() const;
 
-    operator org_kde_kwin_server_decoration*();
-    operator org_kde_kwin_server_decoration*() const;
+    operator org_kde_kwin_server_decoration *();
+    operator org_kde_kwin_server_decoration *() const;
 
 Q_SIGNALS:
     /**
@@ -230,7 +229,6 @@ private:
     class Private;
     QScopedPointer<Private> d;
 };
-
 
 }
 }

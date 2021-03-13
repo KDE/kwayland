@@ -18,14 +18,13 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class OutputInterface;
 class SeatInterface;
 class SurfaceInterface;
 class XdgPopupV5Interface;
 class XdgSurfaceV5Interface;
-template <typename T>
+template<typename T>
 class GenericShellSurface;
 
 class XdgShellV5Interface : public XdgShellInterface

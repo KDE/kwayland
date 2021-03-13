@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN ServerSideDecorationManager::Private
 {
 public:
@@ -28,7 +27,7 @@ public:
     WaylandPointer<org_kde_kwin_server_decoration_manager, org_kde_kwin_server_decoration_manager_destroy> serversidedecorationmanager;
     EventQueue *queue = nullptr;
     ServerSideDecoration::Mode defaultMode = ServerSideDecoration::Mode::None;
-    QVector<ServerSideDecoration*> decorations;
+    QVector<ServerSideDecoration *> decorations;
 
 private:
     static void defaultModeCallback(void *data, org_kde_kwin_server_decoration_manager *manager, uint32_t mode);
@@ -54,14 +53,12 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const org_kde_kwin_server_decoration_manager_listener ServerSideDecorationManager::Private::s_listener = {
-    defaultModeCallback
-};
+const org_kde_kwin_server_decoration_manager_listener ServerSideDecorationManager::Private::s_listener = {defaultModeCallback};
 #endif
 
 void ServerSideDecorationManager::Private::defaultModeCallback(void *data, org_kde_kwin_server_decoration_manager *manager, uint32_t mode)
 {
-    auto p = reinterpret_cast<ServerSideDecorationManager::Private*>(data);
+    auto p = reinterpret_cast<ServerSideDecorationManager::Private *>(data);
     Q_ASSERT(p->serversidedecorationmanager == manager);
 
     ServerSideDecoration::Mode m;
@@ -132,11 +129,13 @@ EventQueue *ServerSideDecorationManager::eventQueue()
     return d->queue;
 }
 
-ServerSideDecorationManager::operator org_kde_kwin_server_decoration_manager*() {
+ServerSideDecorationManager::operator org_kde_kwin_server_decoration_manager *()
+{
     return d->serversidedecorationmanager;
 }
 
-ServerSideDecorationManager::operator org_kde_kwin_server_decoration_manager*() const {
+ServerSideDecorationManager::operator org_kde_kwin_server_decoration_manager *() const
+{
     return d->serversidedecorationmanager;
 }
 
@@ -165,9 +164,7 @@ ServerSideDecoration *ServerSideDecorationManager::create(wl_surface *surface, Q
 }
 
 #ifndef K_DOXYGEN
-const org_kde_kwin_server_decoration_listener ServerSideDecoration::Private::s_listener = {
-    modeCallback
-};
+const org_kde_kwin_server_decoration_listener ServerSideDecoration::Private::s_listener = {modeCallback};
 #endif
 
 ServerSideDecoration::Private::Private(ServerSideDecoration *q)
@@ -178,7 +175,7 @@ ServerSideDecoration::Private::Private(ServerSideDecoration *q)
 void ServerSideDecoration::Private::modeCallback(void *data, org_kde_kwin_server_decoration *decoration, uint32_t mode)
 {
     Q_UNUSED(decoration)
-    Private *p = reinterpret_cast<Private*>(data);
+    Private *p = reinterpret_cast<Private *>(data);
     Mode m;
     switch (mode) {
     case ORG_KDE_KWIN_SERVER_DECORATION_MODE_NONE:
@@ -233,11 +230,13 @@ void ServerSideDecoration::destroy()
     d->serversidedecoration.destroy();
 }
 
-ServerSideDecoration::operator org_kde_kwin_server_decoration*() {
+ServerSideDecoration::operator org_kde_kwin_server_decoration *()
+{
     return d->serversidedecoration;
 }
 
-ServerSideDecoration::operator org_kde_kwin_server_decoration*() const {
+ServerSideDecoration::operator org_kde_kwin_server_decoration *() const
+{
     return d->serversidedecoration;
 }
 

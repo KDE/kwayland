@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Keyboard::Private
 {
 public:
@@ -28,6 +27,7 @@ public:
         qint32 charactersPerSecond = 0;
         qint32 delay = 0;
     } repeatInfo;
+
 private:
     void enter(uint32_t serial, wl_surface *surface, wl_array *keys);
     void leave(uint32_t serial);
@@ -35,8 +35,8 @@ private:
     static void enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys);
     static void leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface);
     static void keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
-    static void modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
-                                  uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+    static void
+    modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
     static void repeatInfoCallback(void *data, wl_keyboard *keyboard, int32_t charactersPerSecond, int32_t delay);
     Keyboard *q;
     static const wl_keyboard_listener s_listener;
@@ -55,14 +55,7 @@ void Keyboard::Private::setup(wl_keyboard *k)
     wl_keyboard_add_listener(keyboard, &s_listener, this);
 }
 
-const wl_keyboard_listener Keyboard::Private::s_listener = {
-    keymapCallback,
-    enterCallback,
-    leaveCallback,
-    keyCallback,
-    modifiersCallback,
-    repeatInfoCallback
-};
+const wl_keyboard_listener Keyboard::Private::s_listener = {keymapCallback, enterCallback, leaveCallback, keyCallback, modifiersCallback, repeatInfoCallback};
 
 Keyboard::Keyboard(QObject *parent)
     : QObject(parent)
@@ -92,7 +85,7 @@ void Keyboard::setup(wl_keyboard *keyboard)
 
 void Keyboard::Private::enterCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
 {
-    auto k = reinterpret_cast<Private*>(data);
+    auto k = reinterpret_cast<Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     k->enter(serial, surface, keys);
 }
@@ -107,7 +100,7 @@ void Keyboard::Private::enter(uint32_t serial, wl_surface *surface, wl_array *ke
 void Keyboard::Private::leaveCallback(void *data, wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
 {
     Q_UNUSED(surface)
-    auto k = reinterpret_cast<Private*>(data);
+    auto k = reinterpret_cast<Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     k->leave(serial);
 }
@@ -121,7 +114,7 @@ void Keyboard::Private::leave(uint32_t serial)
 void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
 {
     Q_UNUSED(serial)
-    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    auto k = reinterpret_cast<Keyboard::Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     auto toState = [state] {
         if (state == WL_KEYBOARD_KEY_STATE_RELEASED) {
@@ -135,7 +128,7 @@ void Keyboard::Private::keyCallback(void *data, wl_keyboard *keyboard, uint32_t 
 
 void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
 {
-    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    auto k = reinterpret_cast<Keyboard::Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1) {
         return;
@@ -143,18 +136,23 @@ void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32
     Q_EMIT k->q->keymapChanged(fd, size);
 }
 
-void Keyboard::Private::modifiersCallback(void *data, wl_keyboard *keyboard, uint32_t serial, uint32_t modsDepressed,
-                                 uint32_t modsLatched, uint32_t modsLocked, uint32_t group)
+void Keyboard::Private::modifiersCallback(void *data,
+                                          wl_keyboard *keyboard,
+                                          uint32_t serial,
+                                          uint32_t modsDepressed,
+                                          uint32_t modsLatched,
+                                          uint32_t modsLocked,
+                                          uint32_t group)
 {
     Q_UNUSED(serial)
-    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    auto k = reinterpret_cast<Keyboard::Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     Q_EMIT k->q->modifiersChanged(modsDepressed, modsLatched, modsLocked, group);
 }
 
 void Keyboard::Private::repeatInfoCallback(void *data, wl_keyboard *keyboard, int32_t charactersPerSecond, int32_t delay)
 {
-    auto k = reinterpret_cast<Keyboard::Private*>(data);
+    auto k = reinterpret_cast<Keyboard::Private *>(data);
     Q_ASSERT(k->keyboard == keyboard);
     k->repeatInfo.charactersPerSecond = qMax(charactersPerSecond, 0);
     k->repeatInfo.delay = qMax(delay, 0);
@@ -191,12 +189,12 @@ qint32 Keyboard::keyRepeatRate() const
     return d->repeatInfo.charactersPerSecond;
 }
 
-Keyboard::operator wl_keyboard*()
+Keyboard::operator wl_keyboard *()
 {
     return d->keyboard;
 }
 
-Keyboard::operator wl_keyboard*() const
+Keyboard::operator wl_keyboard *() const
 {
     return d->keyboard;
 }

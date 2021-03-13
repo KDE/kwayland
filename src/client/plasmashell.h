@@ -125,8 +125,8 @@ public:
      **/
     PlasmaShellSurface *createSurface(Surface *surface, QObject *parent = nullptr);
 
-    operator org_kde_plasma_shell*();
-    operator org_kde_plasma_shell*() const;
+    operator org_kde_plasma_shell *();
+    operator org_kde_plasma_shell *() const;
 
 Q_SIGNALS:
     /**
@@ -219,8 +219,8 @@ public:
      * @returns @c true if managing a org_kde_plasma_surface.
      **/
     bool isValid() const;
-    operator org_kde_plasma_surface*();
-    operator org_kde_plasma_surface*() const;
+    operator org_kde_plasma_surface *();
+    operator org_kde_plasma_surface *() const;
 
     /**
      * Describes possible roles this PlasmaShellSurface can have.
@@ -318,7 +318,7 @@ public:
      * @param takesFocus Set to @c true if the surface should gain focus.
      * @since 5.28
      **/
-    //KF6 TODO rename to make it generic
+    // KF6 TODO rename to make it generic
     void setPanelTakesFocus(bool takesFocus);
 
 Q_SIGNALS:

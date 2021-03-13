@@ -4,8 +4,8 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "keyboard_interface.h"
-#include "keyboard_interface_p.h"
 #include "display.h"
+#include "keyboard_interface_p.h"
 #include "seat_interface.h"
 #include "surface_interface.h"
 // Qt
@@ -18,10 +18,8 @@
 
 namespace KWayland
 {
-
 namespace Server
 {
-
 KeyboardInterface::Private::Private(SeatInterface *s, wl_resource *parentResource, KeyboardInterface *q)
     : Resource::Private(q, s, parentResource, &wl_keyboard_interface, &s_interface)
     , seat(s)
@@ -51,7 +49,7 @@ void KeyboardInterface::Private::sendEnter(SurfaceInterface *surface, quint32 se
     wl_array_init(&keys);
     const auto states = seat->pressedKeys();
     for (auto it = states.constBegin(); it != states.constEnd(); ++it) {
-        uint32_t *k = reinterpret_cast<uint32_t*>(wl_array_add(&keys, sizeof(uint32_t)));
+        uint32_t *k = reinterpret_cast<uint32_t *>(wl_array_add(&keys, sizeof(uint32_t)));
         *k = *it;
     }
     wl_keyboard_send_enter(resource, serial, surface->resource(), &keys);
@@ -93,7 +91,7 @@ void KeyboardInterface::setKeymap(const QByteArray &content)
     if (!address) {
         return;
     }
-    if (qstrncpy(reinterpret_cast<char*>(address), content.constData(), content.size() + 1) == nullptr) {
+    if (qstrncpy(reinterpret_cast<char *>(address), content.constData(), content.size() + 1) == nullptr) {
         return;
     }
     tmp->unmap(address);
@@ -133,16 +131,14 @@ void KeyboardInterface::setFocusedSurface(SurfaceInterface *surface, quint32 ser
     if (!d->focusedSurface) {
         return;
     }
-    d->destroyConnection = connect(d->focusedSurface, &Resource::aboutToBeUnbound, this,
-        [this] {
-            Q_D();
-            if (d->resource) {
-                wl_keyboard_send_leave(d->resource, d->global->display()->nextSerial(), d->focusedSurface->resource());
-            }
-            d->focusedSurface = nullptr;
-            d->focusedChildSurface.clear();
+    d->destroyConnection = connect(d->focusedSurface, &Resource::aboutToBeUnbound, this, [this] {
+        Q_D();
+        if (d->resource) {
+            wl_keyboard_send_leave(d->resource, d->global->display()->nextSerial(), d->focusedSurface->resource());
         }
-    );
+        d->focusedSurface = nullptr;
+        d->focusedChildSurface.clear();
+    });
     d->focusedChildSurface = QPointer<SurfaceInterface>(surface);
 
     d->sendEnter(d->focusedSurface, serial);
@@ -197,7 +193,7 @@ SurfaceInterface *KeyboardInterface::focusedSurface() const
 
 KeyboardInterface::Private *KeyboardInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

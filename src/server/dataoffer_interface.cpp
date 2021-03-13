@@ -3,8 +3,8 @@
 
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
-#include "dataoffer_interface_p.h"
 #include "datadevice_interface.h"
+#include "dataoffer_interface_p.h"
 #include "datasource_interface.h"
 // Qt
 #include <QStringList>
@@ -17,15 +17,12 @@ namespace KWayland
 {
 namespace Server
 {
-
 #ifndef K_DOXYGEN
-const struct wl_data_offer_interface DataOfferInterface::Private::s_interface = {
-    acceptCallback,
-    receiveCallback,
-    resourceDestroyedCallback,
-    finishCallback,
-    setActionsCallback
-};
+const struct wl_data_offer_interface DataOfferInterface::Private::s_interface = {acceptCallback,
+                                                                                 receiveCallback,
+                                                                                 resourceDestroyedCallback,
+                                                                                 finishCallback,
+                                                                                 setActionsCallback};
 #endif
 
 DataOfferInterface::Private::Private(DataSourceInterface *source, DataDeviceInterface *parentInterface, DataOfferInterface *q, wl_resource *parentResource)
@@ -143,21 +140,17 @@ DataOfferInterface::DataOfferInterface(DataSourceInterface *source, DataDeviceIn
     : Resource(new Private(source, parentInterface, this, parentResource))
 {
     Q_ASSERT(source);
-    connect(source, &DataSourceInterface::mimeTypeOffered, this,
-        [this](const QString &mimeType) {
-            Q_D();
-            if (!d->resource) {
-                return;
-            }
-            wl_data_offer_send_offer(d->resource, mimeType.toUtf8().constData());
+    connect(source, &DataSourceInterface::mimeTypeOffered, this, [this](const QString &mimeType) {
+        Q_D();
+        if (!d->resource) {
+            return;
         }
-    );
-    QObject::connect(source, &QObject::destroyed, this,
-        [this] {
-            Q_D();
-            d->source = nullptr;
-        }
-    );
+        wl_data_offer_send_offer(d->resource, mimeType.toUtf8().constData());
+    });
+    QObject::connect(source, &QObject::destroyed, this, [this] {
+        Q_D();
+        d->source = nullptr;
+    });
 }
 
 DataOfferInterface::~DataOfferInterface() = default;
@@ -172,7 +165,7 @@ void DataOfferInterface::sendAllOffers()
 
 DataOfferInterface::Private *DataOfferInterface::d_func() const
 {
-    return reinterpret_cast<DataOfferInterface::Private*>(d.data());
+    return reinterpret_cast<DataOfferInterface::Private *>(d.data());
 }
 
 DataDeviceManagerInterface::DnDActions DataOfferInterface::supportedDragAndDropActions() const
@@ -196,7 +189,7 @@ void DataOfferInterface::dndAction(DataDeviceManagerInterface::DnDAction action)
     uint32_t wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
     if (action == DataDeviceManagerInterface::DnDAction::Copy) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY;
-    } else if (action == DataDeviceManagerInterface::DnDAction::Move ) {
+    } else if (action == DataDeviceManagerInterface::DnDAction::Move) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE;
     } else if (action == DataDeviceManagerInterface::DnDAction::Ask) {
         wlAction = WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK;

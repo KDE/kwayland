@@ -5,9 +5,9 @@
 */
 #ifndef KWAYLAND_SERVER_TEXTINPUT_INTERFACE_P_H
 #define KWAYLAND_SERVER_TEXTINPUT_INTERFACE_P_H
-#include "textinput_interface.h"
-#include "resource_p.h"
 #include "global_p.h"
+#include "resource_p.h"
+#include "textinput_interface.h"
 
 #include <QPointer>
 #include <QRect>
@@ -17,14 +17,13 @@ namespace KWayland
 {
 namespace Server
 {
-
 class TextInputManagerUnstableV0Interface;
 class TextInputManagerUnstableV2Interface;
 
 class TextInputManagerInterface::Private : public Global::Private
 {
 public:
-    QVector<TextInputInterface*> inputs;
+    QVector<TextInputInterface *> inputs;
     TextInputInterfaceVersion interfaceVersion;
 
 protected:
@@ -74,13 +73,14 @@ protected:
 
     static void showInputPanelCallback(wl_client *client, wl_resource *resource);
     static void hideInputPanelCallback(wl_client *client, wl_resource *resource);
-    static void setSurroundingTextCallback(wl_client *client, wl_resource *resource, const char * text, int32_t cursor, int32_t anchor);
+    static void setSurroundingTextCallback(wl_client *client, wl_resource *resource, const char *text, int32_t cursor, int32_t anchor);
     static void setContentTypeCallback(wl_client *client, wl_resource *resource, uint32_t hint, uint32_t purpose);
     static void setCursorRectangleCallback(wl_client *client, wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    static void setPreferredLanguageCallback(wl_client *client, wl_resource *resource, const char * language);
+    static void setPreferredLanguageCallback(wl_client *client, wl_resource *resource, const char *language);
 
 private:
-    TextInputInterface *q_func() {
+    TextInputInterface *q_func()
+    {
         return reinterpret_cast<TextInputInterface *>(q);
     }
 };

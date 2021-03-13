@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class SeatInterface;
 class SurfaceInterface;

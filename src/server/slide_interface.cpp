@@ -6,8 +6,8 @@
 #include "slide_interface.h"
 #include "display.h"
 #include "global_p.h"
-#include "surface_interface.h"
 #include "resource_p.h"
+#include "surface_interface.h"
 #include "surface_interface_p.h"
 
 #include <wayland-server.h>
@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SlideManagerInterface::Private : public Global::Private
 {
 public:
@@ -28,34 +27,32 @@ private:
     void createSlide(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
-    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
-    static void unsetCallback(wl_client *client, wl_resource *resource, wl_resource * surface);
+    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
+    static void unsetCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
 
     SlideManagerInterface *q;
     static const struct org_kde_kwin_slide_manager_interface s_interface;
-    //initializing here doesn't link
+    // initializing here doesn't link
     static const quint32 s_version;
 };
 
 const quint32 SlideManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_slide_manager_interface SlideManagerInterface::Private::s_interface = {
-    createCallback,
-    unsetCallback
-};
+const struct org_kde_kwin_slide_manager_interface SlideManagerInterface::Private::s_interface = {createCallback, unsetCallback};
 #endif
 
-void SlideManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
+void SlideManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
     cast(resource)->createSlide(client, resource, id, surface);
 }
 
-void SlideManagerInterface::Private::createSlide(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
+void SlideManagerInterface::Private::createSlide(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
     SurfaceInterface *s = SurfaceInterface::get(surface);
     if (!s) {
@@ -72,7 +69,7 @@ void SlideManagerInterface::Private::createSlide(wl_client *client, wl_resource 
     s->d_func()->setSlide(QPointer<SlideInterface>(slide));
 }
 
-void SlideManagerInterface::Private::unsetCallback(wl_client *client, wl_resource *resource, wl_resource * surface)
+void SlideManagerInterface::Private::unsetCallback(wl_client *client, wl_resource *resource, wl_resource *surface)
 {
     Q_UNUSED(client)
     Q_UNUSED(resource)
@@ -127,7 +124,8 @@ private:
     static void setLocationCallback(wl_client *client, wl_resource *resource, uint32_t location);
     static void setOffsetCallback(wl_client *client, wl_resource *resource, int32_t offset);
 
-    SlideInterface *q_func() {
+    SlideInterface *q_func()
+    {
         return reinterpret_cast<SlideInterface *>(q);
     }
 
@@ -135,12 +133,10 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_slide_interface SlideInterface::Private::s_interface = {
-    commitCallback,
-    setLocationCallback,
-    setOffsetCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_slide_interface SlideInterface::Private::s_interface = {commitCallback,
+                                                                                  setLocationCallback,
+                                                                                  setOffsetCallback,
+                                                                                  resourceDestroyedCallback};
 #endif
 
 void SlideInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
@@ -179,7 +175,6 @@ SlideInterface::SlideInterface(SlideManagerInterface *parent, wl_resource *paren
 
 SlideInterface::~SlideInterface() = default;
 
-
 SlideInterface::Location SlideInterface::location() const
 {
     Q_D();
@@ -194,9 +189,8 @@ qint32 SlideInterface::offset() const
 
 SlideInterface::Private *SlideInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }
 }
-

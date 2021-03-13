@@ -9,11 +9,14 @@
 #include <QSignalSpy>
 #include <wayland-xdg-shell-client-protocol.h>
 
-class XdgShellTestStable : public XdgShellTest {
+class XdgShellTestStable : public XdgShellTest
+{
     Q_OBJECT
 public:
-    XdgShellTestStable() :
-        XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::Stable) {}
+    XdgShellTestStable()
+        : XdgShellTest(KWayland::Server::XdgShellInterfaceVersion::Stable)
+    {
+    }
 
 private Q_SLOTS:
     void testMaxSize();
@@ -30,14 +33,14 @@ private Q_SLOTS:
 
 void XdgShellTestStable::testMaxSize()
 {
-    qRegisterMetaType<OutputInterface*>();
+    qRegisterMetaType<OutputInterface *>();
     // this test verifies changing the window maxSize
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data()));
     QVERIFY(xdgSurfaceCreatedSpy.wait());
-    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
     QVERIFY(serverXdgSurface);
 
     QSignalSpy maxSizeSpy(serverXdgSurface, &XdgShellSurfaceInterface::maxSizeChanged);
@@ -47,25 +50,24 @@ void XdgShellTestStable::testMaxSize()
     surface->commit(Surface::CommitFlag::None);
     QVERIFY(maxSizeSpy.wait());
     QCOMPARE(maxSizeSpy.count(), 1);
-    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(100,100));
+    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(100, 100));
     QCOMPARE(serverXdgSurface->maximumSize(), QSize(100, 100));
 
     xdgSurface->setMaxSize(QSize(200, 200));
     surface->commit(Surface::CommitFlag::None);
     QVERIFY(maxSizeSpy.wait());
     QCOMPARE(maxSizeSpy.count(), 2);
-    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(200,200));
+    QCOMPARE(maxSizeSpy.last().at(0).value<QSize>(), QSize(200, 200));
     QCOMPARE(serverXdgSurface->maximumSize(), QSize(200, 200));
 }
-
 
 void XdgShellTestStable::testPopup_data()
 {
     QTest::addColumn<XdgPositioner>("positioner");
-    XdgPositioner positioner(QSize(10,10), QRect(100,100,50,50));
+    XdgPositioner positioner(QSize(10, 10), QRect(100, 100, 50, 50));
     QTest::newRow("default") << positioner;
 
-    XdgPositioner positioner2(QSize(20,20), QRect(101,102,51,52));
+    XdgPositioner positioner2(QSize(20, 20), QRect(101, 102, 51, 52));
     QTest::newRow("sizeAndAnchorRect") << positioner2;
 
     positioner.setAnchorEdge(Qt::TopEdge | Qt::RightEdge);
@@ -80,10 +82,11 @@ void XdgShellTestStable::testPopup_data()
     positioner.setConstraints(XdgPositioner::Constraint::SlideX | XdgPositioner::Constraint::FlipY);
     QTest::newRow("constraints") << positioner;
 
-    positioner.setConstraints(XdgPositioner::Constraint::SlideX | XdgPositioner::Constraint::SlideY | XdgPositioner::Constraint::FlipX | XdgPositioner::Constraint::FlipY | XdgPositioner::Constraint::ResizeX | XdgPositioner::Constraint::ResizeY);
+    positioner.setConstraints(XdgPositioner::Constraint::SlideX | XdgPositioner::Constraint::SlideY | XdgPositioner::Constraint::FlipX
+                              | XdgPositioner::Constraint::FlipY | XdgPositioner::Constraint::ResizeX | XdgPositioner::Constraint::ResizeY);
     QTest::newRow("constraints2") << positioner;
 
-    positioner.setAnchorOffset(QPoint(4,5));
+    positioner.setAnchorOffset(QPoint(4, 5));
     QTest::newRow("offset") << positioner;
 }
 
@@ -96,14 +99,14 @@ void XdgShellTestStable::testPopup()
     QScopedPointer<XdgShellSurface> xdgParentSurface(m_xdgShell->createSurface(parentSurface.data()));
 
     QVERIFY(xdgTopLevelCreatedSpy.wait());
-    auto serverXdgTopLevel = xdgTopLevelCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgTopLevel = xdgTopLevelCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
 
     QFETCH(XdgPositioner, positioner);
 
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<XdgShellPopup> xdgSurface(m_xdgShell->createPopup(surface.data(), xdgParentSurface.data(), positioner));
     QVERIFY(xdgPopupCreatedSpy.wait());
-    auto serverXdgPopup = xdgPopupCreatedSpy.first().first().value<XdgShellPopupInterface*>();
+    auto serverXdgPopup = xdgPopupCreatedSpy.first().first().value<XdgShellPopupInterface *>();
     QVERIFY(serverXdgPopup);
 
     QCOMPARE(serverXdgPopup->initialSize(), positioner.initialSize());
@@ -111,21 +114,21 @@ void XdgShellTestStable::testPopup()
     QCOMPARE(serverXdgPopup->anchorEdge(), positioner.anchorEdge());
     QCOMPARE(serverXdgPopup->gravity(), positioner.gravity());
     QCOMPARE(serverXdgPopup->anchorOffset(), positioner.anchorOffset());
-    //we have different enums for client server, but they share the same values
+    // we have different enums for client server, but they share the same values
     QCOMPARE((int)serverXdgPopup->constraintAdjustments(), (int)positioner.constraints());
     QCOMPARE(serverXdgPopup->transientFor().data(), serverXdgTopLevel->surface());
 }
 
 void XdgShellTestStable::testMinSize()
 {
-    qRegisterMetaType<OutputInterface*>();
+    qRegisterMetaType<OutputInterface *>();
     // this test verifies changing the window minSize
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
     QVERIFY(xdgSurfaceCreatedSpy.isValid());
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data()));
     QVERIFY(xdgSurfaceCreatedSpy.wait());
-    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>();
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();
     QVERIFY(serverXdgSurface);
 
     QSignalSpy minSizeSpy(serverXdgSurface, &XdgShellSurfaceInterface::minSizeChanged);
@@ -135,21 +138,21 @@ void XdgShellTestStable::testMinSize()
     surface->commit(Surface::CommitFlag::None);
     QVERIFY(minSizeSpy.wait());
     QCOMPARE(minSizeSpy.count(), 1);
-    QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(200,200));
+    QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(200, 200));
     QCOMPARE(serverXdgSurface->minimumSize(), QSize(200, 200));
 
     xdgSurface->setMinSize(QSize(100, 100));
     surface->commit(Surface::CommitFlag::None);
     QVERIFY(minSizeSpy.wait());
     QCOMPARE(minSizeSpy.count(), 2);
-    QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(100,100));
+    QCOMPARE(minSizeSpy.last().at(0).value<QSize>(), QSize(100, 100));
     QCOMPARE(serverXdgSurface->minimumSize(), QSize(100, 100));
 }
 
-//top level then toplevel
+// top level then toplevel
 void XdgShellTestStable::testMultipleRoles1()
 {
-    //setting multiple roles on an xdg surface should fail
+    // setting multiple roles on an xdg surface should fail
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
     QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
 
@@ -157,17 +160,17 @@ void XdgShellTestStable::testMultipleRoles1()
     QVERIFY(xdgPopupCreatedSpy.isValid());
 
     QScopedPointer<Surface> surface(m_compositor->createSurface());
-    //This is testing we work when a client does something stupid
-    //we can't use KWayland API here because by design that stops you from doing anything stupid
+    // This is testing we work when a client does something stupid
+    // we can't use KWayland API here because by design that stops you from doing anything stupid
 
-    qDebug() << (xdg_wm_base*)*m_xdgShell;
+    qDebug() << (xdg_wm_base *)*m_xdgShell;
     auto xdgSurface = xdg_wm_base_get_xdg_surface(*m_xdgShell, *surface.data());
 
-    //create a top level
+    // create a top level
     auto xdgTopLevel1 = xdg_surface_get_toplevel(xdgSurface);
     QVERIFY(xdgSurfaceCreatedSpy.wait());
 
-    //now try to create another top level for the same xdg surface. It should fail
+    // now try to create another top level for the same xdg surface. It should fail
     auto xdgTopLevel2 = xdg_surface_get_toplevel(xdgSurface);
     QVERIFY(!xdgSurfaceCreatedSpy.wait(10));
 
@@ -176,7 +179,7 @@ void XdgShellTestStable::testMultipleRoles1()
     xdg_surface_destroy(xdgSurface);
 }
 
-//toplevel then popup
+// toplevel then popup
 void XdgShellTestStable::testMultipleRoles2()
 {
     QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);
@@ -192,17 +195,16 @@ void XdgShellTestStable::testMultipleRoles2()
     auto xdgTopLevelParent = xdg_surface_get_toplevel(parentXdgSurface);
     QVERIFY(xdgSurfaceCreatedSpy.wait());
 
-
     auto xdgSurface = xdg_wm_base_get_xdg_surface(*m_xdgShell, *surface.data());
-    //create a top level
+    // create a top level
     auto xdgTopLevel1 = xdg_surface_get_toplevel(xdgSurface);
     QVERIFY(xdgSurfaceCreatedSpy.wait());
 
-    //now try to create a popup on the same xdg surface. It should fail
+    // now try to create a popup on the same xdg surface. It should fail
 
     auto positioner = xdg_wm_base_create_positioner(*m_xdgShell);
-    xdg_positioner_set_anchor_rect(positioner,10, 10, 10, 10);
-    xdg_positioner_set_size(positioner,10, 100);
+    xdg_positioner_set_anchor_rect(positioner, 10, 10, 10, 10);
+    xdg_positioner_set_size(positioner, 10, 100);
 
     auto xdgPopup2 = xdg_surface_get_popup(xdgSurface, parentXdgSurface, positioner);
     QVERIFY(!xdgPopupCreatedSpy.wait(10));
@@ -223,13 +225,13 @@ void XdgShellTestStable::testWindowGeometry()
     QVERIFY(windowGeometryChangedSpy.wait());
     QCOMPARE(serverXdgSurface->windowGeometry(), QRect(50, 50, 400, 400));
 
-    //add a popup to this surface
-    XdgPositioner positioner(QSize(10,10), QRect(100,100,50,50));
+    // add a popup to this surface
+    XdgPositioner positioner(QSize(10, 10), QRect(100, 100, 50, 50));
     QSignalSpy xdgPopupCreatedSpy(m_xdgShellInterface, &XdgShellInterface::xdgPopupCreated);
     QScopedPointer<Surface> popupSurface(m_compositor->createSurface());
     QScopedPointer<XdgShellPopup> xdgPopupSurface(m_xdgShell->createPopup(popupSurface.data(), xdgSurface.data(), positioner));
     QVERIFY(xdgPopupCreatedSpy.wait());
-    auto serverXdgPopup = xdgPopupCreatedSpy.first().first().value<XdgShellPopupInterface*>();
+    auto serverXdgPopup = xdgPopupCreatedSpy.first().first().value<XdgShellPopupInterface *>();
     QVERIFY(serverXdgPopup);
 
     QSignalSpy popupWindowGeometryChangedSpy(serverXdgPopup, &XdgShellPopupInterface::windowGeometryChanged);
@@ -239,8 +241,6 @@ void XdgShellTestStable::testWindowGeometry()
     QCOMPARE(serverXdgPopup->windowGeometry(), QRect(60, 60, 300, 300));
 }
 
-
 QTEST_GUILESS_MAIN(XdgShellTestStable)
 
 #include "test_xdg_shell_stable.moc"
-

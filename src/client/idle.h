@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class IdleTimeout;
 class Seat;
@@ -118,8 +117,8 @@ public:
      **/
     IdleTimeout *getTimeout(quint32 msecs, Seat *seat, QObject *parent = nullptr);
 
-    operator org_kde_kwin_idle*();
-    operator org_kde_kwin_idle*() const;
+    operator org_kde_kwin_idle *();
+    operator org_kde_kwin_idle *() const;
 
 Q_SIGNALS:
     /**
@@ -190,8 +189,8 @@ public:
      **/
     bool isValid() const;
 
-    operator org_kde_kwin_idle_timeout*();
-    operator org_kde_kwin_idle_timeout*() const;
+    operator org_kde_kwin_idle_timeout *();
+    operator org_kde_kwin_idle_timeout *() const;
 
     /**
      * Simulates user activity. If the IdleTimeout is in idle state this will trigger the

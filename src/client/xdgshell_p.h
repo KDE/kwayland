@@ -7,53 +7,62 @@
 #define KWAYLAND_CLIENT_XDGSHELL_P_H
 #include "xdgshell.h"
 
-#include <QSize>
-#include <QRect>
 #include <QDebug>
+#include <QRect>
+#include <QSize>
 
 namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN XdgShell::Private
 {
 public:
     virtual ~Private();
-    virtual void setupV5(xdg_shell *xdgshellv5) {
+    virtual void setupV5(xdg_shell *xdgshellv5)
+    {
         Q_UNUSED(xdgshellv5)
     }
-    virtual void setupV6(zxdg_shell_v6 *xdgshellv6) {
+    virtual void setupV6(zxdg_shell_v6 *xdgshellv6)
+    {
         Q_UNUSED(xdgshellv6)
     }
-    virtual void setup(xdg_wm_base *xdgshell) {
+    virtual void setup(xdg_wm_base *xdgshell)
+    {
         Q_UNUSED(xdgshell);
     }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
-    virtual operator xdg_shell*() {
+    virtual operator xdg_shell *()
+    {
         return nullptr;
     }
-    virtual operator xdg_shell*() const {
+    virtual operator xdg_shell *() const
+    {
         return nullptr;
     }
-    virtual operator zxdg_shell_v6*() {
+    virtual operator zxdg_shell_v6 *()
+    {
         return nullptr;
     }
-    virtual operator zxdg_shell_v6*() const {
+    virtual operator zxdg_shell_v6 *() const
+    {
         return nullptr;
     }
-    virtual operator xdg_wm_base*() {
+    virtual operator xdg_wm_base *()
+    {
         return nullptr;
     }
-    virtual operator xdg_wm_base*() const {
+    virtual operator xdg_wm_base *() const
+    {
         return nullptr;
     }
 
     virtual XdgShellSurface *getXdgSurface(Surface *surface, QObject *parent) = 0;
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent) {
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, Surface *parentSurface, Seat *seat, quint32 serial, const QPoint &parentPos, QObject *parent)
+    {
         Q_UNUSED(surface)
         Q_UNUSED(parentSurface)
         Q_UNUSED(seat)
@@ -64,7 +73,8 @@ public:
         return nullptr;
     };
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent) {
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellSurface *parentSurface, const XdgPositioner &positioner, QObject *parent)
+    {
         Q_UNUSED(surface)
         Q_UNUSED(parentSurface)
         Q_UNUSED(positioner)
@@ -73,8 +83,8 @@ public:
         return nullptr;
     }
 
-    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent) {
-
+    virtual XdgShellPopup *getXdgPopup(Surface *surface, XdgShellPopup *parentSurface, const XdgPositioner &positioner, QObject *parent)
+    {
         Q_UNUSED(surface)
         Q_UNUSED(parentSurface)
         Q_UNUSED(positioner)
@@ -120,7 +130,6 @@ public:
 
 private:
     class Private;
-
 };
 
 class XdgShellSurfaceUnstableV5 : public XdgShellSurface
@@ -166,7 +175,8 @@ public:
     EventQueue *queue = nullptr;
     QSize size;
 
-    virtual void setupV5(xdg_surface *surface) {
+    virtual void setupV5(xdg_surface *surface)
+    {
         Q_UNUSED(surface)
     }
     virtual void setupV6(zxdg_surface_v6 *surface, zxdg_toplevel_v6 *toplevel)
@@ -182,28 +192,36 @@ public:
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
-    virtual operator xdg_surface*() {
+    virtual operator xdg_surface *()
+    {
         return nullptr;
     }
-    virtual operator xdg_surface*() const {
+    virtual operator xdg_surface *() const
+    {
         return nullptr;
     }
-    virtual operator xdg_toplevel*() {
+    virtual operator xdg_toplevel *()
+    {
         return nullptr;
     }
-    virtual operator xdg_toplevel*() const {
+    virtual operator xdg_toplevel *() const
+    {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() {
+    virtual operator zxdg_surface_v6 *()
+    {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() const {
+    virtual operator zxdg_surface_v6 *() const
+    {
         return nullptr;
     }
-    virtual operator zxdg_toplevel_v6*() {
+    virtual operator zxdg_toplevel_v6 *()
+    {
         return nullptr;
     }
-    virtual operator zxdg_toplevel_v6*() const {
+    virtual operator zxdg_toplevel_v6 *() const
+    {
         return nullptr;
     }
 
@@ -221,7 +239,8 @@ public:
     virtual void setMinimized() = 0;
     virtual void setMaxSize(const QSize &size) = 0;
     virtual void setMinSize(const QSize &size) = 0;
-    virtual void setWindowGeometry(const QRect &windowGeometry) {
+    virtual void setWindowGeometry(const QRect &windowGeometry)
+    {
         Q_UNUSED(windowGeometry);
     }
 
@@ -239,54 +258,68 @@ public:
 
     EventQueue *queue = nullptr;
 
-    virtual void setupV5(xdg_popup *p) {
+    virtual void setupV5(xdg_popup *p)
+    {
         Q_UNUSED(p)
     }
-    virtual void setupV6(zxdg_surface_v6 *s,  zxdg_popup_v6 *p) {
+    virtual void setupV6(zxdg_surface_v6 *s, zxdg_popup_v6 *p)
+    {
         Q_UNUSED(s)
         Q_UNUSED(p)
     }
-    virtual void setup(xdg_surface *s, xdg_popup *p) {
+    virtual void setup(xdg_surface *s, xdg_popup *p)
+    {
         Q_UNUSED(s)
         Q_UNUSED(p)
     }
     virtual void release() = 0;
     virtual void destroy() = 0;
     virtual bool isValid() const = 0;
-    virtual void requestGrab(Seat *seat, quint32 serial) {
+    virtual void requestGrab(Seat *seat, quint32 serial)
+    {
         Q_UNUSED(seat);
         Q_UNUSED(serial);
     };
-    virtual void ackConfigure(quint32 serial) {
+    virtual void ackConfigure(quint32 serial)
+    {
         Q_UNUSED(serial);
     }
 
-    virtual void setWindowGeometry(const QRect &windowGeometry) {
+    virtual void setWindowGeometry(const QRect &windowGeometry)
+    {
         Q_UNUSED(windowGeometry);
     }
 
-    virtual operator xdg_surface*() {
+    virtual operator xdg_surface *()
+    {
         return nullptr;
     }
-    virtual operator xdg_surface*() const {
+    virtual operator xdg_surface *() const
+    {
         return nullptr;
     }
-    virtual operator xdg_popup*() {
+    virtual operator xdg_popup *()
+    {
         return nullptr;
     }
-    virtual operator xdg_popup*() const {
+    virtual operator xdg_popup *() const
+    {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() {
+    virtual operator zxdg_surface_v6 *()
+    {
         return nullptr;
     }
-    virtual operator zxdg_surface_v6*() const {
+    virtual operator zxdg_surface_v6 *() const
+    {
         return nullptr;
     }
-    virtual operator zxdg_popup_v6*() {
+    virtual operator zxdg_popup_v6 *()
+    {
         return nullptr;
     }
-    virtual operator zxdg_popup_v6*() const {
+    virtual operator zxdg_popup_v6 *() const
+    {
         return nullptr;
     }
 
@@ -306,7 +339,6 @@ public:
     XdgPositioner::Constraints constraints;
     QPoint anchorOffset;
 };
-
 
 class XdgShellPopupUnstableV5 : public XdgShellPopup
 {

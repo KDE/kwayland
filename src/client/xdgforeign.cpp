@@ -4,9 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "xdgforeign.h"
-#include "xdgforeign_p.h"
 #include "event_queue.h"
 #include "wayland_pointer_p.h"
+#include "xdgforeign_p.h"
 
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 
@@ -16,7 +16,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 XdgExporter::Private::Private()
 {
 }
@@ -51,11 +50,13 @@ void XdgExporter::destroy()
     d->destroy();
 }
 
-XdgExporter::operator zxdg_exporter_v2*() {
+XdgExporter::operator zxdg_exporter_v2 *()
+{
     return d->exporterV2();
 }
 
-XdgExporter::operator zxdg_exporter_v2*() const {
+XdgExporter::operator zxdg_exporter_v2 *() const
+{
     return d->exporterV2();
 }
 
@@ -78,8 +79,6 @@ XdgExported *XdgExporter::exportTopLevel(Surface *surface, QObject *parent)
 {
     return d->exportTopLevelV2(surface, parent);
 }
-
-
 
 XdgImporter::Private::Private()
 {
@@ -115,11 +114,13 @@ void XdgImporter::destroy()
     d->destroy();
 }
 
-XdgImporter::operator zxdg_importer_v2*() {
+XdgImporter::operator zxdg_importer_v2 *()
+{
     return d->importerV2();
 }
 
-XdgImporter::operator zxdg_importer_v2*() const {
+XdgImporter::operator zxdg_importer_v2 *() const
+{
     return d->importerV2();
 }
 
@@ -138,7 +139,7 @@ EventQueue *XdgImporter::eventQueue()
     return d->queue;
 }
 
-XdgImported *XdgImporter::importTopLevel(const QString & handle, QObject *parent)
+XdgImported *XdgImporter::importTopLevel(const QString &handle, QObject *parent)
 {
     Q_ASSERT(isValid());
     return d->importTopLevelV2(handle, parent);
@@ -184,11 +185,13 @@ QString XdgExported::handle() const
     return d->handle;
 }
 
-XdgExported::operator zxdg_exported_v2*() {
+XdgExported::operator zxdg_exported_v2 *()
+{
     return d->exportedV2();
 }
 
-XdgExported::operator zxdg_exported_v2*() const {
+XdgExported::operator zxdg_exported_v2 *() const
+{
     return d->exportedV2();
 }
 
@@ -232,11 +235,13 @@ void XdgImported::destroy()
     d->destroy();
 }
 
-XdgImported::operator zxdg_imported_v2*() {
+XdgImported::operator zxdg_imported_v2 *()
+{
     return d->importedV2();
 }
 
-XdgImported::operator zxdg_imported_v2*() const {
+XdgImported::operator zxdg_imported_v2 *() const
+{
     return d->importedV2();
 }
 
@@ -251,7 +256,5 @@ void XdgImported::setParentOf(Surface *surface)
     d->setParentOf(surface);
 }
 
-
 }
 }
-

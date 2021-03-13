@@ -6,8 +6,8 @@
 #ifndef WAYLAND_PLASMAWINDOWMANAGEMENT_H
 #define WAYLAND_PLASMAWINDOWMANAGEMENT_H
 
-#include <QObject>
 #include <QIcon>
+#include <QObject>
 #include <QSize>
 
 #include <KWayland/Client/kwaylandclient_export.h>
@@ -109,8 +109,8 @@ public:
      **/
     EventQueue *eventQueue();
 
-    operator org_kde_plasma_window_management*();
-    operator org_kde_plasma_window_management*() const;
+    operator org_kde_plasma_window_management *();
+    operator org_kde_plasma_window_management *() const;
 
     /**
      * Whether the system is currently showing the desktop.
@@ -143,7 +143,7 @@ public:
      * @returns All windows currently known to the PlasmaWindowManagement
      * @see windowCreated
      **/
-    QList<PlasmaWindow*> windows() const;
+    QList<PlasmaWindow *> windows() const;
     /**
      * @returns The currently active PlasmaWindow, the PlasmaWindow which
      * returns @c true in {@link PlasmaWindow::isActive} or @c nullptr in case
@@ -278,8 +278,8 @@ public:
      **/
     bool isValid() const;
 
-    operator org_kde_plasma_window*();
-    operator org_kde_plasma_window*() const;
+    operator org_kde_plasma_window *();
+    operator org_kde_plasma_window *() const;
 
     /**
      * @returns the window title.
@@ -367,8 +367,8 @@ public:
      **/
     bool skipTaskbar() const;
     /**
-      * @returns Whether the window should be ignored by a switcher.
-      * @see skipSwitcherChanged
+     * @returns Whether the window should be ignored by a switcher.
+     * @see skipSwitcherChanged
      **/
     bool skipSwitcher() const;
     /**
@@ -613,7 +613,10 @@ Q_SIGNALS:
      * The virtual desktop changed.
      * @deprecated Since 5.52, use plasmaVirtualDesktopEntered and plasmaVirtualDesktopLeft instead
      **/
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 52, "Use PlasmaWindow::plasmaVirtualDesktopEntered(const QString &) and PlasmaWindow::plasmaVirtualDesktopLeft(const QString &)")
+    KWAYLANDCLIENT_DEPRECATED_VERSION(
+        5,
+        52,
+        "Use PlasmaWindow::plasmaVirtualDesktopEntered(const QString &) and PlasmaWindow::plasmaVirtualDesktopLeft(const QString &)")
     void virtualDesktopChanged();
 #endif
     /**
@@ -788,6 +791,6 @@ private:
 }
 }
 
-Q_DECLARE_METATYPE(KWayland::Client::PlasmaWindow*)
+Q_DECLARE_METATYPE(KWayland::Client::PlasmaWindow *)
 
 #endif

@@ -4,9 +4,9 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "subcompositor_interface.h"
-#include "subsurface_interface_p.h"
-#include "global_p.h"
 #include "display.h"
+#include "global_p.h"
+#include "subsurface_interface_p.h"
 #include "surface_interface_p.h"
 // Wayland
 #include <wayland-server.h>
@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class SubCompositorInterface::Private : public Global::Private
 {
 public:
@@ -29,8 +28,9 @@ private:
     static void destroyCallback(wl_client *client, wl_resource *resource);
     static void subsurfaceCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface, wl_resource *parent);
 
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
     SubCompositorInterface *q;
@@ -41,10 +41,7 @@ private:
 const quint32 SubCompositorInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct wl_subcompositor_interface SubCompositorInterface::Private::s_interface = {
-    destroyCallback,
-    subsurfaceCallback
-};
+const struct wl_subcompositor_interface SubCompositorInterface::Private::s_interface = {destroyCallback, subsurfaceCallback};
 #endif
 
 SubCompositorInterface::Private::Private(SubCompositorInterface *q, Display *d)
@@ -81,7 +78,11 @@ void SubCompositorInterface::Private::subsurfaceCallback(wl_client *client, wl_r
     cast(resource)->subsurface(client, resource, id, surface, sparent);
 }
 
-void SubCompositorInterface::Private::subsurface(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *nativeSurface, wl_resource *nativeParentSurface)
+void SubCompositorInterface::Private::subsurface(wl_client *client,
+                                                 wl_resource *resource,
+                                                 uint32_t id,
+                                                 wl_resource *nativeSurface,
+                                                 wl_resource *nativeParentSurface)
 {
     Q_UNUSED(client)
     SurfaceInterface *surface = SurfaceInterface::get(nativeSurface);
@@ -114,14 +115,8 @@ SubCompositorInterface::SubCompositorInterface(Display *display, QObject *parent
 SubCompositorInterface::~SubCompositorInterface() = default;
 
 #ifndef K_DOXYGEN
-const struct wl_subsurface_interface SubSurfaceInterface::Private::s_interface = {
-    resourceDestroyedCallback,
-    setPositionCallback,
-    placeAboveCallback,
-    placeBelowCallback,
-    setSyncCallback,
-    setDeSyncCallback
-};
+const struct wl_subsurface_interface SubSurfaceInterface::Private::s_interface =
+    {resourceDestroyedCallback, setPositionCallback, placeAboveCallback, placeBelowCallback, setSyncCallback, setDeSyncCallback};
 #endif
 
 SubSurfaceInterface::Private::Private(SubSurfaceInterface *q, SubCompositorInterface *compositor, wl_resource *parentResource)
@@ -134,7 +129,7 @@ SubSurfaceInterface::Private::~Private()
     // no need to notify the surface as it's tracking a QPointer which will be reset automatically
     if (parent) {
         Q_Q(SubSurfaceInterface);
-        reinterpret_cast<SurfaceInterface::Private*>(parent->d.data())->removeChild(QPointer<SubSurfaceInterface>(q));
+        reinterpret_cast<SurfaceInterface::Private *>(parent->d.data())->removeChild(QPointer<SubSurfaceInterface>(q));
     }
 }
 
@@ -163,17 +158,15 @@ void SubSurfaceInterface::Private::create(ClientConnection *client, quint32 vers
     surface->d_func()->subSurfacePending.slideIsSet = false;
     parent->d_func()->addChild(QPointer<SubSurfaceInterface>(q));
 
-    QObject::connect(surface.data(), &QObject::destroyed, q,
-        [this] {
-            // from spec: "If the wl_surface associated with the wl_subsurface is destroyed,
-            // the wl_subsurface object becomes inert. Note, that destroying either object
-            // takes effect immediately."
-            if (parent) {
-                Q_Q(SubSurfaceInterface);
-                reinterpret_cast<SurfaceInterface::Private*>(parent->d.data())->removeChild(QPointer<SubSurfaceInterface>(q));
-            }
+    QObject::connect(surface.data(), &QObject::destroyed, q, [this] {
+        // from spec: "If the wl_surface associated with the wl_subsurface is destroyed,
+        // the wl_subsurface object becomes inert. Note, that destroying either object
+        // takes effect immediately."
+        if (parent) {
+            Q_Q(SubSurfaceInterface);
+            reinterpret_cast<SurfaceInterface::Private *>(parent->d.data())->removeChild(QPointer<SubSurfaceInterface>(q));
         }
-    );
+    });
 }
 
 void SubSurfaceInterface::Private::commit()
@@ -357,7 +350,7 @@ QPointer<SurfaceInterface> SubSurfaceInterface::mainSurface() const
 
 SubSurfaceInterface::Private *SubSurfaceInterface::d_func() const
 {
-    return reinterpret_cast<SubSurfaceInterface::Private*>(d.data());
+    return reinterpret_cast<SubSurfaceInterface::Private *>(d.data());
 }
 
 }

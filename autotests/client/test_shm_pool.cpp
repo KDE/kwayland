@@ -4,16 +4,16 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 // Qt
-#include <QTest>
 #include <QImage>
-#include <QThread>
 #include <QSignalSpy>
+#include <QTest>
+#include <QThread>
 // KWin
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
-#include "../../src/client/surface.h"
 #include "../../src/client/registry.h"
 #include "../../src/client/shm_pool.h"
+#include "../../src/client/surface.h"
 #include "../../src/server/buffer_interface.h"
 #include "../../src/server/compositor_interface.h"
 #include "../../src/server/display.h"
@@ -79,7 +79,7 @@ void TestShmPool::init()
     QVERIFY(connectedSpy.wait());
 
     KWayland::Client::Registry registry;
-    QSignalSpy shmSpy(&registry, SIGNAL(shmAnnounced(quint32,quint32)));
+    QSignalSpy shmSpy(&registry, SIGNAL(shmAnnounced(quint32, quint32)));
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());
     registry.setup();
@@ -155,7 +155,7 @@ void TestShmPool::testCreateBufferFromImageWithAlpha()
 {
     QVERIFY(m_shmPool->isValid());
     QImage img(24, 24, QImage::Format_ARGB32_Premultiplied);
-    img.fill(QColor(255,0,0,100)); //red with alpha
+    img.fill(QColor(255, 0, 0, 100)); // red with alpha
     QVERIFY(!img.isNull());
     auto buffer = m_shmPool->createBuffer(img).toStrongRef();
     QVERIFY(buffer);

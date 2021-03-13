@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class TextInputUnstableV0;
 class Surface;
@@ -478,19 +477,19 @@ public:
     /**
      * @returns @c null if not for a wl_text_input_manager
      **/
-    operator wl_text_input_manager*();
+    operator wl_text_input_manager *();
     /**
      * @returns @c null if not for a wl_text_input_manager
      **/
-    operator wl_text_input_manager*() const;
+    operator wl_text_input_manager *() const;
     /**
      * @returns @c null if not for a zwp_text_input_manager_v2
      **/
-    operator zwp_text_input_manager_v2*();
+    operator zwp_text_input_manager_v2 *();
     /**
      * @returns @c null if not for a zwp_text_input_manager_v2
      **/
-    operator zwp_text_input_manager_v2*() const;
+    operator zwp_text_input_manager_v2 *() const;
 
 Q_SIGNALS:
     /**

@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class EventQueue;
 class Keyboard;
 class Pointer;
@@ -125,8 +124,8 @@ public:
     bool hasPointer() const;
     bool hasTouch() const;
     QString name() const;
-    operator wl_seat*();
-    operator wl_seat*() const;
+    operator wl_seat *();
+    operator wl_seat *() const;
 
     /**
      * Creates a Keyboard.

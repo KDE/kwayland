@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Idle::Private
 {
 public:
@@ -78,12 +77,12 @@ IdleTimeout *Idle::getTimeout(quint32 msecs, Seat *seat, QObject *parent)
     return idle;
 }
 
-Idle::operator org_kde_kwin_idle*() const
+Idle::operator org_kde_kwin_idle *() const
 {
     return d->manager;
 }
 
-Idle::operator org_kde_kwin_idle*()
+Idle::operator org_kde_kwin_idle *()
 {
     return d->manager;
 }
@@ -104,21 +103,18 @@ private:
     IdleTimeout *q;
 };
 
-const org_kde_kwin_idle_timeout_listener IdleTimeout::Private::s_listener = {
-    idleCallback,
-    resumedCallback
-};
+const org_kde_kwin_idle_timeout_listener IdleTimeout::Private::s_listener = {idleCallback, resumedCallback};
 
 void IdleTimeout::Private::idleCallback(void *data, org_kde_kwin_idle_timeout *org_kde_kwin_idle_timeout)
 {
     Q_UNUSED(org_kde_kwin_idle_timeout)
-    Q_EMIT reinterpret_cast<Private*>(data)->q->idle();
+    Q_EMIT reinterpret_cast<Private *>(data)->q->idle();
 }
 
 void IdleTimeout::Private::resumedCallback(void *data, org_kde_kwin_idle_timeout *org_kde_kwin_idle_timeout)
 {
     Q_UNUSED(org_kde_kwin_idle_timeout)
-    Q_EMIT reinterpret_cast<Private*>(data)->q->resumeFromIdle();
+    Q_EMIT reinterpret_cast<Private *>(data)->q->resumeFromIdle();
 }
 
 IdleTimeout::Private::Private(IdleTimeout *q)
@@ -171,12 +167,12 @@ void IdleTimeout::simulateUserActivity()
     org_kde_kwin_idle_timeout_simulate_user_activity(d->timeout);
 }
 
-IdleTimeout::operator org_kde_kwin_idle_timeout*()
+IdleTimeout::operator org_kde_kwin_idle_timeout *()
 {
     return d->timeout;
 }
 
-IdleTimeout::operator org_kde_kwin_idle_timeout*() const
+IdleTimeout::operator org_kde_kwin_idle_timeout *() const
 {
     return d->timeout;
 }

@@ -41,7 +41,7 @@ private:
     KWayland::Server::Display *m_display = nullptr;
     KWayland::Server::ShellInterface *m_shell = nullptr;
     KWayland::Server::SeatInterface *m_seat = nullptr;
-    QVector<KWayland::Server::ShellSurfaceInterface*> m_shellSurfaces;
+    QVector<KWayland::Server::ShellSurfaceInterface *> m_shellSurfaces;
     QTimer *m_repaintTimer;
     QScopedPointer<QElapsedTimer> m_timeSinceStart;
     QPointF m_cursorPos;

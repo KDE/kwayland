@@ -5,8 +5,11 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "registry.h"
+#include "appmenu.h"
+#include "blur.h"
 #include "compositor.h"
 #include "connection_thread.h"
+#include "contrast.h"
 #include "datadevicemanager.h"
 #include "dpms.h"
 #include "event_queue.h"
@@ -15,70 +18,67 @@
 #include "idle.h"
 #include "idleinhibit.h"
 #include "keystate.h"
-#include "remote_access.h"
 #include "logging.h"
-#include "outputconfiguration.h"
-#include "outputmanagement.h"
-#include "outputdevice.h"
 #include "output.h"
+#include "outputconfiguration.h"
+#include "outputdevice.h"
+#include "outputmanagement.h"
 #include "plasmashell.h"
 #include "plasmavirtualdesktop.h"
 #include "plasmawindowmanagement.h"
 #include "pointerconstraints.h"
 #include "pointergestures.h"
-#include "seat.h"
-#include "shadow.h"
-#include "blur.h"
-#include "contrast.h"
 #include "relativepointer.h"
+#include "remote_access.h"
+#include "seat.h"
 #include "server_decoration.h"
-#include "slide.h"
+#include "server_decoration_palette.h"
+#include "shadow.h"
 #include "shell.h"
 #include "shm_pool.h"
+#include "slide.h"
 #include "subcompositor.h"
 #include "textinput_p.h"
+#include "wayland_pointer_p.h"
+#include "xdgdecoration.h"
+#include "xdgforeign_v2.h"
+#include "xdgoutput.h"
 #include "xdgshell.h"
 #include "xdgshell_p.h"
-#include "wayland_pointer_p.h"
-#include "xdgforeign_v2.h"
-#include "appmenu.h"
-#include "server_decoration_palette.h"
-#include "xdgoutput.h"
-#include "xdgdecoration.h"
 // Qt
 #include <QDebug>
 // wayland
+#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
+#include <wayland-appmenu-client-protocol.h>
+#include <wayland-blur-client-protocol.h>
 #include <wayland-client-protocol.h>
+#include <wayland-contrast-client-protocol.h>
+#include <wayland-dpms-client-protocol.h>
+#include <wayland-fake-input-client-protocol.h>
 #include <wayland-fullscreen-shell-client-protocol.h>
+#include <wayland-idle-client-protocol.h>
+#include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
+#include <wayland-keystate-client-protocol.h>
+#include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
+#include <wayland-output-management-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-virtual-desktop-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
-#include <wayland-idle-client-protocol.h>
-#include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
+#include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
+#include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
+#include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-remote-access-client-protocol.h>
-#include <wayland-fake-input-client-protocol.h>
-#include <wayland-shadow-client-protocol.h>
-#include <wayland-output-management-client-protocol.h>
-#include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
-#include <wayland-blur-client-protocol.h>
-#include <wayland-contrast-client-protocol.h>
-#include <wayland-slide-client-protocol.h>
-#include <wayland-dpms-client-protocol.h>
 #include <wayland-server-decoration-client-protocol.h>
+#include <wayland-server-decoration-palette-client-protocol.h>
+#include <wayland-shadow-client-protocol.h>
+#include <wayland-slide-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
-#include "../compat/wayland-xdg-shell-v5-client-protocol.h"
-#include <wayland-xdg-shell-v6-client-protocol.h>
-#include <wayland-xdg-shell-client-protocol.h>
-#include <wayland-relativepointer-unstable-v1-client-protocol.h>
-#include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
-#include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
-#include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
-#include <wayland-appmenu-client-protocol.h>
-#include <wayland-server-decoration-palette-client-protocol.h>
-#include <wayland-xdg-output-unstable-v1-client-protocol.h>
 #include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
-#include <wayland-keystate-client-protocol.h>
+#include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
+#include <wayland-xdg-output-unstable-v1-client-protocol.h>
+#include <wayland-xdg-shell-client-protocol.h>
+#include <wayland-xdg-shell-v6-client-protocol.h>
 
 /*****
  * How to add another interface:
@@ -97,8 +97,8 @@ namespace KWayland
 {
 namespace Client
 {
-
-namespace {
+namespace
+{
 struct SuppertedInterfaceData {
     quint32 maxVersion;
     QByteArray name;
@@ -396,9 +396,9 @@ public:
     AnnouncedInterface interface(Interface interface) const;
     QVector<AnnouncedInterface> interfaces(Interface interface) const;
     Interface interfaceForName(quint32 name) const;
-    template <typename T>
+    template<typename T>
     T *bind(Interface interface, uint32_t name, uint32_t version) const;
-    template <class T, typename WL>
+    template<class T, typename WL>
     T *create(quint32 name, quint32 version, QObject *parent, WL *(Registry::*bindMethod)(uint32_t, uint32_t) const);
 
     WaylandPointer<wl_registry, wl_registry_destroy> registry;
@@ -503,34 +503,29 @@ EventQueue *Registry::eventQueue()
 }
 
 #ifndef K_DOXYGEN
-const struct wl_registry_listener Registry::Private::s_registryListener = {
-    globalAnnounce,
-    globalRemove
-};
+const struct wl_registry_listener Registry::Private::s_registryListener = {globalAnnounce, globalRemove};
 
-const struct wl_callback_listener Registry::Private::s_callbackListener = {
-   globalSync
-};
+const struct wl_callback_listener Registry::Private::s_callbackListener = {globalSync};
 #endif
 
 void Registry::Private::globalAnnounce(void *data, wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
 {
-    auto r = reinterpret_cast<Registry::Private*>(data);
+    auto r = reinterpret_cast<Registry::Private *>(data);
     Q_ASSERT(registry == r->registry);
     r->handleAnnounce(name, interface, version);
 }
 
 void Registry::Private::globalRemove(void *data, wl_registry *registry, uint32_t name)
 {
-    auto r = reinterpret_cast<Registry::Private*>(data);
+    auto r = reinterpret_cast<Registry::Private *>(data);
     Q_ASSERT(registry == r->registry);
     r->handleRemove(name);
 }
 
-void Registry::Private::globalSync(void* data, wl_callback* callback, uint32_t serial)
+void Registry::Private::globalSync(void *data, wl_callback *callback, uint32_t serial)
 {
     Q_UNUSED(serial)
-    auto r = reinterpret_cast<Registry::Private*>(data);
+    auto r = reinterpret_cast<Registry::Private *>(data);
     Q_ASSERT(r->callback == callback);
     r->handleGlobalSync();
     r->callback.release();
@@ -541,7 +536,8 @@ void Registry::Private::handleGlobalSync()
     Q_EMIT q->interfacesAnnounced();
 }
 
-namespace {
+namespace
+{
 static Registry::Interface nameToInterface(const char *interface)
 {
     for (auto it = s_interfaces.constBegin(); it != s_interfaces.constEnd(); ++it) {
@@ -565,23 +561,21 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
     m_interfaces.append({i, name, version});
     auto it = s_interfaces.constFind(i);
     if (it != s_interfaces.end()) {
-        Q_EMIT (q->*it.value().announcedSignal)(name, version);
+        Q_EMIT(q->*it.value().announcedSignal)(name, version);
     }
 }
 
 void Registry::Private::handleRemove(uint32_t name)
 {
-    auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(),
-        [name](const InterfaceData &data) {
-            return data.name == name;
-        }
-    );
+    auto it = std::find_if(m_interfaces.begin(), m_interfaces.end(), [name](const InterfaceData &data) {
+        return data.name == name;
+    });
     if (it != m_interfaces.end()) {
         InterfaceData data = *(it);
         m_interfaces.erase(it);
         auto sit = s_interfaces.find(data.interface);
         if (sit != s_interfaces.end()) {
-            Q_EMIT (q->*sit.value().removedSignal)(data.name);
+            Q_EMIT(q->*sit.value().removedSignal)(data.name);
         }
     }
     Q_EMIT q->interfaceRemoved(name);
@@ -589,11 +583,9 @@ void Registry::Private::handleRemove(uint32_t name)
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const
 {
-    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(),
-        [interface](const InterfaceData &data) {
-            return data.interface == interface;
-        }
-    );
+    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(), [interface](const InterfaceData &data) {
+        return data.interface == interface;
+    });
     return it != m_interfaces.constEnd();
 }
 
@@ -620,10 +612,9 @@ Registry::AnnouncedInterface Registry::Private::interface(Interface interface) c
 
 Registry::Interface Registry::Private::interfaceForName(quint32 name) const
 {
-    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(),
-        [name] (const InterfaceData &data) {
-            return data.name == name;
-        });
+    auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(), [name](const InterfaceData &data) {
+        return data.name == name;
+    });
     if (it == m_interfaces.constEnd()) {
         return Interface::Unknown;
     }
@@ -697,19 +688,17 @@ BIND(XdgDecorationUnstableV1, zxdg_decoration_manager_v1)
 #undef BIND
 #undef BIND2
 
-template <class T, typename WL>
+template<class T, typename WL>
 T *Registry::Private::create(quint32 name, quint32 version, QObject *parent, WL *(Registry::*bindMethod)(uint32_t, uint32_t) const)
 {
     T *t = new T(parent);
     t->setEventQueue(queue);
     t->setup((q->*bindMethod)(name, version));
-    QObject::connect(q, &Registry::interfaceRemoved, t,
-        [t, name] (quint32 removed) {
-            if (name == removed) {
-                Q_EMIT t->removed();
-            }
+    QObject::connect(q, &Registry::interfaceRemoved, t, [t, name](quint32 removed) {
+        if (name == removed) {
+            Q_EMIT t->removed();
         }
-    );
+    });
     QObject::connect(q, &Registry::registryDestroyed, t, &T::destroy);
     return t;
 }
@@ -755,13 +744,13 @@ CREATE(ServerSideDecorationPaletteManager)
 
 XdgExporter *Registry::createXdgExporter(quint32 name, quint32 version, QObject *parent)
 {
-    //only V1 supported for now
+    // only V1 supported for now
     return d->create<XdgExporterUnstableV2>(name, version, parent, &Registry::bindXdgExporterUnstableV2);
 }
 
 XdgImporter *Registry::createXdgImporter(quint32 name, quint32 version, QObject *parent)
 {
-    //only V1 supported for now
+    // only V1 supported for now
     return d->create<XdgImporterUnstableV2>(name, version, parent, &Registry::bindXdgImporterUnstableV2);
 }
 
@@ -833,7 +822,7 @@ IdleInhibitManager *Registry::createIdleInhibitManager(quint32 name, quint32 ver
 
 XdgOutputManager *Registry::createXdgOutputManager(quint32 name, quint32 version, QObject *parent)
 {
-    switch(d->interfaceForName(name)) {
+    switch (d->interfaceForName(name)) {
     case Interface::XdgOutputUnstableV1:
         return d->create<XdgOutputManager>(name, version, parent, &Registry::bindXdgOutputUnstableV1);
     default:
@@ -843,7 +832,7 @@ XdgOutputManager *Registry::createXdgOutputManager(quint32 name, quint32 version
 
 XdgDecorationManager *Registry::createXdgDecorationManager(quint32 name, quint32 version, QObject *parent)
 {
-    switch(d->interfaceForName(name)) {
+    switch (d->interfaceForName(name)) {
     case Interface::XdgDecorationUnstableV1:
         return d->create<XdgDecorationManager>(name, version, parent, &Registry::bindXdgDecorationUnstableV1);
     default:
@@ -851,7 +840,8 @@ XdgDecorationManager *Registry::createXdgDecorationManager(quint32 name, quint32
     }
 }
 
-namespace {
+namespace
+{
 static const wl_interface *wlInterface(Registry::Interface interface)
 {
     auto it = s_interfaces.find(interface);
@@ -862,7 +852,7 @@ static const wl_interface *wlInterface(Registry::Interface interface)
 }
 }
 
-template <typename T>
+template<typename T>
 T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_t version) const
 {
     auto it = std::find_if(m_interfaces.constBegin(), m_interfaces.constEnd(), [=](const InterfaceData &data) {
@@ -872,7 +862,7 @@ T *Registry::Private::bind(Registry::Interface interface, uint32_t name, uint32_
         qCDebug(KWAYLAND_CLIENT) << "Don't have interface " << int(interface) << "with name " << name << "and minimum version" << version;
         return nullptr;
     }
-    auto t = reinterpret_cast<T*>(wl_registry_bind(registry, name, wlInterface(interface), version));
+    auto t = reinterpret_cast<T *>(wl_registry_bind(registry, name, wlInterface(interface), version));
     if (queue) {
         queue->addProxy(t);
     }
@@ -889,12 +879,12 @@ wl_registry *Registry::registry()
     return d->registry;
 }
 
-Registry::operator wl_registry*() const
+Registry::operator wl_registry *() const
 {
     return d->registry;
 }
 
-Registry::operator wl_registry*()
+Registry::operator wl_registry *()
 {
     return d->registry;
 }

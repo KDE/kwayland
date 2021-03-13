@@ -5,35 +5,33 @@
 */
 
 #include "xdgforeign_interface.h"
-#include "xdgforeign_v2_interface_p.h"
 #include "display.h"
 #include "global_p.h"
 #include "resource_p.h"
 #include "surface_interface_p.h"
+#include "xdgforeign_v2_interface_p.h"
 
 #include "wayland-xdg-foreign-unstable-v2-server-protocol.h"
 
-#include <QUuid>
 #include <QDebug>
+#include <QUuid>
 
 namespace KWayland
 {
 namespace Server
 {
-
 XdgForeignInterface::Private::Private(Display *display, XdgForeignInterface *q)
     : q(q)
 {
     exporter = new XdgExporterUnstableV2Interface(display, q);
     importer = new XdgImporterUnstableV2Interface(display, q);
 
-    connect(importer, &XdgImporterUnstableV2Interface::transientChanged,
-        q, &XdgForeignInterface::transientChanged);
+    connect(importer, &XdgImporterUnstableV2Interface::transientChanged, q, &XdgForeignInterface::transientChanged);
 }
 
 XdgForeignInterface::XdgForeignInterface(Display *display, QObject *parent)
-    : QObject(parent),
-      d(new Private(display, this))
+    : QObject(parent)
+    , d(new Private(display, this))
 {
 }
 
@@ -62,4 +60,3 @@ SurfaceInterface *XdgForeignInterface::transientFor(SurfaceInterface *surface)
 
 }
 }
-

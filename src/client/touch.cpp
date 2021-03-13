@@ -17,7 +17,6 @@ namespace KWayland
 {
 namespace Client
 {
-
 class Q_DECL_HIDDEN Touch::Private
 {
 public:
@@ -25,7 +24,7 @@ public:
     void setup(wl_touch *t);
     WaylandPointer<wl_touch, wl_touch_release> touch;
     bool active = false;
-    QVector<TouchPoint*> sequence;
+    QVector<TouchPoint *> sequence;
     TouchPoint *getActivePoint(qint32 id) const;
 
 private:
@@ -69,7 +68,7 @@ QPointF TouchPoint::position() const
     return d->positions.last();
 }
 
-QVector< QPointF > TouchPoint::positions() const
+QVector<QPointF> TouchPoint::positions() const
 {
     return d->positions;
 }
@@ -84,7 +83,7 @@ quint32 TouchPoint::upSerial() const
     return d->upSerial;
 }
 
-QPointer< Surface > TouchPoint::surface() const
+QPointer<Surface> TouchPoint::surface() const
 {
     return d->surface;
 }
@@ -97,7 +96,7 @@ quint32 TouchPoint::time() const
     return d->timestamps.last();
 }
 
-QVector< quint32 > TouchPoint::timestamps() const
+QVector<quint32> TouchPoint::timestamps() const
 {
     return d->timestamps;
 }
@@ -125,22 +124,16 @@ void Touch::Private::setup(wl_touch *t)
     wl_touch_add_listener(touch, &s_listener, this);
 }
 
-const wl_touch_listener Touch::Private::s_listener = {
-    downCallback,
-    upCallback,
-    motionCallback,
-    frameCallback,
-    cancelCallback
-};
+const wl_touch_listener Touch::Private::s_listener = {downCallback, upCallback, motionCallback, frameCallback, cancelCallback};
 
 void Touch::Private::downCallback(void *data, wl_touch *touch, uint32_t serial, uint32_t time, wl_surface *surface, int32_t id, wl_fixed_t x, wl_fixed_t y)
 {
-    auto t = reinterpret_cast<Touch::Private*>(data);
+    auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
     t->down(serial, time, id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), QPointer<Surface>(Surface::get(surface)));
 }
 
-void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF &position, const QPointer< Surface> &surface)
+void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF &position, const QPointer<Surface> &surface)
 {
     TouchPoint *p = new TouchPoint;
     p->d->downSerial = serial;
@@ -162,11 +155,9 @@ void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF
 
 TouchPoint *Touch::Private::getActivePoint(qint32 id) const
 {
-    auto it = std::find_if(sequence.constBegin(), sequence.constEnd(),
-        [id] (TouchPoint *p) {
-            return p->id() == id && p->isDown();
-        }
-    );
+    auto it = std::find_if(sequence.constBegin(), sequence.constEnd(), [id](TouchPoint *p) {
+        return p->id() == id && p->isDown();
+    });
     if (it == sequence.constEnd()) {
         return nullptr;
     }
@@ -175,7 +166,7 @@ TouchPoint *Touch::Private::getActivePoint(qint32 id) const
 
 void Touch::Private::upCallback(void *data, wl_touch *touch, uint32_t serial, uint32_t time, int32_t id)
 {
-    auto t = reinterpret_cast<Touch::Private*>(data);
+    auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
     t->up(serial, time, id);
 }
@@ -203,7 +194,7 @@ void Touch::Private::up(quint32 serial, quint32 time, qint32 id)
 
 void Touch::Private::motionCallback(void *data, wl_touch *touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
 {
-    auto t = reinterpret_cast<Touch::Private*>(data);
+    auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
     t->motion(time, id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)));
 }
@@ -221,14 +212,14 @@ void Touch::Private::motion(quint32 time, qint32 id, const QPointF &position)
 
 void Touch::Private::frameCallback(void *data, wl_touch *touch)
 {
-    auto t = reinterpret_cast<Touch::Private*>(data);
+    auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
     Q_EMIT t->q->frameEnded();
 }
 
 void Touch::Private::cancelCallback(void *data, wl_touch *touch)
 {
-    auto t = reinterpret_cast<Touch::Private*>(data);
+    auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
     t->active = false;
     Q_EMIT t->q->sequenceCanceled();
@@ -275,7 +266,7 @@ Touch::operator wl_touch *()
     return d->touch;
 }
 
-QVector< TouchPoint* > Touch::sequence() const
+QVector<TouchPoint *> Touch::sequence() const
 {
     return d->sequence;
 }

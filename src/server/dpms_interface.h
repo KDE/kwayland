@@ -8,14 +8,13 @@
 
 #include <QObject>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /**

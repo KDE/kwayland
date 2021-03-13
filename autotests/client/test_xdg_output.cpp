@@ -8,11 +8,11 @@
 #include <QTest>
 // KWin
 #include "../../src/client/connection_thread.h"
-#include "../../src/client/event_queue.h"
 #include "../../src/client/dpms.h"
+#include "../../src/client/event_queue.h"
 #include "../../src/client/output.h"
-#include "../../src/client/xdgoutput.h"
 #include "../../src/client/registry.h"
+#include "../../src/client/xdgoutput.h"
 #include "../../src/server/display.h"
 #include "../../src/server/dpms_interface.h"
 #include "../../src/server/output_interface.h"
@@ -29,6 +29,7 @@ private Q_SLOTS:
     void init();
     void cleanup();
     void testChanges();
+
 private:
     KWayland::Server::Display *m_display;
     KWayland::Server::OutputInterface *m_serverOutput;
@@ -66,9 +67,9 @@ void TestXdgOutput::init()
 
     m_serverXdgOutputManager = m_display->createXdgOutputManager(this);
     m_serverXdgOutputManager->create();
-    m_serverXdgOutput =  m_serverXdgOutputManager->createXdgOutput(m_serverOutput, this);
-    m_serverXdgOutput->setLogicalSize(QSize(1280, 720)); //a 1.5 scale factor
-    m_serverXdgOutput->setLogicalPosition(QPoint(11,12)); //not a sensible value for one monitor, but works for this test
+    m_serverXdgOutput = m_serverXdgOutputManager->createXdgOutput(m_serverOutput, this);
+    m_serverXdgOutput->setLogicalSize(QSize(1280, 720)); // a 1.5 scale factor
+    m_serverXdgOutput->setLogicalPosition(QPoint(11, 12)); // not a sensible value for one monitor, but works for this test
     m_serverXdgOutput->setName("testName");
     m_serverXdgOutput->setDescription("testDescription");
 
@@ -120,8 +121,8 @@ void TestXdgOutput::testChanges()
     using namespace KWayland::Server;
     using namespace KWayland::Client;
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
-    QSignalSpy xdgOutputAnnounced(&registry, SIGNAL(xdgOutputAnnounced(quint32,quint32)));
+    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
+    QSignalSpy xdgOutputAnnounced(&registry, SIGNAL(xdgOutputAnnounced(quint32, quint32)));
 
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
@@ -138,23 +139,23 @@ void TestXdgOutput::testChanges()
     output.setup(registry.bindOutput(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     QVERIFY(outputChanged.wait());
 
-    QScopedPointer<KWayland::Client::XdgOutputManager> xdgOutputManager(registry.createXdgOutputManager(xdgOutputAnnounced.first().first().value<quint32>(), xdgOutputAnnounced.first().last().value<quint32>(), this));
+    QScopedPointer<KWayland::Client::XdgOutputManager> xdgOutputManager(
+        registry.createXdgOutputManager(xdgOutputAnnounced.first().first().value<quint32>(), xdgOutputAnnounced.first().last().value<quint32>(), this));
 
     QScopedPointer<KWayland::Client::XdgOutput> xdgOutput(xdgOutputManager->getXdgOutput(&output, this));
     QSignalSpy xdgOutputChanged(xdgOutput.data(), SIGNAL(changed()));
 
-    //check details are sent on client bind
+    // check details are sent on client bind
     QVERIFY(xdgOutputChanged.wait());
     xdgOutputChanged.clear();
-    QCOMPARE(xdgOutput->logicalPosition(), QPoint(11,12));
-    QCOMPARE(xdgOutput->logicalSize(), QSize(1280,720));
+    QCOMPARE(xdgOutput->logicalPosition(), QPoint(11, 12));
+    QCOMPARE(xdgOutput->logicalSize(), QSize(1280, 720));
     QCOMPARE(xdgOutput->name(), "testName");
     QCOMPARE(xdgOutput->description(), "testDescription");
 
-
     // dynamic updates
     m_serverXdgOutput->setLogicalPosition(QPoint(1000, 2000));
-    m_serverXdgOutput->setLogicalSize(QSize(100,200));
+    m_serverXdgOutput->setLogicalSize(QSize(100, 200));
     // names cannot dynamically change according to the spec
 
     m_serverXdgOutput->done();
@@ -162,7 +163,7 @@ void TestXdgOutput::testChanges()
     QVERIFY(xdgOutputChanged.wait());
     QCOMPARE(xdgOutputChanged.count(), 1);
     QCOMPARE(xdgOutput->logicalPosition(), QPoint(1000, 2000));
-    QCOMPARE(xdgOutput->logicalSize(), QSize(100,200));
+    QCOMPARE(xdgOutput->logicalSize(), QSize(100, 200));
 }
 
 QTEST_GUILESS_MAIN(TestXdgOutput)

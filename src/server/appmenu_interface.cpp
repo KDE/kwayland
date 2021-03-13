@@ -5,10 +5,10 @@
 */
 #include "appmenu_interface.h"
 #include "display.h"
-#include "surface_interface.h"
 #include "global_p.h"
-#include "resource_p.h"
 #include "logging.h"
+#include "resource_p.h"
+#include "surface_interface.h"
 
 #include <QtGlobal>
 
@@ -23,16 +23,18 @@ class AppMenuManagerInterface::Private : public Global::Private
 public:
     Private(AppMenuManagerInterface *q, Display *d);
 
-    QVector<AppMenuInterface*> appmenus;
+    QVector<AppMenuInterface *> appmenus;
+
 private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
 
-    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface);
+    static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
 
     AppMenuManagerInterface *q;
     static const struct org_kde_kwin_appmenu_manager_interface s_interface;
@@ -42,14 +44,12 @@ private:
 const quint32 AppMenuManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_appmenu_manager_interface AppMenuManagerInterface::Private::s_interface = {
-    createCallback
-};
+const struct org_kde_kwin_appmenu_manager_interface AppMenuManagerInterface::Private::s_interface = {createCallback};
 #endif
 
-void AppMenuManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource * surface)
+void AppMenuManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
     SurfaceInterface *s = SurfaceInterface::get(surface);
@@ -100,13 +100,14 @@ public:
     Private(AppMenuInterface *q, AppMenuManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
     ~Private();
 
-
     SurfaceInterface *surface;
     InterfaceAddress address;
-private:
-    static void setAddressCallback(wl_client *client, wl_resource *resource, const char * service_name, const char * object_path);
 
-    AppMenuInterface *q_func() {
+private:
+    static void setAddressCallback(wl_client *client, wl_resource *resource, const char *service_name, const char *object_path);
+
+    AppMenuInterface *q_func()
+    {
         return reinterpret_cast<AppMenuInterface *>(q);
     }
     static AppMenuInterface *get(SurfaceInterface *s);
@@ -114,20 +115,16 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_appmenu_interface AppMenuInterface::Private::s_interface = {
-    setAddressCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_appmenu_interface AppMenuInterface::Private::s_interface = {setAddressCallback, resourceDestroyedCallback};
 #endif
 
-void AppMenuInterface::Private::setAddressCallback(wl_client *client, wl_resource *resource, const char * service_name, const char * object_path)
+void AppMenuInterface::Private::setAddressCallback(wl_client *client, wl_resource *resource, const char *service_name, const char *object_path)
 {
     Q_UNUSED(client);
-    auto p = reinterpret_cast<Private*>(wl_resource_get_user_data(resource));
+    auto p = reinterpret_cast<Private *>(wl_resource_get_user_data(resource));
     Q_ASSERT(p);
 
-    if (p->address.serviceName == QLatin1String(service_name) &&
-        p->address.objectPath == QLatin1String(object_path)) {
+    if (p->address.serviceName == QLatin1String(service_name) && p->address.objectPath == QLatin1String(object_path)) {
         return;
     }
     p->address.serviceName = QString::fromLatin1(service_name);
@@ -136,8 +133,8 @@ void AppMenuInterface::Private::setAddressCallback(wl_client *client, wl_resourc
 }
 
 AppMenuInterface::Private::Private(AppMenuInterface *q, AppMenuManagerInterface *c, SurfaceInterface *s, wl_resource *parentResource)
-    : Resource::Private(q, c, parentResource, &org_kde_kwin_appmenu_interface, &s_interface),
-    surface(s)
+    : Resource::Private(q, c, parentResource, &org_kde_kwin_appmenu_interface, &s_interface)
+    , surface(s)
 {
 }
 
@@ -160,13 +157,13 @@ AppMenuManagerInterface::~AppMenuManagerInterface()
 
 AppMenuManagerInterface::Private *AppMenuManagerInterface::d_func() const
 {
-    return reinterpret_cast<AppMenuManagerInterface::Private*>(d.data());
+    return reinterpret_cast<AppMenuManagerInterface::Private *>(d.data());
 }
 
-AppMenuInterface* AppMenuManagerInterface::appMenuForSurface(SurfaceInterface *surface)
+AppMenuInterface *AppMenuManagerInterface::appMenuForSurface(SurfaceInterface *surface)
 {
     Q_D();
-    for (AppMenuInterface* menu: d->appmenus) {
+    for (AppMenuInterface *menu : d->appmenus) {
         if (menu->surface() == surface) {
             return menu;
         }
@@ -174,29 +171,31 @@ AppMenuInterface* AppMenuManagerInterface::appMenuForSurface(SurfaceInterface *s
     return nullptr;
 }
 
-AppMenuInterface::AppMenuInterface(AppMenuManagerInterface *parent, SurfaceInterface *s, wl_resource *parentResource):
-    Resource(new Private(this, parent, s, parentResource))
+AppMenuInterface::AppMenuInterface(AppMenuManagerInterface *parent, SurfaceInterface *s, wl_resource *parentResource)
+    : Resource(new Private(this, parent, s, parentResource))
 {
 }
 
 AppMenuInterface::Private *AppMenuInterface::d_func() const
 {
-    return reinterpret_cast<AppMenuInterface::Private*>(d.data());
+    return reinterpret_cast<AppMenuInterface::Private *>(d.data());
 }
 
 AppMenuInterface::~AppMenuInterface()
-{}
+{
+}
 
-AppMenuInterface::InterfaceAddress AppMenuInterface::address() const {
+AppMenuInterface::InterfaceAddress AppMenuInterface::address() const
+{
     Q_D();
     return d->address;
 }
 
-SurfaceInterface* AppMenuInterface::surface() const {
+SurfaceInterface *AppMenuInterface::surface() const
+{
     Q_D();
     return d->surface;
 }
 
-}//namespace
+} // namespace
 }
-

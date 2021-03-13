@@ -9,13 +9,13 @@
 // client
 #include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/registry.h"
 #include "../../src/client/plasmawindowmanagement.h"
 #include "../../src/client/plasmawindowmodel.h"
+#include "../../src/client/registry.h"
 // server
 #include "../../src/server/display.h"
-#include "../../src/server/plasmawindowmanagement_interface.h"
 #include "../../src/server/plasmavirtualdesktop_interface.h"
+#include "../../src/server/plasmawindowmanagement_interface.h"
 
 #include <linux/input.h>
 
@@ -27,13 +27,13 @@ typedef void (KWayland::Client::PlasmaWindow::*ClientWindowSignal)();
 Q_DECLARE_METATYPE(ClientWindowSignal)
 typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowBoolSetter)(bool);
 Q_DECLARE_METATYPE(ServerWindowBoolSetter)
-typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowStringSetter)(const QString&);
+typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowStringSetter)(const QString &);
 Q_DECLARE_METATYPE(ServerWindowStringSetter)
 typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowQuint32Setter)(quint32);
 Q_DECLARE_METATYPE(ServerWindowQuint32Setter)
 typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowVoidSetter)();
 Q_DECLARE_METATYPE(ServerWindowVoidSetter)
-typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowIconSetter)(const QIcon&);
+typedef void (KWayland::Server::PlasmaWindowInterface::*ServerWindowIconSetter)(const QIcon &);
 Q_DECLARE_METATYPE(ServerWindowIconSetter)
 
 class PlasmaWindowModelTest : public QObject
@@ -143,10 +143,10 @@ void PlasmaWindowModelTest::init()
 
 void PlasmaWindowModelTest::cleanup()
 {
-#define CLEANUP(variable) \
-    if (variable) { \
-        delete variable; \
-        variable = nullptr; \
+#define CLEANUP(variable)                                                                                                                                      \
+    if (variable) {                                                                                                                                            \
+        delete variable;                                                                                                                                       \
+        variable = nullptr;                                                                                                                                    \
     }
     CLEANUP(m_pw)
     CLEANUP(m_plasmaVirtualDesktopManagementInterface)
@@ -169,12 +169,12 @@ void PlasmaWindowModelTest::cleanup()
 
 bool PlasmaWindowModelTest::testBooleanData(PlasmaWindowModel::AdditionalRoles role, void (PlasmaWindowInterface::*function)(bool))
 {
-#define VERIFY(statement) \
-if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__))\
-    return false;
-#define COMPARE(actual, expected) \
-if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__))\
-    return false;
+#define VERIFY(statement)                                                                                                                                      \
+    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__))                                                                                      \
+        return false;
+#define COMPARE(actual, expected)                                                                                                                              \
+    if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__))                                                                            \
+        return false;
 
     auto model = m_pw->createWindowModel();
     VERIFY(model);
@@ -540,7 +540,7 @@ void PlasmaWindowModelTest::testPid()
     m_display->dispatchEvents();
     QVERIFY(rowInsertedSpy.wait());
 
-    //pid should be set as soon as the new row appears
+    // pid should be set as soon as the new row appears
     const QModelIndex index = model->index(0);
     QCOMPARE(model->data(index, PlasmaWindowModel::Pid).toInt(), 1337);
 }
@@ -823,7 +823,7 @@ void PlasmaWindowModelTest::testCreateWithUnmappedWindow()
     auto w = m_pwInterface->createWindow(m_pwInterface);
     QVERIFY(w);
     QVERIFY(windowCreatedSpy.wait());
-    PlasmaWindow *window = windowCreatedSpy.first().first().value<PlasmaWindow*>();
+    PlasmaWindow *window = windowCreatedSpy.first().first().value<PlasmaWindow *>();
     QVERIFY(window);
     // make sure the resource is properly created on server side
     QCoreApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents);
@@ -893,7 +893,7 @@ void PlasmaWindowModelTest::testChangeWindowAfterModelDestroy()
     QVERIFY(windowCreatedSpy.isValid());
     auto w = m_pwInterface->createWindow(m_pwInterface);
     QVERIFY(windowCreatedSpy.wait());
-    PlasmaWindow *window = windowCreatedSpy.first().first().value<PlasmaWindow*>();
+    PlasmaWindow *window = windowCreatedSpy.first().first().value<PlasmaWindow *>();
     // make sure the resource is properly created on server side
     QCoreApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents);
     QCOMPARE(model->rowCount(), 1);

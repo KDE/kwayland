@@ -5,12 +5,12 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "outputmanagement_interface.h"
-#include "outputconfiguration_interface.h"
 #include "display.h"
 #include "global_p.h"
+#include "outputconfiguration_interface.h"
 
-#include <wayland-server.h>
 #include "wayland-output-management-server-protocol.h"
+#include <wayland-server.h>
 
 #include <QHash>
 
@@ -18,7 +18,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class OutputManagementInterface::Private : public Global::Private
 {
 public:
@@ -28,8 +27,9 @@ private:
     void bind(wl_client *client, uint32_t version, uint32_t id) override;
 
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        return reinterpret_cast<Private*>(wl_resource_get_user_data(r));
+    static Private *cast(wl_resource *r)
+    {
+        return reinterpret_cast<Private *>(wl_resource_get_user_data(r));
     }
     void createConfiguration(wl_client *client, wl_resource *resource, uint32_t id);
 
@@ -39,17 +39,15 @@ private:
     static const struct org_kde_kwin_outputmanagement_interface s_interface;
     static const quint32 s_version;
 
-    QHash<wl_resource*, OutputConfigurationInterface*> configurationInterfaces;
+    QHash<wl_resource *, OutputConfigurationInterface *> configurationInterfaces;
 };
 
 const quint32 OutputManagementInterface::Private::s_version = 2;
 
-const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {
-    createConfigurationCallback
-};
+const struct org_kde_kwin_outputmanagement_interface OutputManagementInterface::Private::s_interface = {createConfigurationCallback};
 
 OutputManagementInterface::OutputManagementInterface(Display *display, QObject *parent)
-: Global(new Private(this, display), parent)
+    : Global(new Private(this, display), parent)
 {
 }
 
@@ -62,7 +60,7 @@ void OutputManagementInterface::Private::createConfigurationCallback(wl_client *
     cast(resource)->createConfiguration(client, resource, id);
 }
 
-void OutputManagementInterface::Private::createConfiguration(wl_client* client, wl_resource* resource, uint32_t id)
+void OutputManagementInterface::Private::createConfiguration(wl_client *client, wl_resource *resource, uint32_t id)
 {
     auto config = new OutputConfigurationInterface(q, resource);
     config->create(display->getConnection(client), wl_resource_get_version(resource), id);
@@ -79,8 +77,8 @@ void OutputManagementInterface::Private::createConfiguration(wl_client* client, 
 }
 
 OutputManagementInterface::Private::Private(OutputManagementInterface *q, Display *d)
-: Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)
-, q(q)
+    : Global::Private(d, &org_kde_kwin_outputmanagement_interface, s_version)
+    , q(q)
 {
 }
 

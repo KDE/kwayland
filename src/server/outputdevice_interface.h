@@ -11,8 +11,8 @@
 #include <QSize>
 #include <QVector>
 
-#include <KWayland/Server/kwaylandserver_export.h>
 #include "global.h"
+#include <KWayland/Server/kwaylandserver_export.h>
 
 struct wl_resource;
 
@@ -20,7 +20,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 
 /** @class OutputDeviceInterface
@@ -143,16 +142,16 @@ public:
     void setUuid(const QByteArray &uuid);
 
     static OutputDeviceInterface *get(wl_resource *native);
-    static QList<OutputDeviceInterface *>list();
+    static QList<OutputDeviceInterface *> list();
 
 Q_SIGNALS:
-    void physicalSizeChanged(const QSize&);
-    void globalPositionChanged(const QPoint&);
-    void manufacturerChanged(const QString&);
-    void modelChanged(const QString&);
-    void serialNumberChanged(const QString&);
+    void physicalSizeChanged(const QSize &);
+    void globalPositionChanged(const QPoint &);
+    void manufacturerChanged(const QString &);
+    void modelChanged(const QString &);
+    void serialNumberChanged(const QString &);
     void eisaIdChanged(const QString &);
-    void pixelSizeChanged(const QSize&);
+    void pixelSizeChanged(const QSize &);
     void refreshRateChanged(int);
 #if KWAYLANDSERVER_ENABLE_DEPRECATED_SINCE(5, 50)
     /// @deprecated Since 5.50, use scaleFChanged(qreal)

@@ -9,18 +9,18 @@
 // Qt
 #include <QTest>
 // client
-#include "../../src/client/xdgshell.h"
-#include "../../src/client/connection_thread.h"
 #include "../../src/client/compositor.h"
+#include "../../src/client/connection_thread.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/registry.h"
 #include "../../src/client/output.h"
+#include "../../src/client/registry.h"
 #include "../../src/client/seat.h"
 #include "../../src/client/shm_pool.h"
 #include "../../src/client/surface.h"
+#include "../../src/client/xdgshell.h"
 // server
-#include "../../src/server/display.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/display.h"
 #include "../../src/server/output_interface.h"
 #include "../../src/server/seat_interface.h"
 #include "../../src/server/surface_interface.h"
@@ -79,14 +79,14 @@ private:
     XdgShellInterfaceVersion m_version;
 };
 
-#define SURFACE \
-    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated); \
-    QVERIFY(xdgSurfaceCreatedSpy.isValid()); \
-    QScopedPointer<Surface> surface(m_compositor->createSurface()); \
-    QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data())); \
-    QCOMPARE(xdgSurface->size(), QSize()); \
-    QVERIFY(xdgSurfaceCreatedSpy.wait()); \
-    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface*>(); \
+#define SURFACE                                                                                                                                                \
+    QSignalSpy xdgSurfaceCreatedSpy(m_xdgShellInterface, &XdgShellInterface::surfaceCreated);                                                                  \
+    QVERIFY(xdgSurfaceCreatedSpy.isValid());                                                                                                                   \
+    QScopedPointer<Surface> surface(m_compositor->createSurface());                                                                                            \
+    QScopedPointer<XdgShellSurface> xdgSurface(m_xdgShell->createSurface(surface.data()));                                                                     \
+    QCOMPARE(xdgSurface->size(), QSize());                                                                                                                     \
+    QVERIFY(xdgSurfaceCreatedSpy.wait());                                                                                                                      \
+    auto serverXdgSurface = xdgSurfaceCreatedSpy.first().first().value<XdgShellSurfaceInterface *>();                                                          \
     QVERIFY(serverXdgSurface);
 
 #endif

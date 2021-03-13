@@ -35,7 +35,6 @@ namespace KWayland
  **/
 namespace Server
 {
-
 class CompositorInterface;
 class DataDeviceManagerInterface;
 class DpmsManagerInterface;
@@ -157,17 +156,17 @@ public:
      **/
     ClientConnection *createClient(int fd);
 
-    operator wl_display*();
-    operator wl_display*() const;
+    operator wl_display *();
+    operator wl_display *() const;
     bool isRunning() const;
 
     OutputInterface *createOutput(QObject *parent = nullptr);
     void removeOutput(OutputInterface *output);
-    QList<OutputInterface*> outputs() const;
+    QList<OutputInterface *> outputs() const;
 
     OutputDeviceInterface *createOutputDevice(QObject *parent = nullptr);
     void removeOutputDevice(OutputDeviceInterface *output);
-    QList<OutputDeviceInterface*> outputDevices() const;
+    QList<OutputDeviceInterface *> outputDevices() const;
 
     CompositorInterface *createCompositor(QObject *parent = nullptr);
     void createShm();
@@ -177,7 +176,7 @@ public:
      * @returns All SeatInterface currently managed on the Display.
      * @since 5.6
      **/
-    QVector<SeatInterface*> seats() const;
+    QVector<SeatInterface *> seats() const;
     SubCompositorInterface *createSubCompositor(QObject *parent = nullptr);
     DataDeviceManagerInterface *createDataDeviceManager(QObject *parent = nullptr);
     OutputManagementInterface *createOutputManagement(QObject *parent = nullptr);
@@ -285,7 +284,6 @@ public:
      */
     XdgOutputManagerInterface *createXdgOutputManager(QObject *parent = nullptr);
 
-
     /**
      * Creates the PlasmaVirtualDesktopManagementInterface in interface @p version.
      *
@@ -325,7 +323,7 @@ public:
      * @return The ClientConnection for the given native client
      **/
     ClientConnection *getConnection(wl_client *client);
-    QVector<ClientConnection*> connections() const;
+    QVector<ClientConnection *> connections() const;
 
     /**
      * Set the EGL @p display for this Wayland display.
@@ -345,12 +343,12 @@ public:
     void *eglDisplay() const;
 
 Q_SIGNALS:
-    void socketNameChanged(const QString&);
+    void socketNameChanged(const QString &);
     void automaticSocketNamingChanged(bool);
     void runningChanged(bool);
     void aboutToTerminate();
-    void clientConnected(KWayland::Server::ClientConnection*);
-    void clientDisconnected(KWayland::Server::ClientConnection*);
+    void clientConnected(KWayland::Server::ClientConnection *);
+    void clientDisconnected(KWayland::Server::ClientConnection *);
 
 private:
     class Private;

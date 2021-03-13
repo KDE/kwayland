@@ -5,20 +5,19 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "blur_interface.h"
-#include "region_interface.h"
 #include "display.h"
 #include "global_p.h"
+#include "region_interface.h"
 #include "resource_p.h"
 #include "surface_interface_p.h"
 
-#include <wayland-server.h>
 #include <wayland-blur-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class BlurManagerInterface::Private : public Global::Private
 {
 public:
@@ -31,10 +30,11 @@ private:
     static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
     static void unsetCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        auto blurManager = reinterpret_cast<QPointer<BlurManagerInterface>*>(wl_resource_get_user_data(r))->data();
+    static Private *cast(wl_resource *r)
+    {
+        auto blurManager = reinterpret_cast<QPointer<BlurManagerInterface> *>(wl_resource_get_user_data(r))->data();
         if (blurManager) {
-            return static_cast<Private*>(blurManager->d.data());
+            return static_cast<Private *>(blurManager->d.data());
         }
         return nullptr;
     }
@@ -46,10 +46,7 @@ private:
 const quint32 BlurManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_blur_manager_interface BlurManagerInterface::Private::s_interface = {
-    createCallback,
-    unsetCallback
-};
+const struct org_kde_kwin_blur_manager_interface BlurManagerInterface::Private::s_interface = {createCallback, unsetCallback};
 #endif
 
 BlurManagerInterface::Private::Private(BlurManagerInterface *q, Display *d)
@@ -66,20 +63,20 @@ void BlurManagerInterface::Private::bind(wl_client *client, uint32_t version, ui
         wl_client_post_no_memory(client);
         return;
     }
-    auto ref = new QPointer<BlurManagerInterface>(q);//deleted in unbind
+    auto ref = new QPointer<BlurManagerInterface>(q); // deleted in unbind
     wl_resource_set_implementation(resource, &s_interface, ref, unbind);
 }
 
 void BlurManagerInterface::Private::unbind(wl_resource *r)
 {
-    delete reinterpret_cast<QPointer<BlurManagerInterface>*>(wl_resource_get_user_data(r));
+    delete reinterpret_cast<QPointer<BlurManagerInterface> *>(wl_resource_get_user_data(r));
 }
 
 void BlurManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
     auto m = cast(resource);
     if (!m) {
-        return;// will happen if global is deleted
+        return; // will happen if global is deleted
     }
     m->createBlur(client, resource, id, surface);
 }
@@ -130,8 +127,9 @@ public:
 
 private:
     void commit();
-    //TODO
-    BlurInterface *q_func() {
+    // TODO
+    BlurInterface *q_func()
+    {
         return reinterpret_cast<BlurInterface *>(q);
     }
 
@@ -142,11 +140,7 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_blur_interface BlurInterface::Private::s_interface = {
-    commitCallback,
-    setRegionCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_blur_interface BlurInterface::Private::s_interface = {commitCallback, setRegionCallback, resourceDestroyedCallback};
 #endif
 
 void BlurInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
@@ -194,7 +188,7 @@ QRegion BlurInterface::region()
 
 BlurInterface::Private *BlurInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

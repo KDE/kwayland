@@ -14,10 +14,8 @@
 
 namespace KWayland
 {
-
 namespace Client
 {
-
 class Q_DECL_HIDDEN BlurManager::Private
 {
 public:
@@ -88,12 +86,12 @@ void BlurManager::removeBlur(Surface *surface)
     org_kde_kwin_blur_manager_unset(d->manager, *surface);
 }
 
-BlurManager::operator org_kde_kwin_blur_manager*()
+BlurManager::operator org_kde_kwin_blur_manager *()
 {
     return d->manager;
 }
 
-BlurManager::operator org_kde_kwin_blur_manager*() const
+BlurManager::operator org_kde_kwin_blur_manager *() const
 {
     return d->manager;
 }
@@ -148,12 +146,12 @@ void Blur::setRegion(Region *region)
     org_kde_kwin_blur_set_region(d->blur, *region);
 }
 
-Blur::operator org_kde_kwin_blur*()
+Blur::operator org_kde_kwin_blur *()
 {
     return d->blur;
 }
 
-Blur::operator org_kde_kwin_blur*() const
+Blur::operator org_kde_kwin_blur *() const
 {
     return d->blur;
 }

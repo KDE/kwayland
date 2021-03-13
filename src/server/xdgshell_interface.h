@@ -17,13 +17,12 @@ namespace KWayland
 {
 namespace Server
 {
-
 class OutputInterface;
 class SeatInterface;
 class SurfaceInterface;
 class XdgShellPopupInterface;
 class XdgShellSurfaceInterface;
-template <typename T>
+template<typename T>
 class GenericShellSurface;
 
 /**
@@ -31,8 +30,7 @@ class GenericShellSurface;
  *
  * @since 5.25
  **/
-enum class XdgShellInterfaceVersion
-{
+enum class XdgShellInterfaceVersion {
     /**
      * xdg_shell (unstable v5)
      **/
@@ -100,7 +98,7 @@ public:
     /**
      * @returns The XdgShellSurfaceInterface for the @p native resource.
      **/
-    //TODO KF6 make virtual
+    // TODO KF6 make virtual
     XdgShellSurfaceInterface *getSurface(wl_resource *native);
 
     /**
@@ -111,7 +109,7 @@ public:
      * @returns unique identifier for this request
      * @since 5.39
      */
-    quint32 ping(XdgShellSurfaceInterface * surface);
+    quint32 ping(XdgShellSurfaceInterface *surface);
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::XdgShellSurfaceInterface *surface);
@@ -175,7 +173,6 @@ private:
     Private *d_func() const;
 };
 
-
 /**
  *
  * @since 5.25
@@ -198,7 +195,7 @@ public:
         /**
          * The Surface is maximized.
          **/
-        Maximized  = 1 << 0,
+        Maximized = 1 << 0,
         /**
          * The Surface is fullscreen.
          **/
@@ -206,11 +203,11 @@ public:
         /**
          * The Surface is currently being resized by the Compositor.
          **/
-        Resizing   = 1 << 2,
+        Resizing = 1 << 2,
         /**
          * The Surface is considered active. Does not imply keyboard focus.
          **/
-        Activated  = 1 << 3,
+        Activated = 1 << 3,
     };
     Q_DECLARE_FLAGS(States, State)
 
@@ -291,13 +288,13 @@ Q_SIGNALS:
      *
      * @see title
      **/
-    void titleChanged(const QString&);
+    void titleChanged(const QString &);
     /**
      * Emitted whenever the window class changes.
      *
      * @see windowClass
      **/
-    void windowClassChanged(const QByteArray&);
+    void windowClassChanged(const QByteArray &);
     /**
      * The surface requested a window move.
      *
@@ -442,7 +439,7 @@ public:
      * @since 5.39
      */
 
-    //DAVE left + right is illegal, so this is possible a useless return value? Maybe an enum with 9 entries left, topleft, top, ..
+    // DAVE left + right is illegal, so this is possible a useless return value? Maybe an enum with 9 entries left, topleft, top, ..
     Qt::Edges gravity() const;
 
     /**
@@ -463,7 +460,7 @@ public:
      * @param windowGeometry the newly changed geometry of the window contents within the buffer
      * @since 5.59
      */
-    QRect windowGeometry()const;
+    QRect windowGeometry() const;
 
 Q_SIGNALS:
     /**

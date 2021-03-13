@@ -5,20 +5,19 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 #include "contrast_interface.h"
-#include "region_interface.h"
 #include "display.h"
 #include "global_p.h"
+#include "region_interface.h"
 #include "resource_p.h"
 #include "surface_interface_p.h"
 
-#include <wayland-server.h>
 #include <wayland-contrast-server-protocol.h>
+#include <wayland-server.h>
 
 namespace KWayland
 {
 namespace Server
 {
-
 class ContrastManagerInterface::Private : public Global::Private
 {
 public:
@@ -31,11 +30,12 @@ private:
     static void createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface);
     static void unsetCallback(wl_client *client, wl_resource *resource, wl_resource *surface);
     static void unbind(wl_resource *resource);
-    static Private *cast(wl_resource *r) {
-        auto contrastManager = reinterpret_cast<QPointer<ContrastManagerInterface>*>(wl_resource_get_user_data(r))->data();
+    static Private *cast(wl_resource *r)
+    {
+        auto contrastManager = reinterpret_cast<QPointer<ContrastManagerInterface> *>(wl_resource_get_user_data(r))->data();
         if (contrastManager) {
-            return static_cast<Private*>(contrastManager->d.data());
-         }
+            return static_cast<Private *>(contrastManager->d.data());
+        }
         return nullptr;
     }
 
@@ -47,10 +47,7 @@ private:
 const quint32 ContrastManagerInterface::Private::s_version = 1;
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_contrast_manager_interface ContrastManagerInterface::Private::s_interface = {
-    createCallback,
-    unsetCallback
-};
+const struct org_kde_kwin_contrast_manager_interface ContrastManagerInterface::Private::s_interface = {createCallback, unsetCallback};
 #endif
 
 ContrastManagerInterface::Private::Private(ContrastManagerInterface *q, Display *d)
@@ -67,20 +64,20 @@ void ContrastManagerInterface::Private::bind(wl_client *client, uint32_t version
         wl_client_post_no_memory(client);
         return;
     }
-    auto ref = new QPointer<ContrastManagerInterface>(q);//deleted in unbind
+    auto ref = new QPointer<ContrastManagerInterface>(q); // deleted in unbind
     wl_resource_set_implementation(resource, &s_interface, ref, unbind);
 }
 
 void ContrastManagerInterface::Private::unbind(wl_resource *resource)
 {
-    delete reinterpret_cast<QPointer<ContrastManagerInterface>*>(wl_resource_get_user_data(resource));
+    delete reinterpret_cast<QPointer<ContrastManagerInterface> *>(wl_resource_get_user_data(resource));
 }
 
 void ContrastManagerInterface::Private::createCallback(wl_client *client, wl_resource *resource, uint32_t id, wl_resource *surface)
 {
     auto m = cast(resource);
     if (!m) {
-        return;// will happen if global is deleted
+        return; // will happen if global is deleted
     }
     m->createContrast(client, resource, id, surface);
 }
@@ -137,8 +134,9 @@ public:
 
 private:
     void commit();
-    //TODO
-    ContrastInterface *q_func() {
+    // TODO
+    ContrastInterface *q_func()
+    {
         return reinterpret_cast<ContrastInterface *>(q);
     }
 
@@ -152,14 +150,8 @@ private:
 };
 
 #ifndef K_DOXYGEN
-const struct org_kde_kwin_contrast_interface ContrastInterface::Private::s_interface = {
-    commitCallback,
-    setRegionCallback,
-    setContrastCallback,
-    setIntensityCallback,
-    setSaturationCallback,
-    resourceDestroyedCallback
-};
+const struct org_kde_kwin_contrast_interface ContrastInterface::Private::s_interface =
+    {commitCallback, setRegionCallback, setContrastCallback, setIntensityCallback, setSaturationCallback, resourceDestroyedCallback};
 #endif
 
 void ContrastInterface::Private::commitCallback(wl_client *client, wl_resource *resource)
@@ -249,7 +241,7 @@ qreal ContrastInterface::saturation() const
 
 ContrastInterface::Private *ContrastInterface::d_func() const
 {
-    return reinterpret_cast<Private*>(d.data());
+    return reinterpret_cast<Private *>(d.data());
 }
 
 }

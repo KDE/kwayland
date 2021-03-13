@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-
 class Display;
 class XdgDecorationInterface;
 class XdgShellInterface;
@@ -32,6 +31,7 @@ public:
     ~XdgDecorationManagerInterface() override;
 Q_SIGNALS:
     void xdgDecorationInterfaceCreated(XdgDecorationInterface *iface);
+
 private:
     explicit XdgDecorationManagerInterface(Display *display, XdgShellInterface *shellInterface, QObject *parent = nullptr);
     friend class Display;
@@ -87,9 +87,7 @@ private:
     Private *d_func() const;
 };
 
-
 }
 }
-
 
 #endif

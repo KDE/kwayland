@@ -9,54 +9,54 @@
 #include <QTest>
 // KWin
 #include "../../src/client/blur.h"
-#include "../../src/client/contrast.h"
 #include "../../src/client/compositor.h"
 #include "../../src/client/connection_thread.h"
+#include "../../src/client/contrast.h"
 #include "../../src/client/dpms.h"
 #include "../../src/client/event_queue.h"
-#include "../../src/client/registry.h"
+#include "../../src/client/idleinhibit.h"
 #include "../../src/client/output.h"
 #include "../../src/client/pointerconstraints.h"
 #include "../../src/client/pointergestures.h"
-#include "../../src/client/idleinhibit.h"
-#include "../../src/client/seat.h"
+#include "../../src/client/registry.h"
 #include "../../src/client/relativepointer.h"
+#include "../../src/client/seat.h"
 #include "../../src/client/server_decoration.h"
 #include "../../src/client/shell.h"
-#include "../../src/client/surface.h"
 #include "../../src/client/subcompositor.h"
+#include "../../src/client/surface.h"
 #include "../../src/client/xdgshell.h"
+#include "../../src/server/blur_interface.h"
 #include "../../src/server/compositor_interface.h"
+#include "../../src/server/contrast_interface.h"
 #include "../../src/server/datadevicemanager_interface.h"
 #include "../../src/server/display.h"
 #include "../../src/server/dpms_interface.h"
 #include "../../src/server/idleinhibit_interface.h"
 #include "../../src/server/output_interface.h"
-#include "../../src/server/seat_interface.h"
-#include "../../src/server/shell_interface.h"
-#include "../../src/server/blur_interface.h"
-#include "../../src/server/contrast_interface.h"
-#include "../../src/server/server_decoration_interface.h"
-#include "../../src/server/slide_interface.h"
-#include "../../src/server/subcompositor_interface.h"
-#include "../../src/server/outputmanagement_interface.h"
 #include "../../src/server/outputdevice_interface.h"
+#include "../../src/server/outputmanagement_interface.h"
 #include "../../src/server/pointerconstraints_interface.h"
 #include "../../src/server/pointergestures_interface.h"
+#include "../../src/server/relativepointer_interface.h"
+#include "../../src/server/seat_interface.h"
+#include "../../src/server/server_decoration_interface.h"
+#include "../../src/server/shell_interface.h"
+#include "../../src/server/slide_interface.h"
+#include "../../src/server/subcompositor_interface.h"
 #include "../../src/server/textinput_interface.h"
 #include "../../src/server/xdgshell_interface.h"
-#include "../../src/server/relativepointer_interface.h"
 // Wayland
+#include "../../src/compat/wayland-xdg-shell-v5-client-protocol.h"
 #include <wayland-client-protocol.h>
 #include <wayland-dpms-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
+#include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
+#include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
+#include <wayland-relativepointer-unstable-v1-client-protocol.h>
 #include <wayland-server-decoration-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
 #include <wayland-text-input-v2-client-protocol.h>
-#include <wayland-relativepointer-unstable-v1-client-protocol.h>
-#include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
-#include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
-#include "../../src/compat/wayland-xdg-shell-v5-client-protocol.h"
 
 class TestWaylandRegistry : public QObject
 {
@@ -115,7 +115,6 @@ private:
     KWayland::Server::BlurManagerInterface *m_blur;
     KWayland::Server::ContrastManagerInterface *m_contrast;
     KWayland::Server::IdleInhibitManagerInterface *m_idleInhibit;
-
 };
 
 static const QString s_socketName = QStringLiteral("kwin-test-wayland-registry-0");
@@ -220,142 +219,172 @@ void TestWaylandRegistry::testCreate()
     QVERIFY(!registry.isValid());
 }
 
-#define TEST_BIND(iface, signalName, bindMethod, destroyFunction) \
-    KWayland::Client::ConnectionThread connection; \
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected())); \
-    connection.setSocketName(s_socketName); \
-    connection.initConnection(); \
-    QVERIFY(connectedSpy.wait()); \
-    \
-    KWayland::Client::Registry registry; \
-    /* before registry is created, we cannot bind the interface*/ \
-    QVERIFY(!registry.bindMethod(0, 0)); \
-    \
-    QVERIFY(!registry.isValid()); \
-    registry.create(&connection); \
-    QVERIFY(registry.isValid()); \
-    /* created but not yet connected still results in no bind */ \
-    QVERIFY(!registry.bindMethod(0, 0)); \
-    /* interface information should be empty */ \
-    QVERIFY(registry.interfaces(iface).isEmpty()); \
-    QCOMPARE(registry.interface(iface).name, 0u); \
-    QCOMPARE(registry.interface(iface).version, 0u); \
-    \
-    /* now let's register */ \
-    QSignalSpy announced(&registry, signalName); \
-    QVERIFY(announced.isValid()); \
-    registry.setup(); \
-    wl_display_flush(connection.display()); \
-    QVERIFY(announced.wait()); \
-    const quint32 name = announced.first().first().value<quint32>(); \
-    const quint32 version = announced.first().last().value<quint32>(); \
-    QCOMPARE(registry.interfaces(iface).count(), 1); \
-    QCOMPARE(registry.interfaces(iface).first().name, name); \
-    QCOMPARE(registry.interfaces(iface).first().version, version); \
-    QCOMPARE(registry.interface(iface).name, name); \
-    QCOMPARE(registry.interface(iface).version, version); \
-    \
-    /* registry should know about the interface now */ \
-    QVERIFY(registry.hasInterface(iface)); \
-    QVERIFY(!registry.bindMethod(name+1, version)); \
-    QVERIFY(registry.bindMethod(name, version+1)); \
-    auto *c = registry.bindMethod(name, version); \
-    QVERIFY(c); \
-    destroyFunction(c); \
+#define TEST_BIND(iface, signalName, bindMethod, destroyFunction)                                                                                              \
+    KWayland::Client::ConnectionThread connection;                                                                                                             \
+    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));                                                                                                 \
+    connection.setSocketName(s_socketName);                                                                                                                    \
+    connection.initConnection();                                                                                                                               \
+    QVERIFY(connectedSpy.wait());                                                                                                                              \
+                                                                                                                                                               \
+    KWayland::Client::Registry registry;                                                                                                                       \
+    /* before registry is created, we cannot bind the interface*/                                                                                              \
+    QVERIFY(!registry.bindMethod(0, 0));                                                                                                                       \
+                                                                                                                                                               \
+    QVERIFY(!registry.isValid());                                                                                                                              \
+    registry.create(&connection);                                                                                                                              \
+    QVERIFY(registry.isValid());                                                                                                                               \
+    /* created but not yet connected still results in no bind */                                                                                               \
+    QVERIFY(!registry.bindMethod(0, 0));                                                                                                                       \
+    /* interface information should be empty */                                                                                                                \
+    QVERIFY(registry.interfaces(iface).isEmpty());                                                                                                             \
+    QCOMPARE(registry.interface(iface).name, 0u);                                                                                                              \
+    QCOMPARE(registry.interface(iface).version, 0u);                                                                                                           \
+                                                                                                                                                               \
+    /* now let's register */                                                                                                                                   \
+    QSignalSpy announced(&registry, signalName);                                                                                                               \
+    QVERIFY(announced.isValid());                                                                                                                              \
+    registry.setup();                                                                                                                                          \
+    wl_display_flush(connection.display());                                                                                                                    \
+    QVERIFY(announced.wait());                                                                                                                                 \
+    const quint32 name = announced.first().first().value<quint32>();                                                                                           \
+    const quint32 version = announced.first().last().value<quint32>();                                                                                         \
+    QCOMPARE(registry.interfaces(iface).count(), 1);                                                                                                           \
+    QCOMPARE(registry.interfaces(iface).first().name, name);                                                                                                   \
+    QCOMPARE(registry.interfaces(iface).first().version, version);                                                                                             \
+    QCOMPARE(registry.interface(iface).name, name);                                                                                                            \
+    QCOMPARE(registry.interface(iface).version, version);                                                                                                      \
+                                                                                                                                                               \
+    /* registry should know about the interface now */                                                                                                         \
+    QVERIFY(registry.hasInterface(iface));                                                                                                                     \
+    QVERIFY(!registry.bindMethod(name + 1, version));                                                                                                          \
+    QVERIFY(registry.bindMethod(name, version + 1));                                                                                                           \
+    auto *c = registry.bindMethod(name, version);                                                                                                              \
+    QVERIFY(c);                                                                                                                                                \
+    destroyFunction(c);
 
 void TestWaylandRegistry::testBindCompositor()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Compositor, SIGNAL(compositorAnnounced(quint32,quint32)), bindCompositor, wl_compositor_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::Compositor, SIGNAL(compositorAnnounced(quint32, quint32)), bindCompositor, wl_compositor_destroy)
 }
 
 void TestWaylandRegistry::testBindShell()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Shell, SIGNAL(shellAnnounced(quint32,quint32)), bindShell, free)
+    TEST_BIND(KWayland::Client::Registry::Interface::Shell, SIGNAL(shellAnnounced(quint32, quint32)), bindShell, free)
 }
 
 void TestWaylandRegistry::testBindOutput()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Output, SIGNAL(outputAnnounced(quint32,quint32)), bindOutput, wl_output_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::Output, SIGNAL(outputAnnounced(quint32, quint32)), bindOutput, wl_output_destroy)
 }
 
 void TestWaylandRegistry::testBindSeat()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Seat, SIGNAL(seatAnnounced(quint32,quint32)), bindSeat, wl_seat_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::Seat, SIGNAL(seatAnnounced(quint32, quint32)), bindSeat, wl_seat_destroy)
 }
 
 void TestWaylandRegistry::testBindShm()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Shm, SIGNAL(shmAnnounced(quint32,quint32)), bindShm, wl_shm_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::Shm, SIGNAL(shmAnnounced(quint32, quint32)), bindShm, wl_shm_destroy)
 }
 
 void TestWaylandRegistry::testBindSubCompositor()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::SubCompositor, SIGNAL(subCompositorAnnounced(quint32,quint32)), bindSubCompositor, wl_subcompositor_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::SubCompositor,
+              SIGNAL(subCompositorAnnounced(quint32, quint32)),
+              bindSubCompositor,
+              wl_subcompositor_destroy)
 }
 
 void TestWaylandRegistry::testBindDataDeviceManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::DataDeviceManager, SIGNAL(dataDeviceManagerAnnounced(quint32,quint32)), bindDataDeviceManager, wl_data_device_manager_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::DataDeviceManager,
+              SIGNAL(dataDeviceManagerAnnounced(quint32, quint32)),
+              bindDataDeviceManager,
+              wl_data_device_manager_destroy)
 }
 
 void TestWaylandRegistry::testBindBlurManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Blur, SIGNAL(blurAnnounced(quint32,quint32)), bindBlurManager, free)
+    TEST_BIND(KWayland::Client::Registry::Interface::Blur, SIGNAL(blurAnnounced(quint32, quint32)), bindBlurManager, free)
 }
 
 void TestWaylandRegistry::testBindContrastManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Contrast, SIGNAL(contrastAnnounced(quint32,quint32)), bindContrastManager, free)
+    TEST_BIND(KWayland::Client::Registry::Interface::Contrast, SIGNAL(contrastAnnounced(quint32, quint32)), bindContrastManager, free)
 }
 
 void TestWaylandRegistry::testBindSlideManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Slide, SIGNAL(slideAnnounced(quint32,quint32)), bindSlideManager, free)
+    TEST_BIND(KWayland::Client::Registry::Interface::Slide, SIGNAL(slideAnnounced(quint32, quint32)), bindSlideManager, free)
 }
 
 void TestWaylandRegistry::testBindDpmsManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Dpms, SIGNAL(dpmsAnnounced(quint32,quint32)), bindDpmsManager, org_kde_kwin_dpms_manager_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::Dpms, SIGNAL(dpmsAnnounced(quint32, quint32)), bindDpmsManager, org_kde_kwin_dpms_manager_destroy)
 }
 
 void TestWaylandRegistry::testBindServerSideDecorationManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::ServerSideDecorationManager, SIGNAL(serverSideDecorationManagerAnnounced(quint32,quint32)), bindServerSideDecorationManager, org_kde_kwin_server_decoration_manager_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::ServerSideDecorationManager,
+              SIGNAL(serverSideDecorationManagerAnnounced(quint32, quint32)),
+              bindServerSideDecorationManager,
+              org_kde_kwin_server_decoration_manager_destroy)
 }
 
 void TestWaylandRegistry::testBindTextInputManagerUnstableV0()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::TextInputManagerUnstableV0, SIGNAL(textInputManagerUnstableV0Announced(quint32,quint32)), bindTextInputManagerUnstableV0, wl_text_input_manager_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::TextInputManagerUnstableV0,
+              SIGNAL(textInputManagerUnstableV0Announced(quint32, quint32)),
+              bindTextInputManagerUnstableV0,
+              wl_text_input_manager_destroy)
 }
 
 void TestWaylandRegistry::testBindTextInputManagerUnstableV2()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::TextInputManagerUnstableV2, SIGNAL(textInputManagerUnstableV2Announced(quint32,quint32)), bindTextInputManagerUnstableV2, zwp_text_input_manager_v2_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::TextInputManagerUnstableV2,
+              SIGNAL(textInputManagerUnstableV2Announced(quint32, quint32)),
+              bindTextInputManagerUnstableV2,
+              zwp_text_input_manager_v2_destroy)
 }
 
 void TestWaylandRegistry::testBindXdgShellUnstableV5()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::XdgShellUnstableV5, SIGNAL(xdgShellUnstableV5Announced(quint32,quint32)), bindXdgShellUnstableV5, zxdg_shell_v5_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::XdgShellUnstableV5,
+              SIGNAL(xdgShellUnstableV5Announced(quint32, quint32)),
+              bindXdgShellUnstableV5,
+              zxdg_shell_v5_destroy)
 }
 
 void TestWaylandRegistry::testBindRelativePointerManagerUnstableV1()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::RelativePointerManagerUnstableV1, SIGNAL(relativePointerManagerUnstableV1Announced(quint32,quint32)), bindRelativePointerManagerUnstableV1, zwp_relative_pointer_manager_v1_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::RelativePointerManagerUnstableV1,
+              SIGNAL(relativePointerManagerUnstableV1Announced(quint32, quint32)),
+              bindRelativePointerManagerUnstableV1,
+              zwp_relative_pointer_manager_v1_destroy)
 }
 
 void TestWaylandRegistry::testBindPointerGesturesUnstableV1()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::PointerGesturesUnstableV1, SIGNAL(pointerGesturesUnstableV1Announced(quint32,quint32)), bindPointerGesturesUnstableV1, zwp_pointer_gestures_v1_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::PointerGesturesUnstableV1,
+              SIGNAL(pointerGesturesUnstableV1Announced(quint32, quint32)),
+              bindPointerGesturesUnstableV1,
+              zwp_pointer_gestures_v1_destroy)
 }
 
 void TestWaylandRegistry::testBindPointerConstraintsUnstableV1()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::PointerConstraintsUnstableV1, SIGNAL(pointerConstraintsUnstableV1Announced(quint32,quint32)), bindPointerConstraintsUnstableV1, zwp_pointer_constraints_v1_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::PointerConstraintsUnstableV1,
+              SIGNAL(pointerConstraintsUnstableV1Announced(quint32, quint32)),
+              bindPointerConstraintsUnstableV1,
+              zwp_pointer_constraints_v1_destroy)
 }
 
 void TestWaylandRegistry::testBindIdleIhibitManagerUnstableV1()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::IdleInhibitManagerUnstableV1, SIGNAL(idleInhibitManagerUnstableV1Announced(quint32,quint32)), bindIdleInhibitManagerUnstableV1, zwp_idle_inhibit_manager_v1_destroy)
+    TEST_BIND(KWayland::Client::Registry::Interface::IdleInhibitManagerUnstableV1,
+              SIGNAL(idleInhibitManagerUnstableV1Announced(quint32, quint32)),
+              bindIdleInhibitManagerUnstableV1,
+              zwp_idle_inhibit_manager_v1_destroy)
 }
 
 #undef TEST_BIND
@@ -368,28 +397,26 @@ void TestWaylandRegistry::testRemoval()
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
-    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection,
-        [&connection] {
-            wl_display_flush(connection.display());
-        }
-    );
+    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection, [&connection] {
+        wl_display_flush(connection.display());
+    });
 
     KWayland::Client::Registry registry;
-    QSignalSpy shmAnnouncedSpy(&registry, SIGNAL(shmAnnounced(quint32,quint32)));
+    QSignalSpy shmAnnouncedSpy(&registry, SIGNAL(shmAnnounced(quint32, quint32)));
     QVERIFY(shmAnnouncedSpy.isValid());
-    QSignalSpy compositorAnnouncedSpy(&registry, SIGNAL(compositorAnnounced(quint32,quint32)));
+    QSignalSpy compositorAnnouncedSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
     QVERIFY(compositorAnnouncedSpy.isValid());
-    QSignalSpy outputAnnouncedSpy(&registry, SIGNAL(outputAnnounced(quint32,quint32)));
+    QSignalSpy outputAnnouncedSpy(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
     QVERIFY(outputAnnouncedSpy.isValid());
-    QSignalSpy outputDeviceAnnouncedSpy(&registry, SIGNAL(outputDeviceAnnounced(quint32,quint32)));
+    QSignalSpy outputDeviceAnnouncedSpy(&registry, SIGNAL(outputDeviceAnnounced(quint32, quint32)));
     QVERIFY(outputDeviceAnnouncedSpy.isValid());
-    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32,quint32)));
+    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
     QVERIFY(shellAnnouncedSpy.isValid());
-    QSignalSpy seatAnnouncedSpy(&registry, SIGNAL(seatAnnounced(quint32,quint32)));
+    QSignalSpy seatAnnouncedSpy(&registry, SIGNAL(seatAnnounced(quint32, quint32)));
     QVERIFY(seatAnnouncedSpy.isValid());
-    QSignalSpy subCompositorAnnouncedSpy(&registry, SIGNAL(subCompositorAnnounced(quint32,quint32)));
+    QSignalSpy subCompositorAnnouncedSpy(&registry, SIGNAL(subCompositorAnnounced(quint32, quint32)));
     QVERIFY(subCompositorAnnouncedSpy.isValid());
-    QSignalSpy outputManagementAnnouncedSpy(&registry, SIGNAL(outputManagementAnnounced(quint32,quint32)));
+    QSignalSpy outputManagementAnnouncedSpy(&registry, SIGNAL(outputManagementAnnounced(quint32, quint32)));
     QVERIFY(outputManagementAnnouncedSpy.isValid());
     QSignalSpy serverSideDecorationManagerAnnouncedSpy(&registry, &Registry::serverSideDecorationManagerAnnounced);
     QVERIFY(serverSideDecorationManagerAnnouncedSpy.isValid());
@@ -413,7 +440,6 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(!serverSideDecorationManagerAnnouncedSpy.isEmpty());
     QVERIFY(!blurAnnouncedSpy.isEmpty());
     QVERIFY(!idleInhibitManagerUnstableV1AnnouncedSpy.isEmpty());
-
 
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::Compositor));
     QVERIFY(registry.hasInterface(KWayland::Client::Registry::Interface::Output));
@@ -446,12 +472,23 @@ void TestWaylandRegistry::testRemoval()
 
     Seat *seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, registry.interface(Registry::Interface::Seat).version, &registry);
     Shell *shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry);
-    Output *output = registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
-    Compositor *compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, &registry);
-    SubCompositor *subcompositor = registry.createSubCompositor(registry.interface(Registry::Interface::SubCompositor).name, registry.interface(Registry::Interface::SubCompositor).version, &registry);
-    ServerSideDecorationManager *serverSideDeco = registry.createServerSideDecorationManager(registry.interface(Registry::Interface::ServerSideDecorationManager).name, registry.interface(Registry::Interface::ServerSideDecorationManager).version, &registry);
-    BlurManager *blurManager = registry.createBlurManager(registry.interface(Registry::Interface::Blur).name, registry.interface(Registry::Interface::Blur).version, &registry);
-    auto idleInhibitManager = registry.createIdleInhibitManager(registry.interface(Registry::Interface::IdleInhibitManagerUnstableV1).name, registry.interface(Registry::Interface::IdleInhibitManagerUnstableV1).version, &registry);
+    Output *output =
+        registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
+    Compositor *compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name,
+                                                       registry.interface(Registry::Interface::Compositor).version,
+                                                       &registry);
+    SubCompositor *subcompositor = registry.createSubCompositor(registry.interface(Registry::Interface::SubCompositor).name,
+                                                                registry.interface(Registry::Interface::SubCompositor).version,
+                                                                &registry);
+    ServerSideDecorationManager *serverSideDeco =
+        registry.createServerSideDecorationManager(registry.interface(Registry::Interface::ServerSideDecorationManager).name,
+                                                   registry.interface(Registry::Interface::ServerSideDecorationManager).version,
+                                                   &registry);
+    BlurManager *blurManager =
+        registry.createBlurManager(registry.interface(Registry::Interface::Blur).name, registry.interface(Registry::Interface::Blur).version, &registry);
+    auto idleInhibitManager = registry.createIdleInhibitManager(registry.interface(Registry::Interface::IdleInhibitManagerUnstableV1).name,
+                                                                registry.interface(Registry::Interface::IdleInhibitManagerUnstableV1).version,
+                                                                &registry);
 
     connection.flush();
     m_display->dispatchEvents();
@@ -580,13 +617,13 @@ void TestWaylandRegistry::testRemoval()
 
 void TestWaylandRegistry::testOutOfSyncRemoval()
 {
-    //This tests the following sequence of events
-    //server announces global
-    //client binds to that global
+    // This tests the following sequence of events
+    // server announces global
+    // client binds to that global
 
-    //server removes the global
+    // server removes the global
     //(simultaneously) the client legimitely uses the bound resource to the global
-    //client then gets the server events...it should no-op, not be a protocol error
+    // client then gets the server events...it should no-op, not be a protocol error
 
     using namespace KWayland::Client;
     KWayland::Client::ConnectionThread connection;
@@ -594,11 +631,9 @@ void TestWaylandRegistry::testOutOfSyncRemoval()
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
-    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection,
-        [&connection] {
-            wl_display_flush(connection.display());
-        }
-    );
+    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection, [&connection] {
+        wl_display_flush(connection.display());
+    });
 
     KWayland::Client::Registry registry;
     QVERIFY(!registry.isValid());
@@ -609,47 +644,49 @@ void TestWaylandRegistry::testOutOfSyncRemoval()
 
     blurAnnouncedSpy.wait();
     contrastAnnouncedSpy.wait();
-    BlurManager *blurManager = registry.createBlurManager(registry.interface(Registry::Interface::Blur).name, registry.interface(Registry::Interface::Blur).version, &registry);
-    ContrastManager *contrastManager = registry.createContrastManager(registry.interface(Registry::Interface::Contrast).name, registry.interface(Registry::Interface::Contrast).version, &registry);
+    BlurManager *blurManager =
+        registry.createBlurManager(registry.interface(Registry::Interface::Blur).name, registry.interface(Registry::Interface::Blur).version, &registry);
+    ContrastManager *contrastManager = registry.createContrastManager(registry.interface(Registry::Interface::Contrast).name,
+                                                                      registry.interface(Registry::Interface::Contrast).version,
+                                                                      &registry);
 
     connection.flush();
     m_display->dispatchEvents();
 
-    QScopedPointer<Compositor> compositor(registry.createCompositor(registry.interface(Registry::Interface::Compositor).name,
-                                             registry.interface(Registry::Interface::Compositor).version));
+    QScopedPointer<Compositor> compositor(
+        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version));
     QScopedPointer<Surface> surface(compositor->createSurface());
     QVERIFY(surface);
 
-    //remove blur
+    // remove blur
     QSignalSpy blurRemovedSpy(&registry, &Registry::blurRemoved);
 
     delete m_blur;
 
-    //client hasn't processed the event yet
+    // client hasn't processed the event yet
     QVERIFY(blurRemovedSpy.count() == 0);
 
-    //use the in the client
+    // use the in the client
     blurManager->createBlur(surface.data(), nullptr);
 
-    //now process events,
+    // now process events,
     QVERIFY(blurRemovedSpy.wait());
     QVERIFY(blurRemovedSpy.count() == 1);
 
-    //remove background contrast
+    // remove background contrast
     QSignalSpy contrastRemovedSpy(&registry, &Registry::contrastRemoved);
 
     delete m_contrast;
 
-    //client hasn't processed the event yet
+    // client hasn't processed the event yet
     QVERIFY(contrastRemovedSpy.count() == 0);
 
-    //use the in the client
+    // use the in the client
     contrastManager->createContrast(surface.data(), nullptr);
 
-    //now process events,
+    // now process events,
     QVERIFY(contrastRemovedSpy.wait());
     QVERIFY(contrastRemovedSpy.count() == 1);
-
 }
 
 void TestWaylandRegistry::testDestroy()
@@ -662,17 +699,17 @@ void TestWaylandRegistry::testDestroy()
     QVERIFY(connectedSpy.wait());
 
     Registry registry;
-    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32,quint32)));
+    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
 
     QVERIFY(!registry.isValid());
     registry.create(&connection);
     registry.setup();
     QVERIFY(registry.isValid());
 
-    //create some arbitrary Interface
+    // create some arbitrary Interface
     shellAnnouncedSpy.wait();
-    QScopedPointer<Shell> shell(registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry));
-
+    QScopedPointer<Shell> shell(
+        registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry));
 
     QSignalSpy connectionDiedSpy(&connection, SIGNAL(connectionDied()));
     QSignalSpy registryDiedSpy(&registry, SIGNAL(registryDestroyed()));
@@ -756,11 +793,9 @@ void TestWaylandRegistry::testAnnounceMultiple()
     QVERIFY(connectedSpy.isValid());
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
-    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection,
-            [&connection] {
-                wl_display_flush(connection.display());
-            }
-    );
+    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection, [&connection] {
+        wl_display_flush(connection.display());
+    });
 
     Registry registry;
     QSignalSpy syncSpy(&registry, &Registry::interfacesAnnounced);
@@ -815,11 +850,9 @@ void TestWaylandRegistry::testAnnounceMultipleOutputDevices()
     QVERIFY(connectedSpy.isValid());
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
-    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection,
-            [&connection] {
-                wl_display_flush(connection.display());
-            }
-    );
+    connect(QCoreApplication::eventDispatcher(), &QAbstractEventDispatcher::aboutToBlock, &connection, [&connection] {
+        wl_display_flush(connection.display());
+    });
 
     Registry registry;
     QSignalSpy syncSpy(&registry, &Registry::interfacesAnnounced);

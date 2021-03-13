@@ -152,6 +152,7 @@ void Shadow::commit()
     org_kde_kwin_shadow_commit(d->shadow);
 }
 
+// clang-format off
 #ifndef K_DOXYGEN
 #define attach( __PART__, __WAYLAND_PART__ ) \
 void Shadow::attach##__PART__(wl_buffer *buffer) \
@@ -170,6 +171,7 @@ void Shadow::attach##__PART__(Buffer::Ptr buffer) \
 { \
     attach##__PART__(buffer.toStrongRef().data()); \
 }
+// clang-format on
 
 attach(Left, left)
 attach(TopLeft, top_left)

@@ -214,7 +214,7 @@ void TestServerSideDecoration::testRequest_data()
     const auto clientNone = ServerSideDecoration::Mode::None;
     const auto clientClient = ServerSideDecoration::Mode::Client;
     const auto clientServer = ServerSideDecoration::Mode::Server;
-
+    // clang-format off
     QTest::newRow("none->none")     << serverNone   << clientNone   << clientNone   << serverNone;
     QTest::newRow("none->client")   << serverNone   << clientNone   << clientClient << serverClient;
     QTest::newRow("none->server")   << serverNone   << clientNone   << clientServer << serverServer;
@@ -224,6 +224,7 @@ void TestServerSideDecoration::testRequest_data()
     QTest::newRow("server->none")   << serverServer << clientServer << clientNone   << serverNone;
     QTest::newRow("server->client") << serverServer << clientServer << clientClient << serverClient;
     QTest::newRow("server->server") << serverServer << clientServer << clientServer << serverServer;
+    // clang-format on
 }
 
 void TestServerSideDecoration::testRequest()

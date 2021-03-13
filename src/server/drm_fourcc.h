@@ -7,6 +7,8 @@
 #ifndef DRM_FOURCC_H
 #define DRM_FOURCC_H
 
+// clang-format off
+
 //#include "drm.h"
 
 // These typedefs are copied from drm.h

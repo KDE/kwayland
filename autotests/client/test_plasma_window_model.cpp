@@ -218,6 +218,7 @@ void PlasmaWindowModelTest::testRoleNames_data()
     QTest::newRow("display") << int(Qt::DisplayRole) << QByteArrayLiteral("DisplayRole");
     QTest::newRow("decoration") << int(Qt::DecorationRole) << QByteArrayLiteral("DecorationRole");
 
+    // clang-format off
     QTest::newRow("AppId")                << int(PlasmaWindowModel::AppId) << QByteArrayLiteral("AppId");
     QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QByteArrayLiteral("Pid");
     QTest::newRow("IsActive")             << int(PlasmaWindowModel::IsActive) << QByteArrayLiteral("IsActive");
@@ -241,6 +242,7 @@ void PlasmaWindowModelTest::testRoleNames_data()
     QTest::newRow("IsVirtualDesktopChangeable") << int(PlasmaWindowModel::IsVirtualDesktopChangeable) << QByteArrayLiteral("IsVirtualDesktopChangeable");
     QTest::newRow("IsCloseable")          << int(PlasmaWindowModel::IsCloseable) << QByteArrayLiteral("IsCloseable");
     QTest::newRow("Geometry")          << int(PlasmaWindowModel::Geometry) << QByteArrayLiteral("Geometry");
+    // clang-format on
 }
 
 void PlasmaWindowModelTest::testRoleNames()
@@ -312,6 +314,7 @@ void PlasmaWindowModelTest::testDefaultData_data()
     QTest::newRow("display") << int(Qt::DisplayRole) << QVariant(QString());
     QTest::newRow("decoration") << int(Qt::DecorationRole) << QVariant(QIcon());
 
+    // clang-format off
     QTest::newRow("AppId")                << int(PlasmaWindowModel::AppId) << QVariant(QString());
     QTest::newRow("IsActive")             << int(PlasmaWindowModel::IsActive) << QVariant(false);
     QTest::newRow("IsFullscreenable")     << int(PlasmaWindowModel::IsFullscreenable) << QVariant(false);
@@ -334,6 +337,7 @@ void PlasmaWindowModelTest::testDefaultData_data()
     QTest::newRow("IsCloseable")          << int(PlasmaWindowModel::IsCloseable) << QVariant(false);
     QTest::newRow("Geometry")             << int(PlasmaWindowModel::Geometry) << QVariant(QRect());
     QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QVariant(0);
+    // clang-format on
 }
 
 void PlasmaWindowModelTest::testDefaultData()
@@ -850,6 +854,7 @@ void PlasmaWindowModelTest::testChangeWindowAfterModelDestroy_data()
     QTest::addColumn<QVariant>("setter");
     QTest::addColumn<QVariant>("value");
 
+    // clang-format off
     QTest::newRow("active")           << &PlasmaWindow::activeChanged                   << QVariant::fromValue(&PlasmaWindowInterface::setActive)                   << QVariant(true);
     QTest::newRow("minimized")        << &PlasmaWindow::minimizedChanged                << QVariant::fromValue(&PlasmaWindowInterface::setMinimized)                << QVariant(true);
     QTest::newRow("fullscreen")       << &PlasmaWindow::fullscreenChanged               << QVariant::fromValue(&PlasmaWindowInterface::setFullscreen)               << QVariant(true);
@@ -876,6 +881,7 @@ void PlasmaWindowModelTest::testChangeWindowAfterModelDestroy_data()
     QTest::newRow("icon" )            << &PlasmaWindow::iconChanged                     << QVariant::fromValue(&PlasmaWindowInterface::setIcon)                     << QVariant::fromValue(QIcon::fromTheme(QStringLiteral("foo")));
     QTest::newRow("vd")               << &PlasmaWindow::virtualDesktopChanged           << QVariant::fromValue(&PlasmaWindowInterface::setVirtualDesktop)           << QVariant(2u);
     QTest::newRow("unmapped")         << &PlasmaWindow::unmapped                        << QVariant::fromValue(&PlasmaWindowInterface::unmap)                       << QVariant();
+    // clang-format on
 }
 
 void PlasmaWindowModelTest::testChangeWindowAfterModelDestroy()

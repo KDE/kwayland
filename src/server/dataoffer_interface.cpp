@@ -94,10 +94,10 @@ void DataOfferInterface::Private::setActionsCallback(wl_client *client, wl_resou
         wl_resource_post_error(resource, WL_DATA_OFFER_ERROR_INVALID_ACTION_MASK, "Invalid action mask");
         return;
     }
-    if (preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY &&
-        preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE &&
-        preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK &&
-        preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE) {
+    if (preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY //
+        && preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE //
+        && preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_ASK //
+        && preferred_action != WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE) {
         wl_resource_post_error(resource, WL_DATA_OFFER_ERROR_INVALID_ACTION, "Invalid preferred action");
         return;
     }

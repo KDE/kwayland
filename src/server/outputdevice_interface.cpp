@@ -485,6 +485,7 @@ bool OutputDeviceInterface::ColorCurves::operator!=(const ColorCurves &cc) const
     return !operator==(cc);
 }
 
+// clang-format off
 #define SETTER(setterName, type, argumentName) \
     void OutputDeviceInterface::setterName(type arg) \
     { \
@@ -495,6 +496,7 @@ bool OutputDeviceInterface::ColorCurves::operator!=(const ColorCurves &cc) const
         d->argumentName = arg; \
         Q_EMIT argumentName##Changed(d->argumentName); \
     }
+// clang-format on
 
 SETTER(setPhysicalSize, const QSize&, physicalSize)
 SETTER(setGlobalPosition, const QPoint&, globalPosition)

@@ -51,6 +51,7 @@ set_package_properties(EGL PROPERTIES TYPE REQUIRED)
 include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
+include(KDEGitCommitHooks)
 include(CheckIncludeFile)
 
 find_package(PlasmaWaylandProtocols 1.2.1 CONFIG)
@@ -106,3 +107,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5} COMPONENT Devel )
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)

@@ -72,7 +72,7 @@ public:
         /*
         * Resize the popup in the Y axis
         */
-        ResizeY = 1 << 5
+        ResizeY = 1 << 5,
     };
 
     Q_DECLARE_FLAGS(Constraints, Constraint)

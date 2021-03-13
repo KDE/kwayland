@@ -361,7 +361,7 @@ void TestPointerConstraints::testConfinePointer()
 
 enum class Constraint {
     Lock,
-    Confine
+    Confine,
 };
 
 Q_DECLARE_METATYPE(Constraint)

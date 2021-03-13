@@ -130,7 +130,7 @@ public:
      **/
     enum class CommitFlag {
         None,
-        FrameCallback
+        FrameCallback,
     };
     void commit(CommitFlag flag = CommitFlag::FrameCallback);
     /**

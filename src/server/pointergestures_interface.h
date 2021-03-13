@@ -24,7 +24,7 @@ enum class PointerGesturesInterfaceVersion {
     /**
      * zwp_pointer_gestures_v1, zwp_pointer_gesture_swipe_v1 and zwp_pointer_gesture_pinch_v1
      **/
-    UnstableV1
+    UnstableV1,
 };
 
 /**

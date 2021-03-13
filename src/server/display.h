@@ -122,7 +122,7 @@ public:
      **/
     enum class StartMode {
         ConnectToSocket,
-        ConnectClientsOnly
+        ConnectClientsOnly,
     };
     void start(StartMode mode = StartMode::ConnectToSocket);
     void terminate();

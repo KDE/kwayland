@@ -258,7 +258,7 @@ public:
         AlwaysVisible,
         AutoHide,
         WindowsCanCover,
-        WindowsGoBelow
+        WindowsGoBelow,
     };
     /**
      * Sets the PanelBehavior for a PlasmaShellSurface with Role @c Role::Panel

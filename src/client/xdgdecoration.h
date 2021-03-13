@@ -129,7 +129,7 @@ class KWAYLANDCLIENT_EXPORT XdgDecoration : public QObject
 public:
     enum class Mode {
         ClientSide,
-        ServerSide
+        ServerSide,
     };
 
     Q_ENUM(Mode)

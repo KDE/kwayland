@@ -38,7 +38,7 @@ enum class TextInputInterfaceVersion {
     /**
      * zwp_text_input_v2 as used by Qt 5.7
      **/
-    UnstableV2
+    UnstableV2,
 };
 
 /**
@@ -141,7 +141,7 @@ public:
         /**
          * the text input is multi line
          */
-        MultiLine = 1 << 9
+        MultiLine = 1 << 9,
     };
     Q_DECLARE_FLAGS(ContentHints, ContentHint)
 
@@ -203,7 +203,7 @@ public:
         /**
          * input for a terminal
          */
-        Terminal
+        Terminal,
     };
 
     /**

@@ -65,7 +65,7 @@ public:
         Fullscreen,
         Toplevel,
         Maximized,
-        Popup
+        Popup,
     };
     WindowMode windowMode = WindowMode::Toplevel;
     QPoint transientOffset;

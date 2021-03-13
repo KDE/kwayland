@@ -49,7 +49,7 @@ public:
     enum class Mode {
         Undefined,
         ClientSide,
-        ServerSide
+        ServerSide,
     };
 
     Q_ENUM(Mode);

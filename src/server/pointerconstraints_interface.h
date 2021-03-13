@@ -30,7 +30,7 @@ enum class PointerConstraintsInterfaceVersion {
     /**
      * zwp_pointer_constraints_v1
      **/
-     UnstableV1
+     UnstableV1,
 };
 
 /**
@@ -92,7 +92,7 @@ public:
 
     enum class LifeTime {
         OneShot,
-        Persistent
+        Persistent,
     };
 
     LifeTime lifeTime() const;
@@ -214,7 +214,7 @@ public:
 
     enum class LifeTime {
         OneShot,
-        Persistent
+        Persistent,
     };
 
     LifeTime lifeTime() const;

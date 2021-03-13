@@ -34,7 +34,7 @@ class KWAYLANDCLIENT_EXPORT Keyboard : public QObject
 public:
     enum class KeyState {
         Released,
-        Pressed
+        Pressed,
     };
     explicit Keyboard(QObject *parent = nullptr);
     virtual ~Keyboard();

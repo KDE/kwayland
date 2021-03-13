@@ -58,7 +58,7 @@ public:
     struct Pointer {
         enum class State {
             Released,
-            Pressed
+            Pressed,
         };
         QHash<quint32, quint32> buttonSerials;
         QHash<quint32, State> buttonStates;
@@ -82,7 +82,7 @@ public:
     struct Keyboard {
         enum class State {
             Released,
-            Pressed
+            Pressed,
         };
         QHash<quint32, State> states;
         struct Keymap {
@@ -144,7 +144,7 @@ public:
         enum class Mode {
             None,
             Pointer,
-            Touch
+            Touch,
         };
         Mode mode = Mode::None;
         DataDeviceInterface *source = nullptr;

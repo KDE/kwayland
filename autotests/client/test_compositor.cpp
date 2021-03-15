@@ -83,7 +83,9 @@ void TestCompositor::init()
     QVERIFY(m_compositorInterface->isValid());
 
     QVERIFY(compositorSpy.wait());
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
+    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
+                                             compositorSpy.first().last().value<quint32>(),
+                                             this);
 }
 
 void TestCompositor::cleanup()

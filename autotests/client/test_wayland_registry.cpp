@@ -470,10 +470,15 @@ void TestWaylandRegistry::testRemoval()
     QSignalSpy seatRemovedSpy(&registry, SIGNAL(seatRemoved(quint32)));
     QVERIFY(seatRemovedSpy.isValid());
 
-    Seat *seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, registry.interface(Registry::Interface::Seat).version, &registry);
-    Shell *shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry);
-    Output *output =
-        registry.createOutput(registry.interface(Registry::Interface::Output).name, registry.interface(Registry::Interface::Output).version, &registry);
+    Seat *seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
+                                     registry.interface(Registry::Interface::Seat).version,
+                                     &registry);
+    Shell *shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, //
+                                        registry.interface(Registry::Interface::Shell).version,
+                                        &registry);
+    Output *output = registry.createOutput(registry.interface(Registry::Interface::Output).name, //
+                                           registry.interface(Registry::Interface::Output).version,
+                                           &registry);
     Compositor *compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name,
                                                        registry.interface(Registry::Interface::Compositor).version,
                                                        &registry);
@@ -653,8 +658,8 @@ void TestWaylandRegistry::testOutOfSyncRemoval()
     connection.flush();
     m_display->dispatchEvents();
 
-    QScopedPointer<Compositor> compositor(
-        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version));
+    QScopedPointer<Compositor> compositor(registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
+                                                                    registry.interface(Registry::Interface::Compositor).version));
     QScopedPointer<Surface> surface(compositor->createSurface());
     QVERIFY(surface);
 

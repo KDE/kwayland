@@ -88,8 +88,9 @@ void TestDataSource::init()
     QVERIFY(m_dataDeviceManagerInterface->isValid());
 
     QVERIFY(dataDeviceManagerSpy.wait());
-    m_dataDeviceManager =
-        registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), dataDeviceManagerSpy.first().last().value<quint32>(), this);
+    m_dataDeviceManager = registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), //
+                                                           dataDeviceManagerSpy.first().last().value<quint32>(),
+                                                           this);
 }
 
 void TestDataSource::cleanup()

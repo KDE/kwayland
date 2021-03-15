@@ -107,8 +107,9 @@ void TestDataDevice::init()
     QVERIFY(m_dataDeviceManagerInterface->isValid());
 
     QVERIFY(dataDeviceManagerSpy.wait());
-    m_dataDeviceManager =
-        registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), dataDeviceManagerSpy.first().last().value<quint32>(), this);
+    m_dataDeviceManager = registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), //
+                                                           dataDeviceManagerSpy.first().last().value<quint32>(),
+                                                           this);
 
     m_seatInterface = m_display->createSeat(m_display);
     m_seatInterface->setHasPointer(true);
@@ -127,7 +128,9 @@ void TestDataDevice::init()
     QVERIFY(m_compositorInterface->isValid());
 
     QVERIFY(compositorSpy.wait());
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
+    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
+                                             compositorSpy.first().last().value<quint32>(),
+                                             this);
     QVERIFY(m_compositor->isValid());
 }
 

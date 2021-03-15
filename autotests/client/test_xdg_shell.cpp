@@ -65,9 +65,9 @@ void XdgShellTest::init()
     QSignalSpy outputAnnouncedSpy(&registry, &Registry::outputAnnounced);
     QVERIFY(outputAnnouncedSpy.isValid());
 
-    auto shellAnnouncedSignal = m_version == XdgShellInterfaceVersion::UnstableV5 ? &Registry::xdgShellUnstableV5Announced
-        : m_version == XdgShellInterfaceVersion::UnstableV6                       ? &Registry::xdgShellUnstableV6Announced
-                                                                                  : &Registry::xdgShellStableAnnounced;
+    auto shellAnnouncedSignal = (m_version == XdgShellInterfaceVersion::UnstableV5       ? &Registry::xdgShellUnstableV5Announced
+                                     : m_version == XdgShellInterfaceVersion::UnstableV6 ? &Registry::xdgShellUnstableV6Announced
+                                                                                         : &Registry::xdgShellStableAnnounced);
 
     QSignalSpy xdgShellAnnouncedSpy(&registry, shellAnnouncedSignal);
     QVERIFY(xdgShellAnnouncedSpy.isValid());
@@ -78,19 +78,30 @@ void XdgShellTest::init()
     QVERIFY(interfacesAnnouncedSpy.wait());
 
     QCOMPARE(outputAnnouncedSpy.count(), 2);
-    m_output1 = registry.createOutput(outputAnnouncedSpy.first().at(0).value<quint32>(), outputAnnouncedSpy.first().at(1).value<quint32>(), this);
-    m_output2 = registry.createOutput(outputAnnouncedSpy.last().at(0).value<quint32>(), outputAnnouncedSpy.last().at(1).value<quint32>(), this);
+    /* clang-format off */
+    m_output1 = registry.createOutput(outputAnnouncedSpy.first().at(0).value<quint32>(),
+                                      outputAnnouncedSpy.first().at(1).value<quint32>(),
+                                      this);
+    m_output2 = registry.createOutput(outputAnnouncedSpy.last().at(0).value<quint32>(),
+                                      outputAnnouncedSpy.last().at(1).value<quint32>(),
+                                      this);
+    /* clang-format on */
 
-    m_shmPool = registry.createShmPool(registry.interface(Registry::Interface::Shm).name, registry.interface(Registry::Interface::Shm).version, this);
+    m_shmPool = registry.createShmPool(registry.interface(Registry::Interface::Shm).name, //
+                                       registry.interface(Registry::Interface::Shm).version,
+                                       this);
     QVERIFY(m_shmPool);
     QVERIFY(m_shmPool->isValid());
 
-    m_compositor =
-        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
+    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
+                                             registry.interface(Registry::Interface::Compositor).version,
+                                             this);
     QVERIFY(m_compositor);
     QVERIFY(m_compositor->isValid());
 
-    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, registry.interface(Registry::Interface::Seat).version, this);
+    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
+                                 registry.interface(Registry::Interface::Seat).version,
+                                 this);
     QVERIFY(m_seat);
     QVERIFY(m_seat->isValid());
 

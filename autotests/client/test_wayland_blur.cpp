@@ -103,7 +103,9 @@ void TestBlur::init()
     QVERIFY(m_compositorInterface->isValid());
 
     QVERIFY(compositorSpy.wait());
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
+    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
+                                             compositorSpy.first().last().value<quint32>(),
+                                             this);
 
     m_blurManagerInterface = m_display->createBlurManager(m_display);
     m_blurManagerInterface->create();

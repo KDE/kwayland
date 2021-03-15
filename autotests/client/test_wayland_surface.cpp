@@ -138,9 +138,13 @@ void TestWaylandSurface::init()
     QVERIFY(!compositorSpy.isEmpty());
     QVERIFY(!shmSpy.isEmpty());
 
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), compositorSpy.first().last().value<quint32>(), this);
+    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
+                                             compositorSpy.first().last().value<quint32>(),
+                                             this);
     QVERIFY(m_compositor->isValid());
-    m_shm = registry.createShmPool(shmSpy.first().first().value<quint32>(), shmSpy.first().last().value<quint32>(), this);
+    m_shm = registry.createShmPool(shmSpy.first().first().value<quint32>(), //
+                                   shmSpy.first().last().value<quint32>(),
+                                   this);
     QVERIFY(m_shm->isValid());
 
     m_idleInhibitManager = registry.createIdleInhibitManager(registry.interface(Registry::Interface::IdleInhibitManagerUnstableV1).name,

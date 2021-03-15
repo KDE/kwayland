@@ -94,10 +94,13 @@ void ErrorTest::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_compositor =
-        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
+    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
+                                             registry.interface(Registry::Interface::Compositor).version,
+                                             this);
     QVERIFY(m_compositor);
-    m_shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, this);
+    m_shell = registry.createShell(registry.interface(Registry::Interface::Shell).name, //
+                                   registry.interface(Registry::Interface::Shell).version,
+                                   this);
     QVERIFY(m_shell);
     m_plasmaShell = registry.createPlasmaShell(registry.interface(Registry::Interface::PlasmaShell).name,
                                                registry.interface(Registry::Interface::PlasmaShell).version,

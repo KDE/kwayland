@@ -524,13 +524,13 @@ void TestWaylandOutputDevice::testTransform_data()
     QTest::addColumn<KWayland::Client::OutputDevice::Transform>("expected");
     QTest::addColumn<KWayland::Server::OutputDeviceInterface::Transform>("actual");
 
-    QTest::newRow("90") << OutputDevice::Transform::Rotated90 << OutputDeviceInterface::Transform::Rotated90;
-    QTest::newRow("180") << OutputDevice::Transform::Rotated180 << OutputDeviceInterface::Transform::Rotated180;
-    QTest::newRow("270") << OutputDevice::Transform::Rotated270 << OutputDeviceInterface::Transform::Rotated270;
-    QTest::newRow("Flipped") << OutputDevice::Transform::Flipped << OutputDeviceInterface::Transform::Flipped;
-    QTest::newRow("Flipped 90") << OutputDevice::Transform::Flipped90 << OutputDeviceInterface::Transform::Flipped90;
-    QTest::newRow("Flipped 180") << OutputDevice::Transform::Flipped180 << OutputDeviceInterface::Transform::Flipped180;
-    QTest::newRow("Flipped 280") << OutputDevice::Transform::Flipped270 << OutputDeviceInterface::Transform::Flipped270;
+    // clang-format off
+    QTest::newRow("90")          << OutputDevice::Transform::Rotated90  << OutputDeviceInterface::Transform::Rotated90;
+    QTest::newRow("180")         << OutputDevice::Transform::Rotated180 << OutputDeviceInterface::Transform::Rotated180;
+    QTest::newRow("270")         << OutputDevice::Transform::Rotated270 << OutputDeviceInterface::Transform::Rotated270;
+    QTest::newRow("Flipped")     << OutputDevice::Transform::Flipped    << OutputDeviceInterface::Transform::Flipped;
+    QTest::newRow("Flipped 90")  << OutputDevice::Transform::Flipped90  << OutputDeviceInterface::Transform::Flipped90;
+    // clang-format on
 }
 
 void TestWaylandOutputDevice::testTransform()

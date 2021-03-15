@@ -117,8 +117,9 @@ bool SelectionTest::setupConnection(Connection *c)
         return false;
     }
 
-    c->compositor =
-        registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, registry.interface(Registry::Interface::Compositor).version, this);
+    c->compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
+                                              registry.interface(Registry::Interface::Compositor).version,
+                                              this);
     if (!c->compositor->isValid()) {
         return false;
     }

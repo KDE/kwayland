@@ -1836,8 +1836,8 @@ void TestWaylandSeat::testSelection()
     registry.setup();
 
     QVERIFY(dataDeviceManagerSpy.wait());
-    QScopedPointer<DataDeviceManager> ddm(
-        registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), dataDeviceManagerSpy.first().last().value<quint32>()));
+    QScopedPointer<DataDeviceManager> ddm(registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), //
+                                                                           dataDeviceManagerSpy.first().last().value<quint32>()));
     QVERIFY(ddm->isValid());
 
     QScopedPointer<DataDevice> dd1(ddm->getDataDevice(m_seat));
@@ -1953,8 +1953,8 @@ void TestWaylandSeat::testSelectionNoDataSource()
     registry.setup();
 
     QVERIFY(dataDeviceManagerSpy.wait());
-    QScopedPointer<DataDeviceManager> ddm(
-        registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), dataDeviceManagerSpy.first().last().value<quint32>()));
+    QScopedPointer<DataDeviceManager> ddm(registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), //
+                                                                           dataDeviceManagerSpy.first().last().value<quint32>()));
     QVERIFY(ddm->isValid());
 
     QScopedPointer<DataDevice> dd(ddm->getDataDevice(m_seat));

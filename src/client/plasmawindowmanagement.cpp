@@ -89,6 +89,7 @@ public:
     QPointer<PlasmaWindow> parentWindow;
     QMetaObject::Connection parentWindowUnmappedConnection;
     QStringList plasmaVirtualDesktops;
+    QStringList plasmaActivities;
     QRect geometry;
     quint32 pid = 0;
     QString applicationMenuServiceName;
@@ -109,6 +110,8 @@ private:
     static void virtualDesktopEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void virtualDesktopLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *service_name, const char *object_path);
+    static void activityEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
+    static void activityLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -416,7 +419,9 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     pidChangedCallback,
     virtualDesktopEnteredCallback,
     virtualDesktopLeftCallback,
-    appmenuChangedCallback
+    appmenuChangedCallback,
+    activityEnteredCallback,
+    activityLeftCallback,
 };
 
 void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char *service_name, const char *object_path)
@@ -561,6 +566,24 @@ void PlasmaWindow::Private::virtualDesktopLeftCallback(void *data, org_kde_plasm
     if (p->plasmaVirtualDesktops.isEmpty()) {
         Q_EMIT p->q->onAllDesktopsChanged();
     }
+}
+
+void PlasmaWindow::Private::activityEnteredCallback(void *data, org_kde_plasma_window *window, const char *id)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+    const QString stringId(QString::fromUtf8(id));
+    p->plasmaActivities << stringId;
+    Q_EMIT p->q->plasmaActivityEntered(stringId);
+}
+
+void PlasmaWindow::Private::activityLeftCallback(void *data, org_kde_plasma_window *window, const char *id)
+{
+    auto p = cast(data);
+    Q_UNUSED(window);
+    const QString stringId(QString::fromUtf8(id));
+    p->plasmaActivities.removeAll(stringId);
+    Q_EMIT p->q->plasmaActivityLeft(stringId);
 }
 
 void PlasmaWindow::Private::stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state)
@@ -1155,6 +1178,21 @@ void PlasmaWindow::requestLeaveVirtualDesktop(const QString &id)
 QStringList PlasmaWindow::plasmaVirtualDesktops() const
 {
     return d->plasmaVirtualDesktops;
+}
+
+void PlasmaWindow::requestEnterActivity(const QString &id)
+{
+    org_kde_plasma_window_request_enter_activity(d->window, id.toUtf8());
+}
+
+void PlasmaWindow::requestLeaveActivity(const QString &id)
+{
+    org_kde_plasma_window_request_leave_activity(d->window, id.toUtf8());
+}
+
+QStringList PlasmaWindow::plasmaActivities() const
+{
+    return d->plasmaActivities;
 }
 
 }

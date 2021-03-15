@@ -556,6 +556,33 @@ public:
     QStringList plasmaVirtualDesktops() const;
 
     /**
+     * Ask the server to make the window enter an activity.
+     * The server may or may not consent.
+     * A window can enter more than one activity.
+     *
+     * @since 5.81
+     */
+    void requestEnterActivity(const QString &id);
+
+    /**
+     * Ask the server to make the window exit an activity.
+     * The server may or may not consent.
+     * If it exits all activities it will be considered on all of them.
+     *
+     * @since 5.81
+     */
+    void requestLeaveActivity(const QString &id);
+
+    /**
+     * Return all the activity ids this window is associated to.
+     * When an activity gets deleted, it will be automatically removed from this list.
+     * If this list is empty, assume it's on all activities.
+     *
+     * @since 5.81
+     */
+    QStringList plasmaActivities() const;
+
+    /**
      * Return the D-BUS service name for a window's
      * application menu.
      *
@@ -727,6 +754,21 @@ Q_SIGNALS:
      * @since 5.46
      */
     void plasmaVirtualDesktopLeft(const QString &id);
+
+    /**
+     * This signal is emitted when the window has entered an activity.
+     * The window can be on more than one activity, or none: then is considered on all of them.
+     * @since 5.81
+     */
+    void plasmaActivityEntered(const QString &id);
+
+    /**
+     * This signal is emitted when the window left an activity.
+     * If the window leaves all activities, it can be considered on all.
+     *
+     * @since 5.81
+     */
+    void plasmaActivityLeft(const QString &id);
 
     /**
      *  This signal is emitted when either the D-BUS service name or

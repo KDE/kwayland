@@ -94,6 +94,7 @@ XdgOutput *XdgOutputManager::getXdgOutput(Output *output, QObject *parent)
         d->queue->addProxy(w);
     }
     p->setup(w);
+    p->linkOutput(output);
     return p;
 }
 
@@ -171,8 +172,11 @@ void XdgOutput::Private::doneCallback(void *data, zxdg_output_v1 *zxdg_output_v1
 {
     auto p = reinterpret_cast<XdgOutput::Private*>(data);
     Q_ASSERT(p->xdgoutput == zxdg_output_v1);
-    std::swap(p->current, p->pending);
+    if (zxdg_output_v1_get_version(zxdg_output_v1) >= 3) {
+        return;
+    }
 
+    std::swap(p->current, p->pending);
     Q_EMIT p->q->changed();
 }
 
@@ -248,6 +252,16 @@ bool XdgOutput::isValid() const
     return d->xdgoutput.isValid();
 }
 
+void XdgOutput::linkOutput(KWayland::Client::Output* output)
+{
+    if (zxdg_output_v1_get_version(d->xdgoutput) < 3) {
+        return;
+    }
+    connect(output, &Output::changed, this, [this] () {
+        std::swap(d->current, d->pending);
+        Q_EMIT changed();
+    });
+}
 
 }
 }

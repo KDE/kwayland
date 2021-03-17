@@ -346,7 +346,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::serverSideDecorationPaletteManagerRemoved
     }},
     {Registry::Interface::XdgOutputUnstableV1, {
-        2,
+        3,
         QByteArrayLiteral("zxdg_output_manager_v1"),
         &zxdg_output_manager_v1_interface,
         &Registry::xdgOutputAnnounced,

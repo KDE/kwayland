@@ -118,6 +118,12 @@ public:
      **/
     QVector<wl_resource *> clientResources(ClientConnection *client) const;
 
+    /**
+     * Submit changes to all clients.
+     * @since 5.81
+     */
+    void done();
+
     static OutputInterface *get(wl_resource *native);
 
 Q_SIGNALS:

@@ -217,6 +217,7 @@ private:
     friend class XdgOutputManager;
     explicit XdgOutput(QObject *parent = nullptr);
     class Private;
+    void linkOutput(Output *output);
     QScopedPointer<Private> d;
 };
 

@@ -12,6 +12,7 @@
 #include <wayland-xdg-output-server-protocol.h>
 
 #include <QHash>
+#include <QPointer>
 
 namespace KWayland
 {
@@ -40,7 +41,7 @@ private:
     static const quint32 s_version;
 };
 
-const quint32 XdgOutputManagerInterface::Private::s_version = 2;
+const quint32 XdgOutputManagerInterface::Private::s_version = 3;
 
 #ifndef K_DOXYGEN
 const struct zxdg_output_manager_v1_interface XdgOutputManagerInterface::Private::s_interface = {
@@ -75,6 +76,7 @@ public:
     bool dirty = false;
     bool doneOnce = false;
     QList<XdgOutputV1Interface*> resources;
+    QPointer<OutputInterface> output;
 };
 
 
@@ -91,6 +93,7 @@ XdgOutputInterface* XdgOutputManagerInterface::createXdgOutput(OutputInterface *
     Q_D();
     if (!d->outputs.contains(output)) {
         auto xdgOutput = new XdgOutputInterface(parent);
+        xdgOutput->linkOutputInterface(output);
         d->outputs[output] = xdgOutput;
         //as XdgOutput lifespan is managed by user, delete our mapping when either
         //it or the relevant Output gets deleted
@@ -230,6 +233,11 @@ void XdgOutputInterface::done()
     }
 }
 
+void XdgOutputInterface::linkOutputInterface(OutputInterface *output)
+{
+    d->output = output;
+}
+
 void XdgOutputInterface::Private::resourceConnected(XdgOutputV1Interface *resource)
 {
     resource->setLogicalPosition(pos);
@@ -240,8 +248,15 @@ void XdgOutputInterface::Private::resourceConnected(XdgOutputV1Interface *resour
     if (!description.isEmpty()) {
         resource->setDescription(description);
     }
-    if (doneOnce) {
-        resource->done();
+
+    if (wl_resource_get_version(resource->resource()) >= 3) {
+        if (output) {
+            output->done();
+        }
+    } else {
+        if (doneOnce) {
+            resource->done();
+        }
     }
     resources << resource;
 }
@@ -315,6 +330,10 @@ void XdgOutputV1Interface::setDescription(const QString &description)
 void XdgOutputV1Interface::done()
 {
     if (!d->resource) {
+        return;
+    }
+    // zxdg_output_v1.done is deprecated since v3 and should be replaced by wl_output.done.
+    if (wl_resource_get_version(d->resource) >= 3) {
         return;
     }
     zxdg_output_v1_send_done(d->resource);

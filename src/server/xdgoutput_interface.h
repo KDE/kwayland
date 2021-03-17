@@ -27,6 +27,7 @@ namespace Server
 class Display;
 class OutputInterface;
 class XdgOutputInterface;
+class OutputInterface;
 
 /**
  * Global manager for XdgOutputs
@@ -121,6 +122,7 @@ public:
 private:
     explicit XdgOutputInterface(QObject *parent);
     friend class XdgOutputManagerInterface;
+    void linkOutputInterface(OutputInterface *output);
 
     class Private;
     QScopedPointer<Private> d;

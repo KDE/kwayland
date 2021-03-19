@@ -290,21 +290,28 @@
     <!-- Flags -->
 
     <enum name="panel_behavior">
-      <description summary="Behavior for panel surface">
-      </description>
+      <description summary="Behavior for panel surface"/>
       <entry name="always_visible" value="1" summary="normal panel visibility">
-        The panel is on top of other surfaces, windows cannot cover (full screen
-        windows excluded).
+        <description summary="normal panel visibility">
+          The panel is on top of other surfaces, windows cannot cover (full screen
+          windows excluded).
+        </description>
       </entry>
       <entry name="auto_hide" value="2" summary="hide automatically">
-        The panel is hidden automatically and restored when the mouse is over.
+        <description summary="hide automatically">
+          The panel is hidden automatically and restored when the mouse is over.
+        </description>
       </entry>
       <entry name="windows_can_cover" value="3" summary="windows can cover">
-        Windows can cover the panel.
+        <description summary="windows can cover">
+          Windows can cover the panel.
+        </description>
       </entry>
       <entry name="windows_go_below" value="4" summary="windows go below">
-        Maximized windows take the whole screen space but the panel is above
-        the windows.
+        <description summary="windows go below">
+          Maximized windows take the whole screen space but the panel is above
+          the windows.
+        </description>
       </entry>
     </enum>
 

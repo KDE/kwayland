@@ -23,8 +23,8 @@
               the user to decide whether the application should get granted access to
               this very privileged interface.
           </description>
-          <arg name="application" type="string" description="user visible name of the application"/>
-          <arg name="reason" type="string" description="reason why the application wants to use this interface"/>
+          <arg name="application" type="string" summary="user visible name of the application"/>
+          <arg name="reason" type="string" summary="reason why the application wants to use this interface"/>
       </request>
       <request name="pointer_motion">
           <arg name="delta_x" type="fixed"/>
@@ -43,23 +43,23 @@
              A client should use this request to send touch down event at specific
              co-ordinates.
          </description>
-         <arg name="id" type="uint" description="unique id for touch down event"/>
-         <arg name="x" type="fixed" description="x coordinate for touch down event"/>
-         <arg name="y" type="fixed" description="y coordinate for touch down event"/>
+         <arg name="id" type="uint" summary="unique id for touch down event"/>
+         <arg name="x" type="fixed" summary="x coordinate for touch down event"/>
+         <arg name="y" type="fixed" summary="y coordinate for touch down event"/>
       </request>
       <request name="touch_motion" since="2">
           <description summary="touch motion event">
               A client should use this request to send touch motion to specific position.
           </description>
-          <arg name="id" type="uint" description="unique id for touch motion event"/>
-          <arg name="x" type="fixed" description="x coordinate for touch motion event"/>
-          <arg name="y" type="fixed" description="y coordinate for touch motion event"/>
+          <arg name="id" type="uint" summary="unique id for touch motion event"/>
+          <arg name="x" type="fixed" summary="x coordinate for touch motion event"/>
+          <arg name="y" type="fixed" summary="y coordinate for touch motion event"/>
       </request>
       <request name="touch_up" since="2">
           <description summary="touch up event">
               A client should use this request to send touch up event.
           </description>
-          <arg name="id" type="uint" description="unique id for touch up event"/>
+          <arg name="id" type="uint" summary="unique id for touch up event"/>
       </request>
       <request name="touch_cancel" since="2">
           <description summary="touch cancel event">

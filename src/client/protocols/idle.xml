@@ -18,7 +18,7 @@
       <request name="get_idle_timeout">
         <arg name="id" type="new_id" interface="org_kde_kwin_idle_timeout"/>
         <arg name="seat" type="object" interface="wl_seat"/>
-        <arg name="timeout" type="uint" description="The idle timeout in msec"/>
+        <arg name="timeout" type="uint" summary="The idle timeout in msec"/>
       </request>
   </interface>
   <interface name="org_kde_kwin_idle_timeout" version="1">

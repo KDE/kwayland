@@ -53,9 +53,6 @@ include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 include(CheckIncludeFile)
 
-find_package(PlasmaWaylandProtocols 1.1 CONFIG)
-set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
-
 check_include_file("linux/input.h" HAVE_LINUX_INPUT_H)
 configure_file(config-kwayland.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kwayland.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

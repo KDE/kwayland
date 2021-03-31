@@ -75,27 +75,27 @@ ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/fullscreen-shell.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/fullscreen-shell.xml
     BASENAME fullscreen-shell
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/output-management.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/output-management.xml
     BASENAME output-management
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/outputdevice.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/outputdevice.xml
     BASENAME org_kde_kwin_outputdevice
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-shell.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-shell.xml
     BASENAME plasma-shell
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/plasma-virtual-desktop.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-virtual-desktop.xml
     BASENAME plasma-virtual-desktop
 )
 
@@ -105,49 +105,49 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/idle.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/idle.xml
     BASENAME idle
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/fake-input.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/fake-input.xml
     BASENAME fake-input
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/shadow.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/shadow.xml
     BASENAME shadow
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/blur.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/blur.xml
     BASENAME blur
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/contrast.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/contrast.xml
     BASENAME contrast
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/slide.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/slide.xml
     BASENAME slide
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/dpms.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/dpms.xml
     BASENAME dpms
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/server-decoration.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/server-decoration.xml
     BASENAME server-decoration
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/text-input.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/text-input.xml
     BASENAME text-input-v0
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/text-input-unstable-v2.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/text-input-unstable-v2.xml
     BASENAME text-input-v2
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -175,11 +175,11 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME idle-inhibit-unstable-v1
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/appmenu.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/appmenu.xml
     BASENAME appmenu
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/server-decoration-palette.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/server-decoration-palette.xml
     BASENAME server-decoration-palette
 )
 
@@ -199,7 +199,7 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/keystate.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/keystate.xml
     BASENAME keystate
 )
 
@@ -234,7 +234,7 @@ set(CLIENT_GENERATED_FILES
 set_source_files_properties(${CLIENT_GENERATED_FILES} PROPERTIES SKIP_AUTOMOC ON)
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${KWayland_SOURCE_DIR}/src/client/protocols/remote-access.xml
+    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/remote-access.xml
     BASENAME remote-access
 )
 

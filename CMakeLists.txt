@@ -30,7 +30,7 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
                         SOVERSION 5)
 
 # Dependencies
-set(REQUIRED_QT_VERSION 5.14.0)
+set(REQUIRED_QT_VERSION 5.15.0)
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui WaylandClient)
 
 find_package(QtWaylandScanner REQUIRED)
@@ -64,7 +64,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
 add_definitions(-DQT_NO_FOREACH)
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050e00)
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
 # Subdirectories
 if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
     ecm_install_po_files_as_qm(po)

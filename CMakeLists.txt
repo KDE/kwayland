@@ -53,7 +53,7 @@ include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 include(CheckIncludeFile)
 
-find_package(PlasmaWaylandProtocols 1.2 CONFIG)
+find_package(PlasmaWaylandProtocols 1.2.1 CONFIG)
 set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 
 check_include_file("linux/input.h" HAVE_LINUX_INPUT_H)

@@ -218,31 +218,29 @@ void PlasmaWindowModelTest::testRoleNames_data()
     QTest::newRow("display") << int(Qt::DisplayRole) << QByteArrayLiteral("DisplayRole");
     QTest::newRow("decoration") << int(Qt::DecorationRole) << QByteArrayLiteral("DecorationRole");
 
-    // clang-format off
-    QTest::newRow("AppId")                << int(PlasmaWindowModel::AppId) << QByteArrayLiteral("AppId");
-    QTest::newRow("Pid")                  << int(PlasmaWindowModel::Pid) << QByteArrayLiteral("Pid");
-    QTest::newRow("IsActive")             << int(PlasmaWindowModel::IsActive) << QByteArrayLiteral("IsActive");
-    QTest::newRow("IsFullscreenable")     << int(PlasmaWindowModel::IsFullscreenable) << QByteArrayLiteral("IsFullscreenable");
-    QTest::newRow("IsFullscreen")         << int(PlasmaWindowModel::IsFullscreen) << QByteArrayLiteral("IsFullscreen");
-    QTest::newRow("IsMaximizable")        << int(PlasmaWindowModel::IsMaximizable) << QByteArrayLiteral("IsMaximizable");
-    QTest::newRow("IsMaximized")          << int(PlasmaWindowModel::IsMaximized) << QByteArrayLiteral("IsMaximized");
-    QTest::newRow("IsMinimizable")        << int(PlasmaWindowModel::IsMinimizable) << QByteArrayLiteral("IsMinimizable");
-    QTest::newRow("IsMinimized")          << int(PlasmaWindowModel::IsMinimized) << QByteArrayLiteral("IsMinimized");
-    QTest::newRow("IsKeepAbove")          << int(PlasmaWindowModel::IsKeepAbove) << QByteArrayLiteral("IsKeepAbove");
-    QTest::newRow("IsKeepBelow")          << int(PlasmaWindowModel::IsKeepBelow) << QByteArrayLiteral("IsKeepBelow");
-    QTest::newRow("VirtualDesktop")       << int(PlasmaWindowModel::VirtualDesktop) << QByteArrayLiteral("VirtualDesktop");
-    QTest::newRow("IsOnAllDesktops")      << int(PlasmaWindowModel::IsOnAllDesktops) << QByteArrayLiteral("IsOnAllDesktops");
+    QTest::newRow("AppId") << int(PlasmaWindowModel::AppId) << QByteArrayLiteral("AppId");
+    QTest::newRow("Pid") << int(PlasmaWindowModel::Pid) << QByteArrayLiteral("Pid");
+    QTest::newRow("IsActive") << int(PlasmaWindowModel::IsActive) << QByteArrayLiteral("IsActive");
+    QTest::newRow("IsFullscreenable") << int(PlasmaWindowModel::IsFullscreenable) << QByteArrayLiteral("IsFullscreenable");
+    QTest::newRow("IsFullscreen") << int(PlasmaWindowModel::IsFullscreen) << QByteArrayLiteral("IsFullscreen");
+    QTest::newRow("IsMaximizable") << int(PlasmaWindowModel::IsMaximizable) << QByteArrayLiteral("IsMaximizable");
+    QTest::newRow("IsMaximized") << int(PlasmaWindowModel::IsMaximized) << QByteArrayLiteral("IsMaximized");
+    QTest::newRow("IsMinimizable") << int(PlasmaWindowModel::IsMinimizable) << QByteArrayLiteral("IsMinimizable");
+    QTest::newRow("IsMinimized") << int(PlasmaWindowModel::IsMinimized) << QByteArrayLiteral("IsMinimized");
+    QTest::newRow("IsKeepAbove") << int(PlasmaWindowModel::IsKeepAbove) << QByteArrayLiteral("IsKeepAbove");
+    QTest::newRow("IsKeepBelow") << int(PlasmaWindowModel::IsKeepBelow) << QByteArrayLiteral("IsKeepBelow");
+    QTest::newRow("VirtualDesktop") << int(PlasmaWindowModel::VirtualDesktop) << QByteArrayLiteral("VirtualDesktop");
+    QTest::newRow("IsOnAllDesktops") << int(PlasmaWindowModel::IsOnAllDesktops) << QByteArrayLiteral("IsOnAllDesktops");
     QTest::newRow("IsDemandingAttention") << int(PlasmaWindowModel::IsDemandingAttention) << QByteArrayLiteral("IsDemandingAttention");
-    QTest::newRow("SkipTaskbar")          << int(PlasmaWindowModel::SkipTaskbar) << QByteArrayLiteral("SkipTaskbar");
-    QTest::newRow("SkipSwitcher")         << int(PlasmaWindowModel::SkipSwitcher) << QByteArrayLiteral("SkipSwitcher");
-    QTest::newRow("IsShadeable")           << int(PlasmaWindowModel::IsShadeable) << QByteArrayLiteral("IsShadeable");
-    QTest::newRow("IsShaded")             << int(PlasmaWindowModel::IsShaded) << QByteArrayLiteral("IsShaded");
-    QTest::newRow("IsMovable")            << int(PlasmaWindowModel::IsMovable) << QByteArrayLiteral("IsMovable");
-    QTest::newRow("IsResizable")          << int(PlasmaWindowModel::IsResizable) << QByteArrayLiteral("IsResizable");
+    QTest::newRow("SkipTaskbar") << int(PlasmaWindowModel::SkipTaskbar) << QByteArrayLiteral("SkipTaskbar");
+    QTest::newRow("SkipSwitcher") << int(PlasmaWindowModel::SkipSwitcher) << QByteArrayLiteral("SkipSwitcher");
+    QTest::newRow("IsShadeable") << int(PlasmaWindowModel::IsShadeable) << QByteArrayLiteral("IsShadeable");
+    QTest::newRow("IsShaded") << int(PlasmaWindowModel::IsShaded) << QByteArrayLiteral("IsShaded");
+    QTest::newRow("IsMovable") << int(PlasmaWindowModel::IsMovable) << QByteArrayLiteral("IsMovable");
+    QTest::newRow("IsResizable") << int(PlasmaWindowModel::IsResizable) << QByteArrayLiteral("IsResizable");
     QTest::newRow("IsVirtualDesktopChangeable") << int(PlasmaWindowModel::IsVirtualDesktopChangeable) << QByteArrayLiteral("IsVirtualDesktopChangeable");
-    QTest::newRow("IsCloseable")          << int(PlasmaWindowModel::IsCloseable) << QByteArrayLiteral("IsCloseable");
-    QTest::newRow("Geometry")          << int(PlasmaWindowModel::Geometry) << QByteArrayLiteral("Geometry");
-    // clang-format on
+    QTest::newRow("IsCloseable") << int(PlasmaWindowModel::IsCloseable) << QByteArrayLiteral("IsCloseable");
+    QTest::newRow("Geometry") << int(PlasmaWindowModel::Geometry) << QByteArrayLiteral("Geometry");
 }
 
 void PlasmaWindowModelTest::testRoleNames()

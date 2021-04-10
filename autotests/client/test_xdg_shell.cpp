@@ -65,9 +65,9 @@ void XdgShellTest::init()
     QSignalSpy outputAnnouncedSpy(&registry, &Registry::outputAnnounced);
     QVERIFY(outputAnnouncedSpy.isValid());
 
-    auto shellAnnouncedSignal = (m_version == XdgShellInterfaceVersion::UnstableV5       ? &Registry::xdgShellUnstableV5Announced
-                                     : m_version == XdgShellInterfaceVersion::UnstableV6 ? &Registry::xdgShellUnstableV6Announced
-                                                                                         : &Registry::xdgShellStableAnnounced);
+    auto shellAnnouncedSignal = m_version == XdgShellInterfaceVersion::UnstableV5 ? &Registry::xdgShellUnstableV5Announced
+        : m_version == XdgShellInterfaceVersion::UnstableV6                       ? &Registry::xdgShellUnstableV6Announced
+                                                                                  : &Registry::xdgShellStableAnnounced;
 
     QSignalSpy xdgShellAnnouncedSpy(&registry, shellAnnouncedSignal);
     QVERIFY(xdgShellAnnouncedSpy.isValid());

@@ -93,15 +93,13 @@ void XdgShellTest::init()
     QVERIFY(m_shmPool);
     QVERIFY(m_shmPool->isValid());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    auto compositorInterface = registry.interface(Registry::Interface::Compositor);
+    m_compositor = registry.createCompositor(compositorInterface.name, compositorInterface.version, this);
     QVERIFY(m_compositor);
     QVERIFY(m_compositor->isValid());
 
-    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
-                                 registry.interface(Registry::Interface::Seat).version,
-                                 this);
+    auto seatInterface = registry.interface(Registry::Interface::Seat);
+    m_seat = registry.createSeat(seatInterface.name, seatInterface.version, this);
     QVERIFY(m_seat);
     QVERIFY(m_seat->isValid());
 

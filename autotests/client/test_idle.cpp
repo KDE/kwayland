@@ -86,13 +86,11 @@ void IdleTest::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
-                                 registry.interface(Registry::Interface::Seat).version,
-                                 this);
+    auto seatInterface = registry.interface(Registry::Interface::Seat);
+    m_seat = registry.createSeat(seatInterface.name, seatInterface.version, this);
     QVERIFY(m_seat->isValid());
-    m_idle = registry.createIdle(registry.interface(Registry::Interface::Idle).name, //
-                                 registry.interface(Registry::Interface::Idle).version,
-                                 this);
+    auto idleInterface = registry.interface(Registry::Interface::Idle);
+    m_idle = registry.createIdle(idleInterface.name, idleInterface.version, this);
     QVERIFY(m_idle->isValid());
 }
 

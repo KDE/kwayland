@@ -88,9 +88,9 @@ void TestDataSource::init()
     QVERIFY(m_dataDeviceManagerInterface->isValid());
 
     QVERIFY(dataDeviceManagerSpy.wait());
-    m_dataDeviceManager = registry.createDataDeviceManager(dataDeviceManagerSpy.first().first().value<quint32>(), //
-                                                           dataDeviceManagerSpy.first().last().value<quint32>(),
-                                                           this);
+    const int name = dataDeviceManagerSpy.first().first().value<quint32>();
+    const int version = dataDeviceManagerSpy.first().last().value<quint32>();
+    m_dataDeviceManager = registry.createDataDeviceManager(name, version, this);
 }
 
 void TestDataSource::cleanup()

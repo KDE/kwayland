@@ -103,9 +103,8 @@ void TestPointerConstraints::init()
     registry.setup();
     QVERIFY(interfacesAnnouncedSpy.wait());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    auto compositorInterface = registry.interface(Registry::Interface::Compositor);
+    m_compositor = registry.createCompositor(compositorInterface.name, compositorInterface.version, this);
     QVERIFY(m_compositor);
     QVERIFY(m_compositor->isValid());
 
@@ -115,9 +114,8 @@ void TestPointerConstraints::init()
     QVERIFY(m_pointerConstraints);
     QVERIFY(m_pointerConstraints->isValid());
 
-    m_seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
-                                 registry.interface(Registry::Interface::Seat).version,
-                                 this);
+    auto seatInterface = registry.interface(Registry::Interface::Seat);
+    m_seat = registry.createSeat(seatInterface.name, seatInterface.version, this);
     QVERIFY(m_seat);
     QVERIFY(m_seat->isValid());
     QSignalSpy pointerChangedSpy(m_seat, &Seat::hasPointerChanged);

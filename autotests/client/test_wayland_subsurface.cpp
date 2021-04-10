@@ -131,9 +131,9 @@ void TestSubSurface::init()
     if (compositorSpy.isEmpty()) {
         QVERIFY(compositorSpy.wait());
     }
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
-                                             compositorSpy.first().last().value<quint32>(),
-                                             this);
+    const auto name = compositorSpy.first().first().value<quint32>();
+    const auto version = compositorSpy.first().last().value<quint32>();
+    m_compositor = registry.createCompositor(name, version, this);
 
     m_shm = registry.createShmPool(registry.interface(KWayland::Client::Registry::Interface::Shm).name,
                                    registry.interface(KWayland::Client::Registry::Interface::Shm).version,

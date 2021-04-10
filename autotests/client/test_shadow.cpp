@@ -89,9 +89,8 @@ void ShadowTest::init()
 
     m_shm = registry.createShmPool(registry.interface(Registry::Interface::Shm).name, registry.interface(Registry::Interface::Shm).version, this);
     QVERIFY(m_shm->isValid());
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    auto compositorInterface = registry.interface(Registry::Interface::Compositor);
+    m_compositor = registry.createCompositor(compositorInterface.name, compositorInterface.version, this);
     QVERIFY(m_compositor->isValid());
     m_shadow = registry.createShadowManager(registry.interface(Registry::Interface::Shadow).name, //
                                             registry.interface(Registry::Interface::Shadow).version,

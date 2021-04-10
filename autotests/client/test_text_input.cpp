@@ -130,9 +130,8 @@ void TextInputTest::init()
     m_keyboard = m_seat->createKeyboard(this);
     QVERIFY(m_keyboard->isValid());
 
-    m_compositor = registry.createCompositor(registry.interface(Registry::Interface::Compositor).name, //
-                                             registry.interface(Registry::Interface::Compositor).version,
-                                             this);
+    auto compositorInterface = registry.interface(Registry::Interface::Compositor);
+    m_compositor = registry.createCompositor(compositorInterface.name, compositorInterface.version, this);
     QVERIFY(m_compositor->isValid());
 
     m_textInputManagerV0 = registry.createTextInputManager(registry.interface(Registry::Interface::TextInputManagerUnstableV0).name,

@@ -102,9 +102,9 @@ void TestSlide::init()
     QVERIFY(m_compositorInterface->isValid());
 
     QVERIFY(compositorSpy.wait());
-    m_compositor = registry.createCompositor(compositorSpy.first().first().value<quint32>(), //
-                                             compositorSpy.first().last().value<quint32>(),
-                                             this);
+    const auto name = compositorSpy.first().first().value<quint32>();
+    const auto version = compositorSpy.first().last().value<quint32>();
+    m_compositor = registry.createCompositor(name, version, this);
 
     m_slideManagerInterface = m_display->createSlideManager(m_display);
     m_slideManagerInterface->create();

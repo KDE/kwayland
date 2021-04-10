@@ -59,6 +59,8 @@ private:
     static void colorcurvesCallback(wl_client *client, wl_resource *resource,
                                     wl_resource * outputdevice,
                                     wl_array *red, wl_array *green, wl_array *blue);
+    static void overscanCallback(wl_client *client, wl_resource *resource,
+                                 wl_resource *outputdevice, uint32_t overscan);
 
     OutputConfigurationInterface *q_func() {
         return reinterpret_cast<OutputConfigurationInterface *>(q);
@@ -76,7 +78,8 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
     applyCallback,
     scaleFCallback,
     colorcurvesCallback,
-    resourceDestroyedCallback
+    resourceDestroyedCallback,
+    overscanCallback
 };
 
 OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface* parent, wl_resource* parentResource): Resource(new Private(this, parent, parentResource))
@@ -236,6 +239,15 @@ void OutputConfigurationInterface::Private::colorcurvesCallback(wl_client *clien
     fillVector(blue, &cc.blue);
 
     s->pendingChanges(o)->d_func()->colorCurves = cc;
+}
+
+void OutputConfigurationInterface::Private::overscanCallback(wl_client *client, wl_resource *resource,
+                                                             wl_resource *outputdevice, uint32_t overscan)
+{
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
+    Q_UNUSED(outputdevice);
+    Q_UNUSED(overscan);
 }
 
 void OutputConfigurationInterface::Private::emitConfigurationChangeRequested() const

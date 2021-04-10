@@ -186,6 +186,14 @@ void OutputConfiguration::setColorCurves(OutputDevice *outputdevice,
     wl_array_release(&wlBlue);
 }
 
+void OutputConfiguration::setOverscan(OutputDevice *outputdevice, uint32_t overscan)
+{
+    org_kde_kwin_outputdevice *od = outputdevice->output();
+    if (wl_proxy_get_version(d->outputconfiguration) >= ORG_KDE_KWIN_OUTPUTCONFIGURATION_OVERSCAN_SINCE_VERSION) {
+        org_kde_kwin_outputconfiguration_overscan(d->outputconfiguration, od, overscan);
+    }
+}
+
 void OutputConfiguration::apply()
 {
     org_kde_kwin_outputconfiguration_apply(d->outputconfiguration);

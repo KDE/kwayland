@@ -215,6 +215,13 @@ public:
     void setColorCurves(OutputDevice *outputdevice, QVector<quint16> red, QVector<quint16> green, QVector<quint16> blue);
 
     /**
+     * Set overscan in % for this output.
+     *
+     * @since 5.82
+     */
+    void setOverscan(OutputDevice *outputdevice, uint32_t overscan);
+
+    /**
      * Ask the compositor to apply the changes.
      * This results in the compositor looking at all outputdevices and if they have
      * pending changes from the set* calls, these changes will be tested with the

@@ -49,6 +49,9 @@ public:
 
     ColorCurves colorCurves;
 
+    Capabilities capabilities;
+    uint32_t overscan = 0;
+
     bool done = false;
 
 private:
@@ -69,6 +72,8 @@ private:
 
     static void serialNumberCallback(void *data, org_kde_kwin_outputdevice *output, const char *serialNumber);
     static void eisaIdCallback(void *data, org_kde_kwin_outputdevice *output, const char *eisa);
+    static void capabilitiesCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t capabilities);
+    static void overscanCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t overscan);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -136,7 +141,9 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     scaleFCallback,
     colorcurvesCallback,
     serialNumberCallback,
-    eisaIdCallback
+    eisaIdCallback,
+    capabilitiesCallback,
+    overscanCallback,
 };
 
 void OutputDevice::Private::geometryCallback(void *data, org_kde_kwin_outputdevice *output,
@@ -358,6 +365,33 @@ void OutputDevice::Private::eisaIdCallback(void *data, org_kde_kwin_outputdevice
     o->setEisaId(raw);
 }
 
+void OutputDevice::Private::capabilitiesCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t capabilities)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_UNUSED(output);
+    auto caps = static_cast<Capabilities>(capabilities);
+    if (o->capabilities!= caps) {
+        o->capabilities = caps;
+        Q_EMIT o->q->capabilitiesChanged(caps);
+        if (o->done) {
+            Q_EMIT o->q->changed();
+        }
+    }
+}
+
+void OutputDevice::Private::overscanCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t overscan)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_UNUSED(output);
+    if (o->overscan != overscan) {
+        o->overscan = overscan;
+        Q_EMIT o->q->overscanChanged(overscan);
+        if (o->done) {
+            Q_EMIT o->q->changed();
+        }
+    }
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -535,6 +569,18 @@ OutputDevice::ColorCurves OutputDevice::colorCurves() const
 {
     return d->colorCurves;
 }
+
+OutputDevice::Capabilities OutputDevice::capabilities() const
+{
+    return d->capabilities;
+}
+
+
+uint32_t OutputDevice::overscan() const
+{
+    return d->overscan;
+}
+
 
 void OutputDevice::destroy()
 {

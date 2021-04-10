@@ -123,6 +123,10 @@ public:
         bool operator==(const ColorCurves &cc) const;
         bool operator!=(const ColorCurves &cc) const;
     };
+    enum class Capability {
+        Overscan = 0x1,
+    };
+    Q_DECLARE_FLAGS(Capabilities, Capability)
     explicit OutputDevice(QObject *parent = nullptr);
     virtual ~OutputDevice();
 
@@ -253,6 +257,18 @@ public:
     QByteArray uuid() const;
 
     /**
+     * @returns the capabilities of this outputdevice
+     * @since 5.82
+     **/
+    Capabilities capabilities() const;
+
+    /**
+     * @returns what overscan value this outputdevice is using
+     * @since 5.82
+     **/
+    uint32_t overscan() const;
+
+    /**
     * Destroys the data hold by this OutputDevice.
     * This method is supposed to be used when the connection to the Wayland
     * server goes away. If the connection is not valid any more, it's not
@@ -301,6 +317,18 @@ Q_SIGNALS:
      * @since 5.TODO
      **/
     void colorCurvesChanged();
+    /**
+     * Emitted whenever the capabilities change
+     * @param capabilities the new capabilities
+     * @since 5.82
+     **/
+    void capabilitiesChanged(const Capabilities &capabilities);
+    /**
+     * Emitted whenever the overscan changes
+     * @param overscan the new overscan value
+     * @since 5.82
+     **/
+    void overscanChanged(uint32_t overscan);
     /**
      * The corresponding global for this interface on the Registry got removed.
      *

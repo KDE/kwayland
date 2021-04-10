@@ -9,7 +9,7 @@
         SPDX-License-Identifier: MIT-CMU
         ]]></copyright>
 
-<interface name="org_kde_kwin_outputmanagement" version="2">
+<interface name="org_kde_kwin_outputmanagement" version="3">
     <description summary="configuration of server outputs through clients">
     This interface enables clients to set properties of output devices for screen
     configuration purposes via the server. To this end output devices are referenced
@@ -61,7 +61,7 @@
 
 </interface>
 
-<interface name="org_kde_kwin_outputconfiguration" version="2">
+<interface name="org_kde_kwin_outputconfiguration" version="3">
     <description summary="configure single output devices">
         outputconfiguration is a client-specific resource that can be used to ask
         the server to apply changes to available output devices.
@@ -169,6 +169,14 @@
 
     <request name="destroy" type="destructor" since="2">
         <description summary="release the outputconfiguration object"/>
+    </request>
+
+    <request name="overscan" since="3">
+        <description summary="set overscan value">
+            Set the overscan value of this output device with a value in percent.
+        </description>
+        <arg name="outputdevice" type="object" interface="org_kde_kwin_outputdevice" summary="outputdevice overscan applies to"/>
+        <arg name="overscan" type="uint" summary="overscan value"/>
     </request>
 
 </interface>

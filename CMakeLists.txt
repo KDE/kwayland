@@ -66,9 +66,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
 # Subdirectories
-if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
-    ecm_install_po_files_as_qm(po)
-endif()
+ecm_install_po_files_as_qm(po)
 
 find_package(QtWaylandScanner REQUIRED)
 add_subdirectory(src)

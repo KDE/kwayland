@@ -38,8 +38,8 @@ public:
     QString eisaId;
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
-    Modes modes;
-    Modes::iterator currentMode = modes.end();
+    QHash<org_kde_kwin_outputdevice_mode*, OutputDevice::Mode> modes;
+    QHash<org_kde_kwin_outputdevice_mode*, OutputDevice::Mode>::iterator currentMode = modes.end();
 
     QByteArray edid;
     OutputDevice::Enablement enabled = OutputDevice::Enablement::Enabled;
@@ -63,7 +63,9 @@ private:
                                  const char *make,
                                  const char *model,
                                  int32_t transform);
-    static void modeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
+
+    static void currentModeCallback(void *data, org_kde_kwin_outputdevice *output, org_kde_kwin_outputdevice_mode *mode);
+    static void modeCallback(void *data, org_kde_kwin_outputdevice *output, org_kde_kwin_outputdevice_mode *mode);
     static void doneCallback(void *data, org_kde_kwin_outputdevice *output);
     static void scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale);
     static void scaleFCallback(void *data, org_kde_kwin_outputdevice *output, wl_fixed_t scale);
@@ -88,10 +90,22 @@ private:
     void setEisaId(const QString &eisaId);
     void setSubPixel(SubPixel subPixel);
     void setTransform(Transform transform);
-    void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id);
+    // void addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+
+    static void modeSizeCallback(void *data,
+                  org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode,
+                  int32_t width,
+                  int32_t height);
+    static void modeRefreshRateCallback(void *data,
+                         org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode,
+                         int32_t refresh);
+    static void modePreferredCallback(void *data,org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode);
+    static void modeFinishedCallback(void *data,
+                      org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode);
 
     OutputDevice *q;
     static struct org_kde_kwin_outputdevice_listener s_outputListener;
+    static struct org_kde_kwin_outputdevice_mode_listener s_outputModeListener;
 };
 
 OutputDevice::Private::Private(OutputDevice *q)
@@ -134,6 +148,7 @@ OutputDevice::~OutputDevice()
 
 org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     geometryCallback,
+    currentModeCallback,
     modeCallback,
     doneCallback,
     scaleCallback,
@@ -146,6 +161,13 @@ org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
     eisaIdCallback,
     capabilitiesCallback,
     overscanCallback,
+};
+
+struct org_kde_kwin_outputdevice_mode_listener OutputDevice::Private::s_outputModeListener ={
+    modeSizeCallback,
+    modeRefreshRateCallback,
+    modePreferredCallback,
+    modeFinishedCallback,
 };
 
 void OutputDevice::Private::geometryCallback(void *data,
@@ -208,26 +230,73 @@ void OutputDevice::Private::geometryCallback(void *data,
     o->setTransform(toTransform());
 }
 
-void OutputDevice::Private::modeCallback(void *data,
-                                         org_kde_kwin_outputdevice *output,
-                                         uint32_t flags,
-                                         int32_t width,
-                                         int32_t height,
-                                         int32_t refresh,
-                                         int32_t mode_id)
+
+void OutputDevice::Private::modeCallback (void *data, org_kde_kwin_outputdevice *output, org_kde_kwin_outputdevice_mode *mode)
 {
     auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
-    o->addMode(flags, width, height, refresh, mode_id);
+
+    org_kde_kwin_outputdevice_mode_add_listener(mode, &s_outputModeListener, o);
 }
 
-void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh, int32_t mode_id)
+
+void OutputDevice::Private::currentModeCallback (void *data, org_kde_kwin_outputdevice *output, org_kde_kwin_outputdevice_mode *mode)
+{
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+    Q_ASSERT(o->output == output);
+
+    o->currentMode = o->modes.find(mode);
+}
+
+void OutputDevice::Private::modeSizeCallback(void *data,
+              struct org_kde_kwin_outputdevice_mode *mode,
+              int32_t width,
+              int32_t height){
+
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    o->modes.find(mode).value().size = QSize(width, height);
+}
+
+void OutputDevice::Private::modeRefreshRateCallback(void *data,
+                     struct org_kde_kwin_outputdevice_mode *mode,
+                     int32_t refresh){
+
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    auto m = o->modes.find(mode).value();
+    m.refreshRate = refresh;
+
+    Q_EMIT o->q->modeChanged(m);
+}
+
+void OutputDevice::Private::modePreferredCallback(void *data,struct org_kde_kwin_outputdevice_mode *mode){
+
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    auto m = o->modes.find(mode).value();
+    m.flags |= Mode::Flag::Preferred;
+
+    Q_EMIT o->q->modeChanged(m);
+}
+
+void OutputDevice::Private::modeFinishedCallback(void *data,
+                                         struct org_kde_kwin_outputdevice_mode *mode){
+
+    auto o = reinterpret_cast<OutputDevice::Private*>(data);
+
+    auto m = o->modes.take(mode);
+
+    Q_EMIT o->q->modeRemoved(m);
+}
+
+/*
+void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
     Mode mode;
     mode.output = QPointer<OutputDevice>(q);
     mode.refreshRate = refresh;
     mode.size = QSize(width, height);
-    mode.id = mode_id;
     if (flags & WL_OUTPUT_MODE_CURRENT) {
         mode.flags |= Mode::Flag::Current;
     }
@@ -265,6 +334,7 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
         Q_EMIT q->modeAdded(mode);
     }
 }
+*/
 
 KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
 {
@@ -547,7 +617,7 @@ OutputDevice::Transform OutputDevice::transform() const
     return d->transform;
 }
 
-QList<OutputDevice::Mode> OutputDevice::modes() const
+QHash<org_kde_kwin_outputdevice_mode*, OutputDevice::Mode> OutputDevice::modes() const
 {
     return d->modes;
 }

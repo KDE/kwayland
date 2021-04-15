@@ -141,14 +141,14 @@ public:
     void setEnabled(OutputDevice *outputdevice, OutputDevice::Enablement enable);
 
     /**
-     * Set the mode of this output, identified by its mode id.
+     * Set the mode of this output.
      * The changes done in this call will be recorded in the
      * OutputDevice and only applied after apply() has been called.
      *
      * @param outputdevice the OutputDevice this change applies to.
-     * @param modeId the id of the mode.
+     * @param org_kde_kwin_outputdevice_mode the mode.
      */
-    void setMode(OutputDevice *outputdevice, const int modeId);
+    void setMode(OutputDevice *outputdevice, OutputDevice::Mode *mode);
     /**
      * Set transformation for this output, for example rotated or flipped.
      * The changes done in this call will be recorded in the

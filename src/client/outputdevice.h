@@ -15,6 +15,8 @@
 #include <KWayland/Client/kwaylandclient_export.h>
 
 struct org_kde_kwin_outputdevice;
+struct org_kde_kwin_outputdevice_mode;
+
 class QPoint;
 class QRect;
 
@@ -107,12 +109,6 @@ public:
          * The OutputDevice to which this Mode belongs.
          **/
         QPointer<OutputDevice> output;
-        /**
-         * The id of this mode, unique per OutputDevice. This id can be used to call
-         * OutputConfiguration->setMode();
-         * @see OutputConfiguration::setMode
-         **/
-        int id;
 
         bool operator==(const Mode &m) const;
     };
@@ -226,7 +222,7 @@ public:
     /**
      * @returns The Modes of this OutputDevice.
      **/
-    QList<Mode> modes() const;
+    QHash<org_kde_kwin_outputdevice_mode*, OutputDevice::Mode> modes() const;
 
     KWayland::Client::OutputDevice::Mode currentMode() const;
 
@@ -309,6 +305,8 @@ Q_SIGNALS:
      * @param mode The changed Mode
      **/
     void modeChanged(const KWayland::Client::OutputDevice::Mode &mode);
+
+    void modeRemoved(const KWayland::Client::OutputDevice::Mode &mode);
     /**
      * Emitted whenever the color curves changed.
      *

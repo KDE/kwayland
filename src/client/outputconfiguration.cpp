@@ -11,6 +11,8 @@
 #include "wayland-org_kde_kwin_outputdevice-client-protocol.h"
 #include "wayland-output-management-client-protocol.h"
 
+#include <QHash>
+
 namespace KWayland
 {
 namespace Client
@@ -105,10 +107,18 @@ void OutputConfiguration::setEnabled(OutputDevice *outputdevice, OutputDevice::E
     org_kde_kwin_outputconfiguration_enable(d->outputconfiguration, od, _enable);
 }
 
-void OutputConfiguration::setMode(OutputDevice *outputdevice, const int modeId)
+void OutputConfiguration::setMode(OutputDevice* outputdevice, OutputDevice::Mode *mode)
 {
-    org_kde_kwin_outputdevice *od = outputdevice->output();
-    org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, od, modeId);
+    QHash<org_kde_kwin_outputdevice_mode*, OutputDevice::Mode> modes = outputdevice->modes();
+    for (auto it = modes.keyValueBegin(); it != modes.keyValueEnd(); it ++) {
+        auto pair = *it;
+        if (pair.second == *mode) {
+
+            org_kde_kwin_outputconfiguration_mode(d->outputconfiguration, outputdevice->output(),
+                                                  pair.first);
+            return;
+        }
+    }
 }
 
 void OutputConfiguration::setTransform(OutputDevice *outputdevice, KWayland::Client::OutputDevice::Transform transform)

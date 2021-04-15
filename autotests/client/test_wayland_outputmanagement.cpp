@@ -398,7 +398,7 @@ void TestWaylandOutputManagement::testMultipleSettings()
     QSignalSpy serverApplySpy(m_outputManagementInterface, &OutputManagementInterface::configurationChangeRequested);
     QVERIFY(serverApplySpy.isValid());
 
-    config->setMode(output, m_modes.first().id);
+    config->setMode(output, &m_modes.first());
     config->setTransform(output, OutputDevice::Transform::Rotated90);
     config->setPosition(output, QPoint(13, 37));
     config->setScaleF(output, 2.0);
@@ -482,7 +482,8 @@ void TestWaylandOutputManagement::testExampleConfig()
     auto config = m_outputConfiguration;
     KWayland::Client::OutputDevice *output = m_clientOutputs.first();
 
-    config->setMode(output, m_clientOutputs.first()->modes().last().id);
+    auto mode = m_clientOutputs.first()->modes().last();
+    config->setMode(output, mode.size, mode.refreshRate);
     config->setTransform(output, OutputDevice::Transform::Normal);
     config->setPosition(output, QPoint(-1, -1));
 

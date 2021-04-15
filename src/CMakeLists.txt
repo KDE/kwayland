@@ -1,6 +1,5 @@
 add_subdirectory(client)
-add_subdirectory(server)
-add_subdirectory(tools)
+#add_subdirectory(tools)
 
 ecm_qt_install_logging_categories(
     EXPORT KWAYLAND

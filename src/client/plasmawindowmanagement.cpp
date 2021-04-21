@@ -18,7 +18,7 @@
 #include <QtConcurrentRun>
 #include <qplatformdefs.h>
 
-#include <errno.h>
+#include <cerrno>
 
 namespace KWayland
 {

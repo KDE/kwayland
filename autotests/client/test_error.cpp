@@ -22,7 +22,7 @@
 
 #include <wayland-client-protocol.h>
 
-#include <errno.h> // For EPROTO
+#include <cerrno> // For EPROTO
 
 using namespace KWayland::Client;
 using namespace KWayland::Server;

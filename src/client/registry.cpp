@@ -99,7 +99,7 @@ namespace Client
 {
 namespace
 {
-struct SuppertedInterfaceData {
+struct SupportedInterfaceData {
     quint32 maxVersion;
     QByteArray name;
     const wl_interface *interface;
@@ -107,7 +107,7 @@ struct SuppertedInterfaceData {
     void (Registry::*removedSignal)(quint32);
 };
 // clang-format off
-static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
+static const QMap<Registry::Interface, SupportedInterfaceData> s_interfaces = {
     {Registry::Interface::Compositor, {
         4,
         QByteArrayLiteral("wl_compositor"),

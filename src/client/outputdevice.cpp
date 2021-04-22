@@ -100,7 +100,7 @@ private:
                          org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode,
                          int32_t refresh);
     static void modePreferredCallback(void *data,org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode);
-    static void modeFinishedCallback(void *data,
+    static void modeRemovedCallback(void *data,
                       org_kde_kwin_outputdevice_mode *org_kde_kwin_outputdevice_mode);
 
     OutputDevice *q;
@@ -167,7 +167,7 @@ struct org_kde_kwin_outputdevice_mode_listener OutputDevice::Private::s_outputMo
     modeSizeCallback,
     modeRefreshRateCallback,
     modePreferredCallback,
-    modeFinishedCallback,
+    modeRemovedCallback,
 };
 
 void OutputDevice::Private::geometryCallback(void *data,
@@ -236,16 +236,37 @@ void OutputDevice::Private::modeCallback (void *data, org_kde_kwin_outputdevice 
     auto o = reinterpret_cast<OutputDevice::Private *>(data);
     Q_ASSERT(o->output == output);
 
-    org_kde_kwin_outputdevice_mode_add_listener(mode, &s_outputModeListener, o);
-}
+    auto it = o->modes.find(mode);
+    if (it == o->modes.end()) {
+        it = o->modes.insert(mode, OutputDevice::Mode{});
+        org_kde_kwin_outputdevice_mode_add_listener(mode, &s_outputModeListener, o);
+    }
 
+    // new current Mode
+    if (o->currentMode != it) {
+        if (o->currentMode != o->modes.end()) {
+            (*o->currentMode).flags &= ~Mode::Flags(Mode::Flag::Current);
+        }
+
+        (*it).flags |= Mode::Flag::Current;
+        o->currentMode = it;
+    }
+}
 
 void OutputDevice::Private::currentModeCallback (void *data, org_kde_kwin_outputdevice *output, org_kde_kwin_outputdevice_mode *mode)
 {
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
     Q_ASSERT(o->output == output);
 
-    o->currentMode = o->modes.find(mode);
+    auto it = o->modes.find(mode);
+    if (o->currentMode != it) {
+        if (o->currentMode != o->modes.end()) {
+            (*o->currentMode).flags &= ~Mode::Flags(Mode::Flag::Current);
+        }
+
+        (*it).flags |= Mode::Flag::Current;
+        o->currentMode = it;
+    }
 }
 
 void OutputDevice::Private::modeSizeCallback(void *data,
@@ -264,10 +285,7 @@ void OutputDevice::Private::modeRefreshRateCallback(void *data,
 
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
 
-    auto m = o->modes.find(mode).value();
-    m.refreshRate = refresh;
-
-    Q_EMIT o->q->modeChanged(m);
+    o->modes.find(mode).value().refreshRate = refresh;
 }
 
 void OutputDevice::Private::modePreferredCallback(void *data,struct org_kde_kwin_outputdevice_mode *mode){
@@ -280,7 +298,7 @@ void OutputDevice::Private::modePreferredCallback(void *data,struct org_kde_kwin
     Q_EMIT o->q->modeChanged(m);
 }
 
-void OutputDevice::Private::modeFinishedCallback(void *data,
+void OutputDevice::Private::modeRemovedCallback(void *data,
                                          struct org_kde_kwin_outputdevice_mode *mode){
 
     auto o = reinterpret_cast<OutputDevice::Private*>(data);
@@ -338,13 +356,11 @@ void OutputDevice::Private::addMode(uint32_t flags, int32_t width, int32_t heigh
 
 KWayland::Client::OutputDevice::Mode OutputDevice::currentMode() const
 {
-    for (const auto &m : modes()) {
-        if (m.flags.testFlag(KWayland::Client::OutputDevice::Mode::Flag::Current)) {
-            return m;
-        }
+    if (d->currentMode == d->modes.end()) {
+        qCWarning(KWAYLAND_CLIENT) << "current mode not found";
+        return Mode();
     }
-    qCWarning(KWAYLAND_CLIENT) << "current mode not found";
-    return Mode();
+    return *d->currentMode;
 }
 
 void OutputDevice::Private::scaleCallback(void *data, org_kde_kwin_outputdevice *output, int32_t scale)

@@ -173,6 +173,7 @@ public:
         XdgShellStable, /// refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, /// refers to zxdg_decoration_manager_v1, @since 5.54
         Keystate, ///< refers to org_kwin_keystate, @since 5.57
+        OutputDeviceMode, ///< Refers to the org_kde_kwin_outputdevice_mode interface
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();

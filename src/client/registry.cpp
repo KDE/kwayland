@@ -373,6 +373,13 @@ static const QMap<Registry::Interface, SupportedInterfaceData> s_interfaces = {
         &org_kde_kwin_keystate_interface,
         &Registry::keystateAnnounced,
         &Registry::keystateRemoved
+    }},
+    {Registry::Interface::OutputDeviceMode, {
+        3,
+        QByteArrayLiteral("org_kde_kwin_outputdevice_mode"),
+        &org_kde_kwin_outputdevice_mode_interface,
+        nullptr, // this interface does not need to be announced
+        nullptr
     }}
 };
 // clang-format on
@@ -557,10 +564,10 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
         qCDebug(KWAYLAND_CLIENT) << "Unknown interface announced: " << interface << "/" << name << "/" << version;
         return;
     }
-    qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
-    m_interfaces.append({i, name, version});
     auto it = s_interfaces.constFind(i);
-    if (it != s_interfaces.end()) {
+    if ((*it).announcedSignal) {
+        qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
+        m_interfaces.append({i, name, version});
         Q_EMIT(q->*it.value().announcedSignal)(name, version);
     }
 }

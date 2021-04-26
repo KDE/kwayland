@@ -248,7 +248,7 @@ ecm_generate_export_header(KF5WaylandClient
     GROUP_BASE_NAME KF
     VERSION ${KF_VERSION}
     DEPRECATED_BASE_VERSION 0
-    DEPRECATION_VERSIONS 5.49 5.50 5.52 5.53 5.73
+    DEPRECATION_VERSIONS 5.49 5.50 5.52 5.53 5.73 5.82
 )
 # TODO: add support for EXCLUDE_DEPRECATED_BEFORE_AND_AT to all KWayland libs
 # needs fixing of undeprecated API being still implemented using own deprecated API

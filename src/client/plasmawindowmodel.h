@@ -59,7 +59,7 @@ public:
         /**
           @deprecated Since 5.53, use VirtualDesktops
          */
-        VirtualDesktop,
+        VirtualDesktop KWAYLANDCLIENT_ENUMERATOR_DEPRECATED_VERSION_BELATED(5, 82, 5, 53, "Use VirtualDesktops"),
 #else
         VirtualDesktop_DEPRECATED_DO_NOT_USE,
 #endif

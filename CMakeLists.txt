@@ -54,7 +54,7 @@ include(KDECMakeSettings)
 include(KDEGitCommitHooks)
 include(CheckIncludeFile)
 
-find_package(PlasmaWaylandProtocols 1.2.1 CONFIG)
+find_package(PlasmaWaylandProtocols 1.3.0 CONFIG)
 set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 
 check_include_file("linux/input.h" HAVE_LINUX_INPUT_H)

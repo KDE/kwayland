@@ -324,7 +324,7 @@ target_link_libraries(KF5WaylandServer
         Qt5::Concurrent
 )
 
-set_target_properties(KF5WaylandServer PROPERTIES VERSION   ${KWAYLAND_VERSION_STRING}
+set_target_properties(KF5WaylandServer PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}
                                                  EXPORT_NAME WaylandServer
 )

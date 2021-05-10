@@ -41,6 +41,7 @@ private:
     static void frameCallback(void *data, wl_callback *callback, uint32_t time);
     static void enterCallback(void *data, wl_surface *wl_surface, wl_output *output);
     static void leaveCallback(void *data, wl_surface *wl_surface, wl_output *output);
+    void removeOutput(Output *o);
 
     Surface *q;
     static const wl_callback_listener s_listener;
@@ -151,6 +152,13 @@ const struct wl_callback_listener Surface::Private::s_listener = {frameCallback}
 const struct wl_surface_listener Surface::Private::s_surfaceListener = {enterCallback, leaveCallback};
 #endif
 
+void Surface::Private::removeOutput(Output *o)
+{
+    if (o && outputs.removeOne(o)) {
+        Q_EMIT q->outputLeft(o);
+    }
+}
+
 void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output *output)
 {
     Q_UNUSED(surface);
@@ -161,11 +169,7 @@ void Surface::Private::enterCallback(void *data, wl_surface *surface, wl_output 
     }
     s->outputs << o;
     QObject::connect(o, &Output::removed, s->q, [s, o]() {
-        if (!s->outputs.contains(o)) {
-            return;
-        }
-        s->outputs.removeOne(o);
-        s->q->outputLeft(o);
+        s->removeOutput(o);
     });
     Q_EMIT s->q->outputEntered(o);
 }
@@ -174,12 +178,7 @@ void Surface::Private::leaveCallback(void *data, wl_surface *surface, wl_output 
 {
     Q_UNUSED(surface);
     auto s = reinterpret_cast<Surface::Private *>(data);
-    Output *o = Output::get(output);
-    if (!o) {
-        return;
-    }
-    s->outputs.removeOne(o);
-    Q_EMIT s->q->outputLeft(o);
+    s->removeOutput(Output::get(output));
 }
 
 void Surface::Private::setupFrameCallback()

@@ -612,7 +612,10 @@ void TestWindowManagement::testIcon()
     m_windowInterface->setIcon(p);
     QVERIFY(iconChangedSpy.wait());
     QCOMPARE(iconChangedSpy.count(), 3);
-    QCOMPARE(m_window->icon().pixmap(32, 32), p);
+
+    auto clientImage = p.toImage();
+    clientImage.convertTo(p.toImage().format());
+    QCOMPARE(clientImage, p.toImage());
 
     // let's set a themed icon
     m_windowInterface->setIcon(QIcon::fromTheme(QStringLiteral("xorg")));

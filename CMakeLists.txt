@@ -64,7 +64,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # adjusting CMAKE_C_FLAGS to get wayland protocols to compile
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
-add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
 # Subdirectories
 ecm_install_po_files_as_qm(po)

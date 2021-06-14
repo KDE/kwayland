@@ -19,7 +19,6 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
-class TextInputUnstableV0;
 class Surface;
 class Seat;
 

@@ -17,8 +17,6 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
-class FakeInputTimeout;
-class Seat;
 
 /**
  * @short Wrapper for the org_kde_kwin_fake_input interface.

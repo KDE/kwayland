@@ -18,7 +18,6 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
-class OutputDevice;
 class OutputConfiguration;
 
 /**

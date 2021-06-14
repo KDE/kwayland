@@ -14,7 +14,6 @@ namespace KWayland
 {
 namespace Server
 {
-class Display;
 
 enum class RelativePointerInterfaceVersion {
     /**

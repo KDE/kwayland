@@ -23,7 +23,6 @@ class EventQueue;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
-class PlasmaVirtualDesktop;
 
 /**
  * @short Wrapper for the org_kde_plasma_window_management interface.

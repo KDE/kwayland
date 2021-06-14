@@ -13,7 +13,6 @@
 #include "global.h"
 #include "resource.h"
 
-class QSize;
 struct wl_resource;
 
 namespace KWayland

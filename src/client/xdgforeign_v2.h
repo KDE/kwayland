@@ -22,8 +22,6 @@ namespace KWayland
 {
 namespace Client
 {
-class EventQueue;
-class Surface;
 class XdgExportedUnstableV2;
 class XdgImportedUnstableV2;
 

@@ -17,7 +17,6 @@ namespace KWayland
 namespace Server
 {
 class DataDeviceManagerInterface;
-class DataOfferInterface;
 class DataSourceInterface;
 class SeatInterface;
 class SurfaceInterface;

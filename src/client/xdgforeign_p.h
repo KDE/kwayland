@@ -13,8 +13,6 @@ namespace KWayland
 {
 namespace Client
 {
-class XdgExportedUnstableV2;
-class XdgImportedUnstableV2;
 
 class Q_DECL_HIDDEN XdgExporter::Private
 {

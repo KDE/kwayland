@@ -15,7 +15,6 @@
 #include "global.h"
 #include "resource.h"
 
-class QSize;
 
 namespace KWayland
 {

@@ -19,7 +19,6 @@ struct org_kde_kwin_shadow;
 struct org_kde_kwin_shadow_manager;
 
 class QMarginsF;
-class QWindow;
 
 namespace KWayland
 {

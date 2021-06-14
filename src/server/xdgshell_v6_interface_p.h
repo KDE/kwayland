@@ -19,8 +19,6 @@ namespace KWayland
 namespace Server
 {
 class Display;
-class OutputInterface;
-class SeatInterface;
 class SurfaceInterface;
 class XdgTopLevelV6Interface;
 class XdgPopupV6Interface;

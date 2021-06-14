@@ -15,7 +15,6 @@ namespace KWayland
 {
 namespace Server
 {
-class Display;
 
 /**
  * Enum describing the interface versions the IdleInhibitManagerInterface can support.

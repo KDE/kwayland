@@ -20,8 +20,6 @@ struct wl_region;
 struct org_kde_kwin_blur;
 struct org_kde_kwin_blur_manager;
 
-class QMarginsF;
-class QWindow;
 
 namespace KWayland
 {

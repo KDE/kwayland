@@ -160,7 +160,7 @@ Request::~Request() = default;
 
 bool Request::isFactory() const
 {
-    for (const auto a : m_arguments) {
+    for (const auto &a : m_arguments) {
         if (a.type() == Argument::Type::NewId) {
             return true;
         }

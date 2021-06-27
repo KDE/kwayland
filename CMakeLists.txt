@@ -29,6 +29,8 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfigVersion.cmake"
                         SOVERSION 5)
 
+set(CMAKE_C_STANDARD 99)
+
 # Dependencies
 set(REQUIRED_QT_VERSION 5.15.0)
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui WaylandClient)

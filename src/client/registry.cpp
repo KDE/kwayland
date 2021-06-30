@@ -408,15 +408,20 @@ public:
     template<class T, typename WL>
     T *create(quint32 name, quint32 version, QObject *parent, WL *(Registry::*bindMethod)(uint32_t, uint32_t) const);
 
+    wl_display *display;
     WaylandPointer<wl_registry, wl_registry_destroy> registry;
     static const struct wl_callback_listener s_callbackListener;
     WaylandPointer<wl_callback, wl_callback_destroy> callback;
     EventQueue *queue = nullptr;
 
+    struct wl_reconnect_listener reconnect_listener = {};
+    static void wlReset(struct wl_reconnect_listener *listener);
+
 private:
     void handleAnnounce(uint32_t name, const char *interface, uint32_t version);
     void handleRemove(uint32_t name);
     void handleGlobalSync();
+    void handleReset();
     static void globalAnnounce(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version);
     static void globalRemove(void *data, struct wl_registry *registry, uint32_t name);
     static void globalSync(void *data, struct wl_callback *callback, uint32_t serial);
@@ -455,6 +460,7 @@ Registry::~Registry()
 
 void Registry::release()
 {
+    wl_list_remove(&d->reconnect_listener.link);
     d->registry.release();
     d->callback.release();
 }
@@ -470,12 +476,16 @@ void Registry::create(wl_display *display)
 {
     Q_ASSERT(display);
     Q_ASSERT(!isValid());
+    d->display = display;
     d->registry.setup(wl_display_get_registry(display));
     d->callback.setup(wl_display_sync(display));
     if (d->queue) {
         d->queue->addProxy(d->registry);
         d->queue->addProxy(d->callback);
     }
+
+    d->reconnect_listener.notify = &Registry::Private::wlReset;
+    wl_display_add_reconnect_listener(display, &d->reconnect_listener);
 }
 
 void Registry::create(ConnectionThread *connection)
@@ -586,6 +596,30 @@ void Registry::Private::handleRemove(uint32_t name)
         }
     }
     Q_EMIT q->interfaceRemoved(name);
+}
+
+void Registry::Private::wlReset(struct wl_reconnect_listener *listener)
+{
+    Registry::Private *self;
+    self = wl_container_of(listener, self, reconnect_listener);
+    self->handleReset();
+}
+
+void Registry::Private::handleReset()
+{
+    for (auto it = m_interfaces.constBegin(); it != m_interfaces.constEnd(); ++it) {
+        auto sit = s_interfaces.find(it->interface);
+        Q_EMIT(q->*sit.value().removedSignal)(it->name);
+        Q_EMIT q->interfaceRemoved(it->name);
+    }
+    m_interfaces.clear();
+    registry.setup(wl_display_get_registry(display));
+    callback.setup(wl_display_sync(display));
+    if (queue) {
+        queue->addProxy(registry);
+        queue->addProxy(callback);
+    }
+    setup();
 }
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const

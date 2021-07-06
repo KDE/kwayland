@@ -228,7 +228,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::blurRemoved
     }},
     {Registry::Interface::Contrast, {
-        1,
+        2,
         QByteArrayLiteral("org_kde_kwin_contrast_manager"),
         &org_kde_kwin_contrast_manager_interface,
         &Registry::contrastAnnounced,

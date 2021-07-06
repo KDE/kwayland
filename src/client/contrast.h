@@ -7,9 +7,12 @@
 #ifndef KWAYLAND_CONTRAST_H
 #define KWAYLAND_CONTRAST_H
 
+#include <optional>
+
 #include <QObject>
 #include <QPoint>
 #include <QSize>
+#include <QColor>
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
@@ -174,6 +177,8 @@ public:
     void setContrast(qreal contrast);
     void setIntensity(qreal intensity);
     void setSaturation(qreal saturation);
+
+    void setFrost(QColor frost);
 
     operator org_kde_kwin_contrast *();
     operator org_kde_kwin_contrast *() const;

@@ -161,6 +161,19 @@ void Contrast::setSaturation(qreal saturation)
     org_kde_kwin_contrast_set_saturation(d->contrast, wl_fixed_from_double(saturation));
 }
 
+void Contrast::setFrost(QColor frost)
+{
+    if (org_kde_kwin_contrast_get_version(d->contrast) < ORG_KDE_KWIN_CONTRAST_SET_FROST_SINCE_VERSION) {
+        return;
+    }
+
+    if (frost.isValid()) {
+        org_kde_kwin_contrast_set_frost(d->contrast, frost.red(), frost.green(), frost.blue(), frost.alpha());
+    } else {
+        org_kde_kwin_contrast_unset_frost(d->contrast);
+    }
+}
+
 Contrast::operator org_kde_kwin_contrast *()
 {
     return d->contrast;

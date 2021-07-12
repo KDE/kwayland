@@ -125,7 +125,7 @@ bool ShmPool::Private::createPool()
     poolData = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
     pool.setup(wl_shm_create_pool(shm, tmpFile->handle(), size));
 
-    if (!poolData || !pool) {
+    if (poolData == MAP_FAILED || !pool) {
         qCDebug(KWAYLAND_CLIENT) << "Creating Shm pool failed";
         return false;
     }
@@ -142,7 +142,7 @@ bool ShmPool::Private::resizePool(int32_t newSize)
     munmap(poolData, size);
     poolData = mmap(nullptr, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
     size = newSize;
-    if (!poolData) {
+    if (poolData == MAP_FAILED) {
         qCDebug(KWAYLAND_CLIENT) << "Resizing Shm pool failed";
         return false;
     }

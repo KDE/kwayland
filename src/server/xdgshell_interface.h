@@ -265,7 +265,7 @@ public:
      * @brief windowGeometry
      * The geometry of the window within the buffer
      *
-     * If invalid, the geometry of the bufer should be used instead
+     * If invalid, the geometry of the buffer should be used instead
      * @since 5.59
      */
     QRect windowGeometry() const;

@@ -59,7 +59,7 @@ public:
      *
      * By default a Buffer is not used.
      *
-     * @param used Whether the Bufer should be marked as used.
+     * @param used Whether the Buffer should be marked as used.
      * @see isUsed
      **/
     void setUsed(bool used);

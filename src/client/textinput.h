@@ -350,7 +350,7 @@ Q_SIGNALS:
      **/
     void inputPanelStateChanged();
     /**
-     * Emitted whenver the text direction changes.
+     * Emitted whenever the text direction changes.
      * @see textDirection
      **/
     void textDirectionChanged();

@@ -323,7 +323,7 @@ public:
 
 Q_SIGNALS:
     /**
-     * Emitted when the compositor hided an auto hiding panel.
+     * Emitted when the compositor hid an auto hiding panel.
      * @see requestHideAutoHidingPanel
      * @see autoHidePanelShown
      * @see requestShowAutoHidingPanel

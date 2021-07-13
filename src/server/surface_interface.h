@@ -336,7 +336,7 @@ Q_SIGNALS:
      */
     void childSubSurfaceAdded(SubSurfaceInterface *subSurface);
     /**
-     * Emitted whenver the child sub-surface @p subSurface is removed.
+     * Emitted whenever the child sub-surface @p subSurface is removed.
      * @since 5.70
      */
     void childSubSurfaceRemoved(SubSurfaceInterface *subSurface);

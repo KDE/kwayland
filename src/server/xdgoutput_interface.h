@@ -63,7 +63,7 @@ public:
     virtual ~XdgOutputInterface();
 
     /**
-     * Sets the size of this output in logical co-ordinates.
+     * Sets the size of this output in logical coordinates.
      * Users should call done() after setting all values
      */
     void setLogicalSize(const QSize &size);
@@ -74,7 +74,7 @@ public:
     QSize logicalSize() const;
 
     /**
-     * Sets the topleft position of this output in logical co-ordinates.
+     * Sets the topleft position of this output in logical coordinates.
      * Users should call done() after setting all values
      * @see OutputInterface::setPosition
      */

@@ -184,12 +184,12 @@ public:
     operator zxdg_output_v1 *() const;
 
     /**
-     * The top left position of the output in compositor co-ordinates
+     * The top left position of the output in compositor coordinates
      */
     QPoint logicalPosition() const;
 
     /**
-     * The size of the output in compositor co-ordinates
+     * The size of the output in compositor coordinates
      * (i.e pixel size / output scale)
      */
     QSize logicalSize() const;

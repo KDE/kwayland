@@ -59,7 +59,7 @@ public:
     void removeDesktop(const QString &id);
 
     /**
-     * @returns All tghe desktops present.
+     * @returns All the desktops present.
      */
     QList<PlasmaVirtualDesktopInterface *> desktops() const;
 

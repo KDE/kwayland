@@ -12,6 +12,7 @@
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
+struct org_kde_plasma_activation;
 struct org_kde_plasma_window_management;
 struct org_kde_plasma_window;
 
@@ -20,6 +21,7 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
+class PlasmaActivation;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
@@ -224,8 +226,12 @@ Q_SIGNALS:
      **/
     void stackingOrderUuidsChanged();
 
-private:
+    void activation(PlasmaActivation *activation);
+
+public:
     class Private;
+
+private:
     QScopedPointer<Private> d;
 };
 
@@ -782,11 +788,41 @@ Q_SIGNALS:
 
 private:
     friend class PlasmaWindowManagement;
-    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *dataOffer, quint32 internalId, const char *uuid);
+    explicit PlasmaWindow(PlasmaWindowManagement *parent, org_kde_plasma_window *activation, quint32 internalId, const char *uuid);
     class Private;
     QScopedPointer<Private> d;
 };
 
+/**
+ * @since 5.86
+ */
+class KWAYLANDCLIENT_EXPORT PlasmaActivation : public QObject
+{
+    Q_OBJECT
+public:
+    virtual ~PlasmaActivation();
+
+Q_SIGNALS:
+    /**
+     * Informs about which application this activation is representing
+     *
+     * The @p appId can be used to infer how to decorate this activation.
+     */
+    void applicationId(const QString &appId);
+
+    /**
+     * Notifies that the activation is done with.
+     *
+     * It might happen either because it's over or because it timed out.
+     */
+    void finished();
+
+private:
+    friend class PlasmaWindowManagement;
+    explicit PlasmaActivation(PlasmaWindowManagement *parent, org_kde_plasma_activation *activation);
+    class Private;
+    QScopedPointer<Private> d;
+};
 }
 }
 

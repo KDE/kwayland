@@ -44,6 +44,7 @@ private:
     static void windowWithUuidCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id, const char *uuid);
     static void stackingOrderCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, wl_array *ids);
     static void stackingOrderUuidsCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char *uuids);
+    static void activationCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, struct org_kde_plasma_activation *id);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId, const char *uuid);
     void setStackingOrder(const QVector<quint32> &ids);
@@ -154,6 +155,7 @@ org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_lis
     stackingOrderCallback,
     stackingOrderUuidsCallback,
     windowWithUuidCallback,
+    activationCallback,
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -281,6 +283,14 @@ void PlasmaWindowManagement::Private::stackingOrderUuidsCallback(void *data, org
     auto wm = reinterpret_cast<PlasmaWindowManagement::Private *>(data);
     Q_ASSERT(wm->wm == interface);
     wm->setStackingOrder(QByteArray(uuids).split(';').toVector());
+}
+
+void PlasmaWindowManagement::Private::activationCallback(void *data, org_kde_plasma_window_management *interface, struct org_kde_plasma_activation *id)
+{
+    auto wm = reinterpret_cast<PlasmaWindowManagement::Private *>(data);
+    Q_ASSERT(wm->wm == interface);
+    auto activation = new PlasmaActivation(wm->q, id);
+    Q_EMIT wm->q->activation(activation);
 }
 
 void PlasmaWindowManagement::Private::setStackingOrder(const QVector<quint32> &ids)
@@ -1168,5 +1178,51 @@ QStringList PlasmaWindow::plasmaActivities() const
     return d->plasmaActivities;
 }
 
+class Q_DECL_HIDDEN PlasmaActivation::Private
+{
+public:
+    Private(org_kde_plasma_activation *activation, PlasmaActivation *q)
+        : activation(activation)
+    {
+        org_kde_plasma_activation_add_listener(activation, &s_listener, q);
+    }
+
+    static PlasmaActivation *cast(void *data)
+    {
+        return reinterpret_cast<PlasmaActivation *>(data);
+    }
+    WaylandPointer<org_kde_plasma_activation, org_kde_plasma_activation_destroy> activation;
+
+    static org_kde_plasma_activation_listener s_listener;
+    static void app_idCallback(void *data, struct org_kde_plasma_activation *org_kde_plasma_activation, const char *app_id);
+    static void finishedCallback(void *data, struct org_kde_plasma_activation *org_kde_plasma_activation);
+};
+
+org_kde_plasma_activation_listener PlasmaActivation::Private::s_listener = {
+    app_idCallback,
+    finishedCallback,
+};
+
+void PlasmaActivation::Private::app_idCallback(void *data, org_kde_plasma_activation *activation, const char *appId)
+{
+    Q_UNUSED(activation)
+    Q_EMIT cast(data)->applicationId(QString::fromUtf8(appId));
+}
+
+void PlasmaActivation::Private::finishedCallback(void *data, org_kde_plasma_activation *)
+{
+    auto q = cast(data);
+    Q_EMIT q->finished();
+    Q_EMIT q->deleteLater();
+    q->d->activation.release();
+}
+
+PlasmaActivation::PlasmaActivation(PlasmaWindowManagement *parent, org_kde_plasma_activation *activation)
+    : QObject(parent)
+    , d(new PlasmaActivation::Private(activation, this))
+{
+}
+
+PlasmaActivation::~PlasmaActivation() = default;
 }
 }

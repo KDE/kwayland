@@ -45,6 +45,7 @@
 #include "xdgoutput.h"
 #include "xdgshell.h"
 #include "xdgshell_p.h"
+#include "xdgdbusannotation_v1.h"
 // Qt
 #include <QDebug>
 // wayland
@@ -78,6 +79,7 @@
 #include <wayland-xdg-foreign-unstable-v2-client-protocol.h>
 #include <wayland-xdg-output-unstable-v1-client-protocol.h>
 #include <wayland-xdg-shell-client-protocol.h>
+#include <wayland-xdg-dbus-annotation-v1-client-protocol.h>
 #include <wayland-xdg-shell-v6-client-protocol.h>
 
 /*****
@@ -380,6 +382,13 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_plasma_activation_feedback_interface,
         &Registry::plasmaActivationFeedbackAnnounced,
         &Registry::plasmaActivationFeedbackRemoved
+    }},
+    {Registry::Interface::XdgDBusAnnotationManagerV1, {
+        1,
+        QByteArrayLiteral("xdg_dbus_annotation_manager_v1"),
+        &xdg_dbus_annotation_manager_v1_interface,
+        &Registry::xdgDbusAnnotationManagerAnnounced,
+        &Registry::xdgDbusAnnotationManagerRemoved
     }},
 };
 // clang-format on
@@ -692,6 +701,7 @@ BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
 BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
 BIND(XdgOutputUnstableV1, zxdg_output_manager_v1)
 BIND(XdgDecorationUnstableV1, zxdg_decoration_manager_v1)
+BIND(XdgDBusAnnotationManagerV1, xdg_dbus_annotation_manager_v1)
 
 #undef BIND
 #undef BIND2
@@ -747,6 +757,7 @@ CREATE2(ShmPool, Shm)
 CREATE(AppMenuManager)
 CREATE(Keystate)
 CREATE(ServerSideDecorationPaletteManager)
+CREATE(XdgDBusAnnotationManagerV1)
 
 #undef CREATE
 #undef CREATE2

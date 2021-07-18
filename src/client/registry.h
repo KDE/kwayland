@@ -53,6 +53,7 @@ struct zxdg_importer_v2;
 struct zwp_idle_inhibit_manager_v1;
 struct zxdg_output_manager_v1;
 struct zxdg_decoration_manager_v1;
+struct xdg_dbus_annotation_manager_v1;
 
 namespace KWayland
 {
@@ -100,6 +101,7 @@ class XdgExporter;
 class XdgImporter;
 class XdgOutputManager;
 class XdgDecorationManager;
+class XdgDBusAnnotationManagerV1;
 
 /**
  * @short Wrapper for the wl_registry interface.
@@ -176,6 +178,7 @@ public:
         XdgDecorationUnstableV1, ///< refers to zxdg_decoration_manager_v1 @since 5.54
         Keystate, ///< refers to org_kwin_keystate @since 5.60
         PlasmaActivationFeedback, ///< Refers to org_kde_plasma_activation_feedback interface, @since 5.83
+        XdgDBusAnnotationManagerV1, ///< refers to xdg_dbus_annotation_v1 @since sometime
     };
     explicit Registry(QObject *parent = nullptr);
     ~Registry() override;
@@ -676,6 +679,8 @@ public:
      * @since 5.54
      **/
     zxdg_decoration_manager_v1 *bindXdgDecorationUnstableV1(uint32_t name, uint32_t version) const;
+
+    xdg_dbus_annotation_manager_v1 *bindXdgDBusAnnotationManagerV1(uint32_t name, uint32_t version) const;
 
     ///@}
 
@@ -1265,6 +1270,8 @@ public:
      **/
     XdgDecorationManager *createXdgDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
+    XdgDBusAnnotationManagerV1 *createXdgDBusAnnotationManagerV1(quint32 name, quint32 version, QObject* parent = nullptr);
+
     ///@}
 
     /**
@@ -1796,6 +1803,9 @@ Q_SIGNALS:
      * @since 5.60
      **/
     void keystateRemoved(quint32 name);
+
+    void xdgDbusAnnotationManagerAnnounced(quint32 name, quint32 version);
+    void xdgDbusAnnotationManagerRemoved(quint32 name);
 
     ///@}
     /**

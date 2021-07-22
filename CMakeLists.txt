@@ -31,7 +31,8 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 
 # Dependencies
 set(REQUIRED_QT_VERSION 5.15.0)
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent Gui WaylandClient)
+find_package(Qt5Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent WaylandClient)
 
 find_package(QtWaylandScanner REQUIRED)
 

@@ -20,7 +20,7 @@ class Display;
 /**
  * @brief Exposes key states to wayland clients
  *
- * @since 5.58
+ * @since 5.60
  **/
 class KWAYLANDSERVER_EXPORT KeyStateInterface : public Global
 {

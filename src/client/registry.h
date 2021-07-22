@@ -172,7 +172,7 @@ public:
         XdgOutputUnstableV1, ///< refers to zxdg_output_v1 @since 5.47
         XdgShellStable, ///< refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, ///< refers to zxdg_decoration_manager_v1 @since 5.54
-        Keystate, ///< refers to org_kwin_keystate @since 5.57
+        Keystate, ///< refers to org_kwin_keystate @since 5.60
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -422,9 +422,9 @@ public:
      * If the @p name does not exist or is not for the keystate interface,
      * @c null will be returned.
      *
-     * Prefer using createIdle instead.
-     * @see createIdle
-     * @since 5.4
+     * Prefer using createKeystate instead.
+     * @see createKeystate
+     * @since 5.60
      **/
     org_kde_kwin_keystate *bindKeystate(uint32_t name, uint32_t version) const;
     /**
@@ -888,19 +888,19 @@ public:
      **/
     Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
-     * Creates a KEystate and sets it up to manage the interface identified by
+     * Creates a Keystate and sets it up to manage the interface identified by
      * @p name and @p version.
      *
      * Note: in case @p name is invalid or isn't for the org_kde_kwin_keystate interface,
-     * the returned Idle will not be valid. Therefore it's recommended to call
+     * the returned Keystate will not be valid. Therefore it's recommended to call
      * isValid on the created instance.
      *
      * @param name The name of the org_kde_kwin_keystate interface to bind
      * @param version The version or the org_kde_kwin_keystate interface to use
-     * @param parent The parent for Idle
+     * @param parent The parent for Keystate
      *
-     * @returns The created Idle.
-     * @since 5.4
+     * @returns The created Keystate.
+     * @since 5.60
      **/
     Keystate *createKeystate(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
@@ -1512,6 +1512,14 @@ Q_SIGNALS:
      **/
     void xdgDecorationAnnounced(quint32 name, quint32 version);
 
+    /**
+     * Emitted whenever a org_kde_kwin_keystate interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.60
+     **/
+    void keystateAnnounced(quint32 name, quint32 version);
+
     ///@}
 
     /**
@@ -1740,7 +1748,11 @@ Q_SIGNALS:
      **/
     void xdgDecorationRemoved(quint32 name);
 
-    void keystateAnnounced(quint32 name, quint32 version);
+    /**
+     * Emitted whenever a org_kde_kwin_keystate gets removed.
+     * @param name The name of the removed interface
+     * @since 5.60
+     **/
     void keystateRemoved(quint32 name);
 
     ///@}

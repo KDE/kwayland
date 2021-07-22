@@ -155,24 +155,24 @@ public:
         OutputManagement, ///< Refers to the wl_data_device_manager interface
         OutputDevice, ///< Refers to the org_kde_kwin_outputdevice interface
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
-        TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager, @since 5.23
-        TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2, @since 5.23
-        XdgShellUnstableV5, ///< Refers to xdg_shell (unstable version 5), @since 5.25
-        RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1, @since 5.28
-        PointerGesturesUnstableV1, ///< Refers to zwp_pointer_gestures_v1, @since 5.29
-        PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1, @since 5.29
-        XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2, @since 5.40
-        XdgImporterUnstableV2, ///< refers to zxdg_importer_v2, @since 5.40
-        XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6), @since 5.39
-        IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1), @since 5.41
-        AppMenu, /// Refers to org_kde_kwin_appmenu @since 5.42
-        ServerSideDecorationPalette, /// Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
-        RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface, @since 5.45
+        TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager @since 5.23
+        TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2 @since 5.23
+        XdgShellUnstableV5, ///< Refers to xdg_shell (unstable version 5) @since 5.25
+        RelativePointerManagerUnstableV1, ///< Refers to zwp_relative_pointer_manager_v1 @since 5.28
+        PointerGesturesUnstableV1, ///< Refers to zwp_pointer_gestures_v1 @since 5.29
+        PointerConstraintsUnstableV1, ///< Refers to zwp_pointer_constraints_v1 @since 5.29
+        XdgExporterUnstableV2, ///< refers to zxdg_exporter_v2 @since 5.40
+        XdgImporterUnstableV2, ///< refers to zxdg_importer_v2 @since 5.40
+        XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6) @since 5.39
+        IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1) @since 5.41
+        AppMenu, ///< Refers to org_kde_kwin_appmenu @since 5.42
+        ServerSideDecorationPalette, ///< Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
+        RemoteAccessManager, ///< Refers to org_kde_kwin_remote_access_manager interface @since 5.45
         PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
-        XdgOutputUnstableV1, /// refers to zxdg_output_v1, @since 5.47
-        XdgShellStable, /// refers to xdg_wm_base @since 5.48
-        XdgDecorationUnstableV1, /// refers to zxdg_decoration_manager_v1, @since 5.54
-        Keystate, ///< refers to org_kwin_keystate, @since 5.57
+        XdgOutputUnstableV1, ///< refers to zxdg_output_v1 @since 5.47
+        XdgShellStable, ///< refers to xdg_wm_base @since 5.48
+        XdgDecorationUnstableV1, ///< refers to zxdg_decoration_manager_v1 @since 5.54
+        Keystate, ///< refers to org_kwin_keystate @since 5.57
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();

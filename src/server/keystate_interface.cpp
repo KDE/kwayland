@@ -47,8 +47,9 @@ public:
     {
         auto s = reinterpret_cast<KeyStateInterface::Private *>(wl_resource_get_user_data(resource));
 
-        for (int i = 0; i < s->m_keyStates.count(); ++i)
+        for (int i = 0; i < s->m_keyStates.count(); ++i) {
             org_kde_kwin_keystate_send_stateChanged(resource, i, s->m_keyStates[i]);
+        }
     }
 
     static const quint32 s_version;

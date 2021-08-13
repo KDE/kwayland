@@ -164,7 +164,9 @@ void OutputConfiguration::setColorCurves(OutputDevice *outputdevice, QVector<qui
 {
     org_kde_kwin_outputdevice *od = outputdevice->output();
 
-    wl_array wlRed, wlGreen, wlBlue;
+    wl_array wlRed;
+    wl_array wlGreen;
+    wl_array wlBlue;
 
     auto fillArray = [](QVector<quint16> &origin, wl_array *dest) {
         wl_array_init(dest);

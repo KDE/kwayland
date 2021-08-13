@@ -102,8 +102,9 @@ public:
         m_serial = serial;
         m_surface = surface;
         m_hotspot = hotspot;
-        if (diff)
+        if (diff) {
             Q_EMIT q->changed();
+        }
     }
 
     TabletCursor *const q;
@@ -161,8 +162,9 @@ public:
 
     wl_resource *targetResource()
     {
-        if (!m_surface)
+        if (!m_surface) {
             return nullptr;
+        }
 
         ClientConnection *client = m_surface->client();
         const Resource *r = resourceMap().value(*client);
@@ -181,16 +183,18 @@ public:
     void zwp_tablet_tool_v2_bind_resource(QtWaylandServer::zwp_tablet_tool_v2::Resource *resource) override
     {
         TabletCursor *&c = m_cursors[resource->handle];
-        if (!c)
+        if (!c) {
             c = new TabletCursor;
+        }
     }
 
     void zwp_tablet_tool_v2_set_cursor(Resource *resource, uint32_t serial, struct ::wl_resource *_surface, int32_t hotspot_x, int32_t hotspot_y) override
     {
         TabletCursor *c = m_cursors[resource->handle];
         c->d->update(serial, SurfaceInterface::get(_surface), {hotspot_x, hotspot_y});
-        if (resource->handle == targetResource())
+        if (resource->handle == targetResource()) {
             q->cursorChanged(c);
+        }
     }
 
     void zwp_tablet_tool_v2_destroy_resource(Resource *resource) override
@@ -227,8 +231,9 @@ TabletToolInterface::~TabletToolInterface() = default;
 
 void TabletToolInterface::setCurrentSurface(SurfaceInterface *surface)
 {
-    if (d->m_surface == surface)
+    if (d->m_surface == surface) {
         return;
+    }
 
     TabletInterface *const lastTablet = d->m_lastTablet;
     if (d->m_surface && d->resourceMap().contains(*d->m_surface->client())) {
@@ -449,8 +454,9 @@ void TabletSeatInterface::removeTablet(const QString &sysname)
 TabletToolInterface *TabletSeatInterface::toolByHardwareId(quint64 hardwareId) const
 {
     for (TabletToolInterface *tool : d->m_tools) {
-        if (tool->d->hardwareId() == hardwareId)
+        if (tool->d->hardwareId() == hardwareId) {
             return tool;
+        }
     }
     return nullptr;
 }
@@ -458,8 +464,9 @@ TabletToolInterface *TabletSeatInterface::toolByHardwareId(quint64 hardwareId) c
 TabletToolInterface *TabletSeatInterface::toolByHardwareSerial(quint64 hardwareSerial) const
 {
     for (TabletToolInterface *tool : d->m_tools) {
-        if (tool->d->hardwareSerial() == hardwareSerial)
+        if (tool->d->hardwareSerial() == hardwareSerial) {
             return tool;
+        }
     }
     return nullptr;
 }

@@ -234,8 +234,9 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
 
     // Check for holes in the dmabufs set (e.g. [0, 1, 3])
     for (uint32_t i = 0; i < m_planeCount; i++) {
-        if (m_planes[i].fd != -1)
+        if (m_planes[i].fd != -1) {
             continue;
+        }
 
         wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INCOMPLETE, "no dmabuf has been added for plane %i", i);
         return;
@@ -261,8 +262,9 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
 
         // Don't report an error as it might be caused by the kernel not supporting seeking on dmabuf
         off_t size = ::lseek(plane.fd, 0, SEEK_END);
-        if (size == -1)
+        if (size == -1) {
             continue;
+        }
 
         if (plane.offset >= size) {
             wl_resource_post_error(m_resource, ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_OUT_OF_BOUNDS, "invalid offset %i for plane %i", plane.offset, i);
@@ -286,8 +288,9 @@ void V1Iface::Private::Params::create(wl_client *client, uint32_t bufferId, cons
     // -----------------
     QVector<V1Iface::Plane> planes;
     planes.reserve(m_planeCount);
-    for (uint32_t i = 0; i < m_planeCount; i++)
+    for (uint32_t i = 0; i < m_planeCount; i++) {
         planes << m_planes[i];
+    }
 
     LinuxDmabufUnstableV1Buffer *buffer = m_dmabufInterface->impl->importBuffer(planes, format, size, (V1Iface::Flags)flags);
     if (buffer) {

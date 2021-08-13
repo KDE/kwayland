@@ -407,7 +407,9 @@ void OutputDeviceInterface::Private::sendColorCurves(const ResourceData &data)
         return;
     }
 
-    wl_array wlRed, wlGreen, wlBlue;
+    wl_array wlRed;
+    wl_array wlGreen;
+    wl_array wlBlue;
 
     auto fillArray = [](const QVector<quint16> &origin, wl_array *dest) {
         wl_array_init(dest);

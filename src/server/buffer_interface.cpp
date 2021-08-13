@@ -166,7 +166,8 @@ BufferInterface::Private::Private(BufferInterface *q, wl_resource *resource, Sur
             resolved = true;
         }
         if (eglQueryWaylandBufferWL) {
-            EGLint width, height;
+            EGLint width;
+            EGLint height;
             bool valid = false;
             valid = eglQueryWaylandBufferWL(eglDisplay, buffer, EGL_WIDTH, &width);
             valid = valid && eglQueryWaylandBufferWL(eglDisplay, buffer, EGL_HEIGHT, &height);

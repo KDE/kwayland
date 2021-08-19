@@ -318,10 +318,12 @@ void TextInputUnstableV2::Private::setPreferredLanguage(const QString &lang)
 
 void TextInputUnstableV2::Private::setSurroundingText(const QString &text, quint32 cursor, quint32 anchor)
 {
+    const QStringView strView(text);
+
     zwp_text_input_v2_set_surrounding_text(textinputunstablev2,
                                            text.toUtf8().constData(),
-                                           text.leftRef(cursor).toUtf8().length(),
-                                           text.leftRef(anchor).toUtf8().length());
+                                           strView.left(cursor).toUtf8().length(),
+                                           strView.left(anchor).toUtf8().length());
 }
 
 void TextInputUnstableV2::Private::reset()

@@ -67,7 +67,7 @@ Argument::Argument(const QXmlStreamAttributes &attributes)
 
 Argument::~Argument() = default;
 
-Argument::Type Argument::parseType(const QStringRef &type)
+Argument::Type Argument::parseType(const QStringView type)
 {
     if (type.compare(QLatin1String("new_id")) == 0) {
         return Type::NewId;

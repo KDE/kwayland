@@ -58,7 +58,7 @@ public:
     QString typeAsServerWl() const;
 
 private:
-    Type parseType(const QStringRef &type);
+    Type parseType(const QStringView type);
     QString m_name;
     Type m_type = Type::Unknown;
     bool m_allowNull = false;

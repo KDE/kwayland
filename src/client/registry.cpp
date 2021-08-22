@@ -172,7 +172,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::plasmaVirtualDesktopManagementRemoved
     }},
     {Registry::Interface::PlasmaWindowManagement, {
-        15,
+        14,
         QByteArrayLiteral("org_kde_plasma_window_management"),
         &org_kde_plasma_window_management_interface,
         &Registry::plasmaWindowManagementAnnounced,
@@ -373,7 +373,14 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_keystate_interface,
         &Registry::keystateAnnounced,
         &Registry::keystateRemoved
-    }}
+    }},
+    {Registry::Interface::PlasmaActivationFeedback, {
+        1,
+        QByteArrayLiteral("org_kde_plasma_activation_feedback"),
+        &org_kde_plasma_activation_feedback_interface,
+        &Registry::plasmaActivationFeedbackAnnounced,
+        &Registry::plasmaActivationFeedbackRemoved
+    }},
 };
 // clang-format on
 
@@ -655,6 +662,7 @@ BIND(SubCompositor, wl_subcompositor)
 BIND(FullscreenShell, _wl_fullscreen_shell)
 BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
+BIND(PlasmaActivationFeedback, org_kde_plasma_activation_feedback)
 BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
@@ -721,6 +729,7 @@ CREATE(FullscreenShell)
 CREATE(Output)
 CREATE(DataDeviceManager)
 CREATE(PlasmaShell)
+CREATE(PlasmaActivationFeedback)
 CREATE(PlasmaVirtualDesktopManagement)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)

@@ -12,6 +12,7 @@
 
 #include <KWayland/Client/kwaylandclient_export.h>
 
+struct org_kde_plasma_activation_feedback;
 struct org_kde_plasma_activation;
 struct org_kde_plasma_window_management;
 struct org_kde_plasma_window;
@@ -21,7 +22,7 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
-class PlasmaActivation;
+class PlasmaActivationFeedback;
 class PlasmaWindow;
 class PlasmaWindowModel;
 class Surface;
@@ -225,8 +226,6 @@ Q_SIGNALS:
      * @since 5.73
      **/
     void stackingOrderUuidsChanged();
-
-    void activation(PlasmaActivation *activation);
 
 public:
     class Private;
@@ -818,8 +817,99 @@ Q_SIGNALS:
     void finished();
 
 private:
-    friend class PlasmaWindowManagement;
-    explicit PlasmaActivation(PlasmaWindowManagement *parent, org_kde_plasma_activation *activation);
+    friend class PlasmaActivationFeedback;
+    explicit PlasmaActivation(PlasmaActivationFeedback *parent, org_kde_plasma_activation *activation);
+    class Private;
+    QScopedPointer<Private> d;
+};
+
+/**
+ * @since 5.86
+ */
+class KWAYLANDCLIENT_EXPORT PlasmaActivationFeedback : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit PlasmaActivationFeedback(QObject *parent = nullptr);
+    ~PlasmaActivationFeedback() override;
+
+    /**
+     * @returns @c true if managing a org_kde_plasma_activation_feedback.
+     **/
+    bool isValid() const;
+
+    /**
+     * Releases the org_kde_plasma_activation_feedback interface.
+     * After the interface has been released the PlasmaActivationFeedback instance is no
+     * longer valid and can be setup with another org_kde_plasma_activation_feedback interface.
+     *
+     * Right before the interface is released the signal interfaceAboutToBeReleased is emitted.
+     * @see interfaceAboutToBeReleased
+     **/
+    void release();
+
+    /**
+     * Destroys the data held by this PlasmaActivationFeedback.
+     * This method is supposed to be used when the connection to the Wayland
+     * server goes away. Once the connection becomes invalid, it's not
+     * possible to call release anymore as that calls into the Wayland
+     * connection and the call would fail. This method cleans up the data, so
+     * that the instance can be deleted or set up to a new org_kde_plasma_activation_feedback interface
+     * once there is a new connection available.
+     *
+     * This method is automatically invoked when the Registry which created this
+     * PlasmaActivationFeedback gets destroyed.
+     *
+     * Right before the data is destroyed, the signal interfaceAboutToBeDestroyed is emitted.
+     *
+     * @see release
+     * @see interfaceAboutToBeDestroyed
+     **/
+    void destroy();
+
+    /**
+     * Setup this PlasmaActivationFeedback to manage the @p manager.
+     * When using Registry::createPlasmaActivationFeedback there is no need to call this
+     * method.
+     **/
+    void setup(org_kde_plasma_activation_feedback *manager);
+
+    /**
+     * Sets the @p queue to use for creating a PlasmaActivationFeedback.
+     **/
+    void setEventQueue(EventQueue *queue);
+
+    /**
+     * @returns The event queue to use for creating a PlasmaActivationFeedback.
+     **/
+    EventQueue *eventQueue();
+
+    operator org_kde_plasma_activation_feedback *();
+    operator org_kde_plasma_activation_feedback *() const;
+
+Q_SIGNALS:
+    /**
+     * This signal is emitted right before the interface is released.
+     **/
+    void interfaceAboutToBeReleased();
+
+    /**
+     * This signal is emitted right before the data is destroyed.
+     **/
+    void interfaceAboutToBeDestroyed();
+
+    /**
+     * The corresponding global for this interface on the Registry got removed.
+     *
+     * This signal gets only emitted if the Compositor got created by
+     * Registry::createPlasmaActivationFeedback
+     **/
+    void removed();
+
+    void activation(KWayland::Client::PlasmaActivation *activation);
+
+private:
     class Private;
     QScopedPointer<Private> d;
 };

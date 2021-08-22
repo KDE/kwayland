@@ -44,7 +44,6 @@ private:
     static void windowWithUuidCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t id, const char *uuid);
     static void stackingOrderCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, wl_array *ids);
     static void stackingOrderUuidsCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char *uuids);
-    static void activationCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, struct org_kde_plasma_activation *id);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId, const char *uuid);
     void setStackingOrder(const QVector<quint32> &ids);
@@ -155,7 +154,6 @@ org_kde_plasma_window_management_listener PlasmaWindowManagement::Private::s_lis
     stackingOrderCallback,
     stackingOrderUuidsCallback,
     windowWithUuidCallback,
-    activationCallback,
 };
 
 void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *windowManagement)
@@ -283,14 +281,6 @@ void PlasmaWindowManagement::Private::stackingOrderUuidsCallback(void *data, org
     auto wm = reinterpret_cast<PlasmaWindowManagement::Private *>(data);
     Q_ASSERT(wm->wm == interface);
     wm->setStackingOrder(QByteArray(uuids).split(';').toVector());
-}
-
-void PlasmaWindowManagement::Private::activationCallback(void *data, org_kde_plasma_window_management *interface, struct org_kde_plasma_activation *id)
-{
-    auto wm = reinterpret_cast<PlasmaWindowManagement::Private *>(data);
-    Q_ASSERT(wm->wm == interface);
-    auto activation = new PlasmaActivation(wm->q, id);
-    Q_EMIT wm->q->activation(activation);
 }
 
 void PlasmaWindowManagement::Private::setStackingOrder(const QVector<quint32> &ids)
@@ -1178,6 +1168,106 @@ QStringList PlasmaWindow::plasmaActivities() const
     return d->plasmaActivities;
 }
 
+class Q_DECL_HIDDEN PlasmaActivationFeedback::Private
+{
+public:
+    Private(PlasmaActivationFeedback *q);
+    WaylandPointer<org_kde_plasma_activation_feedback, org_kde_plasma_activation_feedback_destroy> feedback;
+    EventQueue *queue = nullptr;
+
+    void setup(org_kde_plasma_activation_feedback *feedback);
+
+private:
+    static void activationCallback(void *data, struct org_kde_plasma_activation_feedback *feedback, struct org_kde_plasma_activation *id);
+
+    static struct org_kde_plasma_activation_feedback_listener s_listener;
+    PlasmaActivationFeedback *q;
+};
+
+PlasmaActivationFeedback::Private::Private(PlasmaActivationFeedback *q)
+    : q(q)
+{
+}
+
+org_kde_plasma_activation_feedback_listener PlasmaActivationFeedback::Private::s_listener = {
+    activationCallback,
+};
+
+void PlasmaActivationFeedback::Private::activationCallback(void *data, org_kde_plasma_activation_feedback *interface, struct org_kde_plasma_activation *id)
+{
+    auto feedbackPrivate = reinterpret_cast<PlasmaActivationFeedback::Private *>(data);
+    Q_ASSERT(feedbackPrivate->feedback == interface);
+    auto activation = new PlasmaActivation(feedbackPrivate->q, id);
+    Q_EMIT feedbackPrivate->q->activation(activation);
+}
+
+void PlasmaActivationFeedback::Private::setup(org_kde_plasma_activation_feedback *m)
+{
+    Q_ASSERT(!feedback);
+    Q_ASSERT(m);
+    feedback.setup(m);
+    org_kde_plasma_activation_feedback_add_listener(m, &s_listener, this);
+}
+
+PlasmaActivationFeedback::PlasmaActivationFeedback(QObject *parent)
+    : QObject(parent)
+    , d(new Private(this))
+{
+}
+
+PlasmaActivationFeedback::~PlasmaActivationFeedback()
+{
+    release();
+}
+
+void PlasmaActivationFeedback::destroy()
+{
+    if (!d->feedback) {
+        return;
+    }
+    Q_EMIT interfaceAboutToBeDestroyed();
+    d->feedback.destroy();
+}
+
+void PlasmaActivationFeedback::release()
+{
+    if (!d->feedback) {
+        return;
+    }
+    Q_EMIT interfaceAboutToBeReleased();
+    d->feedback.release();
+}
+
+void PlasmaActivationFeedback::setup(org_kde_plasma_activation_feedback *wm)
+{
+    d->setup(wm);
+}
+
+void PlasmaActivationFeedback::setEventQueue(EventQueue *queue)
+{
+    d->queue = queue;
+}
+
+EventQueue *PlasmaActivationFeedback::eventQueue()
+{
+    return d->queue;
+}
+
+bool PlasmaActivationFeedback::isValid() const
+{
+    return d->feedback.isValid();
+}
+
+PlasmaActivationFeedback::operator org_kde_plasma_activation_feedback *()
+{
+    return d->feedback;
+}
+
+PlasmaActivationFeedback::operator org_kde_plasma_activation_feedback *() const
+{
+    return d->feedback;
+}
+
 class Q_DECL_HIDDEN PlasmaActivation::Private
 {
 public:
@@ -1217,7 +1307,7 @@ void PlasmaActivation::Private::finishedCallback(void *data, org_kde_plasma_acti
     q->d->activation.release();
 }
 
-PlasmaActivation::PlasmaActivation(PlasmaWindowManagement *parent, org_kde_plasma_activation *activation)
+PlasmaActivation::PlasmaActivation(PlasmaActivationFeedback *parent, org_kde_plasma_activation *activation)
     : QObject(parent)
     , d(new PlasmaActivation::Private(activation, this))
 {

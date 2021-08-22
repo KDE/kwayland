@@ -36,6 +36,7 @@ struct org_kde_kwin_shadow_manager;
 struct org_kde_kwin_blur_manager;
 struct org_kde_kwin_contrast_manager;
 struct org_kde_kwin_slide_manager;
+struct org_kde_plasma_activation_feedback;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_virtual_desktop_management;
 struct org_kde_plasma_window_management;
@@ -72,6 +73,7 @@ class IdleInhibitManager;
 class Keystate;
 class RemoteAccessManager;
 class Output;
+class PlasmaActivationFeedback;
 class PlasmaShell;
 class PlasmaVirtualDesktopManagement;
 class PlasmaWindowManagement;
@@ -173,6 +175,7 @@ public:
         XdgShellStable, ///< refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, ///< refers to zxdg_decoration_manager_v1 @since 5.54
         Keystate, ///< refers to org_kwin_keystate @since 5.60
+        PlasmaActivationFeedback, ///< Refers to org_kde_plasma_activation_feedback interface, @since 5.83
     };
     explicit Registry(QObject *parent = nullptr);
     virtual ~Registry();
@@ -387,6 +390,16 @@ public:
      * @since 5.4
      **/
     org_kde_plasma_shell *bindPlasmaShell(uint32_t name, uint32_t version) const;
+    /**
+     * Binds the org_kde_plasma_activation_feedback with @p name and @p version.
+     * If the @p name does not exist or is not for the Plasma activation manager interface,
+     * @c null will be returned.
+     *
+     * Prefer using createPlasmaActivationFeedback instead.
+     * @see createPlasmaActivationFeedback
+     * @since 5.83
+     **/
+    org_kde_plasma_activation_feedback *bindPlasmaActivationFeedback(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_plasma_virtual_desktop_management with @p name and @p version.
      * If the @p name does not exist or is not for the Plasma Virtual desktop interface,
@@ -839,6 +852,22 @@ public:
      * @since 5.4
      **/
     PlasmaShell *createPlasmaShell(quint32 name, quint32 version, QObject *parent = nullptr);
+    /**
+     * Creates a PlasmaActivationFeedback and sets it up to manage the interface identified by
+     * @p name and @p version.
+     *
+     * Note: in case @p name is invalid or isn't for the org_kde_plasma_activation_feedback interface,
+     * the returned PlasmaActivationFeedback will not be valid. Therefore it's recommended to call
+     * isValid on the created instance.
+     *
+     * @param name The name of the org_kde_plasma_activation_feedback interface to bind
+     * @param version The version or the org_kde_plasma_activation_feedback interface to use
+     * @param parent The parent for PlasmaActivationFeedback
+     *
+     * @returns The created PlasmaActivationFeedback.
+     * @since 5.83
+     **/
+    PlasmaActivationFeedback *createPlasmaActivationFeedback(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a PlasmaVirtualDesktopManagement and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1321,6 +1350,13 @@ Q_SIGNALS:
      **/
     void plasmaShellAnnounced(quint32 name, quint32 version);
     /**
+     * Emitted whenever a org_kde_plasma_activation_feedback interface gets announced.
+     * @param name The name for the announced interface
+     * @param version The maximum supported version of the announced interface
+     * @since 5.83
+     **/
+    void plasmaActivationFeedbackAnnounced(quint32 name, quint32 version);
+    /**
      * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1584,6 +1620,12 @@ Q_SIGNALS:
      * @since 5.4
      **/
     void plasmaShellRemoved(quint32 name);
+    /**
+     * Emitted whenever a org_kde_plasma_activation_feedback interface gets removed.
+     * @param name The name for the removed interface
+     * @since 5.83
+     **/
+    void plasmaActivationFeedbackRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_plasma_virtual_desktop_management interface gets removed.
      * @param name The name for the removed interface

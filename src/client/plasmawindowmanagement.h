@@ -22,6 +22,7 @@ namespace KWayland
 namespace Client
 {
 class EventQueue;
+class Output;
 class PlasmaActivationFeedback;
 class PlasmaWindow;
 class PlasmaWindowModel;
@@ -600,6 +601,13 @@ public:
      * @since 5.69
      */
     QString applicationMenuObjectPath() const;
+
+    /**
+     * Sends the current window to @p output
+     *
+     * @since 5.86
+     */
+    void sendToOutput(KWayland::Client::Output *output) const;
 
 Q_SIGNALS:
     /**

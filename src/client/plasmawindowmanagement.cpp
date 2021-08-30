@@ -1168,6 +1168,13 @@ QStringList PlasmaWindow::plasmaActivities() const
     return d->plasmaActivities;
 }
 
+void PlasmaWindow::sendToOutput(KWayland::Client::Output *output) const
+{
+    if (org_kde_plasma_window_get_version(d->window) >= ORG_KDE_PLASMA_WINDOW_SEND_TO_OUTPUT_SINCE_VERSION) {
+        org_kde_plasma_window_send_to_output(d->window, *output);
+    }
+}
+
 class Q_DECL_HIDDEN PlasmaActivationFeedback::Private
 {
 public:

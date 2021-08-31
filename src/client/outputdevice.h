@@ -132,6 +132,13 @@ public:
         Always = 1,
         Automatic = 2
     };
+    Q_ENUM(VrrPolicy)
+    enum class RgbRange {
+        Automatic = 0,
+        Full = 1,
+        Limited = 2,
+    };
+    Q_ENUM(RgbRange)
 
     explicit OutputDevice(QObject *parent = nullptr);
     virtual ~OutputDevice();
@@ -280,6 +287,12 @@ public:
     VrrPolicy vrrPolicy() const;
 
     /**
+     * @returns the rgb range used on this output
+     * @since 5.87
+     */
+    RgbRange rgbRange() const;
+
+    /**
      * Destroys the data hold by this OutputDevice.
      * This method is supposed to be used when the connection to the Wayland
      * server goes away. If the connection is not valid any more, it's not
@@ -346,6 +359,11 @@ Q_SIGNALS:
      * @since 5.82
      **/
     void vrrPolicyChanged(VrrPolicy vrrPolicy);
+    /**
+     * Emitted whenever the rgb range of this output changes
+     * @since 5.87
+     */
+    void rgbRangeChanged(RgbRange rgbRange);
     /**
      * The corresponding global for this interface on the Registry got removed.
      *

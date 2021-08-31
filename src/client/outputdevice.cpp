@@ -50,6 +50,7 @@ public:
     Capabilities capabilities;
     uint32_t overscan = 0;
     VrrPolicy vrrPolicy = VrrPolicy::Automatic;
+    RgbRange rgbRange = RgbRange::Automatic;
 
     bool done = false;
 
@@ -80,6 +81,7 @@ private:
     static void capabilitiesCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t capabilities);
     static void overscanCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t overscan);
     static void vrrPolicyCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t vrrPolicy);
+    static void rgbRangeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t rgbRange);
 
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
@@ -134,22 +136,21 @@ OutputDevice::~OutputDevice()
     d->output.release();
 }
 
-org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {
-    geometryCallback,
-    modeCallback,
-    doneCallback,
-    scaleCallback,
-    edidCallback,
-    enabledCallback,
-    uuidCallback,
-    scaleFCallback,
-    colorcurvesCallback,
-    serialNumberCallback,
-    eisaIdCallback,
-    capabilitiesCallback,
-    overscanCallback,
-    vrrPolicyCallback
-};
+org_kde_kwin_outputdevice_listener OutputDevice::Private::s_outputListener = {geometryCallback,
+                                                                              modeCallback,
+                                                                              doneCallback,
+                                                                              scaleCallback,
+                                                                              edidCallback,
+                                                                              enabledCallback,
+                                                                              uuidCallback,
+                                                                              scaleFCallback,
+                                                                              colorcurvesCallback,
+                                                                              serialNumberCallback,
+                                                                              eisaIdCallback,
+                                                                              capabilitiesCallback,
+                                                                              overscanCallback,
+                                                                              vrrPolicyCallback,
+                                                                              rgbRangeCallback};
 
 void OutputDevice::Private::geometryCallback(void *data,
                                              org_kde_kwin_outputdevice *output,
@@ -420,6 +421,20 @@ void OutputDevice::Private::vrrPolicyCallback(void *data, org_kde_kwin_outputdev
     }
 }
 
+void OutputDevice::Private::rgbRangeCallback(void *data, org_kde_kwin_outputdevice *output, uint32_t rgb_range)
+{
+    auto o = reinterpret_cast<OutputDevice::Private *>(data);
+    Q_UNUSED(output);
+    auto rgbRange = static_cast<RgbRange>(rgb_range);
+    if (o->rgbRange != rgbRange) {
+        o->rgbRange = rgbRange;
+        Q_EMIT o->q->rgbRangeChanged(rgbRange);
+        if (o->done) {
+            Q_EMIT o->q->changed();
+        }
+    }
+}
+
 void OutputDevice::setup(org_kde_kwin_outputdevice *output)
 {
     d->setup(output);
@@ -612,6 +627,11 @@ uint32_t OutputDevice::overscan() const
 OutputDevice::VrrPolicy OutputDevice::vrrPolicy() const
 {
     return d->vrrPolicy;
+}
+
+OutputDevice::RgbRange OutputDevice::rgbRange() const
+{
+    return d->rgbRange;
 }
 
 void OutputDevice::destroy()

@@ -228,6 +228,12 @@ public:
     void setVrrPolicy(OutputDevice *outputdevice, OutputDevice::VrrPolicy policy);
 
     /**
+     * Set the rgb range for this output
+     * @since 5.87
+     */
+    void setRgbRange(OutputDevice *outputdevice, OutputDevice::RgbRange rgbRange);
+
+    /**
      * Ask the compositor to apply the changes.
      * This results in the compositor looking at all outputdevices and if they have
      * pending changes from the set* calls, these changes will be tested with the

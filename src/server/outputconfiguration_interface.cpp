@@ -51,6 +51,7 @@ private:
     static void colorcurvesCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, wl_array *red, wl_array *green, wl_array *blue);
     static void overscanCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t overscan);
     static void vrrCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t vrrPolicy);
+    static void rgbRangeCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t rgbRange);
 
     OutputConfigurationInterface *q_func()
     {
@@ -70,7 +71,8 @@ const struct org_kde_kwin_outputconfiguration_interface OutputConfigurationInter
                                                                                                               colorcurvesCallback,
                                                                                                               resourceDestroyedCallback,
                                                                                                               overscanCallback,
-                                                                                                              vrrCallback};
+                                                                                                              vrrCallback,
+                                                                                                              rgbRangeCallback};
 
 OutputConfigurationInterface::OutputConfigurationInterface(OutputManagementInterface *parent, wl_resource *parentResource)
     : Resource(new Private(this, parent, parentResource))
@@ -248,6 +250,14 @@ void OutputConfigurationInterface::Private::vrrCallback(wl_client *client, wl_re
     Q_UNUSED(resource);
     Q_UNUSED(outputdevice);
     Q_UNUSED(vrrPolicy);
+}
+
+void OutputConfigurationInterface::Private::rgbRangeCallback(wl_client *client, wl_resource *resource, wl_resource *outputdevice, uint32_t rgbRange)
+{
+    Q_UNUSED(client);
+    Q_UNUSED(resource);
+    Q_UNUSED(outputdevice);
+    Q_UNUSED(rgbRange);
 }
 
 void OutputConfigurationInterface::Private::emitConfigurationChangeRequested() const

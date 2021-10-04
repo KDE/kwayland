@@ -11,7 +11,12 @@
 
 #include <QFile>
 #include <QGuiApplication>
+#include <private/qabstracteventdispatcher_p.h>
+#if QT_CONFIG(glib)
 #include <private/qeventdispatcher_glib_p.h>
+#else
+#include <private/qeventdispatcher_unix_p.h>
+#endif
 
 #include <iostream>
 #include <unistd.h>
@@ -66,7 +71,11 @@ int main(int argc, char **argv)
     using namespace KWayland::Server;
 
     // set our own event dispatcher to be able to dispatch events before the event loop is started
+#if QT_CONFIG(glib)
     QAbstractEventDispatcher *eventDispatcher = new QEventDispatcherGlib();
+#else
+    QAbstractEventDispatcher *eventDispatcher = new QEventDispatcherUNIX();
+#endif
     QCoreApplication::setEventDispatcher(eventDispatcher);
 
     // first create the Server and setup with minimum to get an XWayland connected

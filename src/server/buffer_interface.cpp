@@ -22,7 +22,7 @@ namespace Server
 {
 namespace EGL
 {
-typedef GLboolean (*eglQueryWaylandBufferWL_func)(EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
+typedef EGLBoolean (*eglQueryWaylandBufferWL_func)(EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
 eglQueryWaylandBufferWL_func eglQueryWaylandBufferWL = nullptr;
 }
 

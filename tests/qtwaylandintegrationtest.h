@@ -29,7 +29,7 @@ class WaylandClientTest : public QObject
     Q_OBJECT
 public:
     explicit WaylandClientTest(QObject *parent = nullptr);
-    virtual ~WaylandClientTest();
+    ~WaylandClientTest() override;
 
 private:
     void init();

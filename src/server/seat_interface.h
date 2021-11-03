@@ -133,7 +133,7 @@ class KWAYLANDSERVER_EXPORT SeatInterface : public Global
      **/
     Q_PROPERTY(quint32 timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
 public:
-    virtual ~SeatInterface();
+    ~SeatInterface() override;
 
     QString name() const;
     bool hasPointer() const;

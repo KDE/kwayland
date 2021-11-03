@@ -58,7 +58,7 @@ class XdgPopupV6Interface::Private : public XdgShellPopupInterface::Private
 {
 public:
     Private(XdgPopupV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRect windowGeometry() const override;
     void commit() override;
@@ -110,7 +110,7 @@ class XdgSurfaceV6Interface::Private : public KWayland::Server::Resource::Privat
 public:
     Private(XdgSurfaceV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
 
-    ~Private();
+    ~Private() override;
 
     XdgSurfaceV6Interface *q_func()
     {
@@ -140,7 +140,7 @@ class XdgTopLevelV6Interface::Private : public XdgShellSurfaceInterface::Private
 {
 public:
     Private(XdgTopLevelV6Interface *q, XdgShellV6Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRect windowGeometry() const override;
     QSize minimumSize() const override;

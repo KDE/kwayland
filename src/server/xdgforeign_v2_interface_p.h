@@ -32,7 +32,7 @@ class Q_DECL_HIDDEN XdgExporterUnstableV2Interface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~XdgExporterUnstableV2Interface();
+    ~XdgExporterUnstableV2Interface() override;
 
     XdgExportedUnstableV2Interface *exportedSurface(const QString &handle);
 
@@ -52,7 +52,7 @@ class Q_DECL_HIDDEN XdgImporterUnstableV2Interface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~XdgImporterUnstableV2Interface();
+    ~XdgImporterUnstableV2Interface() override;
 
     XdgImportedUnstableV2Interface *importedSurface(const QString &handle);
     SurfaceInterface *transientFor(SurfaceInterface *surface);
@@ -74,7 +74,7 @@ class Q_DECL_HIDDEN XdgExportedUnstableV2Interface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgExportedUnstableV2Interface();
+    ~XdgExportedUnstableV2Interface() override;
 
 private:
     explicit XdgExportedUnstableV2Interface(XdgExporterUnstableV2Interface *parent, wl_resource *parentResource);
@@ -88,7 +88,7 @@ class Q_DECL_HIDDEN XdgImportedUnstableV2Interface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgImportedUnstableV2Interface();
+    ~XdgImportedUnstableV2Interface() override;
 
     SurfaceInterface *child() const;
 

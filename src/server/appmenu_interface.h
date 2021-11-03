@@ -30,7 +30,7 @@ class KWAYLANDSERVER_EXPORT AppMenuManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~AppMenuManagerInterface();
+    ~AppMenuManagerInterface() override;
     /**
      * Returns any existing appMenu for a given surface
      * This returns a null pointer if no AppMenuInterface exists.
@@ -69,7 +69,7 @@ public:
         /** Object path of the AppMenu interface*/
         QString objectPath;
     };
-    virtual ~AppMenuInterface();
+    ~AppMenuInterface() override;
 
     /**
      * @returns the service name and object path or empty strings if unset

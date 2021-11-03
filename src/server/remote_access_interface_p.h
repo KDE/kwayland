@@ -21,7 +21,7 @@ class RemoteBufferInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~RemoteBufferInterface() = default;
+    ~RemoteBufferInterface() override = default;
 
     /**
      * Sends GBM fd to the client.

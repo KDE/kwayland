@@ -34,7 +34,7 @@ class KWAYLANDCLIENT_EXPORT DataDevice : public QObject
     Q_OBJECT
 public:
     explicit DataDevice(QObject *parent = nullptr);
-    virtual ~DataDevice();
+    ~DataDevice() override;
 
     /**
      * Setup this DataDevice to manage the @p dataDevice.

@@ -30,7 +30,7 @@ class KWAYLANDSERVER_EXPORT QtSurfaceExtensionInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~QtSurfaceExtensionInterface();
+    ~QtSurfaceExtensionInterface() override;
 
 Q_SIGNALS:
     void surfaceCreated(KWayland::Server::QtExtendedSurfaceInterface *);
@@ -48,7 +48,7 @@ class KWAYLANDSERVER_EXPORT QtExtendedSurfaceInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~QtExtendedSurfaceInterface();
+    ~QtExtendedSurfaceInterface() override;
 
     SurfaceInterface *surface() const;
     QtSurfaceExtensionInterface *shell() const;

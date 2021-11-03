@@ -98,7 +98,7 @@ class ServerSideDecorationPaletteInterface::Private : public Resource::Private
 {
 public:
     Private(ServerSideDecorationPaletteInterface *q, ServerSideDecorationPaletteManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     SurfaceInterface *surface;
     QString palette;

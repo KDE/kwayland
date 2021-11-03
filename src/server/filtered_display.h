@@ -28,7 +28,7 @@ class KWAYLANDSERVER_EXPORT FilteredDisplay : public Display
     Q_OBJECT
 public:
     FilteredDisplay(QObject *parent);
-    ~FilteredDisplay();
+    ~FilteredDisplay() override;
 
     /**
      * Return whether the @arg client can see the interface with the given @arg interfaceName

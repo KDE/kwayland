@@ -55,7 +55,7 @@ class KWAYLANDSERVER_EXPORT RemoteAccessManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~RemoteAccessManagerInterface() = default;
+    ~RemoteAccessManagerInterface() override = default;
 
     /**
      * Store buffer in sent list and notify client that we have a buffer for it

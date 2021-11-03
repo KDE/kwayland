@@ -46,7 +46,7 @@ class KWAYLANDSERVER_EXPORT OutputConfigurationInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~OutputConfigurationInterface();
+    ~OutputConfigurationInterface() override;
 
     /**
      * Accessor for the changes made to OutputDevices. The data returned from this call

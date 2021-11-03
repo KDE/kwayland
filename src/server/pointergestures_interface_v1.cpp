@@ -105,7 +105,7 @@ class PointerSwipeGestureUnstableV1Interface::Private : public PointerSwipeGestu
 {
 public:
     Private(PointerSwipeGestureUnstableV1Interface *q, PointerGesturesUnstableV1Interface *c, wl_resource *parentResource, PointerInterface *pointer);
-    ~Private();
+    ~Private() override;
 
     void end(quint32 serial, bool end);
 
@@ -194,7 +194,7 @@ class PointerPinchGestureUnstableV1Interface::Private : public PointerPinchGestu
 {
 public:
     Private(PointerPinchGestureUnstableV1Interface *q, PointerGesturesUnstableV1Interface *c, wl_resource *parentResource, PointerInterface *pointer);
-    ~Private();
+    ~Private() override;
 
     void end(quint32 serial, bool end);
 

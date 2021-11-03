@@ -45,7 +45,7 @@ class KWAYLANDCLIENT_EXPORT Surface : public QObject
     Q_OBJECT
 public:
     explicit Surface(QObject *parent = nullptr);
-    virtual ~Surface();
+    ~Surface() override;
 
     /**
      * Creates a Surface for the given @p window.

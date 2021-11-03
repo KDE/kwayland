@@ -89,7 +89,7 @@ class KWAYLANDCLIENT_EXPORT Touch : public QObject
     Q_OBJECT
 public:
     explicit Touch(QObject *parent = nullptr);
-    virtual ~Touch();
+    ~Touch() override;
 
     /**
      * @returns @c true if managing a wl_pointer.

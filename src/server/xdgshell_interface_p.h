@@ -34,7 +34,7 @@ protected:
 class XdgShellSurfaceInterface::Private : public Resource::Private, public GenericShellSurface<XdgShellSurfaceInterface>
 {
 public:
-    virtual ~Private();
+    ~Private() override;
 
     virtual void close() = 0;
     virtual quint32 configure(States states, const QSize &size) = 0;
@@ -64,7 +64,7 @@ protected:
 class XdgShellPopupInterface::Private : public Resource::Private, public GenericShellSurface<XdgShellPopupInterface>
 {
 public:
-    virtual ~Private();
+    ~Private() override;
     virtual void popupDone() = 0;
     virtual QRect windowGeometry() const = 0;
 

@@ -121,7 +121,7 @@ class ContrastInterface::Private : public Resource::Private
 {
 public:
     Private(ContrastInterface *q, ContrastManagerInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRegion pendingRegion;
     QRegion currentRegion;

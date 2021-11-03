@@ -31,7 +31,7 @@ class KWAYLANDSERVER_EXPORT RegionInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~RegionInterface();
+    ~RegionInterface() override;
 
     /**
      * @returns the data of the region as a QRegion.

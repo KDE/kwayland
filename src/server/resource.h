@@ -32,7 +32,7 @@ class KWAYLANDSERVER_EXPORT Resource : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Resource();
+    ~Resource() override;
     void create(ClientConnection *client, quint32 version, quint32 id);
 
     /**

@@ -24,7 +24,7 @@ class PlasmaSurfaceTest : public QObject
     Q_OBJECT
 public:
     explicit PlasmaSurfaceTest(QObject *parent = nullptr);
-    virtual ~PlasmaSurfaceTest();
+    ~PlasmaSurfaceTest() override;
 
     void init();
 

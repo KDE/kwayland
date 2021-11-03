@@ -57,7 +57,7 @@ public:
      * Registry::createServerSideDecorationManager.
      **/
     explicit ServerSideDecorationManager(QObject *parent = nullptr);
-    virtual ~ServerSideDecorationManager();
+    ~ServerSideDecorationManager() override;
 
     /**
      * Setup this ServerSideDecorationManager to manage the @p serversidedecorationmanager.
@@ -134,7 +134,7 @@ class KWAYLANDCLIENT_EXPORT ServerSideDecoration : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~ServerSideDecoration();
+    ~ServerSideDecoration() override;
 
     /**
      * Setup this ServerSideDecoration to manage the @p serversidedecoration.

@@ -120,7 +120,7 @@ class ShadowInterface::Private : public Resource::Private
 {
 public:
     Private(ShadowInterface *q, ShadowManagerInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     struct State {
         enum Flags {

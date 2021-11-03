@@ -211,7 +211,7 @@ class Generator : public QObject
     Q_OBJECT
 public:
     explicit Generator(QObject *parent = nullptr);
-    virtual ~Generator();
+    ~Generator() override;
 
     void setXmlFileName(const QString &name)
     {

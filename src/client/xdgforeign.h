@@ -53,7 +53,7 @@ class KWAYLANDCLIENT_EXPORT XdgExporter : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgExporter();
+    ~XdgExporter() override;
 
     /**
      * Setup this  to manage the @p .
@@ -153,7 +153,7 @@ class KWAYLANDCLIENT_EXPORT XdgImporter : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgImporter();
+    ~XdgImporter() override;
 
     /**
      * Setup this  to manage the @p .
@@ -235,7 +235,7 @@ class KWAYLANDCLIENT_EXPORT XdgExported : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgExported();
+    ~XdgExported() override;
 
     /**
      * Setup this  to manage the @p .
@@ -299,7 +299,7 @@ class KWAYLANDCLIENT_EXPORT XdgImported : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgImported();
+    ~XdgImported() override;
 
     /**
      * Setup this  to manage the @p .

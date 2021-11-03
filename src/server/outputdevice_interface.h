@@ -84,7 +84,7 @@ public:
         bool operator==(const ColorCurves &cc) const;
         bool operator!=(const ColorCurves &cc) const;
     };
-    virtual ~OutputDeviceInterface();
+    ~OutputDeviceInterface() override;
 
     QSize physicalSize() const;
     QPoint globalPosition() const;

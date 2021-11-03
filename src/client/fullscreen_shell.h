@@ -52,7 +52,7 @@ class KWAYLANDCLIENT_EXPORT FullscreenShell : public QObject
     Q_PROPERTY(bool capabilityCursorPlane READ hasCapabilityCursorPlane NOTIFY capabilityCursorPlaneChanged)
 public:
     explicit FullscreenShell(QObject *parent = nullptr);
-    virtual ~FullscreenShell();
+    ~FullscreenShell() override;
 
     bool isValid() const;
     void release();

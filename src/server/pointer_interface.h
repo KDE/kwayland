@@ -31,7 +31,7 @@ class KWAYLANDSERVER_EXPORT PointerInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~PointerInterface();
+    ~PointerInterface() override;
 
     /**
      * @returns the focused SurfaceInterface on this pointer resource, if any.
@@ -80,7 +80,7 @@ class KWAYLANDSERVER_EXPORT Cursor : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Cursor();
+    ~Cursor() override;
     /**
      * The hotspot of the cursor image in surface-relative coordinates.
      **/

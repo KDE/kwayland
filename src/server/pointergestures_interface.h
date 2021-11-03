@@ -39,7 +39,7 @@ class KWAYLANDSERVER_EXPORT PointerGesturesInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~PointerGesturesInterface();
+    ~PointerGesturesInterface() override;
 
     /**
      * @returns The interface version used by this PointerGesturesInterface

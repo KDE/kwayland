@@ -19,7 +19,7 @@ class TextInputUnstableV0Interface::Private : public TextInputInterface::Private
 {
 public:
     Private(TextInputInterface *q, TextInputManagerUnstableV0Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void activate(SeatInterface *seat, SurfaceInterface *surface);
     void deactivate();

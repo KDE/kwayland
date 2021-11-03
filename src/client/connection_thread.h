@@ -108,7 +108,7 @@ class KWAYLANDCLIENT_EXPORT ConnectionThread : public QObject
     Q_OBJECT
 public:
     explicit ConnectionThread(QObject *parent = nullptr);
-    virtual ~ConnectionThread();
+    ~ConnectionThread() override;
 
     /**
      * Creates a ConnectionThread for the used QGuiApplication.

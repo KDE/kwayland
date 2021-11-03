@@ -18,7 +18,7 @@ class Q_DECL_HIDDEN DataOfferInterface::Private : public Resource::Private
 {
 public:
     Private(DataSourceInterface *source, DataDeviceInterface *parentInterface, DataOfferInterface *q, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
     DataSourceInterface *source;
     DataDeviceInterface *dataDevice;
     // defaults are set to sensible values for < version 3 interfaces

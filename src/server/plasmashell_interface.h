@@ -39,7 +39,7 @@ class KWAYLANDSERVER_EXPORT PlasmaShellInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaShellInterface();
+    ~PlasmaShellInterface() override;
 
 Q_SIGNALS:
     /**
@@ -64,7 +64,7 @@ class KWAYLANDSERVER_EXPORT PlasmaShellSurfaceInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaShellSurfaceInterface();
+    ~PlasmaShellSurfaceInterface() override;
 
     /**
      * @returns the SurfaceInterface this PlasmaShellSurfaceInterface got created for

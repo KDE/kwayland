@@ -62,7 +62,7 @@ public:
      * Registry::createSlideManager.
      **/
     explicit SlideManager(QObject *parent = nullptr);
-    virtual ~SlideManager();
+    ~SlideManager() override;
 
     /**
      * Setup this SlideManager to manage the @p slidemanager.
@@ -140,7 +140,7 @@ public:
         Bottom, /**< Slide from the bottom edge of the screen */
     };
 
-    virtual ~Slide();
+    ~Slide() override;
 
     /**
      * Setup this Slide to manage the @p slide.

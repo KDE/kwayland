@@ -36,7 +36,7 @@ class KWAYLANDSERVER_EXPORT RelativePointerManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~RelativePointerManagerInterface();
+    ~RelativePointerManagerInterface() override;
 
     /**
      * @returns The interface version used by this RelativePointerManagerInterface

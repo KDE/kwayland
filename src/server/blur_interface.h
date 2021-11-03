@@ -33,7 +33,7 @@ class KWAYLANDSERVER_EXPORT BlurManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~BlurManagerInterface();
+    ~BlurManagerInterface() override;
 
 private:
     explicit BlurManagerInterface(Display *display, QObject *parent = nullptr);
@@ -58,7 +58,7 @@ class KWAYLANDSERVER_EXPORT BlurInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~BlurInterface();
+    ~BlurInterface() override;
 
     /**
      * @returns The region or the SurfaceInterface which should be blurred, null Region implies complete surface.

@@ -35,7 +35,7 @@ class KWAYLANDSERVER_EXPORT XdgForeignInterface : public QObject
     Q_OBJECT
 public:
     XdgForeignInterface(Display *display, QObject *parent = nullptr);
-    ~XdgForeignInterface();
+    ~XdgForeignInterface() override;
 
     /**
      * Creates the native zxdg_exporter_v2 and zxdg_importer_v2 interfaces

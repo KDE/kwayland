@@ -35,7 +35,7 @@ class KWAYLANDSERVER_EXPORT ClientConnection : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~ClientConnection();
+    ~ClientConnection() override;
 
     /**
      * Flushes the connection to this client. Ensures that all events are pushed to the client.

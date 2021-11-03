@@ -33,7 +33,7 @@ class KWAYLANDSERVER_EXPORT OutputManagementInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~OutputManagementInterface();
+    ~OutputManagementInterface() override;
 
 Q_SIGNALS:
     /**

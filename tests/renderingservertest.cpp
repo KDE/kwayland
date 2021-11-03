@@ -75,7 +75,7 @@ class CompositorWindow : public QWidget
     Q_OBJECT
 public:
     explicit CompositorWindow(QWidget *parent = nullptr);
-    virtual ~CompositorWindow();
+    ~CompositorWindow() override;
 
     void surfaceCreated(KWayland::Server::ShellSurfaceInterface *surface);
 

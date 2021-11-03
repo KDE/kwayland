@@ -36,7 +36,7 @@ class KWAYLANDCLIENT_EXPORT SubCompositor : public QObject
     Q_OBJECT
 public:
     explicit SubCompositor(QObject *parent = nullptr);
-    virtual ~SubCompositor();
+    ~SubCompositor() override;
 
     /**
      * @returns @c true if managing a wl_subcompositor.

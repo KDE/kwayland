@@ -31,7 +31,7 @@ class KWAYLANDSERVER_EXPORT SubCompositorInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~SubCompositorInterface();
+    ~SubCompositorInterface() override;
 
 Q_SIGNALS:
     void subSurfaceCreated(KWayland::Server::SubSurfaceInterface *);
@@ -51,7 +51,7 @@ class KWAYLANDSERVER_EXPORT SubSurfaceInterface : public Resource
     Q_PROPERTY(QPoint position READ position NOTIFY positionChanged)
     Q_PROPERTY(KWayland::Server::SubSurfaceInterface::Mode mode READ mode NOTIFY modeChanged)
 public:
-    virtual ~SubSurfaceInterface();
+    ~SubSurfaceInterface() override;
 
     QPoint position() const;
 

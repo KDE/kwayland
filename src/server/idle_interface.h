@@ -41,7 +41,7 @@ class KWAYLANDSERVER_EXPORT IdleInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~IdleInterface();
+    ~IdleInterface() override;
 
     /**
      * Inhibits the IdleInterface. While inhibited no IdleTimeoutInterface interface gets
@@ -110,7 +110,7 @@ class KWAYLANDSERVER_EXPORT IdleTimeoutInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~IdleTimeoutInterface();
+    ~IdleTimeoutInterface() override;
 
 private:
     explicit IdleTimeoutInterface(SeatInterface *seat, IdleInterface *parent, wl_resource *parentResource);

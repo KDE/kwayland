@@ -19,7 +19,7 @@ class TextInputUnstableV2Interface::Private : public TextInputInterface::Private
 {
 public:
     Private(TextInputInterface *q, TextInputManagerUnstableV2Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void sendEnter(SurfaceInterface *surface, quint32 serial) override;
     void sendLeave(quint32 serial, SurfaceInterface *surface) override;

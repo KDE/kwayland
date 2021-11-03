@@ -156,7 +156,7 @@ class KWAYLANDCLIENT_EXPORT XdgShell : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgShell();
+    ~XdgShell() override;
 
     /**
      * Setup this XdgShell to manage the @p xdgshellv5.
@@ -275,7 +275,7 @@ class KWAYLANDCLIENT_EXPORT XdgShellSurface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellSurface();
+    ~XdgShellSurface() override;
     /**
      * States the Surface can be in
      **/
@@ -512,7 +512,7 @@ class KWAYLANDCLIENT_EXPORT XdgShellPopup : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellPopup();
+    ~XdgShellPopup() override;
 
     /**
      * Setup this XdgShellPopup to manage the @p xdgpopupv5.

@@ -46,7 +46,7 @@ class IdleTimeoutInterface::Private : public Resource::Private
 {
 public:
     Private(SeatInterface *seat, IdleTimeoutInterface *q, IdleInterface *manager, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
     void setup(quint32 timeout);
 
     void simulateUserActivity();

@@ -42,7 +42,7 @@ class KWAYLANDCLIENT_EXPORT SubSurface : public QObject
     Q_OBJECT
 public:
     explicit SubSurface(QPointer<Surface> surface, QPointer<Surface> parentSurface, QObject *parent = nullptr);
-    virtual ~SubSurface();
+    ~SubSurface() override;
 
     /**
      * @returns @c true if managing a wl_subsurface.

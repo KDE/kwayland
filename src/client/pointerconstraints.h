@@ -62,7 +62,7 @@ public:
      * Registry::createPointerConstraints.
      **/
     explicit PointerConstraints(QObject *parent = nullptr);
-    virtual ~PointerConstraints();
+    ~PointerConstraints() override;
 
     /**
      * Setup this PointerConstraints to manage the @p pointerconstraints.
@@ -247,7 +247,7 @@ class KWAYLANDCLIENT_EXPORT LockedPointer : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~LockedPointer();
+    ~LockedPointer() override;
 
     /**
      * Setup this LockedPointer to manage the @p lockedpointer.
@@ -365,7 +365,7 @@ class KWAYLANDCLIENT_EXPORT ConfinedPointer : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~ConfinedPointer();
+    ~ConfinedPointer() override;
 
     /**
      * Setup this ConfinedPointer to manage the @p confinedpointer.

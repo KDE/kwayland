@@ -56,7 +56,7 @@ public:
      * Registry::createRelativePointerManagerUnstableV1.
      **/
     explicit RelativePointerManager(QObject *parent = nullptr);
-    virtual ~RelativePointerManager();
+    ~RelativePointerManager() override;
 
     /**
      * Setup this RelativePointerManagerUnstableV1 to manage the @p relativepointermanagerunstablev1.
@@ -136,7 +136,7 @@ class KWAYLANDCLIENT_EXPORT RelativePointer : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~RelativePointer();
+    ~RelativePointer() override;
 
     /**
      * Setup this RelativePointerUnstableV1 to manage the @p relativepointerunstablev1.

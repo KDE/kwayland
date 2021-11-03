@@ -34,7 +34,7 @@ class KWAYLANDSERVER_EXPORT PlasmaWindowManagementInterface : public Global
 public:
     KWAYLANDSERVER_DEPRECATED_VERSION(5, 73, "Port to KWaylandServer")
     PlasmaWindowManagementInterface() = default;
-    virtual ~PlasmaWindowManagementInterface();
+    ~PlasmaWindowManagementInterface() override;
     enum class ShowingDesktopState { Disabled, Enabled };
     void setShowingDesktopState(ShowingDesktopState state);
 
@@ -97,7 +97,7 @@ class KWAYLANDSERVER_EXPORT PlasmaWindowInterface : public QObject
 public:
     KWAYLANDSERVER_DEPRECATED_VERSION(5, 73, "Port to KWaylandServer")
     PlasmaWindowInterface() = default;
-    virtual ~PlasmaWindowInterface();
+    ~PlasmaWindowInterface() override;
 
     void setTitle(const QString &title);
     void setAppId(const QString &appId);

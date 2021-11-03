@@ -72,7 +72,7 @@ class XdgPopupV5Interface::Private : public XdgShellPopupInterface::Private
 {
 public:
     Private(XdgPopupV5Interface *q, XdgShellV5Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRect windowGeometry() const override;
     void commit() override;
@@ -262,7 +262,7 @@ class XdgSurfaceV5Interface::Private : public XdgShellSurfaceInterface::Private
 {
 public:
     Private(XdgSurfaceV5Interface *q, XdgShellV5Interface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRect windowGeometry() const override;
     QSize minimumSize() const override;

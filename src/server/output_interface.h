@@ -73,7 +73,7 @@ public:
         Suspend,
         Off,
     };
-    virtual ~OutputInterface();
+    ~OutputInterface() override;
 
     QSize physicalSize() const;
     QPoint globalPosition() const;

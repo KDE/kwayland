@@ -97,7 +97,7 @@ class RelativePointerUnstableV1Interface::Private : public RelativePointerInterf
 {
 public:
     Private(RelativePointerUnstableV1Interface *q, RelativePointerManagerUnstableV1Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
     void relativeMotion(const QSizeF &delta, const QSizeF &deltaNonAccelerated, quint64 microseconds) override;
 
 private:

@@ -51,7 +51,7 @@ class MockupClient : public QObject
     Q_OBJECT
 public:
     MockupClient(QObject *parent = nullptr);
-    ~MockupClient();
+    ~MockupClient() override;
 
     void bindOutput(int index);
 

@@ -26,7 +26,7 @@ class XdgForeignTest : public QObject
     Q_OBJECT
 public:
     explicit XdgForeignTest(QObject *parent = nullptr);
-    virtual ~XdgForeignTest();
+    ~XdgForeignTest() override;
 
     void init();
 

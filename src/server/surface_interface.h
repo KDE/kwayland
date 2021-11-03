@@ -78,7 +78,7 @@ class KWAYLANDSERVER_EXPORT SurfaceInterface : public Resource
     Q_PROPERTY(KWayland::Server::OutputInterface::Transform transform READ transform NOTIFY transformChanged)
     Q_PROPERTY(QSize size READ size NOTIFY sizeChanged)
 public:
-    virtual ~SurfaceInterface();
+    ~SurfaceInterface() override;
 
     void frameRendered(quint32 msec);
 

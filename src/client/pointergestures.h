@@ -64,7 +64,7 @@ public:
      * Registry::createPointerGestures.
      **/
     explicit PointerGestures(QObject *parent = nullptr);
-    virtual ~PointerGestures();
+    ~PointerGestures() override;
 
     /**
      * Setup this PointerGestures to manage the @p pointergestures.
@@ -162,7 +162,7 @@ class KWAYLANDCLIENT_EXPORT PointerSwipeGesture : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PointerSwipeGesture();
+    ~PointerSwipeGesture() override;
 
     /**
      * Setup this PointerSwipeGesture to manage the @p pointerswipegesture.
@@ -290,7 +290,7 @@ class KWAYLANDCLIENT_EXPORT PointerPinchGesture : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PointerPinchGesture();
+    ~PointerPinchGesture() override;
 
     /**
      * Setup this PointerPinchGesture to manage the @p pointerpinchgesture.

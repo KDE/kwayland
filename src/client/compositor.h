@@ -57,7 +57,7 @@ public:
      * Registry::createCompositor.
      **/
     explicit Compositor(QObject *parent = nullptr);
-    virtual ~Compositor();
+    ~Compositor() override;
 
     /**
      * Creates a Compositor for the used QGuiApplication.

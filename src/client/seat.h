@@ -71,7 +71,7 @@ class KWAYLANDCLIENT_EXPORT Seat : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 public:
     explicit Seat(QObject *parent = nullptr);
-    virtual ~Seat();
+    ~Seat() override;
 
     /**
      * @returns @c true if managing a wl_seat.

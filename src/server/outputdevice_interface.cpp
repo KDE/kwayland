@@ -24,7 +24,7 @@ public:
         uint32_t version;
     };
     Private(OutputDeviceInterface *q, Display *d);
-    ~Private();
+    ~Private() override;
 
     void updateGeometry();
     void updateUuid();

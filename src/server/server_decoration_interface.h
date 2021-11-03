@@ -28,7 +28,7 @@ class KWAYLANDSERVER_EXPORT ServerSideDecorationManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~ServerSideDecorationManagerInterface();
+    ~ServerSideDecorationManagerInterface() override;
 
     /**
      * Decoration mode used for SurfaceInterfaces.
@@ -84,7 +84,7 @@ class KWAYLANDSERVER_EXPORT ServerSideDecorationInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~ServerSideDecorationInterface();
+    ~ServerSideDecorationInterface() override;
 
     /**
      * Sets the @p mode on the SurfaceInterface. A client might refuse the provided @p mode,

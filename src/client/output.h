@@ -101,7 +101,7 @@ public:
         bool operator==(const Mode &m) const;
     };
     explicit Output(QObject *parent = nullptr);
-    virtual ~Output();
+    ~Output() override;
 
     /**
      * Setup this Compositor to manage the @p output.

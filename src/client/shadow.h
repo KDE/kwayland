@@ -63,7 +63,7 @@ public:
      * Registry::createShadowManager.
      **/
     explicit ShadowManager(QObject *parent = nullptr);
-    virtual ~ShadowManager();
+    ~ShadowManager() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_shadow_manager.
@@ -150,7 +150,7 @@ class KWAYLANDCLIENT_EXPORT Shadow : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Shadow();
+    ~Shadow() override;
 
     /**
      * Setup this Shadow to manage the @p shadow.

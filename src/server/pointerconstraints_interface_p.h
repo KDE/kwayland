@@ -30,7 +30,7 @@ class PointerConstraintsUnstableV1Interface : public PointerConstraintsInterface
     Q_OBJECT
 public:
     explicit PointerConstraintsUnstableV1Interface(Display *display, QObject *parent = nullptr);
-    virtual ~PointerConstraintsUnstableV1Interface();
+    ~PointerConstraintsUnstableV1Interface() override;
 
 private:
     class Private;
@@ -39,7 +39,7 @@ private:
 class LockedPointerInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
 
     virtual void updateLocked() = 0;
     void commit();
@@ -77,7 +77,7 @@ class LockedPointerUnstableV1Interface : public LockedPointerInterface
     Q_OBJECT
 public:
     explicit LockedPointerUnstableV1Interface(PointerConstraintsUnstableV1Interface *parent, wl_resource *parentResource);
-    virtual ~LockedPointerUnstableV1Interface();
+    ~LockedPointerUnstableV1Interface() override;
 
 private:
     class Private;
@@ -88,7 +88,7 @@ private:
 class ConfinedPointerInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
 
     virtual void updateConfined() = 0;
     void commit();
@@ -123,7 +123,7 @@ class ConfinedPointerUnstableV1Interface : public ConfinedPointerInterface
     Q_OBJECT
 public:
     explicit ConfinedPointerUnstableV1Interface(PointerConstraintsUnstableV1Interface *parent, wl_resource *parentResource);
-    virtual ~ConfinedPointerUnstableV1Interface();
+    ~ConfinedPointerUnstableV1Interface() override;
 
 private:
     class Private;

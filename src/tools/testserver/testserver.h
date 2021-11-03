@@ -30,7 +30,7 @@ class TestServer : public QObject
     Q_OBJECT
 public:
     explicit TestServer(QObject *parent);
-    virtual ~TestServer();
+    ~TestServer() override;
 
     void init();
     void startTestApp(const QString &app, const QStringList &arguments);

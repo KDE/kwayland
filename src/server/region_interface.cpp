@@ -17,7 +17,7 @@ class RegionInterface::Private : public Resource::Private
 {
 public:
     Private(CompositorInterface *compositor, RegionInterface *q, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
     QRegion qtRegion;
 
 private:

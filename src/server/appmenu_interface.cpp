@@ -98,7 +98,7 @@ class AppMenuInterface::Private : public Resource::Private
 {
 public:
     Private(AppMenuInterface *q, AppMenuManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     SurfaceInterface *surface;
     InterfaceAddress address;

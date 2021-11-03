@@ -55,7 +55,7 @@ public:
      * Registry::createPlasmaVirtualDesktopManagement.
      **/
     explicit PlasmaVirtualDesktopManagement(QObject *parent = nullptr);
-    virtual ~PlasmaVirtualDesktopManagement();
+    ~PlasmaVirtualDesktopManagement() override;
 
     /**
      * Setup this PlasmaVirtualDesktopManagement to manage the @p plasmavirtualdesktopmanagement.
@@ -174,7 +174,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaVirtualDesktop : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaVirtualDesktop();
+    ~PlasmaVirtualDesktop() override;
 
     /**
      * Setup this PlasmaVirtualDesktop to manage the @p plasmavirtualdesktop.

@@ -57,7 +57,7 @@ class KWAYLANDCLIENT_EXPORT Shell : public QObject
     Q_OBJECT
 public:
     explicit Shell(QObject *parent = nullptr);
-    virtual ~Shell();
+    ~Shell() override;
 
     /**
      * @returns @c true if managing a wl_shell.
@@ -172,7 +172,7 @@ class KWAYLANDCLIENT_EXPORT ShellSurface : public QObject
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged)
 public:
     explicit ShellSurface(QObject *parent);
-    virtual ~ShellSurface();
+    ~ShellSurface() override;
 
     /**
      * Releases the wl_shell_surface interface.

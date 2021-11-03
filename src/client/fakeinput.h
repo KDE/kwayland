@@ -55,7 +55,7 @@ public:
      * Registry::createFakeInput.
      **/
     explicit FakeInput(QObject *parent = nullptr);
-    virtual ~FakeInput();
+    ~FakeInput() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_fake_input.

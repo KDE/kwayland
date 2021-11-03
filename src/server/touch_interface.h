@@ -24,7 +24,7 @@ class KWAYLANDSERVER_EXPORT TouchInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~TouchInterface();
+    ~TouchInterface() override;
 
 private:
     void down(qint32 id, quint32 serial, const QPointF &localPos);

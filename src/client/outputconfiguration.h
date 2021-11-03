@@ -83,7 +83,7 @@ class KWAYLANDCLIENT_EXPORT OutputConfiguration : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~OutputConfiguration();
+    ~OutputConfiguration() override;
 
     /**
      * Setup this OutputConfiguration to manage the @p outputconfiguration.

@@ -31,7 +31,7 @@ class PointerGesturesUnstableV1Interface : public PointerGesturesInterface
     Q_OBJECT
 public:
     explicit PointerGesturesUnstableV1Interface(Display *display, QObject *parent = nullptr);
-    virtual ~PointerGesturesUnstableV1Interface();
+    ~PointerGesturesUnstableV1Interface() override;
 
 private:
     class Private;
@@ -41,7 +41,7 @@ class PointerSwipeGestureInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~PointerSwipeGestureInterface();
+    ~PointerSwipeGestureInterface() override;
 
     virtual void start(quint32 serial, quint32 fingerCount) = 0;
     virtual void update(const QSizeF &delta) = 0;
@@ -59,7 +59,7 @@ private:
 class PointerSwipeGestureInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
 
     PointerInterface *pointer;
 
@@ -82,7 +82,7 @@ class PointerPinchGestureInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~PointerPinchGestureInterface();
+    ~PointerPinchGestureInterface() override;
 
     virtual void start(quint32 serial, quint32 fingerCount) = 0;
     virtual void update(const QSizeF &delta, qreal scale, qreal rotation) = 0;
@@ -100,7 +100,7 @@ private:
 class PointerPinchGestureInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
 
     PointerInterface *pointer;
 
@@ -124,7 +124,7 @@ class PointerSwipeGestureUnstableV1Interface : public PointerSwipeGestureInterfa
     Q_OBJECT
 public:
     explicit PointerSwipeGestureUnstableV1Interface(PointerGesturesUnstableV1Interface *parent, wl_resource *parentResource, PointerInterface *pointer);
-    virtual ~PointerSwipeGestureUnstableV1Interface();
+    ~PointerSwipeGestureUnstableV1Interface() override;
 
     void start(quint32 serial, quint32 fingerCount) override;
     void update(const QSizeF &delta) override;
@@ -142,7 +142,7 @@ class PointerPinchGestureUnstableV1Interface : public PointerPinchGestureInterfa
     Q_OBJECT
 public:
     explicit PointerPinchGestureUnstableV1Interface(PointerGesturesUnstableV1Interface *parent, wl_resource *parentResource, PointerInterface *pointer);
-    virtual ~PointerPinchGestureUnstableV1Interface();
+    ~PointerPinchGestureUnstableV1Interface() override;
 
     void start(quint32 serial, quint32 fingerCount) override;
     void update(const QSizeF &delta, qreal scale, qreal rotation) override;

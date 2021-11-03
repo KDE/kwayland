@@ -67,7 +67,7 @@ public:
      * Registry::createCompositor.
      **/
     explicit DataDeviceManager(QObject *parent = nullptr);
-    virtual ~DataDeviceManager();
+    ~DataDeviceManager() override;
 
     /**
      * @returns @c true if managing a wl_data_device_manager.

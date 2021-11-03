@@ -23,7 +23,7 @@ class ShadowTest : public QObject
     Q_OBJECT
 public:
     explicit ShadowTest(QObject *parent = nullptr);
-    virtual ~ShadowTest();
+    ~ShadowTest() override;
 
     void init();
 

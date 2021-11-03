@@ -30,7 +30,7 @@ class KWAYLANDSERVER_EXPORT OutputChangeSet : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~OutputChangeSet();
+    ~OutputChangeSet() override;
 
     /** Whether the enabled() property of the outputdevice changed.
      * @returns @c true if the enabled property of the outputdevice has changed.

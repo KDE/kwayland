@@ -52,7 +52,7 @@ class KWAYLANDSERVER_EXPORT BufferInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~BufferInterface();
+    ~BufferInterface() override;
     /**
      * Reference the BufferInterface.
      *

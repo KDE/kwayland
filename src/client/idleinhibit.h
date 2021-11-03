@@ -56,7 +56,7 @@ public:
      * Registry::createIdleInhibitManager.
      **/
     explicit IdleInhibitManager(QObject *parent = nullptr);
-    virtual ~IdleInhibitManager();
+    ~IdleInhibitManager() override;
 
     /**
      * Setup this IdleInhibitManager to manage the @p idleinhibitmanager.
@@ -149,7 +149,7 @@ class KWAYLANDCLIENT_EXPORT IdleInhibitor : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~IdleInhibitor();
+    ~IdleInhibitor() override;
 
     /**
      * Setup this IdleInhibitor to manage the @p idleinhibitor.

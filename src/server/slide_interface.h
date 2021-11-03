@@ -24,7 +24,7 @@ class KWAYLANDSERVER_EXPORT SlideManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~SlideManagerInterface();
+    ~SlideManagerInterface() override;
 
 private:
     explicit SlideManagerInterface(Display *display, QObject *parent = nullptr);
@@ -46,7 +46,7 @@ public:
         Bottom, /**< Slide from the bottom edge of the screen */
     };
 
-    virtual ~SlideInterface();
+    ~SlideInterface() override;
 
     /**
      * @returns the location the window will be slided from

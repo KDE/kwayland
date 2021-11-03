@@ -56,7 +56,7 @@ class KWAYLANDCLIENT_EXPORT EventQueue : public QObject
     Q_OBJECT
 public:
     explicit EventQueue(QObject *parent = nullptr);
-    virtual ~EventQueue();
+    ~EventQueue() override;
 
     /**
      * Creates the event queue for the @p display.

@@ -25,7 +25,7 @@ class KWAYLANDSERVER_EXPORT KeyboardInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~KeyboardInterface();
+    ~KeyboardInterface() override;
 
     /**
      * @returns the focused SurfaceInterface on this keyboard resource, if any.

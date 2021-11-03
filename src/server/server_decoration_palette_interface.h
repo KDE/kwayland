@@ -30,7 +30,7 @@ class KWAYLANDSERVER_EXPORT ServerSideDecorationPaletteManagerInterface : public
 {
     Q_OBJECT
 public:
-    virtual ~ServerSideDecorationPaletteManagerInterface();
+    ~ServerSideDecorationPaletteManagerInterface() override;
     /**
      * Returns any existing palette for a given surface
      * This returns a null pointer if no ServerSideDecorationPaletteInterface exists.
@@ -59,7 +59,7 @@ class KWAYLANDSERVER_EXPORT ServerSideDecorationPaletteInterface : public Resour
 {
     Q_OBJECT
 public:
-    virtual ~ServerSideDecorationPaletteInterface();
+    ~ServerSideDecorationPaletteInterface() override;
 
     /**
      * @returns the palette or an empty string if unset

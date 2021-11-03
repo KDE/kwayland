@@ -33,7 +33,7 @@ public:
      * Registry::createTextInputManagerUnstableV0.
      **/
     explicit TextInputManagerUnstableV0(QObject *parent = nullptr);
-    virtual ~TextInputManagerUnstableV0();
+    ~TextInputManagerUnstableV0() override;
 
 private:
     class Private;
@@ -51,7 +51,7 @@ public:
      * Registry::createTextInputManagerUnstableV0.
      **/
     explicit TextInputManagerUnstableV2(QObject *parent = nullptr);
-    virtual ~TextInputManagerUnstableV2();
+    ~TextInputManagerUnstableV2() override;
 
 private:
     class Private;
@@ -145,7 +145,7 @@ class TextInputUnstableV0 : public TextInput
     Q_OBJECT
 public:
     explicit TextInputUnstableV0(Seat *seat, QObject *parent = nullptr);
-    virtual ~TextInputUnstableV0();
+    ~TextInputUnstableV0() override;
 
     /**
      * Setup this TextInputUnstableV0 to manage the @p textinputunstablev0.
@@ -190,7 +190,7 @@ class TextInputUnstableV2 : public TextInput
     Q_OBJECT
 public:
     explicit TextInputUnstableV2(Seat *seat, QObject *parent = nullptr);
-    virtual ~TextInputUnstableV2();
+    ~TextInputUnstableV2() override;
 
     /**
      * Setup this TextInputUnstableV2 to manage the @p textinputunstablev2.

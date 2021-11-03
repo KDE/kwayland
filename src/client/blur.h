@@ -44,7 +44,7 @@ public:
      * Registry::createBlurManager.
      **/
     explicit BlurManager(QObject *parent = nullptr);
-    virtual ~BlurManager();
+    ~BlurManager() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_blur_manager.
@@ -133,7 +133,7 @@ class KWAYLANDCLIENT_EXPORT Blur : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Blur();
+    ~Blur() override;
 
     /**
      * Setup this Blur to manage the @p blur.

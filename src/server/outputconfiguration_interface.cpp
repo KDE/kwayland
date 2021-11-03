@@ -25,7 +25,7 @@ class OutputConfigurationInterface::Private : public Resource::Private
 {
 public:
     Private(OutputConfigurationInterface *q, OutputManagementInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void sendApplied();
     void sendFailed();

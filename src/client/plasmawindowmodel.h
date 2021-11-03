@@ -114,7 +114,7 @@ public:
     Q_ENUM(AdditionalRoles)
 
     explicit PlasmaWindowModel(PlasmaWindowManagement *parent);
-    virtual ~PlasmaWindowModel();
+    ~PlasmaWindowModel() override;
 
     QHash<int, QByteArray> roleNames() const override;
 

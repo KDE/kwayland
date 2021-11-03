@@ -39,7 +39,7 @@ class KWAYLANDSERVER_EXPORT FakeInputInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~FakeInputInterface();
+    ~FakeInputInterface() override;
 
 Q_SIGNALS:
     /**
@@ -64,7 +64,7 @@ class KWAYLANDSERVER_EXPORT FakeInputDevice : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~FakeInputDevice();
+    ~FakeInputDevice() override;
     /**
      * @returns the native wl_resource.
      **/

@@ -23,7 +23,7 @@ public:
         uint32_t version;
     };
     Private(OutputInterface *q, Display *d);
-    ~Private();
+    ~Private() override;
     void sendMode(wl_resource *resource, const Mode &mode);
     void sendDone(const ResourceData &data);
     void updateGeometry();

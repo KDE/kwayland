@@ -54,7 +54,7 @@ class KWAYLANDSERVER_EXPORT TextInputManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~TextInputManagerInterface();
+    ~TextInputManagerInterface() override;
 
     /**
      * @returns The interface version used by this TextInputManagerInterface
@@ -91,7 +91,7 @@ class KWAYLANDSERVER_EXPORT TextInputInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~TextInputInterface();
+    ~TextInputInterface() override;
 
     /**
      * ContentHint allows to modify the behavior of the text input.

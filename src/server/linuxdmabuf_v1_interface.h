@@ -63,7 +63,7 @@ public:
     /**
      * Destroys the Buffer.
      */
-    virtual ~LinuxDmabufUnstableV1Buffer() = default;
+    ~LinuxDmabufUnstableV1Buffer() override = default;
 
 private:
     class Private;
@@ -126,7 +126,7 @@ public:
     /**
      * Destroys the LinuxDmabufUnstableV1Interface.
      */
-    virtual ~LinuxDmabufUnstableV1Interface();
+    ~LinuxDmabufUnstableV1Interface() override;
 
     /**
      * Sets the compositor implementation for the dmabuf interface.

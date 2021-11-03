@@ -134,7 +134,7 @@ public:
     };
 
     explicit OutputDevice(QObject *parent = nullptr);
-    virtual ~OutputDevice();
+    ~OutputDevice() override;
 
     /**
      * Setup this Compositor to manage the @p output.

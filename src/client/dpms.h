@@ -56,7 +56,7 @@ public:
      * Registry::createDpmsManager.
      **/
     explicit DpmsManager(QObject *parent = nullptr);
-    virtual ~DpmsManager();
+    ~DpmsManager() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_dpms_manager.
@@ -131,7 +131,7 @@ class KWAYLANDCLIENT_EXPORT Dpms : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Dpms();
+    ~Dpms() override;
 
     enum class Mode {
         On,

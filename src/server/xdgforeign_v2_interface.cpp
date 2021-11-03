@@ -332,7 +332,7 @@ class Q_DECL_HIDDEN XdgExportedUnstableV2Interface::Private : public Resource::P
 {
 public:
     Private(XdgExportedUnstableV2Interface *q, XdgExporterUnstableV2Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
 private:
     XdgExportedUnstableV2Interface *q_func()
@@ -374,7 +374,7 @@ class Q_DECL_HIDDEN XdgImportedUnstableV2Interface::Private : public Resource::P
 {
 public:
     Private(XdgImportedUnstableV2Interface *q, XdgImporterUnstableV2Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QPointer<SurfaceInterface> parentOf;
 

@@ -112,7 +112,7 @@ class SlideInterface::Private : public Resource::Private
 {
 public:
     Private(SlideInterface *q, SlideManagerInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     SlideInterface::Location pendingLocation;
     SlideInterface::Location currentLocation;

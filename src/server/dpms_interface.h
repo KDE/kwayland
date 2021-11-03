@@ -54,7 +54,7 @@ class KWAYLANDSERVER_EXPORT DpmsManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~DpmsManagerInterface();
+    ~DpmsManagerInterface() override;
 
 private:
     explicit DpmsManagerInterface(Display *display, QObject *parent = nullptr);

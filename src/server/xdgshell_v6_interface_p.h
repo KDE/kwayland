@@ -31,7 +31,7 @@ class XdgShellV6Interface : public XdgShellInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellV6Interface();
+    ~XdgShellV6Interface() override;
 
     /**
      * @returns The XdgTopLevelV6Interface for the @p native resource.
@@ -59,7 +59,7 @@ class XdgSurfaceV6Interface : public KWayland::Server::Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgSurfaceV6Interface();
+    ~XdgSurfaceV6Interface() override;
     SurfaceInterface *surface() const;
     XdgTopLevelV6Interface *topLevel() const;
     XdgPopupV6Interface *popup() const;
@@ -76,7 +76,7 @@ class XdgTopLevelV6Interface : public XdgShellSurfaceInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgTopLevelV6Interface();
+    ~XdgTopLevelV6Interface() override;
 
 private:
     explicit XdgTopLevelV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
@@ -91,7 +91,7 @@ class XdgPopupV6Interface : public XdgShellPopupInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgPopupV6Interface();
+    ~XdgPopupV6Interface() override;
 
 private:
     explicit XdgPopupV6Interface(XdgShellV6Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);

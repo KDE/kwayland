@@ -30,7 +30,7 @@ class CopyClient : public QObject
     Q_OBJECT
 public:
     explicit CopyClient(QObject *parent = nullptr);
-    virtual ~CopyClient();
+    ~CopyClient() override;
 
     void init();
 

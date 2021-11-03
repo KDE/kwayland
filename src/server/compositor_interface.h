@@ -29,7 +29,7 @@ class KWAYLANDSERVER_EXPORT CompositorInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~CompositorInterface();
+    ~CompositorInterface() override;
 
 Q_SIGNALS:
     /**

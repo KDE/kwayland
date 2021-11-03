@@ -27,7 +27,7 @@ class KWAYLANDSERVER_EXPORT DataDeviceManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~DataDeviceManagerInterface();
+    ~DataDeviceManagerInterface() override;
 
     /**
      * Drag and Drop actions supported by the DataSourceInterface.

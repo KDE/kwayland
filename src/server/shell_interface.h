@@ -38,7 +38,7 @@ class KWAYLANDSERVER_EXPORT ShellInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~ShellInterface();
+    ~ShellInterface() override;
 
 Q_SIGNALS:
     /**
@@ -115,7 +115,7 @@ class KWAYLANDSERVER_EXPORT ShellSurfaceInterface : public Resource
      **/
     Q_PROPERTY(bool acceptsKeyboardFocus READ acceptsKeyboardFocus NOTIFY acceptsKeyboardFocusChanged)
 public:
-    virtual ~ShellSurfaceInterface();
+    ~ShellSurfaceInterface() override;
 
     /**
      * Pings the client.

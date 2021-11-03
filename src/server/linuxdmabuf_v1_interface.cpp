@@ -93,7 +93,7 @@ class V1Iface::Private : public Global::Private
 {
 public:
     Private(V1Iface *q, Display *display);
-    ~Private();
+    ~Private() override;
 
     static const struct wl_buffer_interface *bufferImplementation()
     {

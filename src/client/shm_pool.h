@@ -117,7 +117,7 @@ class KWAYLANDCLIENT_EXPORT ShmPool : public QObject
     Q_OBJECT
 public:
     explicit ShmPool(QObject *parent = nullptr);
-    virtual ~ShmPool();
+    ~ShmPool() override;
     /**
      * @returns @c true if the ShmPool references a wl_shm interface and the shared memory pool
      * is setup.

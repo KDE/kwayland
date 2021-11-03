@@ -43,7 +43,7 @@ class Q_DECL_HIDDEN IdleInhibitorInterface : public Resource
 public:
     explicit IdleInhibitorInterface(IdleInhibitManagerInterface *c, wl_resource *parentResource);
 
-    virtual ~IdleInhibitorInterface();
+    ~IdleInhibitorInterface() override;
 
     /**
      * @returns The interface version used by this IdleInhibitorInterface
@@ -62,7 +62,7 @@ class Q_DECL_HIDDEN IdleInhibitorInterface::Private : public Resource::Private
 {
 public:
     Private(IdleInhibitorInterface *q, IdleInhibitManagerInterface *m, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
 private:
     IdleInhibitorInterface *q_func()

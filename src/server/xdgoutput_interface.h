@@ -33,7 +33,7 @@ class KWAYLANDSERVER_EXPORT XdgOutputManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~XdgOutputManagerInterface();
+    ~XdgOutputManagerInterface() override;
     /**
      * Creates an XdgOutputInterface object for an existing Output
      * which exposes XDG specific properties of outputs
@@ -60,7 +60,7 @@ class KWAYLANDSERVER_EXPORT XdgOutputInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgOutputInterface();
+    ~XdgOutputInterface() override;
 
     /**
      * Sets the size of this output in logical coordinates.

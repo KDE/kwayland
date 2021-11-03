@@ -34,7 +34,7 @@ class KWAYLANDCLIENT_EXPORT DataOffer : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~DataOffer();
+    ~DataOffer() override;
 
     /**
      * Releases the wl_data_offer interface.

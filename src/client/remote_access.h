@@ -55,7 +55,7 @@ public:
      * Registry::createRemoteAccessManager.
      **/
     explicit RemoteAccessManager(QObject *parent = nullptr);
-    virtual ~RemoteAccessManager();
+    ~RemoteAccessManager() override;
 
     /**
      * Setup this RemoteAccessManager to manage the @p remoteaccessmanager.
@@ -132,7 +132,7 @@ class KWAYLANDCLIENT_EXPORT RemoteBuffer : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~RemoteBuffer();
+    ~RemoteBuffer() override;
     /**
      * Setup this RemoteBuffer to manage the @p remotebuffer.
      **/

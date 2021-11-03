@@ -23,7 +23,7 @@ class DataDeviceInterface::Private : public Resource::Private
 {
 public:
     Private(SeatInterface *seat, DataDeviceInterface *q, DataDeviceManagerInterface *manager, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     DataOfferInterface *createDataOffer(DataSourceInterface *source);
 

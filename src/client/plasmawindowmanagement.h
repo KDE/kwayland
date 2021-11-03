@@ -63,7 +63,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaWindowManagement : public QObject
     Q_OBJECT
 public:
     explicit PlasmaWindowManagement(QObject *parent = nullptr);
-    virtual ~PlasmaWindowManagement();
+    ~PlasmaWindowManagement() override;
 
     /**
      * @returns @c true if managing a org_kde_plasma_window_management.
@@ -253,7 +253,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaWindow : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaWindow();
+    ~PlasmaWindow() override;
 
     /**
      * Releases the org_kde_plasma_window interface.
@@ -807,7 +807,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaActivation : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaActivation();
+    ~PlasmaActivation() override;
 
 Q_SIGNALS:
     /**

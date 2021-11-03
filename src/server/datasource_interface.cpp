@@ -21,7 +21,7 @@ class DataSourceInterface::Private : public Resource::Private
 {
 public:
     Private(DataSourceInterface *q, DataDeviceManagerInterface *parent, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QStringList mimeTypes;
     DataDeviceManagerInterface::DnDActions supportedDnDActions = DataDeviceManagerInterface::DnDAction::None;

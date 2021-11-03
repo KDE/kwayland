@@ -120,7 +120,7 @@ class BlurInterface::Private : public Resource::Private
 {
 public:
     Private(BlurInterface *q, BlurManagerInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     QRegion pendingRegion;
     QRegion currentRegion;

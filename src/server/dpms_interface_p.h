@@ -41,7 +41,7 @@ class DpmsInterface : public Resource
     Q_OBJECT
 public:
     explicit DpmsInterface(OutputInterface *output, wl_resource *parentResource, DpmsManagerInterface *manager);
-    virtual ~DpmsInterface();
+    ~DpmsInterface() override;
 
     void sendSupported();
     void sendMode();

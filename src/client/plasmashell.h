@@ -53,7 +53,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaShell : public QObject
     Q_OBJECT
 public:
     explicit PlasmaShell(QObject *parent = nullptr);
-    virtual ~PlasmaShell();
+    ~PlasmaShell() override;
 
     /**
      * @returns @c true if managing a org_kde_plasma_shell.
@@ -175,7 +175,7 @@ class KWAYLANDCLIENT_EXPORT PlasmaShellSurface : public QObject
     Q_OBJECT
 public:
     explicit PlasmaShellSurface(QObject *parent);
-    virtual ~PlasmaShellSurface();
+    ~PlasmaShellSurface() override;
 
     /**
      * Releases the org_kde_plasma_surface interface.

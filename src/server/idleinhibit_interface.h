@@ -39,7 +39,7 @@ class KWAYLANDSERVER_EXPORT IdleInhibitManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~IdleInhibitManagerInterface();
+    ~IdleInhibitManagerInterface() override;
 
     /**
      * @returns The interface version used by this IdleInhibitManagerInterface

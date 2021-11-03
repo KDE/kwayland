@@ -91,7 +91,7 @@ class KWAYLANDSERVER_EXPORT Display : public QObject
     Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
 public:
     explicit Display(QObject *parent = nullptr);
-    virtual ~Display();
+    ~Display() override;
 
     /**
      * Sets the basename of the socket to @p name. If @p name is empty, it will use

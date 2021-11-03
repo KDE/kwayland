@@ -314,7 +314,7 @@ class RemoteBufferInterface::Private : public Resource::Private
 {
 public:
     Private(RemoteAccessManagerInterface *ram, RemoteBufferInterface *q, wl_resource *pResource, const BufferHandle *buf);
-    ~Private();
+    ~Private() override;
 
     void passFd();
 

@@ -28,7 +28,7 @@ class KWAYLANDSERVER_EXPORT DataOfferInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~DataOfferInterface();
+    ~DataOfferInterface() override;
 
     void sendAllOffers();
 

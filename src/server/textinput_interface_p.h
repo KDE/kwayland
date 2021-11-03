@@ -34,7 +34,7 @@ protected:
 class TextInputInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
 
     virtual void sendEnter(SurfaceInterface *surface, quint32 serial) = 0;
     virtual void sendLeave(quint32 serial, SurfaceInterface *surface) = 0;
@@ -89,7 +89,7 @@ class TextInputUnstableV0Interface : public TextInputInterface
 {
     Q_OBJECT
 public:
-    virtual ~TextInputUnstableV0Interface();
+    ~TextInputUnstableV0Interface() override;
 
 Q_SIGNALS:
     /**
@@ -107,7 +107,7 @@ class TextInputUnstableV2Interface : public TextInputInterface
 {
     Q_OBJECT
 public:
-    virtual ~TextInputUnstableV2Interface();
+    ~TextInputUnstableV2Interface() override;
 
 private:
     explicit TextInputUnstableV2Interface(TextInputManagerUnstableV2Interface *parent, wl_resource *parentResource);
@@ -120,7 +120,7 @@ class TextInputManagerUnstableV0Interface : public TextInputManagerInterface
     Q_OBJECT
 public:
     explicit TextInputManagerUnstableV0Interface(Display *display, QObject *parent = nullptr);
-    virtual ~TextInputManagerUnstableV0Interface();
+    ~TextInputManagerUnstableV0Interface() override;
 
 private:
     class Private;
@@ -131,7 +131,7 @@ class TextInputManagerUnstableV2Interface : public TextInputManagerInterface
     Q_OBJECT
 public:
     explicit TextInputManagerUnstableV2Interface(Display *display, QObject *parent = nullptr);
-    virtual ~TextInputManagerUnstableV2Interface();
+    ~TextInputManagerUnstableV2Interface() override;
 
 private:
     class Private;

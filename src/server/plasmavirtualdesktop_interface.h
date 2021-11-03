@@ -28,7 +28,7 @@ class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopManagementInterface : public Glo
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaVirtualDesktopManagementInterface();
+    ~PlasmaVirtualDesktopManagementInterface() override;
 
     /**
      * Sets how many rows the virtual desktops should be laid into
@@ -100,7 +100,7 @@ class KWAYLANDSERVER_EXPORT PlasmaVirtualDesktopInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~PlasmaVirtualDesktopInterface();
+    ~PlasmaVirtualDesktopInterface() override;
 
     /**
      * @returns the unique id for this desktop.

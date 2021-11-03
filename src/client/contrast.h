@@ -42,7 +42,7 @@ public:
      * Registry::createContrastManager.
      **/
     explicit ContrastManager(QObject *parent = nullptr);
-    virtual ~ContrastManager();
+    ~ContrastManager() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_contrast_manager.
@@ -131,7 +131,7 @@ class KWAYLANDCLIENT_EXPORT Contrast : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~Contrast();
+    ~Contrast() override;
 
     /**
      * Setup this Contrast to manage the @p contrast.

@@ -58,7 +58,7 @@ class LockedPointerUnstableV1Interface::Private : public LockedPointerInterface:
 {
 public:
     Private(LockedPointerUnstableV1Interface *q, PointerConstraintsUnstableV1Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void updateLocked() override;
 
@@ -237,7 +237,7 @@ class ConfinedPointerUnstableV1Interface::Private : public ConfinedPointerInterf
 {
 public:
     Private(ConfinedPointerUnstableV1Interface *q, PointerConstraintsUnstableV1Interface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void updateConfined() override;
 

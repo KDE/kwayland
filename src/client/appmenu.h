@@ -56,7 +56,7 @@ public:
      * Registry::createAppMenuManager.
      **/
     explicit AppMenuManager(QObject *parent = nullptr);
-    virtual ~AppMenuManager();
+    ~AppMenuManager() override;
 
     /**
      * Setup this AppMenuManager to manage the @p appmenumanager.
@@ -128,7 +128,7 @@ class KWAYLANDCLIENT_EXPORT AppMenu : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~AppMenu();
+    ~AppMenu() override;
 
     /**
      * Setup this Appmenu to manage the @p appmenu.

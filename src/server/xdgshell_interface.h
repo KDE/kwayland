@@ -88,7 +88,7 @@ class KWAYLANDSERVER_EXPORT XdgShellInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellInterface();
+    ~XdgShellInterface() override;
 
     /**
      * @returns The interface version used by this XdgShellInterface
@@ -181,7 +181,7 @@ class KWAYLANDSERVER_EXPORT XdgShellSurfaceInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellSurfaceInterface();
+    ~XdgShellSurfaceInterface() override;
 
     /**
      * @returns The interface version used by this XdgShellSurfaceInterface
@@ -374,7 +374,7 @@ class KWAYLANDSERVER_EXPORT XdgShellPopupInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellPopupInterface();
+    ~XdgShellPopupInterface() override;
 
     /**
      * @return The SurfaceInterface this XdgShellPopupInterface got created for.

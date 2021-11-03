@@ -26,7 +26,7 @@ class KWAYLANDSERVER_EXPORT KeyStateInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~KeyStateInterface();
+    ~KeyStateInterface() override;
 
     enum class Key {
         CapsLock = 0,

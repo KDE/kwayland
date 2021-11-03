@@ -55,7 +55,7 @@ public:
      * Registry::createOutputManagement.
      **/
     explicit OutputManagement(QObject *parent = nullptr);
-    virtual ~OutputManagement();
+    ~OutputManagement() override;
 
     /**
      * Setup this OutputManagement to manage the @p outputmanagement.

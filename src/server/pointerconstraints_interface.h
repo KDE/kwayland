@@ -46,7 +46,7 @@ class KWAYLANDSERVER_EXPORT PointerConstraintsInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~PointerConstraintsInterface();
+    ~PointerConstraintsInterface() override;
 
     /**
      * @returns The interface version used by this PointerConstraintsInterface
@@ -81,7 +81,7 @@ class KWAYLANDSERVER_EXPORT LockedPointerInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~LockedPointerInterface();
+    ~LockedPointerInterface() override;
 
     /**
      * @returns The interface version used by this LockedPointerInterface
@@ -202,7 +202,7 @@ class KWAYLANDSERVER_EXPORT ConfinedPointerInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~ConfinedPointerInterface();
+    ~ConfinedPointerInterface() override;
 
     /**
      * @returns The interface version used by this ConfinedPointerInterface

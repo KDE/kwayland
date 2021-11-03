@@ -49,7 +49,7 @@ class KWAYLANDSERVER_EXPORT TabletManagerInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TabletManagerInterface();
+    ~TabletManagerInterface() override;
 
     TabletSeatInterface *seat(SeatInterface *seat) const;
 
@@ -64,7 +64,7 @@ class KWAYLANDSERVER_EXPORT TabletToolInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TabletToolInterface();
+    ~TabletToolInterface() override;
 
     enum Type {
         Pen = 0x140, ///< Pen
@@ -154,7 +154,7 @@ class KWAYLANDSERVER_EXPORT TabletInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TabletInterface();
+    ~TabletInterface() override;
 
     /**
      * @returns true if the surface has been bound to the tablet.
@@ -175,7 +175,7 @@ class KWAYLANDSERVER_EXPORT TabletSeatInterface : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TabletSeatInterface();
+    ~TabletSeatInterface() override;
 
     TabletInterface *addTablet(quint32 vendorId, quint32 productId, const QString &sysname, const QString &name, const QStringList &paths);
     TabletToolInterface *

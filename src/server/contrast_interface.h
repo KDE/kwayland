@@ -33,7 +33,7 @@ class KWAYLANDSERVER_EXPORT ContrastManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~ContrastManagerInterface();
+    ~ContrastManagerInterface() override;
 
 private:
     explicit ContrastManagerInterface(Display *display, QObject *parent = nullptr);
@@ -58,7 +58,7 @@ class KWAYLANDSERVER_EXPORT ContrastInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~ContrastInterface();
+    ~ContrastInterface() override;
 
     QRegion region() const;
     qreal contrast() const;

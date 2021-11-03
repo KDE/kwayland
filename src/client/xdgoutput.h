@@ -62,7 +62,7 @@ public:
      * Registry::createXdgOutputManager.
      **/
     explicit XdgOutputManager(QObject *parent = nullptr);
-    virtual ~XdgOutputManager();
+    ~XdgOutputManager() override;
 
     /**
      * Setup this XdgOutputManager to manage the @p xdgoutputmanager.
@@ -144,7 +144,7 @@ class KWAYLANDCLIENT_EXPORT XdgOutput : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~XdgOutput();
+    ~XdgOutput() override;
 
     /**
      * Setup this XdgOutput to manage the @p xdgoutput.

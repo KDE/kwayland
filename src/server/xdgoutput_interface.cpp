@@ -50,7 +50,7 @@ class XdgOutputV1Interface : public Resource
 {
 public:
     XdgOutputV1Interface(XdgOutputManagerInterface *parent, wl_resource *parentResource);
-    ~XdgOutputV1Interface();
+    ~XdgOutputV1Interface() override;
     void setLogicalSize(const QSize &size);
     void setLogicalPosition(const QPoint &pos);
     void setName(const QString &name);
@@ -253,7 +253,7 @@ class XdgOutputV1Interface::Private : public Resource::Private
 {
 public:
     Private(XdgOutputV1Interface *q, XdgOutputManagerInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
 private:
     XdgOutputV1Interface *q_func()

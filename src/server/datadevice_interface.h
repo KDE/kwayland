@@ -36,7 +36,7 @@ class KWAYLANDSERVER_EXPORT DataDeviceInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~DataDeviceInterface();
+    ~DataDeviceInterface() override;
 
     SeatInterface *seat() const;
     DataSourceInterface *dragSource() const;

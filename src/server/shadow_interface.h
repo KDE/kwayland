@@ -28,7 +28,7 @@ class KWAYLANDSERVER_EXPORT ShadowManagerInterface : public Global
 {
     Q_OBJECT
 public:
-    virtual ~ShadowManagerInterface();
+    ~ShadowManagerInterface() override;
 
 private:
     explicit ShadowManagerInterface(Display *display, QObject *parent = nullptr);
@@ -43,7 +43,7 @@ class KWAYLANDSERVER_EXPORT ShadowInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~ShadowInterface();
+    ~ShadowInterface() override;
 
     BufferInterface *left() const;
     BufferInterface *topLeft() const;

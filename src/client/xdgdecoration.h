@@ -58,7 +58,7 @@ public:
      * Registry::createXdgDecorationManager.
      **/
     explicit XdgDecorationManager(QObject *parent = nullptr);
-    virtual ~XdgDecorationManager();
+    ~XdgDecorationManager() override;
 
     /**
      * Setup this XdgDecorationManager to manage the @p xdgdecorationmanager.
@@ -133,7 +133,7 @@ public:
 
     Q_ENUM(Mode)
 
-    virtual ~XdgDecoration();
+    ~XdgDecoration() override;
 
     /**
      * Setup this XdgDecoration to manage the @p xdgdecoration.

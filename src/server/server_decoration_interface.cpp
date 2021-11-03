@@ -152,7 +152,7 @@ class ServerSideDecorationInterface::Private : public Resource::Private
 {
 public:
     Private(ServerSideDecorationInterface *q, ServerSideDecorationManagerInterface *c, SurfaceInterface *surface, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     ServerSideDecorationManagerInterface::Mode mode = ServerSideDecorationManagerInterface::Mode::None;
     SurfaceInterface *surface;

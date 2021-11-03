@@ -123,7 +123,7 @@ class XdgDecorationInterface::Private : public Resource::Private
 {
 public:
     Private(XdgDecorationInterface *q, XdgDecorationManagerInterface *c, XdgShellSurfaceInterface *s, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
     Mode m_requestedMode = Mode::Undefined;
     XdgShellSurfaceInterface *m_shell;
 

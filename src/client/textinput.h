@@ -39,7 +39,7 @@ class KWAYLANDCLIENT_EXPORT TextInput : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TextInput();
+    ~TextInput() override;
     /**
      * @returns @c true if managing a resource.
      **/
@@ -416,7 +416,7 @@ class KWAYLANDCLIENT_EXPORT TextInputManager : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~TextInputManager();
+    ~TextInputManager() override;
 
     /**
      * Setup this TextInputManager to manage the @p textinputmanagerunstablev0.

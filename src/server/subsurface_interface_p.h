@@ -21,7 +21,7 @@ class SubSurfaceInterface::Private : public Resource::Private
 {
 public:
     Private(SubSurfaceInterface *q, SubCompositorInterface *compositor, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     using Resource::Private::create;
     void create(ClientConnection *client, quint32 version, quint32 id, SurfaceInterface *surface, SurfaceInterface *parent);

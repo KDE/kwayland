@@ -24,7 +24,7 @@ class KWAYLANDSERVER_EXPORT DataSourceInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~DataSourceInterface();
+    ~DataSourceInterface() override;
 
     void accept(const QString &mimeType);
     void requestData(const QString &mimeType, qint32 fd);

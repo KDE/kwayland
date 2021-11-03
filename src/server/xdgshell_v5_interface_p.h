@@ -29,7 +29,7 @@ class XdgShellV5Interface : public XdgShellInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellV5Interface();
+    ~XdgShellV5Interface() override;
 
     /**
      * @returns The XdgSurfaceV5Interface for the @p native resource.
@@ -49,7 +49,7 @@ class XdgSurfaceV5Interface : public XdgShellSurfaceInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgSurfaceV5Interface();
+    ~XdgSurfaceV5Interface() override;
 
 private:
     explicit XdgSurfaceV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);
@@ -62,7 +62,7 @@ class XdgPopupV5Interface : public XdgShellPopupInterface
 {
     Q_OBJECT
 public:
-    virtual ~XdgPopupV5Interface();
+    ~XdgPopupV5Interface() override;
 
 private:
     explicit XdgPopupV5Interface(XdgShellV5Interface *parent, SurfaceInterface *surface, wl_resource *parentResource);

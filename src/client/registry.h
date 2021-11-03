@@ -178,7 +178,7 @@ public:
         PlasmaActivationFeedback, ///< Refers to org_kde_plasma_activation_feedback interface, @since 5.83
     };
     explicit Registry(QObject *parent = nullptr);
-    virtual ~Registry();
+    ~Registry() override;
 
     /**
      * Releases the wl_registry interface.

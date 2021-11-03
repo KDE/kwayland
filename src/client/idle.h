@@ -60,7 +60,7 @@ public:
      * Registry::createIdle.
      **/
     explicit Idle(QObject *parent = nullptr);
-    virtual ~Idle();
+    ~Idle() override;
 
     /**
      * @returns @c true if managing a org_kde_kwin_idle.
@@ -153,7 +153,7 @@ public:
      * IdleTimeout to be fully functional.
      **/
     explicit IdleTimeout(QObject *parent = nullptr);
-    virtual ~IdleTimeout();
+    ~IdleTimeout() override;
 
     /**
      * Setup this IdleTimeout to manage the @p timeout.

@@ -47,7 +47,7 @@ public:
         WheelTilt,
     };
     explicit Pointer(QObject *parent = nullptr);
-    virtual ~Pointer();
+    ~Pointer() override;
 
     /**
      * @returns @c true if managing a wl_pointer.

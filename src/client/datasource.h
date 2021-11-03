@@ -33,7 +33,7 @@ class KWAYLANDCLIENT_EXPORT DataSource : public QObject
     Q_OBJECT
 public:
     explicit DataSource(QObject *parent = nullptr);
-    virtual ~DataSource();
+    ~DataSource() override;
 
     /**
      * Setup this DataSource to manage the @p dataSource.

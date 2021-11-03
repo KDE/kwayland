@@ -53,7 +53,7 @@ public:
         QPointer<SlideInterface> slide;
     };
     Private(SurfaceInterface *q, CompositorInterface *c, wl_resource *parentResource);
-    ~Private();
+    ~Private() override;
 
     void destroy();
 

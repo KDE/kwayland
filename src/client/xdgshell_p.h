@@ -104,7 +104,7 @@ class XdgShellUnstableV5 : public XdgShell
     Q_OBJECT
 public:
     explicit XdgShellUnstableV5(QObject *parent = nullptr);
-    virtual ~XdgShellUnstableV5();
+    ~XdgShellUnstableV5() override;
 
 private:
     class Private;
@@ -115,7 +115,7 @@ class XdgShellUnstableV6 : public XdgShell
     Q_OBJECT
 public:
     explicit XdgShellUnstableV6(QObject *parent = nullptr);
-    virtual ~XdgShellUnstableV6();
+    ~XdgShellUnstableV6() override;
 
 private:
     class Private;
@@ -126,7 +126,7 @@ class XdgShellStable : public XdgShell
     Q_OBJECT
 public:
     explicit XdgShellStable(QObject *parent = nullptr);
-    virtual ~XdgShellStable();
+    ~XdgShellStable() override;
 
 private:
     class Private;
@@ -136,7 +136,7 @@ class XdgShellSurfaceUnstableV5 : public XdgShellSurface
 {
     Q_OBJECT
 public:
-    virtual ~XdgShellSurfaceUnstableV5();
+    ~XdgShellSurfaceUnstableV5() override;
 
 private:
     explicit XdgShellSurfaceUnstableV5(QObject *parent = nullptr);
@@ -148,7 +148,7 @@ class XdgTopLevelUnstableV6 : public XdgShellSurface
 {
     Q_OBJECT
 public:
-    virtual ~XdgTopLevelUnstableV6();
+    ~XdgTopLevelUnstableV6() override;
 
 private:
     explicit XdgTopLevelUnstableV6(QObject *parent = nullptr);
@@ -160,7 +160,7 @@ class XdgTopLevelStable : public XdgShellSurface
 {
     Q_OBJECT
 public:
-    virtual ~XdgTopLevelStable();
+    ~XdgTopLevelStable() override;
 
 private:
     explicit XdgTopLevelStable(QObject *parent = nullptr);
@@ -343,7 +343,7 @@ public:
 class XdgShellPopupUnstableV5 : public XdgShellPopup
 {
 public:
-    virtual ~XdgShellPopupUnstableV5();
+    ~XdgShellPopupUnstableV5() override;
 
 private:
     explicit XdgShellPopupUnstableV5(QObject *parent = nullptr);
@@ -354,7 +354,7 @@ private:
 class XdgShellPopupUnstableV6 : public XdgShellPopup
 {
 public:
-    virtual ~XdgShellPopupUnstableV6();
+    ~XdgShellPopupUnstableV6() override;
 
 private:
     explicit XdgShellPopupUnstableV6(QObject *parent = nullptr);
@@ -365,7 +365,7 @@ private:
 class XdgShellPopupStable : public XdgShellPopup
 {
 public:
-    virtual ~XdgShellPopupStable();
+    ~XdgShellPopupStable() override;
 
 private:
     explicit XdgShellPopupStable(QObject *parent = nullptr);

@@ -28,7 +28,7 @@ class RelativePointerManagerUnstableV1Interface : public RelativePointerManagerI
     Q_OBJECT
 public:
     explicit RelativePointerManagerUnstableV1Interface(Display *display, QObject *parent = nullptr);
-    virtual ~RelativePointerManagerUnstableV1Interface();
+    ~RelativePointerManagerUnstableV1Interface() override;
 
 private:
     class Private;
@@ -38,7 +38,7 @@ class RelativePointerInterface : public Resource
 {
     Q_OBJECT
 public:
-    virtual ~RelativePointerInterface();
+    ~RelativePointerInterface() override;
     void relativeMotion(const QSizeF &delta, const QSizeF &deltaNonAccelerated, quint64 microseconds);
 
 protected:
@@ -52,7 +52,7 @@ private:
 class RelativePointerInterface::Private : public Resource::Private
 {
 public:
-    ~Private();
+    ~Private() override;
     virtual void relativeMotion(const QSizeF &delta, const QSizeF &deltaNonAccelerated, quint64 microseconds) = 0;
 
 protected:
@@ -69,7 +69,7 @@ class RelativePointerUnstableV1Interface : public RelativePointerInterface
 {
     Q_OBJECT
 public:
-    virtual ~RelativePointerUnstableV1Interface();
+    ~RelativePointerUnstableV1Interface() override;
 
 private:
     explicit RelativePointerUnstableV1Interface(RelativePointerManagerUnstableV1Interface *parent, wl_resource *parentResource);

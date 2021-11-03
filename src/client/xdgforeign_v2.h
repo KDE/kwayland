@@ -59,7 +59,7 @@ public:
      * Registry::create.
      **/
     explicit XdgExporterUnstableV2(QObject *parent = nullptr);
-    virtual ~XdgExporterUnstableV2();
+    ~XdgExporterUnstableV2() override;
 
 private:
     class Private;
@@ -99,7 +99,7 @@ public:
      * Registry::create.
      **/
     explicit XdgImporterUnstableV2(QObject *parent = nullptr);
-    virtual ~XdgImporterUnstableV2();
+    ~XdgImporterUnstableV2() override;
 
 private:
     class Private;
@@ -109,7 +109,7 @@ class Q_DECL_HIDDEN XdgExportedUnstableV2 : public XdgExported
 {
     Q_OBJECT
 public:
-    virtual ~XdgExportedUnstableV2();
+    ~XdgExportedUnstableV2() override;
 
 private:
     friend class XdgExporterUnstableV2;
@@ -121,7 +121,7 @@ class Q_DECL_HIDDEN XdgImportedUnstableV2 : public XdgImported
 {
     Q_OBJECT
 public:
-    virtual ~XdgImportedUnstableV2();
+    ~XdgImportedUnstableV2() override;
 
 private:
     friend class XdgImporterUnstableV2;

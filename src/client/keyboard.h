@@ -36,7 +36,7 @@ public:
         Pressed,
     };
     explicit Keyboard(QObject *parent = nullptr);
-    virtual ~Keyboard();
+    ~Keyboard() override;
 
     /**
      * @returns @c true if managing a wl_keyboard.

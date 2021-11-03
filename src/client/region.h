@@ -33,7 +33,7 @@ class KWAYLANDCLIENT_EXPORT Region : public QObject
     Q_OBJECT
 public:
     explicit Region(const QRegion &region, QObject *parent = nullptr);
-    virtual ~Region();
+    ~Region() override;
 
     /**
      * Setup this Surface to manage the @p region.

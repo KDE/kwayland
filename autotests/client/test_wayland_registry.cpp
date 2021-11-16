@@ -206,7 +206,7 @@ void TestWaylandRegistry::cleanup()
 void TestWaylandRegistry::testCreate()
 {
     KWayland::Client::ConnectionThread connection;
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
@@ -393,7 +393,7 @@ void TestWaylandRegistry::testRemoval()
 {
     using namespace KWayland::Client;
     KWayland::Client::ConnectionThread connection;
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
@@ -402,21 +402,21 @@ void TestWaylandRegistry::testRemoval()
     });
 
     KWayland::Client::Registry registry;
-    QSignalSpy shmAnnouncedSpy(&registry, SIGNAL(shmAnnounced(quint32, quint32)));
+    QSignalSpy shmAnnouncedSpy(&registry, &KWayland::Client::Registry::shmAnnounced);
     QVERIFY(shmAnnouncedSpy.isValid());
-    QSignalSpy compositorAnnouncedSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
+    QSignalSpy compositorAnnouncedSpy(&registry, &KWayland::Client::Registry::compositorAnnounced);
     QVERIFY(compositorAnnouncedSpy.isValid());
-    QSignalSpy outputAnnouncedSpy(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
+    QSignalSpy outputAnnouncedSpy(&registry, &KWayland::Client::Registry::outputAnnounced);
     QVERIFY(outputAnnouncedSpy.isValid());
-    QSignalSpy outputDeviceAnnouncedSpy(&registry, SIGNAL(outputDeviceAnnounced(quint32, quint32)));
+    QSignalSpy outputDeviceAnnouncedSpy(&registry, &KWayland::Client::Registry::outputDeviceAnnounced);
     QVERIFY(outputDeviceAnnouncedSpy.isValid());
-    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
+    QSignalSpy shellAnnouncedSpy(&registry, &KWayland::Client::Registry::shellAnnounced);
     QVERIFY(shellAnnouncedSpy.isValid());
-    QSignalSpy seatAnnouncedSpy(&registry, SIGNAL(seatAnnounced(quint32, quint32)));
+    QSignalSpy seatAnnouncedSpy(&registry, &KWayland::Client::Registry::seatAnnounced);
     QVERIFY(seatAnnouncedSpy.isValid());
-    QSignalSpy subCompositorAnnouncedSpy(&registry, SIGNAL(subCompositorAnnounced(quint32, quint32)));
+    QSignalSpy subCompositorAnnouncedSpy(&registry, &KWayland::Client::Registry::subCompositorAnnounced);
     QVERIFY(subCompositorAnnouncedSpy.isValid());
-    QSignalSpy outputManagementAnnouncedSpy(&registry, SIGNAL(outputManagementAnnounced(quint32, quint32)));
+    QSignalSpy outputManagementAnnouncedSpy(&registry, &KWayland::Client::Registry::outputManagementAnnounced);
     QVERIFY(outputManagementAnnouncedSpy.isValid());
     QSignalSpy serverSideDecorationManagerAnnouncedSpy(&registry, &Registry::serverSideDecorationManagerAnnounced);
     QVERIFY(serverSideDecorationManagerAnnouncedSpy.isValid());
@@ -467,7 +467,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::Blur).isEmpty());
     QVERIFY(!registry.interfaces(KWayland::Client::Registry::Interface::IdleInhibitManagerUnstableV1).isEmpty());
 
-    QSignalSpy seatRemovedSpy(&registry, SIGNAL(seatRemoved(quint32)));
+    QSignalSpy seatRemovedSpy(&registry, &KWayland::Client::Registry::seatRemoved);
     QVERIFY(seatRemovedSpy.isValid());
 
     Seat *seat = registry.createSeat(registry.interface(Registry::Interface::Seat).name, //
@@ -517,7 +517,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Seat).isEmpty());
     QCOMPARE(seatObjectRemovedSpy.count(), 1);
 
-    QSignalSpy shellRemovedSpy(&registry, SIGNAL(shellRemoved(quint32)));
+    QSignalSpy shellRemovedSpy(&registry, &KWayland::Client::Registry::shellRemoved);
     QVERIFY(shellRemovedSpy.isValid());
 
     delete m_shell;
@@ -527,7 +527,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Shell).isEmpty());
     QCOMPARE(shellObjectRemovedSpy.count(), 1);
 
-    QSignalSpy outputRemovedSpy(&registry, SIGNAL(outputRemoved(quint32)));
+    QSignalSpy outputRemovedSpy(&registry, &KWayland::Client::Registry::outputRemoved);
     QVERIFY(outputRemovedSpy.isValid());
 
     delete m_output;
@@ -537,7 +537,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Output).isEmpty());
     QCOMPARE(outputObjectRemovedSpy.count(), 1);
 
-    QSignalSpy outputDeviceRemovedSpy(&registry, SIGNAL(outputDeviceRemoved(quint32)));
+    QSignalSpy outputDeviceRemovedSpy(&registry, &KWayland::Client::Registry::outputDeviceRemoved);
     QVERIFY(outputDeviceRemovedSpy.isValid());
 
     delete m_outputDevice;
@@ -546,7 +546,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(!registry.hasInterface(KWayland::Client::Registry::Interface::OutputDevice));
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::OutputDevice).isEmpty());
 
-    QSignalSpy compositorRemovedSpy(&registry, SIGNAL(compositorRemoved(quint32)));
+    QSignalSpy compositorRemovedSpy(&registry, &KWayland::Client::Registry::compositorRemoved);
     QVERIFY(compositorRemovedSpy.isValid());
 
     delete m_compositor;
@@ -556,7 +556,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::Compositor).isEmpty());
     QCOMPARE(compositorObjectRemovedSpy.count(), 1);
 
-    QSignalSpy subCompositorRemovedSpy(&registry, SIGNAL(subCompositorRemoved(quint32)));
+    QSignalSpy subCompositorRemovedSpy(&registry, &KWayland::Client::Registry::subCompositorRemoved);
     QVERIFY(subCompositorRemovedSpy.isValid());
 
     delete m_subcompositor;
@@ -566,7 +566,7 @@ void TestWaylandRegistry::testRemoval()
     QVERIFY(registry.interfaces(KWayland::Client::Registry::Interface::SubCompositor).isEmpty());
     QCOMPARE(subcompositorObjectRemovedSpy.count(), 1);
 
-    QSignalSpy outputManagementRemovedSpy(&registry, SIGNAL(outputManagementRemoved(quint32)));
+    QSignalSpy outputManagementRemovedSpy(&registry, &KWayland::Client::Registry::outputManagementRemoved);
     QVERIFY(outputManagementRemovedSpy.isValid());
 
     delete m_outputManagement;
@@ -632,7 +632,7 @@ void TestWaylandRegistry::testOutOfSyncRemoval()
 
     using namespace KWayland::Client;
     KWayland::Client::ConnectionThread connection;
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
@@ -698,13 +698,13 @@ void TestWaylandRegistry::testDestroy()
 {
     using namespace KWayland::Client;
     KWayland::Client::ConnectionThread connection;
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.setSocketName(s_socketName);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
 
     Registry registry;
-    QSignalSpy shellAnnouncedSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
+    QSignalSpy shellAnnouncedSpy(&registry, &KWayland::Client::Registry::shellAnnounced);
 
     QVERIFY(!registry.isValid());
     registry.create(&connection);
@@ -716,8 +716,8 @@ void TestWaylandRegistry::testDestroy()
     QScopedPointer<Shell> shell(
         registry.createShell(registry.interface(Registry::Interface::Shell).name, registry.interface(Registry::Interface::Shell).version, &registry));
 
-    QSignalSpy connectionDiedSpy(&connection, SIGNAL(connectionDied()));
-    QSignalSpy registryDiedSpy(&registry, SIGNAL(registryDestroyed()));
+    QSignalSpy connectionDiedSpy(&connection, &KWayland::Client::ConnectionThread::connectionDied);
+    QSignalSpy registryDiedSpy(&registry, &KWayland::Client::Registry::registryDestroyed);
 
     QVERIFY(connectionDiedSpy.isValid());
     QVERIFY(registryDiedSpy.isValid());
@@ -742,12 +742,12 @@ void TestWaylandRegistry::testGlobalSync()
     using namespace KWayland::Client;
     ConnectionThread connection;
     connection.setSocketName(s_socketName);
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.initConnection();
     QVERIFY(connectedSpy.wait());
 
     Registry registry;
-    QSignalSpy syncSpy(&registry, SIGNAL(interfacesAnnounced()));
+    QSignalSpy syncSpy(&registry, &KWayland::Client::Registry::interfacesAnnounced);
     // Most simple case: don't even use the ConnectionThread,
     // just its display.
     registry.create(connection.display());
@@ -768,7 +768,7 @@ void TestWaylandRegistry::testGlobalSyncThreaded()
     connection.moveToThread(&thread);
     thread.start();
 
-    QSignalSpy connectedSpy(&connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(&connection, &KWayland::Client::ConnectionThread::connected);
     connection.initConnection();
 
     QVERIFY(connectedSpy.wait());
@@ -776,7 +776,7 @@ void TestWaylandRegistry::testGlobalSyncThreaded()
     queue.setup(&connection);
 
     Registry registry;
-    QSignalSpy syncSpy(&registry, SIGNAL(interfacesAnnounced()));
+    QSignalSpy syncSpy(&registry, &KWayland::Client::Registry::interfacesAnnounced);
     registry.setEventQueue(&queue);
     registry.create(&connection);
     registry.setup();

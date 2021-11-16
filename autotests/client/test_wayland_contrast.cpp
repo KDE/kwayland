@@ -71,7 +71,7 @@ void TestContrast::init()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -145,14 +145,14 @@ void TestContrast::cleanup()
 
 void TestContrast::testCreate()
 {
-    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, &KWayland::Server::CompositorInterface::surfaceCreated);
     QVERIFY(serverSurfaceCreated.isValid());
 
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
     auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
-    QSignalSpy contrastChanged(serverSurface, SIGNAL(contrastChanged()));
+    QSignalSpy contrastChanged(serverSurface, &KWayland::Server::SurfaceInterface::contrastChanged);
 
     auto contrast = m_contrastManager->createContrast(surface.data(), surface.data());
     contrast->setRegion(m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));

@@ -74,8 +74,8 @@ void TestWaylandConnectionThread::testInitConnectionNoThread()
     connection->setSocketName(s_socketName);
     QCOMPARE(connection->socketName(), s_socketName);
 
-    QSignalSpy connectedSpy(connection.data(), SIGNAL(connected()));
-    QSignalSpy failedSpy(connection.data(), SIGNAL(failed()));
+    QSignalSpy connectedSpy(connection.data(), &KWayland::Client::ConnectionThread::connected);
+    QSignalSpy failedSpy(connection.data(), &KWayland::Client::ConnectionThread::failed);
     connection->initConnection();
     QVERIFY(connectedSpy.wait());
     QCOMPARE(connectedSpy.count(), 1);
@@ -91,8 +91,8 @@ void TestWaylandConnectionThread::testConnectionFailure()
     QScopedPointer<KWayland::Client::ConnectionThread> connection(new KWayland::Client::ConnectionThread);
     connection->setSocketName(QStringLiteral("kwin-test-socket-does-not-exist"));
 
-    QSignalSpy connectedSpy(connection.data(), SIGNAL(connected()));
-    QSignalSpy failedSpy(connection.data(), SIGNAL(failed()));
+    QSignalSpy connectedSpy(connection.data(), &KWayland::Client::ConnectionThread::connected);
+    QSignalSpy failedSpy(connection.data(), &KWayland::Client::ConnectionThread::failed);
     connection->initConnection();
     QVERIFY(failedSpy.wait());
     QCOMPARE(connectedSpy.count(), 0);
@@ -127,9 +127,9 @@ void TestWaylandConnectionThread::testConnectionThread()
     connection->moveToThread(connectionThread);
     connectionThread->start();
 
-    QSignalSpy connectedSpy(connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(connection, &KWayland::Client::ConnectionThread::connected);
     QVERIFY(connectedSpy.isValid());
-    QSignalSpy failedSpy(connection, SIGNAL(failed()));
+    QSignalSpy failedSpy(connection, &KWayland::Client::ConnectionThread::failed);
     QVERIFY(failedSpy.isValid());
     connection->initConnection();
     QVERIFY(connectedSpy.wait());
@@ -138,7 +138,7 @@ void TestWaylandConnectionThread::testConnectionThread()
     QVERIFY(connection->display());
 
     // now we have the connection ready, let's get some events
-    QSignalSpy eventsSpy(connection, SIGNAL(eventsRead()));
+    QSignalSpy eventsSpy(connection, &KWayland::Client::ConnectionThread::eventsRead);
     QVERIFY(eventsSpy.isValid());
     wl_display *display = connection->display();
     QScopedPointer<KWayland::Client::EventQueue> queue(new KWayland::Client::EventQueue);
@@ -169,13 +169,13 @@ void TestWaylandConnectionThread::testConnectionThread()
 void TestWaylandConnectionThread::testConnectionDieing()
 {
     QScopedPointer<KWayland::Client::ConnectionThread> connection(new KWayland::Client::ConnectionThread);
-    QSignalSpy connectedSpy(connection.data(), SIGNAL(connected()));
+    QSignalSpy connectedSpy(connection.data(), &KWayland::Client::ConnectionThread::connected);
     connection->setSocketName(s_socketName);
     connection->initConnection();
     QVERIFY(connectedSpy.wait());
     QVERIFY(connection->display());
 
-    QSignalSpy diedSpy(connection.data(), SIGNAL(connectionDied()));
+    QSignalSpy diedSpy(connection.data(), &KWayland::Client::ConnectionThread::connectionDied);
     m_display->terminate();
     QVERIFY(!m_display->isRunning());
     QVERIFY(diedSpy.wait());
@@ -205,7 +205,7 @@ void TestWaylandConnectionThread::testConnectFd()
     QVERIFY(disconnectedSpy.isValid());
 
     ConnectionThread *connection = new ConnectionThread;
-    QSignalSpy connectedSpy(connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(connection, &KWayland::Client::ConnectionThread::connected);
     QVERIFY(connectedSpy.isValid());
     connection->setSocketFd(sv[1]);
 
@@ -217,7 +217,7 @@ void TestWaylandConnectionThread::testConnectFd()
 
     // create the Registry
     QScopedPointer<Registry> registry(new Registry);
-    QSignalSpy announcedSpy(registry.data(), SIGNAL(interfacesAnnounced()));
+    QSignalSpy announcedSpy(registry.data(), &Registry::interfacesAnnounced);
     QVERIFY(announcedSpy.isValid());
     registry->create(connection);
     QScopedPointer<EventQueue> queue(new EventQueue);
@@ -253,7 +253,7 @@ void TestWaylandConnectionThread::testConnectFdNoSocketName()
     QVERIFY(display.createClient(sv[0]));
 
     ConnectionThread *connection = new ConnectionThread;
-    QSignalSpy connectedSpy(connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(connection, &KWayland::Client::ConnectionThread::connected);
     QVERIFY(connectedSpy.isValid());
     connection->setSocketFd(sv[1]);
 
@@ -265,7 +265,7 @@ void TestWaylandConnectionThread::testConnectFdNoSocketName()
 
     // create the Registry
     QScopedPointer<Registry> registry(new Registry);
-    QSignalSpy announcedSpy(registry.data(), SIGNAL(interfacesAnnounced()));
+    QSignalSpy announcedSpy(registry.data(), &Registry::interfacesAnnounced);
     QVERIFY(announcedSpy.isValid());
     registry->create(connection);
     QScopedPointer<EventQueue> queue(new EventQueue);

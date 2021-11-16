@@ -119,7 +119,7 @@ void TestWaylandShell::init()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -138,8 +138,8 @@ void TestWaylandShell::init()
     KWayland::Client::Registry registry;
     QSignalSpy interfacesAnnouncedSpy(&registry, &Registry::interfacesAnnounced);
     QVERIFY(interfacesAnnouncedSpy.isValid());
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
-    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
+    QSignalSpy compositorSpy(&registry, &KWayland::Client::Registry::compositorAnnounced);
+    QSignalSpy shellSpy(&registry, &KWayland::Client::Registry::shellAnnounced);
     QSignalSpy seatAnnouncedSpy(&registry, &Registry::seatAnnounced);
     QVERIFY(seatAnnouncedSpy.isValid());
     QVERIFY(!registry.eventQueue());
@@ -229,7 +229,7 @@ void TestWaylandShell::testCreateMultiple()
     QVERIFY(!s2.isNull());
     QVERIFY(s2->isValid());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QScopedPointer<ShellSurface> surface1(m_shell->createSurface(s1.data()));
     QVERIFY(!surface1.isNull());
@@ -265,11 +265,11 @@ void TestWaylandShell::testFullscreen()
     QVERIFY(!s.isNull());
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
-    QSignalSpy sizeSpy(surface, SIGNAL(sizeChanged(QSize)));
+    QSignalSpy sizeSpy(surface, &KWayland::Client::ShellSurface::sizeChanged);
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
@@ -277,7 +277,7 @@ void TestWaylandShell::testFullscreen()
     QVERIFY(serverSurface->parentResource());
     QCOMPARE(serverSurface->shell(), m_shellInterface);
 
-    QSignalSpy fullscreenSpy(serverSurface, SIGNAL(fullscreenChanged(bool)));
+    QSignalSpy fullscreenSpy(serverSurface, &ShellSurfaceInterface::fullscreenChanged);
     QVERIFY(fullscreenSpy.isValid());
 
     QVERIFY(!serverSurface->isFullscreen());
@@ -309,18 +309,18 @@ void TestWaylandShell::testMaximize()
     QVERIFY(!s.isNull());
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
-    QSignalSpy sizeSpy(surface, SIGNAL(sizeChanged(QSize)));
+    QSignalSpy sizeSpy(surface, &KWayland::Client::ShellSurface::sizeChanged);
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->parentResource());
 
-    QSignalSpy maximizedSpy(serverSurface, SIGNAL(maximizedChanged(bool)));
+    QSignalSpy maximizedSpy(serverSurface, &ShellSurfaceInterface::maximizedChanged);
     QVERIFY(maximizedSpy.isValid());
 
     QVERIFY(!serverSurface->isMaximized());
@@ -352,18 +352,18 @@ void TestWaylandShell::testToplevel()
     QVERIFY(!s.isNull());
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
-    QSignalSpy sizeSpy(surface, SIGNAL(sizeChanged(QSize)));
+    QSignalSpy sizeSpy(surface, &KWayland::Client::ShellSurface::sizeChanged);
     QVERIFY(sizeSpy.isValid());
     QCOMPARE(surface->size(), QSize());
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(serverSurface->parentResource());
 
-    QSignalSpy toplevelSpy(serverSurface, SIGNAL(toplevelChanged(bool)));
+    QSignalSpy toplevelSpy(serverSurface, &ShellSurfaceInterface::toplevelChanged);
     QVERIFY(toplevelSpy.isValid());
 
     surface->setFullscreen();
@@ -536,18 +536,18 @@ void TestWaylandShell::testPing()
     QVERIFY(!s.isNull());
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
-    QSignalSpy pingSpy(surface, SIGNAL(pinged()));
+    QSignalSpy pingSpy(surface, &KWayland::Client::ShellSurface::pinged);
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
     QVERIFY(!serverSurface->isPinged());
 
-    QSignalSpy pingTimeoutSpy(serverSurface, SIGNAL(pingTimeout()));
+    QSignalSpy pingTimeoutSpy(serverSurface, &ShellSurfaceInterface::pingTimeout);
     QVERIFY(pingTimeoutSpy.isValid());
-    QSignalSpy pongSpy(serverSurface, SIGNAL(pongReceived()));
+    QSignalSpy pongSpy(serverSurface, &ShellSurfaceInterface::pongReceived);
     QVERIFY(pongSpy.isValid());
 
     serverSurface->ping();
@@ -582,13 +582,13 @@ void TestWaylandShell::testTitle()
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
 
-    QSignalSpy titleSpy(serverSurface, SIGNAL(titleChanged(QString)));
+    QSignalSpy titleSpy(serverSurface, &ShellSurfaceInterface::titleChanged);
     QVERIFY(titleSpy.isValid());
     QString testTitle = QStringLiteral("fooBar");
     QVERIFY(serverSurface->title().isNull());
@@ -607,13 +607,13 @@ void TestWaylandShell::testWindowClass()
     QVERIFY(s->isValid());
     KWayland::Client::ShellSurface *surface = m_shell->createSurface(s.data(), m_shell);
 
-    QSignalSpy serverSurfaceSpy(m_shellInterface, SIGNAL(surfaceCreated(KWayland::Server::ShellSurfaceInterface *)));
+    QSignalSpy serverSurfaceSpy(m_shellInterface, &KWayland::Server::ShellInterface::surfaceCreated);
     QVERIFY(serverSurfaceSpy.isValid());
     QVERIFY(serverSurfaceSpy.wait());
     ShellSurfaceInterface *serverSurface = serverSurfaceSpy.first().first().value<ShellSurfaceInterface *>();
     QVERIFY(serverSurface);
 
-    QSignalSpy windowClassSpy(serverSurface, SIGNAL(windowClassChanged(QByteArray)));
+    QSignalSpy windowClassSpy(serverSurface, &ShellSurfaceInterface::windowClassChanged);
     QVERIFY(windowClassSpy.isValid());
     QByteArray testClass = QByteArrayLiteral("fooBar");
     QVERIFY(serverSurface->windowClass().isNull());
@@ -644,7 +644,7 @@ void TestWaylandShell::testDestroy()
     connect(m_connection, &ConnectionThread::connectionDied, s.data(), &Surface::destroy);
     connect(m_connection, &ConnectionThread::connectionDied, m_queue, &EventQueue::destroy);
 
-    QSignalSpy connectionDiedSpy(m_connection, SIGNAL(connectionDied()));
+    QSignalSpy connectionDiedSpy(m_connection, &KWayland::Client::ConnectionThread::connectionDied);
     QVERIFY(connectionDiedSpy.isValid());
     delete m_display;
     m_display = nullptr;
@@ -664,7 +664,7 @@ void TestWaylandShell::testCast()
 {
     using namespace KWayland::Client;
     Registry registry;
-    QSignalSpy shellSpy(&registry, SIGNAL(shellAnnounced(quint32, quint32)));
+    QSignalSpy shellSpy(&registry, &KWayland::Client::Registry::shellAnnounced);
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
     QVERIFY(registry.isValid());

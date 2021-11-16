@@ -143,14 +143,14 @@ void TestBlur::cleanup()
 
 void TestBlur::testCreate()
 {
-    QSignalSpy serverSurfaceCreated(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
+    QSignalSpy serverSurfaceCreated(m_compositorInterface, &KWayland::Server::CompositorInterface::surfaceCreated);
     QVERIFY(serverSurfaceCreated.isValid());
 
     QScopedPointer<KWayland::Client::Surface> surface(m_compositor->createSurface());
     QVERIFY(serverSurfaceCreated.wait());
 
     auto serverSurface = serverSurfaceCreated.first().first().value<KWayland::Server::SurfaceInterface *>();
-    QSignalSpy blurChanged(serverSurface, SIGNAL(blurChanged()));
+    QSignalSpy blurChanged(serverSurface, &KWayland::Server::SurfaceInterface::blurChanged);
 
     auto blur = m_blurManager->createBlur(surface.data(), surface.data());
     blur->setRegion(m_compositor->createRegion(QRegion(0, 0, 10, 20), nullptr));

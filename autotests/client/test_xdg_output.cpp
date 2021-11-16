@@ -77,7 +77,7 @@ void TestXdgOutput::init()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -121,8 +121,8 @@ void TestXdgOutput::testChanges()
     using namespace KWayland::Server;
     using namespace KWayland::Client;
     KWayland::Client::Registry registry;
-    QSignalSpy announced(&registry, SIGNAL(outputAnnounced(quint32, quint32)));
-    QSignalSpy xdgOutputAnnounced(&registry, SIGNAL(xdgOutputAnnounced(quint32, quint32)));
+    QSignalSpy announced(&registry, &KWayland::Client::Registry::outputAnnounced);
+    QSignalSpy xdgOutputAnnounced(&registry, &KWayland::Client::Registry::xdgOutputAnnounced);
 
     registry.setEventQueue(m_queue);
     registry.create(m_connection->display());
@@ -134,7 +134,7 @@ void TestXdgOutput::testChanges()
     }
 
     KWayland::Client::Output output;
-    QSignalSpy outputChanged(&output, SIGNAL(changed()));
+    QSignalSpy outputChanged(&output, &KWayland::Client::Output::changed);
 
     output.setup(registry.bindOutput(announced.first().first().value<quint32>(), announced.first().last().value<quint32>()));
     QVERIFY(outputChanged.wait());
@@ -143,7 +143,7 @@ void TestXdgOutput::testChanges()
         registry.createXdgOutputManager(xdgOutputAnnounced.first().first().value<quint32>(), xdgOutputAnnounced.first().last().value<quint32>(), this));
 
     QScopedPointer<KWayland::Client::XdgOutput> xdgOutput(xdgOutputManager->getXdgOutput(&output, this));
-    QSignalSpy xdgOutputChanged(xdgOutput.data(), SIGNAL(changed()));
+    QSignalSpy xdgOutputChanged(xdgOutput.data(), &KWayland::Client::XdgOutput::changed);
 
     // check details are sent on client bind
     QVERIFY(xdgOutputChanged.wait());

@@ -89,7 +89,7 @@ void TestSubSurface::init()
 
     // setup connection
     m_connection = new KWayland::Client::ConnectionThread;
-    QSignalSpy connectedSpy(m_connection, SIGNAL(connected()));
+    QSignalSpy connectedSpy(m_connection, &KWayland::Client::ConnectionThread::connected);
     m_connection->setSocketName(s_socketName);
 
     m_thread = new QThread(this);
@@ -105,9 +105,9 @@ void TestSubSurface::init()
     QVERIFY(m_queue->isValid());
 
     KWayland::Client::Registry registry;
-    QSignalSpy compositorSpy(&registry, SIGNAL(compositorAnnounced(quint32, quint32)));
+    QSignalSpy compositorSpy(&registry, &KWayland::Client::Registry::compositorAnnounced);
     QVERIFY(compositorSpy.isValid());
-    QSignalSpy subCompositorSpy(&registry, SIGNAL(subCompositorAnnounced(quint32, quint32)));
+    QSignalSpy subCompositorSpy(&registry, &KWayland::Client::Registry::subCompositorAnnounced);
     QVERIFY(subCompositorSpy.isValid());
     QVERIFY(!registry.eventQueue());
     registry.setEventQueue(m_queue);
@@ -176,7 +176,7 @@ void TestSubSurface::testCreate()
 {
     using namespace KWayland::Client;
     using namespace KWayland::Server;
-    QSignalSpy surfaceCreatedSpy(m_compositorInterface, SIGNAL(surfaceCreated(KWayland::Server::SurfaceInterface *)));
+    QSignalSpy surfaceCreatedSpy(m_compositorInterface, &KWayland::Server::CompositorInterface::surfaceCreated);
     QVERIFY(surfaceCreatedSpy.isValid());
 
     // create two Surfaces
@@ -191,7 +191,7 @@ void TestSubSurface::testCreate()
     SurfaceInterface *serverParentSurface = surfaceCreatedSpy.first().first().value<KWayland::Server::SurfaceInterface *>();
     QVERIFY(serverParentSurface);
 
-    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, SIGNAL(subSurfaceCreated(KWayland::Server::SubSurfaceInterface *)));
+    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, &KWayland::Server::SubCompositorInterface::subSurfaceCreated);
     QVERIFY(subSurfaceCreatedSpy.isValid());
 
     // create subSurface for surface of parent
@@ -216,7 +216,7 @@ void TestSubSurface::testCreate()
     QCOMPARE(serverParentSurface->childSubSurfaces().first().data(), serverSubSurface);
 
     // and let's destroy it again
-    QSignalSpy destroyedSpy(serverSubSurface, SIGNAL(destroyed(QObject *)));
+    QSignalSpy destroyedSpy(serverSubSurface, &QObject::destroyed);
     QVERIFY(destroyedSpy.isValid());
     subSurface.reset();
     QVERIFY(destroyedSpy.wait());
@@ -243,7 +243,7 @@ void TestSubSurface::testMode()
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<Surface> parent(m_compositor->createSurface());
 
-    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, SIGNAL(subSurfaceCreated(KWayland::Server::SubSurfaceInterface *)));
+    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, &KWayland::Server::SubCompositorInterface::subSurfaceCreated);
     QVERIFY(subSurfaceCreatedSpy.isValid());
 
     // create the SubSurface for surface of parent
@@ -257,7 +257,7 @@ void TestSubSurface::testMode()
     QCOMPARE(serverSubSurface->mode(), SubSurfaceInterface::Mode::Synchronized);
 
     // verify that we can change to desynchronized
-    QSignalSpy modeChangedSpy(serverSubSurface, SIGNAL(modeChanged(KWayland::Server::SubSurfaceInterface::Mode)));
+    QSignalSpy modeChangedSpy(serverSubSurface, &KWayland::Server::SubSurfaceInterface::modeChanged);
     QVERIFY(modeChangedSpy.isValid());
 
     subSurface->setMode(SubSurface::Mode::Desynchronized);
@@ -291,7 +291,7 @@ void TestSubSurface::testPosition()
     QScopedPointer<Surface> surface(m_compositor->createSurface());
     QScopedPointer<Surface> parent(m_compositor->createSurface());
 
-    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, SIGNAL(subSurfaceCreated(KWayland::Server::SubSurfaceInterface *)));
+    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, &KWayland::Server::SubCompositorInterface::subSurfaceCreated);
     QVERIFY(subSurfaceCreatedSpy.isValid());
 
     // create the SubSurface for surface of parent
@@ -308,7 +308,7 @@ void TestSubSurface::testPosition()
     QCOMPARE(subSurface->position(), QPoint());
     QCOMPARE(serverSubSurface->position(), QPoint());
 
-    QSignalSpy positionChangedSpy(serverSubSurface, SIGNAL(positionChanged(QPoint)));
+    QSignalSpy positionChangedSpy(serverSubSurface, &KWayland::Server::SubSurfaceInterface::positionChanged);
     QVERIFY(positionChangedSpy.isValid());
 
     // changing the position should not trigger a direct update on server side
@@ -346,7 +346,7 @@ void TestSubSurface::testPlaceAbove()
     QScopedPointer<Surface> surface3(m_compositor->createSurface());
     QScopedPointer<Surface> parent(m_compositor->createSurface());
 
-    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, SIGNAL(subSurfaceCreated(KWayland::Server::SubSurfaceInterface *)));
+    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, &KWayland::Server::SubCompositorInterface::subSurfaceCreated);
     QVERIFY(subSurfaceCreatedSpy.isValid());
 
     // create the SubSurfaces for surface of parent
@@ -447,7 +447,7 @@ void TestSubSurface::testPlaceBelow()
     QScopedPointer<Surface> surface3(m_compositor->createSurface());
     QScopedPointer<Surface> parent(m_compositor->createSurface());
 
-    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, SIGNAL(subSurfaceCreated(KWayland::Server::SubSurfaceInterface *)));
+    QSignalSpy subSurfaceCreatedSpy(m_subcompositorInterface, &KWayland::Server::SubCompositorInterface::subSurfaceCreated);
     QVERIFY(subSurfaceCreatedSpy.isValid());
 
     // create the SubSurfaces for surface of parent
@@ -557,7 +557,7 @@ void TestSubSurface::testDestroy()
     connect(m_connection, &ConnectionThread::connectionDied, subSurface.data(), &SubSurface::destroy);
     QVERIFY(subSurface->isValid());
 
-    QSignalSpy connectionDiedSpy(m_connection, SIGNAL(connectionDied()));
+    QSignalSpy connectionDiedSpy(m_connection, &KWayland::Client::ConnectionThread::connectionDied);
     QVERIFY(connectionDiedSpy.isValid());
     delete m_display;
     m_display = nullptr;

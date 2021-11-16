@@ -36,7 +36,7 @@ private Q_SLOTS:
 void TestWaylandServerDisplay::testSocketName()
 {
     Display display;
-    QSignalSpy changedSpy(&display, SIGNAL(socketNameChanged(QString)));
+    QSignalSpy changedSpy(&display, &Display::socketNameChanged);
     QVERIFY(changedSpy.isValid());
     QCOMPARE(display.socketName(), QStringLiteral("wayland-0"));
     const QString testSName = QStringLiteral("fooBar");
@@ -58,7 +58,7 @@ void TestWaylandServerDisplay::testStartStop()
     QVERIFY(!runtimeDir.exists(testSocketName));
 
     Display display;
-    QSignalSpy runningSpy(&display, SIGNAL(runningChanged(bool)));
+    QSignalSpy runningSpy(&display, &Display::runningChanged);
     QVERIFY(runningSpy.isValid());
     display.setSocketName(testSocketName);
     QVERIFY(!display.isRunning());
@@ -105,9 +105,9 @@ void TestWaylandServerDisplay::testClientConnection()
     Display display;
     display.setSocketName(QStringLiteral("kwin-wayland-server-display-test-client-connection"));
     display.start();
-    QSignalSpy connectedSpy(&display, SIGNAL(clientConnected(KWayland::Server::ClientConnection *)));
+    QSignalSpy connectedSpy(&display, &Display::clientConnected);
     QVERIFY(connectedSpy.isValid());
-    QSignalSpy disconnectedSpy(&display, SIGNAL(clientDisconnected(KWayland::Server::ClientConnection *)));
+    QSignalSpy disconnectedSpy(&display, &Display::clientDisconnected);
     QVERIFY(disconnectedSpy.isValid());
 
     int sv[2];
@@ -211,7 +211,7 @@ void TestWaylandServerDisplay::testAutoSocketName()
 
     Display display0;
     display0.setAutomaticSocketNaming(true);
-    QSignalSpy socketNameChangedSpy0(&display0, SIGNAL(socketNameChanged(QString)));
+    QSignalSpy socketNameChangedSpy0(&display0, &Display::socketNameChanged);
     display0.start();
     QVERIFY(display0.isRunning());
     QCOMPARE(socketNameChangedSpy0.count(), 0);
@@ -219,7 +219,7 @@ void TestWaylandServerDisplay::testAutoSocketName()
 
     Display display1;
     display1.setAutomaticSocketNaming(true);
-    QSignalSpy socketNameChangedSpy1(&display1, SIGNAL(socketNameChanged(QString)));
+    QSignalSpy socketNameChangedSpy1(&display1, &Display::socketNameChanged);
     display1.start();
     QVERIFY(display1.isRunning());
     QCOMPARE(socketNameChangedSpy1.count(), 1);

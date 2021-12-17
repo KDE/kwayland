@@ -10,10 +10,7 @@
 #include <QPointF>
 #include <QSizeF>
 
-#include <config-kwayland.h>
-#if HAVE_LINUX_INPUT_H
 #include <linux/input.h>
-#endif
 
 #include <wayland-fake-input-client-protocol.h>
 
@@ -97,7 +94,6 @@ void FakeInput::requestPointerMoveAbsolute(const QPointF &pos)
 
 void FakeInput::Private::sendPointerButtonState(Qt::MouseButton button, quint32 state)
 {
-#if HAVE_LINUX_INPUT_H
     Q_ASSERT(manager.isValid());
     uint32_t b = 0;
     switch (button) {
@@ -116,7 +112,6 @@ void FakeInput::Private::sendPointerButtonState(Qt::MouseButton button, quint32 
         return;
     }
     org_kde_kwin_fake_input_button(manager, b, state);
-#endif
 }
 
 void FakeInput::requestPointerButtonPress(Qt::MouseButton button)

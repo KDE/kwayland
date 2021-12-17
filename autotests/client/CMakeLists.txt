@@ -74,15 +74,13 @@ ecm_mark_as_test(testWaylandSurface)
 ########################################################
 # Test WaylandSeat
 ########################################################
-if (HAVE_LINUX_INPUT_H)
-    set( testWaylandSeat_SRCS
-            test_wayland_seat.cpp
-        )
-    add_executable(testWaylandSeat ${testWaylandSeat_SRCS})
-    target_link_libraries( testWaylandSeat Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
-    add_test(NAME kwayland-testWaylandSeat COMMAND testWaylandSeat)
-    ecm_mark_as_test(testWaylandSeat)
-endif()
+set( testWaylandSeat_SRCS
+        test_wayland_seat.cpp
+    )
+add_executable(testWaylandSeat ${testWaylandSeat_SRCS})
+target_link_libraries( testWaylandSeat Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
+add_test(NAME kwayland-testWaylandSeat COMMAND testWaylandSeat)
+ecm_mark_as_test(testWaylandSeat)
 
 ########################################################
 # Test ShmPool
@@ -286,28 +284,24 @@ ecm_mark_as_test(testShadow)
 ########################################################
 # Test FakeInput
 ########################################################
-if (HAVE_LINUX_INPUT_H)
-    set( testFakeInput_SRCS
-            test_fake_input.cpp
-        )
-    add_executable(testFakeInput ${testFakeInput_SRCS})
-    target_link_libraries( testFakeInput Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
-    add_test(NAME kwayland-testFakeInput COMMAND testFakeInput)
-    ecm_mark_as_test(testFakeInput)
-endif()
+set( testFakeInput_SRCS
+        test_fake_input.cpp
+    )
+add_executable(testFakeInput ${testFakeInput_SRCS})
+target_link_libraries( testFakeInput Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(NAME kwayland-testFakeInput COMMAND testFakeInput)
+ecm_mark_as_test(testFakeInput)
 
 ########################################################
 # Test PlasmaWindowModel
 ########################################################
-if (HAVE_LINUX_INPUT_H)
-    set( testPlasmaWindowModel_SRCS
-            test_plasma_window_model.cpp
-        )
-    add_executable(testPlasmaWindowModel ${testPlasmaWindowModel_SRCS})
-    target_link_libraries( testPlasmaWindowModel Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
-    add_test(NAME kwayland-testPlasmaWindowModel COMMAND testPlasmaWindowModel)
-    ecm_mark_as_test(testPlasmaWindowModel)
-endif()
+set( testPlasmaWindowModel_SRCS
+        test_plasma_window_model.cpp
+    )
+add_executable(testPlasmaWindowModel ${testPlasmaWindowModel_SRCS})
+target_link_libraries( testPlasmaWindowModel Qt5::Test Qt5::Gui KF5::WaylandClient KF5::WaylandServer)
+add_test(NAME kwayland-testPlasmaWindowModel COMMAND testPlasmaWindowModel)
+ecm_mark_as_test(testPlasmaWindowModel)
 
 ########################################################
 # Test TextInput

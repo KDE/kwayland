@@ -18,11 +18,8 @@
 #ifndef WL_SEAT_NAME_SINCE_VERSION
 #define WL_SEAT_NAME_SINCE_VERSION 2
 #endif
-// linux
-#include <config-kwayland.h>
-#if HAVE_LINUX_INPUT_H
+
 #include <linux/input.h>
-#endif
 
 #include <functional>
 
@@ -755,7 +752,6 @@ namespace
 {
 static quint32 qtToWaylandButton(Qt::MouseButton button)
 {
-#if HAVE_LINUX_INPUT_H
     static const QHash<Qt::MouseButton, quint32> s_buttons({
         {Qt::LeftButton, BTN_LEFT},
         {Qt::RightButton, BTN_RIGHT},
@@ -776,9 +772,6 @@ static quint32 qtToWaylandButton(Qt::MouseButton button)
         // further mapping not possible, 0x120 is BTN_JOYSTICK
     });
     return s_buttons.value(button, 0);
-#else
-    return 0;
-#endif
 }
 }
 
@@ -1332,7 +1325,6 @@ qint32 SeatInterface::touchDown(const QPointF &globalPosition)
         d->globalTouch.focus.firstTouchPos = globalPosition;
     }
 
-#if HAVE_LINUX_INPUT_H
     if (id == 0 && d->globalTouch.focus.touchs.isEmpty()) {
         // If the client did not bind the touch interface fall back
         // to at least emulating touch through pointer events.
@@ -1344,7 +1336,6 @@ qint32 SeatInterface::touchDown(const QPointF &globalPosition)
             p->d_func()->sendFrame();
         });
     }
-#endif
 
     d->globalTouch.ids[id] = serial;
     return id;
@@ -1385,7 +1376,6 @@ void SeatInterface::touchUp(qint32 id)
         (*it)->up(id, serial);
     }
 
-#if HAVE_LINUX_INPUT_H
     if (id == 0 && d->globalTouch.focus.touchs.isEmpty()) {
         // Client did not bind touch, fall back to emulating with pointer events.
         const quint32 serial = display()->nextSerial();
@@ -1393,7 +1383,6 @@ void SeatInterface::touchUp(qint32 id)
             wl_pointer_send_button(p->resource(), serial, timestamp(), BTN_LEFT, WL_POINTER_BUTTON_STATE_RELEASED);
         });
     }
-#endif
 
     d->globalTouch.ids.remove(id);
 }

@@ -3,7 +3,7 @@ remove_definitions(-DQT_NO_CAST_FROM_ASCII)
 remove_definitions(-DQT_NO_CAST_TO_ASCII)
 
 # needed to access QPA
-include_directories(SYSTEM ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
+include_directories(SYSTEM ${Qt${QT_MAJOR_VERSION}Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
     appmenu.cpp
@@ -254,12 +254,12 @@ ecm_generate_export_header(KF5WaylandClient
 # needs fixing of undeprecated API being still implemented using own deprecated API
 
 
-target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Client>")
+target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client>")
 
 target_link_libraries(KF5WaylandClient
-    PUBLIC Qt5::Gui
+    PUBLIC Qt${QT_MAJOR_VERSION}::Gui
     PRIVATE Wayland::Client
-        Qt5::Concurrent
+        Qt${QT_MAJOR_VERSION}::Concurrent
 )
 
 set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
@@ -324,7 +324,7 @@ set(CLIENT_LIB_HEADERS
 
 install(FILES
   ${CLIENT_LIB_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Client COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client COMPONENT Devel
 )
 
 # make available to ecm_add_qch in parent folder
@@ -332,6 +332,6 @@ set(KWaylandClient_APIDOX_SRCS ${CLIENT_LIB_HEADERS} PARENT_SCOPE)
 set(KWaylandClient_APIDOX_BUILD_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
 
 include(ECMGeneratePriFile)
-ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF5WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5})
+ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF5WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF})
 install(FILES ${PRI_FILENAME}
         DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

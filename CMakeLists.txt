@@ -31,10 +31,16 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 
 # Dependencies
 set(REQUIRED_QT_VERSION 5.15.2)
-find_package(Qt5Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent WaylandClient)
+find_package(Qt${QT_MAJOR_VERSION}Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
+find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent WaylandClient)
 
-find_package(QtWaylandScanner REQUIRED)
+# With Qt6 use qt_generate_wayland_protocol_{client,server}_sources instead of
+# ecm_add_qtwayland_{client,server}_protocol (from ECM's QtWaylandScanner)
+if (QT_MAJOR_VERSION STREQUAL "6")
+    find_package(Qt6WaylandCompositor CONFIG REQUIRED)
+else()
+    find_package(QtWaylandScanner REQUIRED)
+endif()
 
 find_package(Wayland 1.15 COMPONENTS Client Server)
 set_package_properties(Wayland PROPERTIES
@@ -65,7 +71,6 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f02)
 # Subdirectories
 ecm_install_po_files_as_qm(po)
 
-find_package(QtWaylandScanner REQUIRED)
 add_subdirectory(src)
 
 if (BUILD_TESTING)
@@ -100,7 +105,7 @@ install(EXPORT KF5WaylandTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE K
 
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
-        DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5} COMPONENT Devel )
+        DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF} COMPONENT Devel )
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

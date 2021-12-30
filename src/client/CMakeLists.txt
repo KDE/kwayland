@@ -249,10 +249,8 @@ ecm_generate_export_header(KF5WaylandClient
     VERSION ${KF_VERSION}
     DEPRECATED_BASE_VERSION 0
     DEPRECATION_VERSIONS 5.49 5.50 5.52 5.53 5.73 5.82
+    EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
 )
-# TODO: add support for EXCLUDE_DEPRECATED_BEFORE_AND_AT to all KWayland libs
-# needs fixing of undeprecated API being still implemented using own deprecated API
-
 
 target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client>")
 

@@ -314,10 +314,19 @@ Q_INVOKABLE void PlasmaWindowModel::requestResize(int row)
     }
 }
 
+#if KWAYLANDCLIENT_BUILD_DEPRECATED_SINCE(5, 52)
 Q_INVOKABLE void PlasmaWindowModel::requestVirtualDesktop(int row, quint32 desktop)
 {
     if (row >= 0 && row < d->windows.count()) {
         d->windows.at(row)->requestVirtualDesktop(desktop);
+    }
+}
+#endif
+
+Q_INVOKABLE void PlasmaWindowModel::requestEnterVirtualDesktop(int row, const QString &id)
+{
+    if (row >= 0 && row < d->windows.count()) {
+        d->windows.at(row)->requestEnterVirtualDesktop(id);
     }
 }
 

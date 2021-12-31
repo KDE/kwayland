@@ -1,4 +1,7 @@
-add_subdirectory(testserver)
+# The server part of this repo has been moved to Plasma kwayland-server since 5.73
+if(EXCLUDE_DEPRECATED_BEFORE_AND_AT VERSION_LESS 5.74.0)
+    add_subdirectory(testserver)
+endif()
 
 include(ECMMarkAsTest)
 

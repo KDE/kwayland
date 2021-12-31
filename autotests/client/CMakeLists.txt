@@ -1,26 +1,4 @@
 ########################################################
-# Test WaylandConnectionThread
-########################################################
-set( testWaylandConnectionThread_SRCS
-        test_wayland_connection_thread.cpp
-    )
-add_executable(testWaylandConnectionThread ${testWaylandConnectionThread_SRCS})
-target_link_libraries( testWaylandConnectionThread Qt${QT_MAJOR_VERSION}::Test Qt${QT_MAJOR_VERSION}::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
-add_test(NAME kwayland-testWaylandConnectionThread COMMAND testWaylandConnectionThread)
-ecm_mark_as_test(testWaylandConnectionThread)
-
-########################################################
-# Test WaylandRegistry
-########################################################
-set( testWaylandRegistry_SRCS
-        test_wayland_registry.cpp
-    )
-add_executable(testWaylandRegistry ${testWaylandRegistry_SRCS})
-target_link_libraries( testWaylandRegistry Qt${QT_MAJOR_VERSION}::Test Qt${QT_MAJOR_VERSION}::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
-add_test(NAME kwayland-testWaylandRegistry COMMAND testWaylandRegistry)
-ecm_mark_as_test(testWaylandRegistry)
-
-########################################################
 # Test WaylandFullscreenShell
 ########################################################
 if(Wayland_VERSION VERSION_GREATER "1.4.0")
@@ -36,6 +14,34 @@ if(Wayland_VERSION VERSION_GREATER "1.4.0")
   else()
     message(STATUS "The weston executable was not found. Some autotests will not be executed.")
   endif()
+endif()
+
+# The server part of this repo has been moved to Plasma kwayland-server since 5.73,
+# all tests that link to KF5::WaylandServer can't be built
+if(EXCLUDE_DEPRECATED_BEFORE_AND_AT VERSION_LESS 5.74.0)
+
+########################################################
+# Test WaylandConnectionThread
+########################################################
+set( testWaylandConnectionThread_SRCS
+        test_wayland_connection_thread.cpp
+    )
+add_executable(testWaylandConnectionThread ${testWaylandConnectionThread_SRCS})
+target_link_libraries( testWaylandConnectionThread Qt${QT_MAJOR_VERSION}::Test Qt${QT_MAJOR_VERSION}::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
+add_test(NAME kwayland-testWaylandConnectionThread COMMAND testWaylandConnectionThread)
+ecm_mark_as_test(testWaylandConnectionThread)
+
+########################################################
+# Test WaylandRegistry
+########################################################
+if(EXCLUDE_DEPRECATED_BEFORE_AND_AT VERSION_LESS 5.74.0)
+    set( testWaylandRegistry_SRCS
+            test_wayland_registry.cpp
+        )
+    add_executable(testWaylandRegistry ${testWaylandRegistry_SRCS})
+    target_link_libraries( testWaylandRegistry Qt${QT_MAJOR_VERSION}::Test Qt${QT_MAJOR_VERSION}::Gui KF5::WaylandClient KF5::WaylandServer Wayland::Client Wayland::Server)
+    add_test(NAME kwayland-testWaylandRegistry COMMAND testWaylandRegistry)
+    ecm_mark_as_test(testWaylandRegistry)
 endif()
 
 ########################################################
@@ -468,3 +474,4 @@ target_link_libraries( testXdgDecoration Qt${QT_MAJOR_VERSION}::Test Qt${QT_MAJO
 add_test(NAME kwayland-testXdgDecoration COMMAND testXdgDecoration)
 ecm_mark_as_test(testXdgDecoration)
 
+endif()

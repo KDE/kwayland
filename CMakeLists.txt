@@ -112,8 +112,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
 
 if (NOT WIN32)
     ecm_generate_pkgconfig_file(BASE_NAME KF5WaylandClient
-      INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}
-      DEPS Qt5Gui
+      INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}
+      DEPS Qt${QT_MAJOR_VERSION}Gui
     INSTALL)
 endif()
 

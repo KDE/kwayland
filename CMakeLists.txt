@@ -15,6 +15,7 @@ include(ECMGenerateExportHeader)
 include(CMakePackageConfigHelpers)
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
+include(ECMGeneratePkgConfigFile)
 include(CMakeFindFrameworks)
 include(ECMQtDeclareLoggingCategory)
 
@@ -108,6 +109,13 @@ install(EXPORT KF5WaylandTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE K
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF} COMPONENT Devel )
+
+if (NOT WIN32)
+    ecm_generate_pkgconfig_file(BASE_NAME KF5WaylandClient
+      INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}
+      DEPS Qt5Gui
+    INSTALL)
+endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

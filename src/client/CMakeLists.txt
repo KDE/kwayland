@@ -252,7 +252,8 @@ ecm_generate_export_header(KF5WaylandClient
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
 )
 
-target_include_directories(KF5WaylandClient INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client>")
+target_include_directories(KF5WaylandClient
+    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland;${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client>")
 
 target_link_libraries(KF5WaylandClient
     PUBLIC Qt${QT_MAJOR_VERSION}::Gui

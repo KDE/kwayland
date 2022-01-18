@@ -253,7 +253,8 @@ ecm_generate_export_header(KF5WaylandClient
 )
 
 target_include_directories(KF5WaylandClient
-    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland;${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client>")
+    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland>"
+)
 
 target_link_libraries(KF5WaylandClient
     PUBLIC Qt${QT_MAJOR_VERSION}::Gui
@@ -323,7 +324,7 @@ set(CLIENT_LIB_HEADERS
 
 install(FILES
   ${CLIENT_LIB_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/Client COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/KWayland/Client COMPONENT Devel
 )
 
 # make available to ecm_add_qch in parent folder

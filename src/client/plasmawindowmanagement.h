@@ -418,6 +418,12 @@ public:
      * @since 5.35
      */
     quint32 pid() const;
+    /**
+     * @returns The X11 resource name for this window.
+     * This is only set for X11 windows.
+     * @since 5.91
+     */
+    QString resourceName() const;
 
     /**
      * Requests to activate the window.
@@ -754,6 +760,13 @@ Q_SIGNALS:
      * @since 5.25
      **/
     void geometryChanged();
+
+    /**
+     * This signal is emitted whenever the resource name changes.
+     * @see resourceName
+     * @since 5.91
+     **/
+    void resourceNameChanged();
 
     /**
      * This signal is emitted when the window has entered a new virtual desktop.

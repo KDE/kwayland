@@ -91,6 +91,7 @@ public:
     QStringList plasmaActivities;
     QRect geometry;
     quint32 pid = 0;
+    QString resourceName;
     QString applicationMenuServiceName;
     QString applicationMenuObjectPath;
 
@@ -98,6 +99,7 @@ private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
     static void appIdChangedCallback(void *data, org_kde_plasma_window *window, const char *app_id);
     static void pidChangedCallback(void *data, org_kde_plasma_window *window, uint32_t pid);
+    static void resourceNameChangedCallback(void *data, org_kde_plasma_window *window, const char *resourceName);
     static void stateChangedCallback(void *data, org_kde_plasma_window *window, uint32_t state);
     static void virtualDesktopChangedCallback(void *data, org_kde_plasma_window *window, int32_t number);
     static void themedIconNameChangedCallback(void *data, org_kde_plasma_window *window, const char *name);
@@ -436,6 +438,7 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     appmenuChangedCallback,
     activityEnteredCallback,
     activityLeftCallback,
+    resourceNameChangedCallback,
 };
 
 void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char *service_name, const char *object_path)
@@ -532,6 +535,18 @@ void PlasmaWindow::Private::pidChangedCallback(void *data, org_kde_plasma_window
         return;
     }
     p->pid = pid;
+}
+
+void PlasmaWindow::Private::resourceNameChangedCallback(void *data, org_kde_plasma_window *window, const char *resourceName)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    const QString s = QString::fromUtf8(resourceName);
+    if (s == p->resourceName) {
+        return;
+    }
+    p->resourceName = s;
+    Q_EMIT p->q->resourceNameChanged();
 }
 
 void PlasmaWindow::Private::virtualDesktopChangedCallback([[maybe_unused]] void *data,
@@ -923,6 +938,11 @@ QString PlasmaWindow::appId() const
 quint32 PlasmaWindow::pid() const
 {
     return d->pid;
+}
+
+QString PlasmaWindow::resourceName() const
+{
+    return d->resourceName;
 }
 
 QString PlasmaWindow::title() const

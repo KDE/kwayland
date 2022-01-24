@@ -219,7 +219,7 @@ void TestWaylandRegistry::testCreate()
     QVERIFY(!registry.isValid());
 }
 
-#define TEST_BIND(iface, signalName, bindMethod, destroyFunction)                                                                                              \
+#define TEST_BIND_NOCHECK_BIND_INVALID_VERSION(iface, signalName, bindMethod, destroyFunction)                                                                 \
     KWayland::Client::ConnectionThread connection;                                                                                                             \
     QSignalSpy connectedSpy(&connection, SIGNAL(connected()));                                                                                                 \
     connection.setSocketName(s_socketName);                                                                                                                    \
@@ -257,10 +257,13 @@ void TestWaylandRegistry::testCreate()
     /* registry should know about the interface now */                                                                                                         \
     QVERIFY(registry.hasInterface(iface));                                                                                                                     \
     QVERIFY(!registry.bindMethod(name + 1, version));                                                                                                          \
-    QVERIFY(registry.bindMethod(name, version + 1));                                                                                                           \
     auto *c = registry.bindMethod(name, version);                                                                                                              \
     QVERIFY(c);                                                                                                                                                \
     destroyFunction(c);
+
+#define TEST_BIND(iface, signalName, bindMethod, destroyFunction)                                                                                              \
+    TEST_BIND_NOCHECK_BIND_INVALID_VERSION(iface, signalName, bindMethod, destroyFunction)                                                                     \
+    QVERIFY(registry.bindMethod(name, version + 1));
 
 void TestWaylandRegistry::testBindCompositor()
 {
@@ -310,7 +313,11 @@ void TestWaylandRegistry::testBindBlurManager()
 
 void TestWaylandRegistry::testBindContrastManager()
 {
-    TEST_BIND(KWayland::Client::Registry::Interface::Contrast, SIGNAL(contrastAnnounced(quint32, quint32)), bindContrastManager, free)
+    // Max supported version in KWayland::Client is not same as the version of KWayland::Server.
+    TEST_BIND_NOCHECK_BIND_INVALID_VERSION(KWayland::Client::Registry::Interface::Contrast,
+                                           SIGNAL(contrastAnnounced(quint32, quint32)),
+                                           bindContrastManager,
+                                           free)
 }
 
 void TestWaylandRegistry::testBindSlideManager()

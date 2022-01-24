@@ -57,6 +57,7 @@ private Q_SLOTS:
     void testIcon();
     void testPid();
     void testApplicationMenu();
+    void testUnmapAndWindowList();
 
     void cleanup();
 
@@ -239,6 +240,20 @@ void TestWindowManagement::cleanup()
 
     delete m_display;
     m_display = nullptr;
+}
+
+void TestWindowManagement::testUnmapAndWindowList()
+{
+    // Ensure it is called before signal spy.
+    connect(m_window, &KWayland::Client::PlasmaWindow::unmapped, this, [this]() {
+        QVERIFY(!m_windowManagement->windows().contains(m_window));
+    });
+    QSignalSpy unmappedSpy(m_window, &KWayland::Client::PlasmaWindow::unmapped);
+    QVERIFY(unmappedSpy.isValid());
+    QSignalSpy destroyedSpy(m_window, &QObject::destroyed);
+    QVERIFY(destroyedSpy.isValid());
+    m_windowInterface->unmap();
+    QVERIFY(unmappedSpy.wait());
 }
 
 void TestWindowManagement::testUseAfterUnmap()

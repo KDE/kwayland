@@ -826,21 +826,21 @@ void PlasmaWindowModelTest::testCreateWithUnmappedWindow()
     // make sure the resource is properly created on server side
     QCoreApplication::instance()->processEvents(QEventLoop::WaitForMoreEvents);
 
+    auto model = m_pw->createWindowModel();
+    QVERIFY(model);
+    QCOMPARE(model->rowCount(), 1);
     QSignalSpy unmappedSpy(window, &PlasmaWindow::unmapped);
     QVERIFY(unmappedSpy.isValid());
     QSignalSpy destroyedSpy(window, &PlasmaWindow::destroyed);
     QVERIFY(destroyedSpy.isValid());
+    QSignalSpy rowRemovedSpy(model, &PlasmaWindowModel::rowsRemoved);
     // unmap should be triggered, but not yet the destroyed
     w->unmap();
     QVERIFY(unmappedSpy.wait());
     QVERIFY(destroyedSpy.isEmpty());
 
-    auto model = m_pw->createWindowModel();
-    QVERIFY(model);
-    QCOMPARE(model->rowCount(), 1);
-    QSignalSpy rowRemovedSpy(model, &PlasmaWindowModel::rowsRemoved);
-    QVERIFY(rowRemovedSpy.isValid());
-    QVERIFY(rowRemovedSpy.wait());
+    QVERIFY(destroyedSpy.wait());
+    QVERIFY(rowRemovedSpy.count() || rowRemovedSpy.wait());
     QCOMPARE(rowRemovedSpy.count(), 1);
     QCOMPARE(model->rowCount(), 0);
     QCOMPARE(destroyedSpy.count(), 1);

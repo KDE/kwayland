@@ -237,20 +237,23 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
     PlasmaWindow *window = new PlasmaWindow(q, id, internalId, uuid);
     window->d->wm = q;
     windows << window;
-    QObject::connect(window, &QObject::destroyed, q, [this, window] {
+
+    const auto windowRemoved = [this, window] {
         windows.removeAll(window);
         if (activeWindow == window) {
             activeWindow = nullptr;
             Q_EMIT q->activeWindowChanged();
         }
-    });
-    QObject::connect(window, &PlasmaWindow::unmapped, q, [this, window] {
-        if (activeWindow == window) {
-            activeWindow = nullptr;
-            Q_EMIT q->activeWindowChanged();
-        }
-    });
+    };
+
+    QObject::connect(window, &QObject::destroyed, q, windowRemoved);
+    // unmapped is emitted earlier than QObject::destroyed. We want to update windows earlier to ensure other slot will see the up to date value of
+    // PlasmaWindowManagement::windows().
+    QObject::connect(window, &PlasmaWindow::unmapped, q, windowRemoved);
     QObject::connect(window, &PlasmaWindow::activeChanged, q, [this, window] {
+        if (window->d->unmapped) {
+            return;
+        }
         if (window->isActive()) {
             if (activeWindow == window) {
                 return;

@@ -481,30 +481,30 @@ void Generator::checkEnd()
 
 void Generator::startAuthorNameProcess()
 {
-    QProcess *git = new QProcess(this);
-    git->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.name")});
-    git->setProgram(QStringLiteral("git"));
-    connect(git, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, git] {
+    QProcess *proc = new QProcess(this);
+    proc->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.name")});
+    proc->setProgram(QStringLiteral("git"));
+    connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, proc] {
         QMutexLocker locker(&m_mutex);
-        m_authorName = QString::fromLocal8Bit(git->readAllStandardOutput()).trimmed();
-        git->deleteLater();
+        m_authorName = QString::fromLocal8Bit(proc->readAllStandardOutput()).trimmed();
+        proc->deleteLater();
         m_waitCondition.wakeAll();
     });
-    git->start();
+    proc->start();
 }
 
 void Generator::startAuthorEmailProcess()
 {
-    QProcess *git = new QProcess(this);
-    git->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.email")});
-    git->setProgram(QStringLiteral("git"));
-    connect(git, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, git] {
+    QProcess *proc = new QProcess(this);
+    proc->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.email")});
+    proc->setProgram(QStringLiteral("git"));
+    connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, proc] {
         QMutexLocker locker(&m_mutex);
-        m_authorEmail = QString::fromLocal8Bit(git->readAllStandardOutput()).trimmed();
-        git->deleteLater();
+        m_authorEmail = QString::fromLocal8Bit(proc->readAllStandardOutput()).trimmed();
+        proc->deleteLater();
         m_waitCondition.wakeAll();
     });
-    git->start();
+    proc->start();
 }
 
 void Generator::generateCopyrightHeader()

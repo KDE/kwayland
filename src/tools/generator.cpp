@@ -479,11 +479,24 @@ void Generator::checkEnd()
     }
 }
 
+static QString findGitExec()
+{
+    const QString exec = QStandardPaths::findExecutable(QStringLiteral("git"));
+    if (exec.isEmpty()) {
+        qWarning() << "Could not find git executable in PATH.";
+    }
+    return exec;
+}
+
 void Generator::startAuthorNameProcess()
 {
+    const QString exec = findGitExec();
+    if (exec.isEmpty()) {
+        return;
+    }
     QProcess *proc = new QProcess(this);
     proc->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.name")});
-    proc->setProgram(QStringLiteral("git"));
+    proc->setProgram(exec);
     connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, proc] {
         QMutexLocker locker(&m_mutex);
         m_authorName = QString::fromLocal8Bit(proc->readAllStandardOutput()).trimmed();
@@ -495,9 +508,13 @@ void Generator::startAuthorNameProcess()
 
 void Generator::startAuthorEmailProcess()
 {
+    const QString exec = findGitExec();
+    if (exec.isEmpty()) {
+        return;
+    }
     QProcess *proc = new QProcess(this);
     proc->setArguments(QStringList{QStringLiteral("config"), QStringLiteral("--get"), QStringLiteral("user.email")});
-    proc->setProgram(QStringLiteral("git"));
+    proc->setProgram(exec);
     connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [this, proc] {
         QMutexLocker locker(&m_mutex);
         m_authorEmail = QString::fromLocal8Bit(proc->readAllStandardOutput()).trimmed();

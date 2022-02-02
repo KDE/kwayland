@@ -43,7 +43,9 @@ void TestWaylandFullscreenShell::init()
     QVERIFY(!m_westonProcess);
     // starts weston
     m_westonProcess = new QProcess(this);
-    m_westonProcess->setProgram(QStringLiteral("weston"));
+    const QString exec = QStandardPaths::findExecutable(QStringLiteral("weston"));
+    QVERIFY(!exec.isEmpty());
+    m_westonProcess->setProgram(exec);
 
     m_westonProcess->setArguments(QStringList(
         {QStringLiteral("--socket=%1").arg(s_socketName), QStringLiteral("--backend=headless-backend.so"), QStringLiteral("--shell=fullscreen-shell.so")}));

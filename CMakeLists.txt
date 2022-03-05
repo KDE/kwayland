@@ -37,11 +37,9 @@ set(REQUIRED_QT_VERSION 5.15.2)
 find_package(Qt${QT_MAJOR_VERSION}Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
 find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent WaylandClient)
 
-# With Qt6 use qt_generate_wayland_protocol_{client,server}_sources instead of
-# ecm_add_qtwayland_{client,server}_protocol (from ECM's QtWaylandScanner)
-if (QT_MAJOR_VERSION STREQUAL "6")
-    find_package(Qt6WaylandCompositor CONFIG REQUIRED)
-else()
+# With Qt6 use qt_generate_wayland_protocol_client_sources instead of
+# ecm_add_qtwayland_client_protocol (from ECM's QtWaylandScanner)
+if (QT_MAJOR_VERSION STREQUAL "5")
     find_package(QtWaylandScanner REQUIRED)
 endif()
 

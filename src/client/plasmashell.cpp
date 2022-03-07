@@ -239,6 +239,11 @@ void PlasmaShellSurface::setPosition(const QPoint &point)
     org_kde_plasma_surface_set_position(d->surface, point.x(), point.y());
 }
 
+void PlasmaShellSurface::openUnderCursor()
+{
+    org_kde_plasma_surface_open_under_cursor(d->surface);
+}
+
 void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
 {
     Q_ASSERT(isValid());

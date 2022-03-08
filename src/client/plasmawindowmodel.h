@@ -8,7 +8,7 @@
 
 #include <QAbstractListModel>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 namespace KWayland
 {

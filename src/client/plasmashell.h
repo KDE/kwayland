@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QSize>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct wl_surface;
 struct org_kde_plasma_shell;

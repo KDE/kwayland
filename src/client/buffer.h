@@ -10,7 +10,7 @@
 #include <QSize>
 #include <QWeakPointer>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct wl_buffer;
 

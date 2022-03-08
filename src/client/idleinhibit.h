@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct zwp_idle_inhibit_manager_v1;
 struct zwp_idle_inhibitor_v1;

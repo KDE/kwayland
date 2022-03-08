@@ -10,7 +10,7 @@
 
 #include <QObject>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct zxdg_exporter_v2;
 struct zxdg_importer_v2;

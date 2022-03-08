@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct _wl_fullscreen_shell;
 struct wl_output;

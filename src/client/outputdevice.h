@@ -12,7 +12,7 @@
 #include <QSize>
 #include <QVector>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct org_kde_kwin_outputdevice;
 class QPoint;

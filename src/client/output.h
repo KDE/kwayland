@@ -10,7 +10,7 @@
 #include <QPointer>
 #include <QSize>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct wl_output;
 class QPoint;

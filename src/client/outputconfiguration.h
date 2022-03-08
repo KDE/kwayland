@@ -10,8 +10,8 @@
 #include <QPoint>
 #include <QVector>
 
+#include "KWayland/Client/kwaylandclient_export.h"
 #include "outputdevice.h"
-#include <KWayland/Client/kwaylandclient_export.h>
 
 struct org_kde_kwin_outputmanagement;
 struct org_kde_kwin_outputconfiguration;

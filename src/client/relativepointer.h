@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct zwp_relative_pointer_manager_v1;
 struct zwp_relative_pointer_v1;

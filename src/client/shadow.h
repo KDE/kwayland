@@ -12,7 +12,7 @@
 #include <QPoint>
 #include <QSize>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct wl_buffer;
 struct org_kde_kwin_shadow;

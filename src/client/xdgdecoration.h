@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct zxdg_decoration_manager_v1;
 struct zxdg_toplevel_decoration_v1;

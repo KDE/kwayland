@@ -14,7 +14,7 @@
 #include <QSize>
 #include <QColor>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct org_kde_kwin_contrast;
 struct org_kde_kwin_contrast_manager;

@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QPointer>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct zwp_pointer_gestures_v1;
 struct zwp_pointer_gesture_swipe_v1;

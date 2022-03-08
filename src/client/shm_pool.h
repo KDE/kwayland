@@ -8,8 +8,8 @@
 
 #include <QObject>
 
+#include "KWayland/Client/kwaylandclient_export.h"
 #include "buffer.h"
-#include <KWayland/Client/kwaylandclient_export.h>
 
 class QImage;
 class QSize;

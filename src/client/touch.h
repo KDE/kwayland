@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QPoint>
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 
 struct wl_touch;
 

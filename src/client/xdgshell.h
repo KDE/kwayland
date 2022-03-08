@@ -6,7 +6,7 @@
 #ifndef KWAYLAND_CLIENT_XDG_SHELL_H
 #define KWAYLAND_CLIENT_XDG_SHELL_H
 
-#include <KWayland/Client/kwaylandclient_export.h>
+#include "KWayland/Client/kwaylandclient_export.h"
 #include <QObject>
 #include <QRect>
 #include <QSize>

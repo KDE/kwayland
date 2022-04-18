@@ -421,7 +421,7 @@ public:
     /**
      * @returns The X11 resource name for this window.
      * This is only set for X11 windows.
-     * @since 5.91
+     * @since 5.94
      */
     QString resourceName() const;
 
@@ -764,7 +764,7 @@ Q_SIGNALS:
     /**
      * This signal is emitted whenever the resource name changes.
      * @see resourceName
-     * @since 5.91
+     * @since 5.94
      **/
     void resourceNameChanged();
 

@@ -663,15 +663,13 @@ static int readData(int fd, QByteArray &data)
     int n;
     while (true) {
         n = QT_READ(fd, buf, sizeof buf);
-        if (n == -1 && (errno == EAGAIN) && ++retryCount < 1000) {
+        if (n > 0) {
+            data.append(buf, n);
+        } else if (n == -1 && (errno == EAGAIN) && ++retryCount < 1000) {
             usleep(1000);
         } else {
             break;
         }
-    }
-    if (n > 0) {
-        data.append(buf, n);
-        n = readData(fd, data);
     }
     return n;
 }

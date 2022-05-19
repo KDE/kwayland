@@ -62,7 +62,7 @@ include(KDECMakeSettings)
 include(KDEGitCommitHooks)
 include(CheckIncludeFile)
 
-find_package(PlasmaWaylandProtocols 1.4.0 CONFIG)
+find_package(PlasmaWaylandProtocols 1.7.0 CONFIG)
 set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 
 # adjusting CMAKE_C_FLAGS to get wayland protocols to compile

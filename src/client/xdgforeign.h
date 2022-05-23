@@ -32,19 +32,19 @@ class XdgImported;
  * This class provides a convenient wrapper for the zxdg_exporter_v2 interface.
  *
  * To use this class one needs to interact with the Registry. There are two
- * possible ways to create the  interface:
+ * possible ways to create the XdgExporter interface:
  * @code
  *  *c = registry->create(name, version);
  * @endcode
  *
- * This creates the  and sets it up directly. As an alternative this
+ * This creates the XdgExporter and sets it up directly. As an alternative this
  * can also be done in a more low level way:
  * @code
  *  *c = new ;
  * c->setup(registry->bind(name, version));
  * @endcode
  *
- * The  can be used as a drop-in replacement for any zxdg_exporter_v2
+ * The XdgExporter can be used as a drop-in replacement for any zxdg_exporter_v2
  * pointer as it provides matching cast operators.
  *
  * @see Registry
@@ -56,7 +56,7 @@ public:
     ~XdgExporter() override;
 
     /**
-     * Setup this  to manage the @p .
+     * Setup this XdgExporter to manage the @p .
      * When using Registry::create there is no need to call this
      * method.
      **/
@@ -67,7 +67,7 @@ public:
     bool isValid() const;
     /**
      * Releases the zxdg_exporter_v2 interface.
-     * After the interface has been released the  instance is no
+     * After the interface has been released the XdgExporter instance is no
      * longer valid and can be setup with another zxdg_exporter_v2 interface.
      **/
     void release();
@@ -115,7 +115,7 @@ Q_SIGNALS:
     /**
      * The corresponding global for this interface on the Registry got removed.
      *
-     * This signal gets only emitted if the  got created by
+     * This signal gets only emitted if the XdgExporter got created by
      * Registry::create
      **/
     void removed();
@@ -132,19 +132,19 @@ protected:
  * This class provides a convenient wrapper for the zxdg_importer_v2 interface.
  *
  * To use this class one needs to interact with the Registry. There are two
- * possible ways to create the  interface:
+ * possible ways to create the XdgImporter interface:
  * @code
  *  *c = registry->create(name, version);
  * @endcode
  *
- * This creates the  and sets it up directly. As an alternative this
+ * This creates the XdgImporter and sets it up directly. As an alternative this
  * can also be done in a more low level way:
  * @code
  *  *c = new ;
  * c->setup(registry->bind(name, version));
  * @endcode
  *
- * The  can be used as a drop-in replacement for any zxdg_importer_v2
+ * The XdgImporter can be used as a drop-in replacement for any zxdg_importer_v2
  * pointer as it provides matching cast operators.
  *
  * @see Registry
@@ -156,7 +156,7 @@ public:
     ~XdgImporter() override;
 
     /**
-     * Setup this  to manage the @p .
+     * Setup this XdgImporter to manage the @p .
      * When using Registry::create there is no need to call this
      * method.
      **/
@@ -167,7 +167,7 @@ public:
     bool isValid() const;
     /**
      * Releases the zxdg_importer_v2 interface.
-     * After the interface has been released the  instance is no
+     * After the interface has been released the XdgImporter instance is no
      * longer valid and can be setup with another zxdg_importer_v2 interface.
      **/
     void release();
@@ -220,7 +220,7 @@ Q_SIGNALS:
     /**
      * The corresponding global for this interface on the Registry got removed.
      *
-     * This signal gets only emitted if the  got created by
+     * This signal gets only emitted if the XdgImporter got created by
      * Registry::create
      **/
     void removed();
@@ -238,7 +238,7 @@ public:
     ~XdgExported() override;
 
     /**
-     * Setup this  to manage the @p .
+     * Setup this XdgExported to manage the @p .
      * When using ::create there is no need to call this
      * method.
      **/
@@ -249,7 +249,7 @@ public:
     bool isValid() const;
     /**
      * Releases the zxdg_exported_v2 interface.
-     * After the interface has been released the  instance is no
+     * After the interface has been released the XdgExported instance is no
      * longer valid and can be setup with another zxdg_exported_v2 interface.
      **/
     void release();
@@ -302,7 +302,7 @@ public:
     ~XdgImported() override;
 
     /**
-     * Setup this  to manage the @p .
+     * Setup this XdgImported to manage the @p .
      * When using ::create there is no need to call this
      * method.
      **/
@@ -313,7 +313,7 @@ public:
     bool isValid() const;
     /**
      * Releases the zxdg_imported_v2 interface.
-     * After the interface has been released the  instance is no
+     * After the interface has been released the XdgImported instance is no
      * longer valid and can be setup with another zxdg_imported_v2 interface.
      **/
     void release();

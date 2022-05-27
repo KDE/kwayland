@@ -155,6 +155,8 @@ int main(int argc, char **argv)
     parser.addOption(notificationOption);
     QCommandLineOption criticalNotificationOption(QStringLiteral("criticalNotification"));
     parser.addOption(criticalNotificationOption);
+    QCommandLineOption appletPopupOption(QStringLiteral("appletPopup"));
+    parser.addOption(appletPopupOption);
     QCommandLineOption panelOption(QStringLiteral("panel"));
     parser.addOption(panelOption);
     QCommandLineOption desktopOption(QStringLiteral("desktop"));
@@ -184,6 +186,8 @@ int main(int argc, char **argv)
         client.setRole(PlasmaShellSurface::Role::OnScreenDisplay);
     } else if (parser.isSet(tooltipOption)) {
         client.setRole(PlasmaShellSurface::Role::ToolTip);
+    } else if (parser.isSet(appletPopupOption)) {
+        client.setRole(PlasmaShellSurface::Role::AppletPopup);
     }
     client.setSkipTaskbar(parser.isSet(skipTaskbarOption));
     client.setSkipSwitcher(parser.isSet(skipSwitcherOption));

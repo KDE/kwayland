@@ -234,6 +234,7 @@ public:
         Notification, ///< The Surface represents a notification @since 5.24
         ToolTip, ///< The Surface represents a tooltip @since 5.24
         CriticalNotification, ///< The Surface represents a critical notification, like battery is running out @since 5.58
+        AppletPopup, ///< The Surface used for applets
     };
     /**
      * Changes the requested Role to @p role.

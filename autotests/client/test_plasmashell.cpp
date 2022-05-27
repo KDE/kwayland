@@ -146,6 +146,7 @@ void TestPlasmaShell::testRole_data()
     QTest::newRow("notification") << PlasmaShellSurface::Role::Notification << PlasmaShellSurfaceInterface::Role::Notification;
     QTest::newRow("tooltip") << PlasmaShellSurface::Role::ToolTip << PlasmaShellSurfaceInterface::Role::ToolTip;
     QTest::newRow("criticalnotification") << PlasmaShellSurface::Role::CriticalNotification << PlasmaShellSurfaceInterface::Role::CriticalNotification;
+    QTest::newRow("appletpopup") << PlasmaShellSurface::Role::AppletPopup << PlasmaShellSurfaceInterface::Role::AppletPopup;
 }
 
 void TestPlasmaShell::testRole()

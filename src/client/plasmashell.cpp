@@ -275,6 +275,9 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
             wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_CRITICALNOTIFICATION;
         }
         break;
+    case Role::AppletPopup:
+        wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_APPLETPOPUP;
+        break;
     default:
         Q_UNREACHABLE();
         break;

@@ -96,6 +96,7 @@ public:
         Notification, ///< The surface represents a notification @since 5.24
         ToolTip, ///< The surface represents a tooltip @since 5.24
         CriticalNotification, ///< The surface represents a critical notification, like battery is running out @since 5.58
+        AppletPopup, ///< The surface represents an applet
     };
     /**
      * @returns The requested role, default value is @c Role::Normal.

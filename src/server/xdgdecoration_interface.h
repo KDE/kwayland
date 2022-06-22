@@ -52,7 +52,7 @@ public:
         ServerSide,
     };
 
-    Q_ENUM(Mode);
+    Q_ENUM(Mode)
 
     ~XdgDecorationInterface() override;
 

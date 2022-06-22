@@ -27,7 +27,7 @@ public:
         NumLock = 1,
         ScrollLock = 2,
     };
-    Q_ENUM(Key);
+    Q_ENUM(Key)
     enum State {
         Unlocked = 0,
         Latched = 1,

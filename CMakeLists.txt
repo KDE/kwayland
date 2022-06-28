@@ -10,17 +10,21 @@ set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Mod
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
-include(FeatureSummary)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
+
+include(KDEGitCommitHooks)
 include(ECMGenerateExportHeader)
-include(CMakePackageConfigHelpers)
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
 include(ECMGeneratePkgConfigFile)
-include(CMakeFindFrameworks)
 include(ECMQtDeclareLoggingCategory)
-
 include(ECMPoQmTools)
 include(ECMAddQch)
+include(CMakeFindFrameworks)
+include(CMakePackageConfigHelpers)
+include(CheckIncludeFile)
 
 set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control how much of deprecated API is built [default=0].")
 
@@ -55,12 +59,6 @@ set_package_properties(WaylandProtocols PROPERTIES TYPE REQUIRED)
 
 find_package(EGL)
 set_package_properties(EGL PROPERTIES TYPE REQUIRED)
-
-include(KDEInstallDirs)
-include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
-include(KDECMakeSettings)
-include(KDEGitCommitHooks)
-include(CheckIncludeFile)
 
 find_package(PlasmaWaylandProtocols 1.7.0 CONFIG)
 set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)

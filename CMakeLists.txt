@@ -20,6 +20,7 @@ include(ECMSetupVersion)
 include(ECMGenerateHeaders)
 include(ECMGeneratePkgConfigFile)
 include(ECMQtDeclareLoggingCategory)
+include(ECMDeprecationSettings)
 include(ECMPoQmTools)
 include(ECMAddQch)
 include(CMakeFindFrameworks)
@@ -66,7 +67,10 @@ set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 # adjusting CMAKE_C_FLAGS to get wayland protocols to compile
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f02)
+ecm_set_disabled_deprecation_versions(
+    QT 5.15.2
+)
+
 # Subdirectories
 ecm_install_po_files_as_qm(po)
 

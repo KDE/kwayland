@@ -110,6 +110,7 @@ public:
          * @since 5.73
          */
         Uuid,
+        LastRole,
     };
     Q_ENUM(AdditionalRoles)
 
@@ -125,6 +126,8 @@ public:
      * Returns an index with internalPointer() pointing to a PlasmaWindow instance.
      **/
     QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+
+    QMap<int, QVariant> itemData(const QModelIndex &index) const override;
 
     /**
      * Request the window at this model row index be activated.

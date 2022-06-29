@@ -275,6 +275,14 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
 
     return QVariant();
 }
+QMap<int, QVariant> PlasmaWindowModel::itemData(const QModelIndex &index) const
+{
+    QMap<int, QVariant> ret = QAbstractItemModel::itemData(index);
+    for (int role = AppId; role < LastRole; ++role) {
+        ret.insert(role, data(index, role));
+    }
+    return ret;
+}
 
 int PlasmaWindowModel::rowCount(const QModelIndex &parent) const
 {

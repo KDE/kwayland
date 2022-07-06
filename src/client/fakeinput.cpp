@@ -216,6 +216,36 @@ void FakeInput::requestKeyboardKeyRelease(quint32 linuxKey)
     org_kde_kwin_fake_input_keyboard_key(d->manager, linuxKey, WL_KEYBOARD_KEY_STATE_RELEASED);
 }
 
+void FakeInput::requestKeyboardKeySymPress(quint32 keysym)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_KEYBOARD_KEYSYM_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_keyboard_keysym(d->manager, keysym, WL_KEYBOARD_KEY_STATE_PRESSED);
+}
+
+void FakeInput::requestKeyboardKeySymRelease(quint32 keysym)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_KEYBOARD_KEYSYM_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_keyboard_keysym(d->manager, keysym, WL_KEYBOARD_KEY_STATE_RELEASED);
+}
+
+void FakeInput::requestKeyboardMap(int fd, int size)
+{
+    Q_ASSERT(d->manager.isValid());
+    if (wl_proxy_get_version(d->manager) < ORG_KDE_KWIN_FAKE_INPUT_KEYBOARD_KEYMAP_SINCE_VERSION) {
+        return;
+    }
+
+    org_kde_kwin_fake_input_keyboard_keymap(d->manager, fd, size);
+}
+
 FakeInput::operator org_kde_kwin_fake_input *() const
 {
     return d->manager;

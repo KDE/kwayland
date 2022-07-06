@@ -208,6 +208,28 @@ public:
      **/
     void requestKeyboardKeyRelease(quint32 linuxKey);
 
+    /**
+     * Request a keyboard keysym press.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     *
+     * @since 5.97
+     **/
+    void requestKeyboardKeySymPress(quint32 linuxKey);
+    /**
+     * Request a keyboard keysym release.
+     * @param linuxButton The button code as defined in linux/input-event-codes.h
+     *
+     * @since 5.97
+     **/
+    void requestKeyboardKeySymRelease(quint32 linuxKey);
+
+    /**
+     * Request a keymap to be used when decoding keysyms
+     *
+     * @since 5.97
+     */
+    void requestKeyboardMap(int fd, int size);
+
     operator org_kde_kwin_fake_input *();
     operator org_kde_kwin_fake_input *() const;
 

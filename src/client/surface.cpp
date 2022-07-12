@@ -6,12 +6,12 @@
 #include "surface.h"
 #include "output.h"
 #include "region.h"
+#include "surface_p.h"
 #include "wayland_pointer_p.h"
 
 #include <QGuiApplication>
 #include <QRegion>
 #include <QVector>
-#include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -19,34 +19,6 @@ namespace KWayland
 {
 namespace Client
 {
-class Q_DECL_HIDDEN Surface::Private
-{
-public:
-    Private(Surface *q);
-    void setupFrameCallback();
-
-    WaylandPointer<wl_surface, wl_surface_destroy> surface;
-    bool frameCallbackInstalled = false;
-    QSize size;
-    bool foreign = false;
-    qint32 scale = 1;
-    QVector<Output *> outputs;
-
-    void setup(wl_surface *s);
-
-    static QList<Surface *> s_surfaces;
-
-private:
-    void handleFrameCallback();
-    static void frameCallback(void *data, wl_callback *callback, uint32_t time);
-    static void enterCallback(void *data, wl_surface *wl_surface, wl_output *output);
-    static void leaveCallback(void *data, wl_surface *wl_surface, wl_output *output);
-    void removeOutput(Output *o);
-
-    Surface *q;
-    static const wl_callback_listener s_listener;
-    static const wl_surface_listener s_surfaceListener;
-};
 
 QList<Surface *> Surface::Private::s_surfaces = QList<Surface *>();
 
@@ -68,44 +40,6 @@ Surface::~Surface()
     release();
 }
 
-Surface *Surface::fromWindow(QWindow *window)
-{
-    if (!window) {
-        return nullptr;
-    }
-    QPlatformNativeInterface *native = qApp->platformNativeInterface();
-    if (!native) {
-        return nullptr;
-    }
-    window->create();
-    wl_surface *s = reinterpret_cast<wl_surface *>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
-    if (!s) {
-        return nullptr;
-    }
-    if (auto surface = get(s)) {
-        return surface;
-    }
-    Surface *surface = new Surface(window);
-    surface->d->surface.setup(s, true);
-    return surface;
-}
-
-Surface *Surface::fromQtWinId(WId wid)
-{
-    QWindow *window = nullptr;
-
-    for (auto win : qApp->allWindows()) {
-        if (win->winId() == wid) {
-            window = win;
-            break;
-        }
-    }
-
-    if (!window) {
-        return nullptr;
-    }
-    return fromWindow(window);
-}
 
 void Surface::release()
 {

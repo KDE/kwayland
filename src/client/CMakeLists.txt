@@ -1,6 +1,7 @@
 remove_definitions(-DQT_NO_CAST_FROM_BYTEARRAY)
 remove_definitions(-DQT_NO_CAST_FROM_ASCII)
 remove_definitions(-DQT_NO_CAST_TO_ASCII)
+remove_definitions(-DQT_NO_KEYWORDS)
 
 # needed to access QPA
 include_directories(SYSTEM ${Qt${QT_MAJOR_VERSION}Gui_PRIVATE_INCLUDE_DIRS})
@@ -238,7 +239,10 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME remote-access
 )
 
-add_library(KF5WaylandClient ${CLIENT_LIB_SRCS})
+set_source_files_properties(${CLIENT_LIB_SRCS} PROPERTIES
+    COMPILE_FLAGS -DQT_NO_KEYWORDS)
+
+add_library(KF5WaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
 add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
 ecm_generate_export_header(KF5WaylandClient
     BASE_NAME
@@ -260,7 +264,16 @@ target_link_libraries(KF5WaylandClient
     PUBLIC Qt${QT_MAJOR_VERSION}::Gui
     PRIVATE Wayland::Client
         Qt${QT_MAJOR_VERSION}::Concurrent
+        Qt${QT_MAJOR_VERSION}::WaylandClientPrivate
 )
+
+if (QT_MAJOR_VERSION EQUAL "5")
+    target_link_libraries(KF5WaylandClient
+        PRIVATE
+            Qt::XkbCommonSupportPrivate
+            PkgConfig::XKBCommon
+    )
+endif()
 
 set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}

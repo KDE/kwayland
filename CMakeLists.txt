@@ -40,12 +40,16 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 # Dependencies
 set(REQUIRED_QT_VERSION 5.15.2)
 find_package(Qt${QT_MAJOR_VERSION}Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
-find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent WaylandClient)
+find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent)
+find_package(Qt${QT_MAJOR_VERSION}WaylandClient ${REQUIRED_QT_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
 
 # With Qt6 use qt_generate_wayland_protocol_client_sources instead of
 # ecm_add_qtwayland_client_protocol (from ECM's QtWaylandScanner)
 if (QT_MAJOR_VERSION STREQUAL "5")
     find_package(QtWaylandScanner REQUIRED)
+    find_package(Qt5XkbCommonSupport REQUIRED) # Needed by Qt5::WaylandClientPrivate
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(XKBCommon REQUIRED IMPORTED_TARGET xkbcommon)
 endif()
 
 find_package(Wayland 1.15 COMPONENTS Client Server)

@@ -53,7 +53,9 @@ public:
      * @c nullptr as well as for not created QWindows.
      *
      * The returned Surface will be fully setup, but won't be released. It gets automatically
-     * destroyed together with the @p window.
+     * destroyed together with the @p window or when the internal wl_surface get destroyed.
+     * QtWayland may destroy wl_surface when hiding the window, you should always call
+     * this function instead of holding the returned pointer.
      * @since 5.4
      **/
     static Surface *fromWindow(QWindow *window);
@@ -64,9 +66,10 @@ public:
      * @c nullptr as well as for not created QWindows.
      *
      * The returned Surface will be fully setup, but won't be released. It gets automatically
-     * destroyed together with the QWindow corresponding
+     * destroyed together with the QWindow or the wl_surface corresponding.
      * the @p wid.
      * @since 5.5
+     * @see fromWindow
      **/
     static Surface *fromQtWinId(WId wid);
 

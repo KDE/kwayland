@@ -18,6 +18,8 @@
 // Wayland
 #include <wayland-client-protocol.h>
 
+#include <poll.h>
+
 namespace KWayland
 {
 namespace Client
@@ -109,7 +111,25 @@ void ConnectionThread::Private::setupSocketNotifier()
         if (!display) {
             return;
         }
-        if (wl_display_dispatch(display) == -1) {
+        // first dispatch any pending events on the default queue
+        while (wl_display_prepare_read(display) != 0) {
+            wl_display_dispatch_pending(display);
+        }
+        wl_display_flush(display);
+        // then check if there are any new events waiting to be read
+        struct pollfd pfd;
+        pfd.fd = wl_display_get_fd(display);
+        pfd.events = POLLIN;
+        int ret = poll(&pfd, 1, 0);
+        if (ret > 0) {
+            // if yes, read them now
+            wl_display_read_events(display);
+        } else {
+            wl_display_cancel_read(display);
+        }
+        // finally, dispatch the default queue and all frame queues
+
+        if (wl_display_dispatch_pending(display) == -1) {
             error = wl_display_get_error(display);
             if (error != 0) {
                 if (display) {

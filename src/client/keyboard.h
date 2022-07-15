@@ -133,6 +133,9 @@ Q_SIGNALS:
      *
      * @param fd file descriptor of the keymap
      * @param size The size of the keymap
+     *
+     * @since 5.97 fd will get closed after this signal has been emitted,
+     * remember to dup(fd) if you need to keep the file descriptor around.
      **/
     void keymapChanged(int fd, quint32 size);
     /**

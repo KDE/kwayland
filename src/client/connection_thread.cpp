@@ -234,7 +234,7 @@ ConnectionThread *ConnectionThread::fromApplication(QObject *parent)
 
 void ConnectionThread::initConnection()
 {
-    QMetaObject::invokeMethod(this, "doInitConnection", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, &ConnectionThread::doInitConnection, Qt::QueuedConnection);
 }
 
 void ConnectionThread::doInitConnection()

@@ -8,7 +8,6 @@
 #include "wayland_pointer_p.h"
 #include <QPointer>
 // wayland
-#include <unistd.h>
 #include <wayland-client-protocol.h>
 
 namespace KWayland
@@ -135,7 +134,6 @@ void Keyboard::Private::keymapCallback(void *data, wl_keyboard *keyboard, uint32
         return;
     }
     Q_EMIT k->q->keymapChanged(fd, size);
-    close(fd);
 }
 
 void Keyboard::Private::modifiersCallback(void *data,

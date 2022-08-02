@@ -48,6 +48,7 @@ FilteredDisplay::FilteredDisplay(QObject *parent)
 
 FilteredDisplay::~FilteredDisplay()
 {
+    wl_display_set_global_filter(*this, nullptr, nullptr);
 }
 
 }

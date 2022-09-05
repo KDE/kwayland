@@ -175,6 +175,16 @@ public:
     QList<Mode> modes() const;
 
     /**
+     * Returns the name of the output.
+     **/
+    QString name() const;
+
+    /**
+     * Returns the human readable description of the output.
+     **/
+    QString description() const;
+
+    /**
      * Sets the @p queue to use for bound proxies.
      **/
     void setEventQueue(EventQueue *queue);

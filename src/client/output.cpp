@@ -39,6 +39,8 @@ public:
     Transform transform = Transform::Normal;
     Modes modes;
     Modes::iterator currentMode = modes.end();
+    QString name;
+    QString description;
 
     static Output *get(wl_output *o);
 
@@ -56,6 +58,8 @@ private:
     static void modeCallback(void *data, wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
     static void doneCallback(void *data, wl_output *output);
     static void scaleCallback(void *data, wl_output *output, int32_t scale);
+    static void nameCallback(void *data, struct wl_output *wl_output, const char *name);
+    static void descriptionCallback(void *data, struct wl_output *wl_output, const char *description);
     void setPhysicalSize(const QSize &size);
     void setGlobalPosition(const QPoint &pos);
     void setManufacturer(const QString &manufacturer);
@@ -120,7 +124,7 @@ Output::~Output()
     d->output.release();
 }
 
-wl_output_listener Output::Private::s_outputListener = {geometryCallback, modeCallback, doneCallback, scaleCallback};
+wl_output_listener Output::Private::s_outputListener = {geometryCallback, modeCallback, doneCallback, scaleCallback, nameCallback, descriptionCallback};
 
 void Output::Private::geometryCallback(void *data,
                                        wl_output *output,
@@ -232,6 +236,20 @@ void Output::Private::scaleCallback(void *data, wl_output *output, int32_t scale
     auto o = reinterpret_cast<Output::Private *>(data);
     Q_ASSERT(o->output == output);
     o->setScale(scale);
+}
+
+void Output::Private::nameCallback(void *data, struct wl_output *wl_output, const char *name)
+{
+    auto o = reinterpret_cast<Output::Private *>(data);
+    Q_ASSERT(o->output == wl_output);
+    o->name = QString::fromUtf8(name);
+}
+
+void Output::Private::descriptionCallback(void *data, struct wl_output *wl_output, const char *description)
+{
+    auto o = reinterpret_cast<Output::Private *>(data);
+    Q_ASSERT(o->output == wl_output);
+    o->description = QString::fromUtf8(description);
 }
 
 void Output::Private::doneCallback(void *data, wl_output *output)
@@ -363,6 +381,16 @@ Output::Transform Output::transform() const
 QList<Output::Mode> Output::modes() const
 {
     return d->modes;
+}
+
+QString Output::name() const
+{
+    return d->name;
+}
+
+QString Output::description() const
+{
+    return d->description;
 }
 
 Output::operator wl_output *()

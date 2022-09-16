@@ -280,7 +280,7 @@ set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  EXPORT_NAME WaylandClient
 )
 
-install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF5_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(CLIENT_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h

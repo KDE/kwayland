@@ -276,9 +276,7 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
         }
         break;
     case Role::AppletPopup:
-        // ORG_KDE_PLASMA_SURFACE_ROLE_APPLETPOPUP_SINCE_VERSION is not used for this check
-        // because it wrongly is 7 with old plasma wayland protocols
-        if (wl_proxy_get_version(d->surface) < 8) {
+        if (wl_proxy_get_version(d->surface) < ORG_KDE_PLASMA_SURFACE_ROLE_APPLETPOPUP_SINCE_VERSION) {
             // dock is what applet popups were before
             wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_PANEL;
             setPanelBehavior(PanelBehavior::WindowsGoBelow);

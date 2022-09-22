@@ -281,6 +281,7 @@ void PlasmaShellSurface::setRole(PlasmaShellSurface::Role role)
         if (wl_proxy_get_version(d->surface) < 8) {
             // dock is what applet popups were before
             wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_PANEL;
+            setPanelBehavior(PanelBehavior::WindowsGoBelow);
         } else {
             wlRole = ORG_KDE_PLASMA_SURFACE_ROLE_APPLETPOPUP;
         }

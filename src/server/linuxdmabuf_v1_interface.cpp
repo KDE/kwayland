@@ -417,7 +417,7 @@ void V1Iface::Private::bind(wl_client *client, uint32_t version, uint32_t id)
             modifiers << DRM_FORMAT_MOD_INVALID;
         }
 
-        for (uint64_t modifier : qAsConst(modifiers)) {
+        for (uint64_t modifier : std::as_const(modifiers)) {
             if (version >= ZWP_LINUX_DMABUF_V1_MODIFIER_SINCE_VERSION) {
                 const uint32_t modifier_lo = modifier & 0xFFFFFFFF;
                 const uint32_t modifier_hi = modifier >> 32;

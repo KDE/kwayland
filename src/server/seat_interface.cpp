@@ -693,7 +693,7 @@ void SeatInterface::setFocusedPointerSurface(SurfaceInterface *surface, const QM
     }
     if (p.isEmpty()) {
         Q_EMIT focusedPointerChanged(nullptr);
-        for (auto p : qAsConst(framePointers)) {
+        for (auto p : std::as_const(framePointers)) {
             p->d_func()->sendFrame();
         }
         return;
@@ -704,7 +704,7 @@ void SeatInterface::setFocusedPointerSurface(SurfaceInterface *surface, const QM
         (*it)->setFocusedSurface(surface, serial);
         framePointers << *it;
     }
-    for (auto p : qAsConst(framePointers)) {
+    for (auto p : std::as_const(framePointers)) {
         p->d_func()->sendFrame();
     }
 }

@@ -74,7 +74,7 @@ void KeyStateInterface::setState(KeyStateInterface::Key key, KeyStateInterface::
     auto dptr = static_cast<KeyStateInterface::Private *>(d.data());
     dptr->m_keyStates[int(key)] = state;
 
-    for (auto r : qAsConst(dptr->m_resources)) {
+    for (auto r : std::as_const(dptr->m_resources)) {
         org_kde_kwin_keystate_send_stateChanged(r, int(key), int(state));
     }
 }

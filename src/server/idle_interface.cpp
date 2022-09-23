@@ -145,7 +145,7 @@ bool IdleInterface::isInhibited() const
 void IdleInterface::simulateUserActivity()
 {
     Q_D();
-    for (auto i : qAsConst(d->idleTimeouts)) {
+    for (auto i : std::as_const(d->idleTimeouts)) {
         i->d_func()->simulateUserActivity();
     }
 }

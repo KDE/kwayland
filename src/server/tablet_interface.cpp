@@ -353,11 +353,11 @@ public:
 
     void zwp_tablet_seat_v2_bind_resource(Resource *resource) override
     {
-        for (auto iface : qAsConst(m_tablets)) {
+        for (auto iface : std::as_const(m_tablets)) {
             sendTabletAdded(resource, iface);
         }
 
-        for (auto *tool : qAsConst(m_tools)) {
+        for (auto *tool : std::as_const(m_tools)) {
             sendToolAdded(resource, tool);
         }
     }
@@ -370,7 +370,7 @@ public:
         tool->d->send_type(toolResource, tool->d->m_type);
         tool->d->send_hardware_serial(toolResource, tool->d->m_hardwareSerialHigh, tool->d->m_hardwareSerialLow);
         tool->d->send_hardware_id_wacom(toolResource, tool->d->m_hardwareIdHigh, tool->d->m_hardwareIdLow);
-        for (uint32_t cap : qAsConst(tool->d->m_capabilities)) {
+        for (uint32_t cap : std::as_const(tool->d->m_capabilities)) {
             tool->d->send_capability(toolResource, cap);
         }
         tool->d->send_done(toolResource);
@@ -384,7 +384,7 @@ public:
         if (tablet->d->m_vendorId && tablet->d->m_productId) {
             tablet->d->send_id(tabletResource, tablet->d->m_vendorId, tablet->d->m_productId);
         }
-        for (const QString &path : qAsConst(tablet->d->m_paths)) {
+        for (const QString &path : std::as_const(tablet->d->m_paths)) {
             tablet->d->send_path(tabletResource, path);
         }
         tablet->d->send_done(tabletResource);

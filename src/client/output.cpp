@@ -124,7 +124,15 @@ Output::~Output()
     d->output.release();
 }
 
-wl_output_listener Output::Private::s_outputListener = {geometryCallback, modeCallback, doneCallback, scaleCallback, nameCallback, descriptionCallback};
+wl_output_listener Output::Private::s_outputListener = {
+    geometryCallback, modeCallback, doneCallback, scaleCallback,
+#ifdef WL_OUTPUT_NAME_SINCE_VERSION
+    nameCallback,
+#endif
+#ifdef WL_OUTPUT_DESCRIPTION_SINCE_VERSION
+    descriptionCallback,
+#endif
+};
 
 void Output::Private::geometryCallback(void *data,
                                        wl_output *output,

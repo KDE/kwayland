@@ -629,6 +629,55 @@ private:
     QScopedPointer<Private> d;
 };
 
+/**
+ * Wrapper class for xdg_wm_base interface.
+ *
+ * @since 5.101
+ */
+class KWAYLANDCLIENT_EXPORT XdgShellStable : public XdgShell
+{
+    Q_OBJECT
+public:
+    explicit XdgShellStable(QObject *parent = nullptr);
+    ~XdgShellStable() override;
+
+private:
+    class Private;
+};
+
+/**
+ * Wrapper class for xdg_toplevel interface.
+ *
+ * @since 5.101
+ */
+class KWAYLANDCLIENT_EXPORT XdgTopLevelStable : public XdgShellSurface
+{
+    Q_OBJECT
+public:
+    explicit XdgTopLevelStable(QObject *parent = nullptr);
+    ~XdgTopLevelStable() override;
+
+private:
+    friend class XdgShellStable;
+    class Private;
+};
+
+/**
+ * Wrapper class for xdg_popup interface.
+ *
+ * @since 5.101
+ */
+class KWAYLANDCLIENT_EXPORT XdgShellPopupStable : public XdgShellPopup
+{
+public:
+    explicit XdgShellPopupStable(QObject *parent = nullptr);
+    ~XdgShellPopupStable() override;
+
+private:
+    friend class XdgShellStable;
+    class Private;
+};
+
 }
 }
 

@@ -121,17 +121,6 @@ private:
     class Private;
 };
 
-class XdgShellStable : public XdgShell
-{
-    Q_OBJECT
-public:
-    explicit XdgShellStable(QObject *parent = nullptr);
-    ~XdgShellStable() override;
-
-private:
-    class Private;
-};
-
 class XdgShellSurfaceUnstableV5 : public XdgShellSurface
 {
     Q_OBJECT
@@ -153,18 +142,6 @@ public:
 private:
     explicit XdgTopLevelUnstableV6(QObject *parent = nullptr);
     friend class XdgShellUnstableV6;
-    class Private;
-};
-
-class XdgTopLevelStable : public XdgShellSurface
-{
-    Q_OBJECT
-public:
-    ~XdgTopLevelStable() override;
-
-private:
-    explicit XdgTopLevelStable(QObject *parent = nullptr);
-    friend class XdgShellStable;
     class Private;
 };
 
@@ -359,17 +336,6 @@ public:
 private:
     explicit XdgShellPopupUnstableV6(QObject *parent = nullptr);
     friend class XdgShellUnstableV6;
-    class Private;
-};
-
-class XdgShellPopupStable : public XdgShellPopup
-{
-public:
-    ~XdgShellPopupStable() override;
-
-private:
-    explicit XdgShellPopupStable(QObject *parent = nullptr);
-    friend class XdgShellStable;
     class Private;
 };
 

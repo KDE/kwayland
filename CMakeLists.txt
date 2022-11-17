@@ -75,6 +75,20 @@ ecm_set_disabled_deprecation_versions(
     QT 5.15.2
 )
 
+check_cxx_source_compiles("
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
+int main() {
+    const int size = 10;
+    int fd = memfd_create(\"test\", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+    ftruncate(fd, size);
+    fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK | F_SEAL_SEAL);
+    mmap(nullptr, size, PROT_WRITE, MAP_SHARED, fd, 0);
+    return 0;
+}" HAVE_MEMFD)
+
 # Subdirectories
 ecm_install_po_files_as_qm(po)
 

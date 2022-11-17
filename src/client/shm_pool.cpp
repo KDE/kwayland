@@ -11,8 +11,8 @@
 // Qt
 #include <QDebug>
 #include <QImage>
-#include <QTemporaryFile>
 // system
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
 // wayland
@@ -32,8 +32,8 @@ public:
     WaylandPointer<wl_shm, wl_shm_destroy> shm;
     WaylandPointer<wl_shm_pool, wl_shm_pool_destroy> pool;
     void *poolData = nullptr;
+    int fd = -1;
     int32_t size = 1024;
-    QScopedPointer<QTemporaryFile> tmpFile;
     bool valid = false;
     int offset = 0;
     QList<QSharedPointer<Buffer>> buffers;
@@ -44,8 +44,7 @@ private:
 };
 
 ShmPool::Private::Private(ShmPool *q)
-    : tmpFile(new QTemporaryFile())
-    , q(q)
+    : q(q)
 {
 }
 
@@ -67,9 +66,12 @@ void ShmPool::release()
         munmap(d->poolData, d->size);
         d->poolData = nullptr;
     }
+    if (d->fd != -1) {
+        close(d->fd);
+        d->fd = -1;
+    }
     d->pool.release();
     d->shm.release();
-    d->tmpFile->close();
     d->valid = false;
     d->offset = 0;
 }
@@ -84,9 +86,12 @@ void ShmPool::destroy()
         munmap(d->poolData, d->size);
         d->poolData = nullptr;
     }
+    if (d->fd != -1) {
+        close(d->fd);
+        d->fd = -1;
+    }
     d->pool.destroy();
     d->shm.destroy();
-    d->tmpFile->close();
     d->valid = false;
     d->offset = 0;
 }
@@ -111,19 +116,37 @@ EventQueue *ShmPool::eventQueue()
 
 bool ShmPool::Private::createPool()
 {
-    if (!tmpFile->open()) {
+#if HAVE_MEMFD
+    fd = memfd_create("kwayland-shared", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+    if (fd >= 0) {
+        fcntl(fd, F_ADD_SEALS, F_SEAL_SHRINK | F_SEAL_SEAL);
+    } else
+#endif
+    {
+        char templateName[] = "/tmp/kwayland-shared-XXXXXX";
+        fd = mkstemp(templateName);
+        if (fd >= 0) {
+            unlink(templateName);
+
+            int flags = fcntl(fd, F_GETFD);
+            if (flags == -1 || fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
+                close(fd);
+                fd = -1;
+            }
+        }
+    }
+
+    if (fd == -1) {
         qCDebug(KWAYLAND_CLIENT) << "Could not open temporary file for Shm pool";
         return false;
     }
-    if (unlink(tmpFile->fileName().toUtf8().constData()) != 0) {
-        qCDebug(KWAYLAND_CLIENT) << "Unlinking temporary file for Shm pool from file system failed";
-    }
-    if (ftruncate(tmpFile->handle(), size) < 0) {
+
+    if (ftruncate(fd, size) < 0) {
         qCDebug(KWAYLAND_CLIENT) << "Could not set size for Shm pool file";
         return false;
     }
-    poolData = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
-    pool.setup(wl_shm_create_pool(shm, tmpFile->handle(), size));
+    poolData = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    pool.setup(wl_shm_create_pool(shm, fd, size));
 
     if (poolData == MAP_FAILED || !pool) {
         qCDebug(KWAYLAND_CLIENT) << "Creating Shm pool failed";
@@ -134,13 +157,13 @@ bool ShmPool::Private::createPool()
 
 bool ShmPool::Private::resizePool(int32_t newSize)
 {
-    if (ftruncate(tmpFile->handle(), newSize) < 0) {
+    if (ftruncate(fd, newSize) < 0) {
         qCDebug(KWAYLAND_CLIENT) << "Could not set new size for Shm pool file";
         return false;
     }
     wl_shm_pool_resize(pool, newSize);
     munmap(poolData, size);
-    poolData = mmap(nullptr, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, tmpFile->handle(), 0);
+    poolData = mmap(nullptr, newSize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     size = newSize;
     if (poolData == MAP_FAILED) {
         qCDebug(KWAYLAND_CLIENT) << "Resizing Shm pool failed";

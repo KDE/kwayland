@@ -256,9 +256,11 @@ ecm_generate_export_header(KF5WaylandClient
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
 )
 
-target_compile_definitions(KF5WaylandClient PRIVATE
-    -DHAVE_MEMFD=${HAVE_MEMFD}
-)
+if (HAVE_MEMFD)
+    target_compile_definitions(KF5WaylandClient PRIVATE -DHAVE_MEMFD=1)
+else()
+    target_compile_definitions(KF5WaylandClient PRIVATE -DHAVE_MEMFD=0)
+endif()
 
 target_include_directories(KF5WaylandClient
     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland>"

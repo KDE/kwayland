@@ -34,8 +34,8 @@ add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt 
 
 ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h"
-                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfigVersion.cmake"
-                        SOVERSION 5)
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfigVersion.cmake"
+                        SOVERSION 6)
 
 # Dependencies
 set(REQUIRED_QT_VERSION 6.4.0)
@@ -100,36 +100,36 @@ if (BUILD_TESTING)
 endif()
 
 # create a Config.cmake and a ConfigVersion.cmake file and install them
-set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF5Wayland")
+set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF6Wayland")
 
 if (BUILD_QCH)
     ecm_install_qch_export(
-        TARGETS KF5Wayland_QCH
-        FILE KF5WaylandQchTargets.cmake
+        TARGETS KF6Wayland_QCH
+        FILE KF6WaylandQchTargets.cmake
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel
     )
-    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5WaylandQchTargets.cmake\")")
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF6WaylandQchTargets.cmake\")")
 endif()
 
-configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KF5WaylandConfig.cmake.in"
-                              "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfig.cmake"
+configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/KF6WaylandConfig.cmake.in"
+                              "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfig.cmake"
                               INSTALL_DESTINATION  ${CMAKECONFIG_INSTALL_DIR}
                               )
 
-install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfig.cmake"
-               "${CMAKE_CURRENT_BINARY_DIR}/KF5WaylandConfigVersion.cmake"
+install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfigVersion.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel )
 
-install(EXPORT KF5WaylandTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KF5WaylandTargets.cmake NAMESPACE KF5:: )
+install(EXPORT KF6WaylandTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KF6WaylandTargets.cmake NAMESPACE KF6:: )
 
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland COMPONENT Devel)
 
 if (NOT WIN32)
-    ecm_generate_pkgconfig_file(BASE_NAME KF5WaylandClient
+    ecm_generate_pkgconfig_file(BASE_NAME KF6WaylandClient
       INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland
       DEPS Qt${QT_MAJOR_VERSION}Gui
     INSTALL)

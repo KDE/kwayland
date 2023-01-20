@@ -137,19 +137,19 @@ one library for Client and one for Server.
 
 To find the package use for example:
 
-    find_package(KF5Wayland CONFIG)
-    set_package_properties(KF5Wayland PROPERTIES TYPE OPTIONAL )
-    add_feature_info("KF5Wayland" KF5Wayland_FOUND "Required for the awesome Wayland on Qt demo")
+    find_package(KF6Wayland CONFIG)
+    set_package_properties(KF6Wayland PROPERTIES TYPE OPTIONAL )
+    add_feature_info("KF6Wayland" KF6Wayland_FOUND "Required for the awesome Wayland on Qt demo")
 
 Now to link against the Client library use:
 
     add_executable(exampleApp example.cpp)
-    target_link_libraries(exampleApp KF5::WaylandClient)
+    target_link_libraries(exampleApp KF6::WaylandClient)
 
 To link against the Server library use:
 
     add_executable(exampleServer exampleServer.cpp)
-    target_link_libraries(exampleServer KF5::WaylandServer)
+    target_link_libraries(exampleServer KF6::WaylandServer)
 
 ### With QMake
 

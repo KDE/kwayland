@@ -298,9 +298,9 @@ set(SERVER_GENERATED_SRCS
 
 set_source_files_properties(${SERVER_GENERATED_SRCS} PROPERTIES SKIP_AUTOMOC ON)
 
-add_library(KF5WaylandServer ${SERVER_LIB_SRCS})
-add_library(KF5::WaylandServer ALIAS KF5WaylandServer)
-ecm_generate_export_header(KF5WaylandServer
+add_library(KF6WaylandServer ${SERVER_LIB_SRCS})
+add_library(KF6::WaylandServer ALIAS KF6WaylandServer)
+ecm_generate_export_header(KF6WaylandServer
     BASE_NAME
         KWaylandServer
     EXPORT_FILE_NAME
@@ -312,10 +312,10 @@ ecm_generate_export_header(KF5WaylandServer
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
 )
 
-target_include_directories(KF5WaylandServer
-    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland;${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Server>")
+target_include_directories(KF6WaylandServer
+    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland;${KDE_INSTALL_INCLUDEDIR_KF6}/KWayland/Server>")
 
-target_link_libraries(KF5WaylandServer
+target_link_libraries(KF6WaylandServer
     PUBLIC Qt5::Gui
     PRIVATE
         Wayland::Server
@@ -323,12 +323,12 @@ target_link_libraries(KF5WaylandServer
         Qt5::Concurrent
 )
 
-set_target_properties(KF5WaylandServer PROPERTIES VERSION   ${KWAYLAND_VERSION}
+set_target_properties(KF6WaylandServer PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}
                                                  EXPORT_NAME WaylandServer
 )
 
-install(TARGETS KF5WaylandServer EXPORT KF5WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS KF6WaylandServer EXPORT KF6WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(SERVER_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Server/kwaylandserver_export.h
@@ -388,7 +388,7 @@ set(SERVER_LIB_HEADERS
 
 install(FILES
   ${SERVER_LIB_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KWayland/Server COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF6}/KWayland/Server COMPONENT Devel
 )
 
 # make available to ecm_add_qch in parent folder
@@ -396,6 +396,6 @@ set(KWaylandServer_APIDOX_SRCS ${SERVER_LIB_HEADERS} PARENT_SCOPE)
 set(KWaylandServer_APIDOX_BUILD_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
 
 include(ECMGeneratePriFile)
-ecm_generate_pri_file(BASE_NAME KWaylandServer LIB_NAME KF5WaylandServer DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5})
+ecm_generate_pri_file(BASE_NAME KWaylandServer LIB_NAME KF6WaylandServer DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF6})
 install(FILES ${PRI_FILENAME}
         DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

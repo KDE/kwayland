@@ -242,9 +242,9 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 set_source_files_properties(${CLIENT_LIB_SRCS} PROPERTIES
     COMPILE_FLAGS -DQT_NO_KEYWORDS)
 
-add_library(KF5WaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
-add_library(KF5::WaylandClient ALIAS KF5WaylandClient)
-ecm_generate_export_header(KF5WaylandClient
+add_library(KF6WaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
+add_library(KF6::WaylandClient ALIAS KF6WaylandClient)
+ecm_generate_export_header(KF6WaylandClient
     BASE_NAME
         KWaylandClient
     EXPORT_FILE_NAME
@@ -257,16 +257,16 @@ ecm_generate_export_header(KF5WaylandClient
 )
 
 if (HAVE_MEMFD)
-    target_compile_definitions(KF5WaylandClient PRIVATE -DHAVE_MEMFD=1)
+    target_compile_definitions(KF6WaylandClient PRIVATE -DHAVE_MEMFD=1)
 else()
-    target_compile_definitions(KF5WaylandClient PRIVATE -DHAVE_MEMFD=0)
+    target_compile_definitions(KF6WaylandClient PRIVATE -DHAVE_MEMFD=0)
 endif()
 
-target_include_directories(KF5WaylandClient
+target_include_directories(KF6WaylandClient
     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland>"
 )
 
-target_link_libraries(KF5WaylandClient
+target_link_libraries(KF6WaylandClient
     PUBLIC Qt${QT_MAJOR_VERSION}::Gui
     PRIVATE Wayland::Client
         Qt${QT_MAJOR_VERSION}::Concurrent
@@ -274,19 +274,19 @@ target_link_libraries(KF5WaylandClient
 )
 
 if (QT_MAJOR_VERSION EQUAL "5")
-    target_link_libraries(KF5WaylandClient
+    target_link_libraries(KF6WaylandClient
         PRIVATE
             Qt::XkbCommonSupportPrivate
             PkgConfig::XKBCommon
     )
 endif()
 
-set_target_properties(KF5WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
+set_target_properties(KF6WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}
                                                  EXPORT_NAME WaylandClient
 )
 
-install(TARGETS KF5WaylandClient EXPORT KF5WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS KF6WaylandClient EXPORT KF6WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(CLIENT_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
@@ -351,6 +351,6 @@ set(KWaylandClient_APIDOX_SRCS ${CLIENT_LIB_HEADERS} PARENT_SCOPE)
 set(KWaylandClient_APIDOX_BUILD_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
 
 include(ECMGeneratePriFile)
-ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF5WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland)
+ecm_generate_pri_file(BASE_NAME KWaylandClient LIB_NAME KF6WaylandClient DEPS "core" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland)
 install(FILES ${PRI_FILENAME}
         DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

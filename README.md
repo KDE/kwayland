@@ -1,100 +1,13 @@
 # KWayland
 
-KWayland is a Qt-style API to interact with the wayland-client and wayland-server API.
+KWayland is a Qt-style API to interact with the wayland-client API.
 
 ## Introduction
 
-KWayland provides two libraries:
-
-- KWayland::Client
-- KWayland::Server
-
-As the names suggest they implement a Client respectively a Server API for the Wayland
-protocol. The API is Qt-styled removing the needs to interact with a for a Qt developer
+The API is Qt-styled removing the needs to interact with a for a Qt developer
 uncomfortable low-level C-API. For example the callback mechanism from the Wayland API
 is replaced by signals; data types are adjusted to be what a Qt developer expects, e.g.
 two arguments of int are represented by a QPoint or a QSize.
-
-## KWayland Server
-
-### Head-less API
-
-The server library can be used to implement a Wayland server with Qt. The API is head-less
-meaning it does not perform any output and does not restrict on the way how one wants to
-render. This allows to easily integrate in existing rendering code based on e.g. OpenGL or
-QPainter. Applications built on top of KWayland Server integrated the graphics with the
-following technologies:
-
-- OpenGL over DRM/KMS
-- OpenGL over X11
-- OpenGL over Wayland
-- OpenGL over Android's hwcomposer enabled through libhybris
-- QPainter over DRM/KMs
-- QPainter over fbdev
-- QPainter over X11
-- QPainter over Wayland
-- QWidget
-- QtQuick
-
-Although the library does not perform any output, it makes it very easy to enable rendering.
-The representation for a [Buffer](@ref KWayland::Server::BufferInterface) allows easy conversion
-to a (memory-shared) QImage in case the buffer represents a shared memory buffer. This QImage
-can be used for rendering in a QPainter based API or to generate an OpenGL texture.
-
-### Easy usage of Wayland API
-
-The library hides many Wayland implementation details. For all Wayland interfaces which have
-double buffered state the classes always only provide access to the committed state. The pending
-state is an internal detail. On commit of the pending state Qt signals are emitted about what
-changed.
-
-Buffers are ref-counted and automatically released if it is no longer referenced allowing the
-client to reuse it. This happens fully automatically when a surface no longer references a buffer.
-As long as a buffer is attached surface, the surface has it referenced and the user of the API can
-access the buffer without needing to care about referencing it.
-
-The API of KWayland is hand-crafted to make usage easier. The representation of a
-[Surface](@ref KWayland::Server::SurfaceInterface) combines multiple aspects about a Surface even
-if in Wayland API it is added to other elements. E.g. a Surface contains all
-[SubSurfaces](@ref KWayland::Server::SubSurfaceInterface) attached to it instead of the user
-having to monitor for which Surface a SubSurface got created.
-
-Similar the representation of a [Seat](@ref KWayland::Server::SeatInterface) combines all aspects of
-the Seat. A user of the API only needs to interact with the Seat, there is no need to track all the
-created [keyboards](@ref KWayland::Server::KeyboardInterface), [pointers](@ref KWayland::Server::PointerInterface), etc. The
-representation of Seat tracks which keyboards are generated and is able to forward events to the
-proper focus surface, send enter and leave notifications when needed without the user of the API
-to care about it.
-
-### Handling input events
-
-Just like with output the server API does not restrict on how to get input events. This allows to
-integrate with existing input handlers and also allows to easily filter the input before it is passed
-to the server and from there delegated to the client. By that one can filter out e.g. global touch
-gestures or keyboard shortcuts without having to implement handlers inside KWayland. The SeatInterface
-provides a very easy to use API to forward events which can be easily integrated with Qt's own
-input event system, e.g. there is a mapping from Qt::MouseButton to the Linux input code.
-
-Applications built on top of KWayland Server integrated input events with the following technologies:
-
-- libinput
-- X11
-- Wayland
-- Android's inputstack enabled through libhybris
-- QInputEvent
-
-### Private IPC with child processes
-
-KWayland Server is well suited for having a private IPC with child processes. The [Display](@ref KWayland::Server::Display) can be
-setup in a way that it doesn't create a public socket but only allows connections through socket
-pairs. This allows to create a socketpair, pass one file descriptor to KWayland server and the other
-to the forked process, e.g. through the WAYLAND_SOCKET environment variable. Thus a dedicated IPC
-is created which can be used even for running your own custom protocol. For example KDE Plasma uses
-such a dedicated parent-child Wayland server in it's screen locker architecture.
-
-Of course private sockets can be added at any time in addition to a publicly available socket. This
-can be used to recognize specific clients and to restrict access to interfaces for only some dedicated
-clients.
 
 ## KWayland Client
 
@@ -132,8 +45,7 @@ is a way to get a Wayland object from Qt, the respective class provides a static
 
 ### With CMake
 
-KWayland installs a CMake Config file which allows to use KWayland as imported targets. There is
-one library for Client and one for Server.
+KWayland installs a CMake Config file which allows to use KWayland as imported targets.
 
 To find the package use for example:
 
@@ -146,23 +58,14 @@ Now to link against the Client library use:
     add_executable(exampleApp example.cpp)
     target_link_libraries(exampleApp KF6::WaylandClient)
 
-To link against the Server library use:
-
-    add_executable(exampleServer exampleServer.cpp)
-    target_link_libraries(exampleServer KF6::WaylandServer)
-
 ### With QMake
 
-KWayland installs .pri files for the Client and Server library allowing easy usage in QMake based
+KWayland installs .pri files allowing easy usage in QMake based
 applications.
 
 Just use:
 
     QT += KWaylandClient
-
-Respectively:
-
-    QT += KWaylandServer
 
 Please make sure that your project is configured with C++11 support:
 

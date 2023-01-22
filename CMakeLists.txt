@@ -52,7 +52,7 @@ if (QT_MAJOR_VERSION STREQUAL "5")
     pkg_check_modules(XKBCommon REQUIRED IMPORTED_TARGET xkbcommon)
 endif()
 
-find_package(Wayland 1.15 COMPONENTS Client Server)
+find_package(Wayland 1.15 COMPONENTS Client)
 set_package_properties(Wayland PROPERTIES
                        TYPE REQUIRED
                       )

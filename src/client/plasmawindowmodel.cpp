@@ -102,12 +102,6 @@ void PlasmaWindowModel::Private::addWindow(PlasmaWindow *window)
         this->dataChanged(window, IsKeepBelow);
     });
 
-#if KWAYLANDCLIENT_BUILD_DEPRECATED_SINCE(5, 52)
-    QObject::connect(window, &PlasmaWindow::virtualDesktopChanged, q, [window, this] {
-        this->dataChanged(window, VirtualDesktop);
-    });
-#endif
-
     QObject::connect(window, &PlasmaWindow::onAllDesktopsChanged, q, [window, this] {
         this->dataChanged(window, IsOnAllDesktops);
     });
@@ -267,11 +261,6 @@ QVariant PlasmaWindowModel::data(const QModelIndex &index, int role) const
     } else if (role == Uuid) {
         return window->uuid();
     }
-#if KWAYLANDCLIENT_BUILD_DEPRECATED_SINCE(5, 52)
-    else if (role == VirtualDesktop) {
-        return window->virtualDesktop();
-    }
-#endif
 
     return QVariant();
 }
@@ -321,15 +310,6 @@ Q_INVOKABLE void PlasmaWindowModel::requestResize(int row)
         d->windows.at(row)->requestResize();
     }
 }
-
-#if KWAYLANDCLIENT_BUILD_DEPRECATED_SINCE(5, 52)
-Q_INVOKABLE void PlasmaWindowModel::requestVirtualDesktop(int row, quint32 desktop)
-{
-    if (row >= 0 && row < d->windows.count()) {
-        d->windows.at(row)->requestVirtualDesktop(desktop);
-    }
-}
-#endif
 
 Q_INVOKABLE void PlasmaWindowModel::requestEnterVirtualDesktop(int row, const QString &id)
 {

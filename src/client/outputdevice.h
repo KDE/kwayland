@@ -190,19 +190,6 @@ public:
      **/
     int refreshRate() const;
 
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 50)
-    /**
-     * Scaling factor of this output.
-     *
-     * A scale larger than 1 means that the compositor will automatically scale surface buffers
-     * by this amount when rendering. This is used for very high resolution displays where
-     * applications rendering at the native resolution would be too small to be legible.
-     * @deprecated Since 5.50, use scaleF()
-     **/
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 50, "Use OutputDevice::scaleF()")
-    int scale() const;
-#endif
-
     /**
      * Scaling factor of this output.
      *

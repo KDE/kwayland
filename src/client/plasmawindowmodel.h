@@ -55,14 +55,6 @@ public:
         IsMinimized,
         IsKeepAbove,
         IsKeepBelow,
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 53)
-        /**
-          @deprecated Since 5.53, use VirtualDesktops
-         */
-        VirtualDesktop KWAYLANDCLIENT_ENUMERATOR_DEPRECATED_VERSION_BELATED(5, 82, 5, 53, "Use VirtualDesktops"),
-#else
-        VirtualDesktop_DEPRECATED_DO_NOT_USE,
-#endif
         IsOnAllDesktops,
         IsDemandingAttention,
         SkipTaskbar,
@@ -150,16 +142,6 @@ public:
      * @since 5.22
      **/
     Q_INVOKABLE void requestResize(int row);
-
-#if KWAYLANDCLIENT_ENABLE_DEPRECATED_SINCE(5, 52)
-    /**
-     * Request the window at this model row index be moved to this virtual desktop.
-     *
-     * @deprecated Since 5.52; starting from 5.90, use requestEnterVirtualDesktop(int row, const QString &id) instead.
-     **/
-    KWAYLANDCLIENT_DEPRECATED_VERSION(5, 52, "Starting from 5.90 use PlasmaWindowModel::requestEnterVirtualDesktop(int row, const QString &id) instead.")
-    Q_INVOKABLE void requestVirtualDesktop(int row, quint32 desktop);
-#endif
 
     /**
      * Request the window at the model index @p row to be moved to the virtual desktop @p id.

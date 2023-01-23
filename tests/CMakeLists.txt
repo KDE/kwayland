@@ -1,28 +1,5 @@
 include(ECMMarkAsTest)
 
-# The server part of this repo has been moved to Plasma kwayland-server since 5.73,
-# all targets that link to KF6::WaylandServer can't be built
-if(EXCLUDE_DEPRECATED_BEFORE_AND_AT VERSION_LESS 5.74.0)
-    # find_package(Qt${QT_MAJOR_VERSION}Core ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENT Private _check_private)
-    include_directories(SYSTEM ${Qt${QT_MAJOR_VERSION}Core_PRIVATE_INCLUDE_DIRS})
-    set(testServer_SRCS
-        waylandservertest.cpp
-        )
-    add_executable(testServer ${testServer_SRCS})
-    target_link_libraries(testServer KF6::WaylandServer)
-    ecm_mark_as_test(testServer)
-
-    find_package(Qt${QT_MAJOR_VERSION}Widgets ${QT_MIN_VERSION} CONFIG QUIET)
-    if (TARGET Qt${QT_MAJOR_VERSION}::Widgets)
-        set(testRenderingServer_SRCS
-            renderingservertest.cpp
-            )
-        add_executable(testRenderingServer ${testRenderingServer_SRCS})
-        target_link_libraries(testRenderingServer KF6::WaylandServer Qt${QT_MAJOR_VERSION}::Concurrent Qt${QT_MAJOR_VERSION}::Widgets)
-        ecm_mark_as_test(testRenderingServer)
-    endif()
-endif()
-
 add_executable(copyClient copyclient.cpp)
 target_link_libraries(copyClient KF6::WaylandClient)
 ecm_mark_as_test(copyClient)

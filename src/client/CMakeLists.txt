@@ -4,7 +4,7 @@ remove_definitions(-DQT_NO_CAST_TO_ASCII)
 remove_definitions(-DQT_NO_KEYWORDS)
 
 # needed to access QPA
-include_directories(SYSTEM ${Qt${QT_MAJOR_VERSION}Gui_PRIVATE_INCLUDE_DIRS})
+include_directories(SYSTEM ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
 
 set(CLIENT_LIB_SRCS
     appmenu.cpp
@@ -267,19 +267,11 @@ target_include_directories(KF6WaylandClient
 )
 
 target_link_libraries(KF6WaylandClient
-    PUBLIC Qt${QT_MAJOR_VERSION}::Gui
+    PUBLIC Qt6::Gui
     PRIVATE Wayland::Client
-        Qt${QT_MAJOR_VERSION}::Concurrent
-        Qt${QT_MAJOR_VERSION}::WaylandClientPrivate
+        Qt6::Concurrent
+        Qt6::WaylandClientPrivate
 )
-
-if (QT_MAJOR_VERSION EQUAL "5")
-    target_link_libraries(KF6WaylandClient
-        PRIVATE
-            Qt::XkbCommonSupportPrivate
-            PkgConfig::XKBCommon
-    )
-endif()
 
 set_target_properties(KF6WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}

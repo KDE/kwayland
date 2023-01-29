@@ -8,7 +8,7 @@ if(Wayland_VERSION VERSION_GREATER "1.4.0")
             test_wayland_fullscreen_shell.cpp
         )
     add_executable(testWaylandFullscreenShell ${testWaylandFullscreenShell_SRCS})
-    target_link_libraries( testWaylandFullscreenShell Qt${QT_MAJOR_VERSION}::Test KF6::WaylandClient Wayland::Client)
+    target_link_libraries( testWaylandFullscreenShell Qt6::Test KF6::WaylandClient Wayland::Client)
     add_test(NAME kwayland-testWaylandFullscreenShell COMMAND testWaylandFullscreenShell)
     ecm_mark_as_test(testWaylandFullscreenShell)
   else()

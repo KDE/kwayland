@@ -39,18 +39,9 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
 
 # Dependencies
 set(REQUIRED_QT_VERSION 6.4.0)
-find_package(Qt${QT_MAJOR_VERSION}Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
-find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent)
-find_package(Qt${QT_MAJOR_VERSION}WaylandClient ${REQUIRED_QT_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
-
-# With Qt6 use qt_generate_wayland_protocol_client_sources instead of
-# ecm_add_qtwayland_client_protocol (from ECM's QtWaylandScanner)
-if (QT_MAJOR_VERSION STREQUAL "5")
-    find_package(QtWaylandScanner REQUIRED)
-    find_package(Qt5XkbCommonSupport REQUIRED) # Needed by Qt5::WaylandClientPrivate
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(XKBCommon REQUIRED IMPORTED_TARGET xkbcommon)
-endif()
+find_package(Qt6Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
+find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent)
+find_package(Qt6WaylandClient ${REQUIRED_QT_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
 
 find_package(Wayland 1.15 COMPONENTS Client)
 set_package_properties(Wayland PROPERTIES
@@ -72,7 +63,7 @@ set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
 ecm_set_disabled_deprecation_versions(
-    QT 5.15.2
+    QT 6.4.0
 )
 
 check_cxx_source_compiles("
@@ -131,7 +122,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
 if (NOT WIN32)
     ecm_generate_pkgconfig_file(BASE_NAME KF6WaylandClient
       INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland
-      DEPS Qt${QT_MAJOR_VERSION}Gui
+      DEPS Qt6Gui
     INSTALL)
 endif()
 

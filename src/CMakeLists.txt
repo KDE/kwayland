@@ -23,7 +23,6 @@ if(BUILD_QCH)
     endmacro()
 
     _make_absolute(KWaylandClient_APIDOX_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/client")
-    _make_absolute(KWaylandServer_APIDOX_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/server")
 
     ecm_add_qch(
         KF6Wayland_QCH
@@ -33,13 +32,11 @@ if(BUILD_QCH)
         ORG_DOMAIN org.kde
         SOURCES # using only public headers, to cover only public API
             ${KWaylandClient_APIDOX_SRCS}
-            ${KWaylandServer_APIDOX_SRCS}
         MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
         LINK_QCHS
             Qt6Gui_QCH
         INCLUDE_DIRS
             ${KWaylandClient_APIDOX_BUILD_INCLUDE_DIRS}
-            ${KWaylandServer_APIDOX_BUILD_INCLUDE_DIRS}
         BLANK_MACROS
             KWAYLANDCLIENT_EXPORT
             KWAYLANDCLIENT_DEPRECATED
@@ -48,10 +45,6 @@ if(BUILD_QCH)
             "KWAYLANDCLIENT_DEPRECATED_VERSION_BELATED(x, y, xt, yt, t)"
             "KWAYLANDCLIENT_ENUMERATOR_DEPRECATED_VERSION(x, y, t)"
             "KWAYLANDCLIENT_ENUMERATOR_DEPRECATED_VERSION_BELATED(x, y, xt, yt, t)"
-            KWAYLANDSERVER_EXPORT
-            KWAYLANDSERVER_DEPRECATED
-            KWAYLANDSERVER_DEPRECATED_EXPORT
-            "KWAYLANDSERVER_DEPRECATED_VERSION(x, y, t)"
         TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
         QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
         COMPONENT Devel

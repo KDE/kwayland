@@ -1,5 +1,5 @@
 maintainer: graesslin
-description: Qt-style API to interact with the wayland-client and wayland-server API
+description: Qt-style API to interact with the wayland-client API
 tier: 1
 type: integration
 platforms:
@@ -11,8 +11,6 @@ release: true
 libraries:
  - qmake: KWaylandClient
    cmake: "KF6::WaylandClient"
- - qmake: KWaylandServer
-   cmake: "KF6::WaylandServer"
 cmakename: KF6Wayland
 
 public_lib: true

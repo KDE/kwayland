@@ -330,6 +330,28 @@ public:
     // KF6 TODO rename to make it generic
     void setPanelTakesFocus(bool takesFocus);
 
+    /**
+     * Set the width/height of the exclusive zone of the PlasmaShellSurface.
+     *
+     * @since 5.101
+     **/
+    void setExclusiveZone(int zone);
+
+    /**
+     *
+     **/
+    enum class Anchor {
+        None = 0, //
+        Top = 1, //
+        Bottom = 2, //
+        Left = 4, //
+        Right = 8
+    };
+    /**
+     *
+     **/
+    void setAnchor(Anchor anchor);
+
 Q_SIGNALS:
     /**
      * Emitted when the compositor hid an auto hiding panel.

@@ -33,6 +33,7 @@ public:
     QSize size;
     QPointer<Surface> parentSurface;
     PlasmaShellSurface::Role role;
+    PlasmaShellSurface::Anchor anchor;
 
     static PlasmaShellSurface *get(Surface *surface);
 
@@ -348,5 +349,33 @@ void PlasmaShellSurface::setPanelTakesFocus(bool takesFocus)
     org_kde_plasma_surface_set_panel_takes_focus(d->surface, takesFocus);
 }
 
+void PlasmaShellSurface::setExclusiveZone(int zone)
+{
+    org_kde_plasma_surface_set_exclusive_zone(d->surface, zone);
+}
+
+void PlasmaShellSurface::setAnchor(PlasmaShellSurface::Anchor anchor)
+{
+    Q_ASSERT(isValid());
+    uint32_t wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_NONE;
+    switch (anchor) {
+    case Anchor::Top:
+        wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_TOP;
+        break;
+    case Anchor::Bottom:
+        wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_BOTTOM;
+        break;
+    case Anchor::Left:
+        wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_LEFT;
+        break;
+    case Anchor::Right:
+        wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_RIGHT;
+        break;
+    case Anchor::None:
+        wlAnchor = ORG_KDE_PLASMA_SURFACE_ANCHOR_NONE;
+        break;
+    }
+    org_kde_plasma_surface_set_anchor(d->surface, wlAnchor);
+}
 }
 }

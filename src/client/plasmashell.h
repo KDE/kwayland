@@ -338,7 +338,7 @@ public:
     void setExclusiveZone(int zone);
 
     /**
-     *
+     * The side of the screen the PlasmaShellSurface should reserve its exclusive zone.
      **/
     enum class Anchor {
         None = 0, //
@@ -348,7 +348,7 @@ public:
         Right = 8
     };
     /**
-     *
+     * Set the side of the screen to reverve the exclusive zone from.
      **/
     void setAnchor(Anchor anchor);
 

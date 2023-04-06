@@ -32,8 +32,9 @@ set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control how much of depreca
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
+set(kwayland_version_header "${CMAKE_CURRENT_BINARY_DIR}/src/client/kwayland_version.h")
 ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
-                        VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h"
+                        VERSION_HEADER "${kwayland_version_header}"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfigVersion.cmake"
                         SOVERSION 6)
 
@@ -116,7 +117,7 @@ install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF6WaylandConfig.cmake"
 install(EXPORT KF6WaylandTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KF6WaylandTargets.cmake NAMESPACE KF6:: )
 
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kwayland_version.h
+install(FILES ${kwayland_version_header}
         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland COMPONENT Devel)
 
 if (NOT WIN32)

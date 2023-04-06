@@ -244,6 +244,7 @@ set_source_files_properties(${CLIENT_LIB_SRCS} PROPERTIES
 
 add_library(KF6WaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
 add_library(KF6::WaylandClient ALIAS KF6WaylandClient)
+
 ecm_generate_export_header(KF6WaylandClient
     BASE_NAME
         KWaylandClient
@@ -251,6 +252,8 @@ ecm_generate_export_header(KF6WaylandClient
         KWayland/Client/kwaylandclient_export.h
     GROUP_BASE_NAME KF
     VERSION ${KF_VERSION}
+    USE_VERSION_HEADER
+    VERSION_BASE_NAME KWayland
     DEPRECATED_BASE_VERSION 0
     DEPRECATION_VERSIONS
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}

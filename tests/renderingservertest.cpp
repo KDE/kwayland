@@ -20,7 +20,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QWidget>
-#include <QtConcurrent>
+#include <QtConcurrentRun>
 
 #include <iostream>
 #include <unistd.h>

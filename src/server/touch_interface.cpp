@@ -116,3 +116,5 @@ TouchInterface::Private *TouchInterface::d_func() const
 
 }
 }
+
+#include "moc_touch_interface.cpp"

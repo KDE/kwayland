@@ -167,3 +167,5 @@ void TestServer::repaint()
         (*it)->surface()->frameRendered(m_timeSinceStart->elapsed());
     }
 }
+
+#include "moc_testserver.cpp"

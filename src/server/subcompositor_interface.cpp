@@ -355,3 +355,5 @@ SubSurfaceInterface::Private *SubSurfaceInterface::d_func() const
 
 }
 }
+
+#include "moc_subcompositor_interface.cpp"

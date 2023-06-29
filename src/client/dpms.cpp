@@ -262,3 +262,5 @@ Dpms::operator org_kde_kwin_dpms *() const
 
 }
 }
+
+#include "moc_dpms.cpp"

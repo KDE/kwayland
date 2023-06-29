@@ -423,3 +423,5 @@ void Output::destroy()
 
 }
 }
+
+#include "moc_output.cpp"

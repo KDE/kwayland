@@ -1103,3 +1103,5 @@ XdgPopupStableInterface::Private *XdgPopupStableInterface::d_func() const
 
 }
 }
+
+#include "moc_xdgshell_stable_interface_p.cpp"

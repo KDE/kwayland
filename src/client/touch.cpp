@@ -273,3 +273,5 @@ QVector<TouchPoint *> Touch::sequence() const
 
 }
 }
+
+#include "moc_touch.cpp"

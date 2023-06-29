@@ -132,3 +132,5 @@ bool Compositor::isValid() const
 
 }
 }
+
+#include "moc_compositor.cpp"

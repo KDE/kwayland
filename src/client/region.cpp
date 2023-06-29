@@ -137,3 +137,5 @@ Region::operator wl_region *()
 
 }
 }
+
+#include "moc_region.cpp"

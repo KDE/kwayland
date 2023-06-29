@@ -99,3 +99,5 @@ RegionInterface::Private *RegionInterface::d_func() const
 
 }
 }
+
+#include "moc_region_interface.cpp"

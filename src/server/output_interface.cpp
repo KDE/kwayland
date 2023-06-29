@@ -527,3 +527,5 @@ OutputInterface::Private *OutputInterface::d_func() const
 
 }
 }
+
+#include "moc_output_interface.cpp"

@@ -1536,3 +1536,5 @@ void SeatInterface::setSelection(DataDeviceInterface *dataDevice)
 
 }
 }
+
+#include "moc_seat_interface.cpp"

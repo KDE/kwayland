@@ -215,3 +215,6 @@ ConfinedPointerInterface::Private *ConfinedPointerInterface::d_func() const
 
 }
 }
+
+#include "moc_pointerconstraints_interface.cpp"
+#include "moc_pointerconstraints_interface_p.cpp"

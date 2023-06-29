@@ -329,3 +329,5 @@ void OutputConfigurationInterface::Private::clearPendingChanges()
 
 }
 }
+
+#include "moc_outputconfiguration_interface.cpp"

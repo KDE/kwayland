@@ -390,3 +390,5 @@ ShadowInterface::Private *ShadowInterface::d_func() const
 
 }
 }
+
+#include "moc_shadow_interface.cpp"

@@ -244,3 +244,5 @@ IdleTimeoutInterface::Private *IdleTimeoutInterface::d_func() const
 
 }
 }
+
+#include "moc_idle_interface.cpp"

@@ -360,3 +360,6 @@ void RemoteBufferInterface::passFd()
 
 }
 }
+
+#include "moc_remote_access_interface.cpp"
+#include "moc_remote_access_interface_p.cpp"

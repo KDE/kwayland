@@ -1364,3 +1364,5 @@ PlasmaActivation::PlasmaActivation(PlasmaActivationFeedback *parent, org_kde_pla
 PlasmaActivation::~PlasmaActivation() = default;
 }
 }
+
+#include "moc_plasmawindowmanagement.cpp"

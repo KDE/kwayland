@@ -399,3 +399,5 @@ void PlasmaVirtualDesktopInterface::sendDone()
 
 }
 }
+
+#include "moc_plasmavirtualdesktop_interface.cpp"

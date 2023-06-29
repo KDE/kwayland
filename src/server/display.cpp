@@ -725,3 +725,5 @@ void *Display::eglDisplay() const
 
 }
 }
+
+#include "moc_display.cpp"

@@ -117,3 +117,5 @@ OutputDeviceInterface::ColorCurves OutputChangeSet::colorCurves() const
 
 }
 }
+
+#include "moc_outputchangeset.cpp"

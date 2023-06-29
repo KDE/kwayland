@@ -216,3 +216,5 @@ void QtExtendedSurfaceInterface::close()
 
 }
 }
+
+#include "moc_qtsurfaceextension_interface.cpp"

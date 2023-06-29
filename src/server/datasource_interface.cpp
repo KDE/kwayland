@@ -185,3 +185,5 @@ void DataSourceInterface::dndAction(DataDeviceManagerInterface::DnDAction action
 
 }
 }
+
+#include "moc_datasource_interface.cpp"

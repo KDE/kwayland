@@ -382,3 +382,5 @@ DataDeviceInterface::Private *DataDeviceInterface::d_func() const
 
 }
 }
+
+#include "moc_datadevice_interface.cpp"

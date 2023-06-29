@@ -474,3 +474,5 @@ V1Iface::Private *V1Iface::d_func() const
 
 }
 }
+
+#include "moc_linuxdmabuf_v1_interface.cpp"

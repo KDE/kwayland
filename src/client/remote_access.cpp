@@ -233,3 +233,5 @@ quint32 RemoteBuffer::format() const
 
 }
 }
+
+#include "moc_remote_access.cpp"

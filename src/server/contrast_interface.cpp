@@ -246,3 +246,5 @@ ContrastInterface::Private *ContrastInterface::d_func() const
 
 }
 }
+
+#include "moc_contrast_interface.cpp"

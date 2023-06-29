@@ -161,3 +161,5 @@ void ServerSideDecorationPalette::setPalette(const QString &palette)
 }
 }
 }
+
+#include "moc_server_decoration_palette.cpp"

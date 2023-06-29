@@ -373,3 +373,5 @@ ShellSurface::operator wl_shell_surface *() const
 
 }
 }
+
+#include "moc_shell.cpp"

@@ -292,3 +292,5 @@ XdgShellPopupInterface::Private *XdgShellPopupInterface::d_func() const
 
 }
 }
+
+#include "moc_xdgshell_interface.cpp"

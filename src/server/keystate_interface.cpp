@@ -82,3 +82,5 @@ void KeyStateInterface::setState(KeyStateInterface::Key key, KeyStateInterface::
 }
 
 }
+
+#include "moc_keystate_interface.cpp"

@@ -198,3 +198,5 @@ KeyboardInterface::Private *KeyboardInterface::d_func() const
 
 }
 }
+
+#include "moc_keyboard_interface.cpp"

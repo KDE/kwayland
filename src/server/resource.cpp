@@ -103,3 +103,5 @@ quint32 Resource::id() const
 
 }
 }
+
+#include "moc_resource.cpp"

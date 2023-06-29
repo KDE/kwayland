@@ -388,3 +388,5 @@ bool PlasmaVirtualDesktop::isActive() const
 
 }
 }
+
+#include "moc_plasmavirtualdesktop.cpp"

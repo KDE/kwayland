@@ -40,3 +40,6 @@ IdleInhibitManagerInterface::Private *IdleInhibitManagerInterface::d_func() cons
 
 }
 }
+
+#include "moc_idleinhibit_interface.cpp"
+#include "moc_idleinhibit_interface_p.cpp"

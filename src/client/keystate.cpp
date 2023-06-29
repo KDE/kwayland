@@ -64,3 +64,5 @@ void Keystate::setEventQueue(KWayland::Client::EventQueue * /*queue*/)
 
 }
 }
+
+#include "moc_keystate.cpp"

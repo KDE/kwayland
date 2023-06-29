@@ -193,3 +193,5 @@ BlurInterface::Private *BlurInterface::d_func() const
 
 }
 }
+
+#include "moc_blur_interface.cpp"

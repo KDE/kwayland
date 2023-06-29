@@ -251,3 +251,5 @@ Seat::operator wl_seat *() const
 
 }
 }
+
+#include "moc_seat.cpp"

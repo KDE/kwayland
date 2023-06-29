@@ -199,3 +199,5 @@ SurfaceInterface *AppMenuInterface::surface() const
 
 } // namespace
 }
+
+#include "moc_appmenu_interface.cpp"

@@ -75,3 +75,6 @@ RelativePointerInterface::Private *RelativePointerInterface::d_func() const
 
 }
 }
+
+#include "moc_relativepointer_interface.cpp"
+#include "moc_relativepointer_interface_p.cpp"

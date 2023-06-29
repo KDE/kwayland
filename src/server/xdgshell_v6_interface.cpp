@@ -1074,3 +1074,5 @@ XdgPopupV6Interface::Private *XdgPopupV6Interface::d_func() const
 
 }
 }
+
+#include "moc_xdgshell_v6_interface_p.cpp"

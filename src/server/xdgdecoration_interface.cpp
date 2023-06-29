@@ -237,3 +237,5 @@ XdgDecorationInterface::Private *XdgDecorationInterface::d_func() const
 
 }
 }
+
+#include "moc_xdgdecoration_interface.cpp"

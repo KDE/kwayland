@@ -310,3 +310,5 @@ bool FakeInputDevice::isAuthenticated() const
 
 }
 }
+
+#include "moc_fakeinput_interface.cpp"

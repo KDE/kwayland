@@ -201,3 +201,5 @@ Keyboard::operator wl_keyboard *() const
 
 }
 }
+
+#include "moc_keyboard.cpp"

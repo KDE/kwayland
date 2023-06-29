@@ -258,3 +258,5 @@ void XdgImported::setParentOf(Surface *surface)
 
 }
 }
+
+#include "moc_xdgforeign.cpp"

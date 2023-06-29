@@ -89,3 +89,5 @@ void SubCompositor::setEventQueue(EventQueue *queue)
 
 }
 }
+
+#include "moc_subcompositor.cpp"

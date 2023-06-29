@@ -60,3 +60,5 @@ SurfaceInterface *XdgForeignInterface::transientFor(SurfaceInterface *surface)
 
 }
 }
+
+#include "moc_xdgforeign_interface.cpp"

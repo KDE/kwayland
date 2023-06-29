@@ -82,3 +82,5 @@ Display *Global::display()
 
 }
 }
+
+#include "moc_global.cpp"

@@ -438,3 +438,5 @@ XdgImportedUnstableV2Interface::Private::~Private()
 }
 }
 }
+
+#include "moc_xdgforeign_v2_interface_p.cpp"

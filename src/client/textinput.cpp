@@ -211,3 +211,6 @@ TextInput *TextInputManager::createTextInput(Seat *seat, QObject *parent)
 
 }
 }
+
+#include "moc_textinput.cpp"
+#include "moc_textinput_p.cpp"

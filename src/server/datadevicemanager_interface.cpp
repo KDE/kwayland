@@ -116,3 +116,5 @@ DataDeviceManagerInterface::~DataDeviceManagerInterface() = default;
 
 }
 }
+
+#include "moc_datadevicemanager_interface.cpp"

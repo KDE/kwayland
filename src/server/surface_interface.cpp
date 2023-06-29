@@ -950,3 +950,5 @@ SurfaceInterface::Private *SurfaceInterface::d_func() const
 
 }
 }
+
+#include "moc_surface_interface.cpp"

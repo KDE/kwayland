@@ -102,3 +102,6 @@ PointerPinchGestureInterface::Private *PointerPinchGestureInterface::d_func() co
 
 }
 }
+
+#include "moc_pointergestures_interface.cpp"
+#include "moc_pointergestures_interface_p.cpp"

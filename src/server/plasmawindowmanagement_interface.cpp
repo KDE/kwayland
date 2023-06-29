@@ -1014,3 +1014,5 @@ quint32 PlasmaWindowInterface::internalId() const
 
 }
 }
+
+#include "moc_plasmawindowmanagement_interface.cpp"

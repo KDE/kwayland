@@ -149,3 +149,6 @@ DpmsInterface::Private *DpmsInterface::d_func() const
 
 }
 }
+
+#include "moc_dpms_interface.cpp"
+#include "moc_dpms_interface_p.cpp"

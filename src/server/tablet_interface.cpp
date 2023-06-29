@@ -519,3 +519,5 @@ TabletSeatInterface *TabletManagerInterface::seat(SeatInterface *seat) const
 }
 
 TabletManagerInterface::~TabletManagerInterface() = default;
+
+#include "moc_tablet_interface.cpp"

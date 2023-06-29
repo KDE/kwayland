@@ -340,3 +340,5 @@ bool BufferInterface::hasAlphaChannel() const
 
 }
 }
+
+#include "moc_buffer_interface.cpp"

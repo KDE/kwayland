@@ -53,3 +53,5 @@ FilteredDisplay::~FilteredDisplay()
 
 }
 }
+
+#include "moc_filtered_display.cpp"

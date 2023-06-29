@@ -82,3 +82,5 @@ void EglStreamControllerInterface::create()
 
 }
 }
+
+#include "moc_eglstream_controller_interface.cpp"

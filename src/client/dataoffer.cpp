@@ -230,3 +230,5 @@ DataDeviceManager::DnDAction DataOffer::selectedDragAndDropAction() const
 
 }
 }
+
+#include "moc_dataoffer.cpp"

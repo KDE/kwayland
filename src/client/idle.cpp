@@ -179,3 +179,5 @@ IdleTimeout::operator org_kde_kwin_idle_timeout *() const
 
 }
 }
+
+#include "moc_idle.cpp"

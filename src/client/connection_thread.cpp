@@ -314,3 +314,5 @@ QVector<ConnectionThread *> ConnectionThread::connections()
 
 }
 }
+
+#include "moc_connection_thread.cpp"

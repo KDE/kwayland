@@ -338,3 +338,5 @@ XdgOutputV1Interface::Private::~Private()
 
 }
 }
+
+#include "moc_xdgoutput_interface.cpp"

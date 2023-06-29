@@ -256,3 +256,6 @@ TextInputManagerInterface::Private *TextInputManagerInterface::d_func() const
 
 }
 }
+
+#include "moc_textinput_interface.cpp"
+#include "moc_textinput_interface_p.cpp"

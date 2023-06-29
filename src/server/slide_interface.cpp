@@ -194,3 +194,5 @@ SlideInterface::Private *SlideInterface::d_func() const
 
 }
 }
+
+#include "moc_slide_interface.cpp"

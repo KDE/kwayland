@@ -466,3 +466,5 @@ ShellSurfaceInterface::Private *ShellSurfaceInterface::d_func() const
 
 }
 }
+
+#include "moc_shell_interface.cpp"

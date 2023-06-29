@@ -102,3 +102,5 @@ void OutputManagementInterface::Private::unbind(wl_resource *resource)
 
 }
 }
+
+#include "moc_outputmanagement_interface.cpp"

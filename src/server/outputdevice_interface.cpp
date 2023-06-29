@@ -720,3 +720,5 @@ void KWayland::Server::OutputDeviceInterface::Private::updateEisaId()
 
 }
 }
+
+#include "moc_outputdevice_interface.cpp"

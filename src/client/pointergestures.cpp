@@ -375,3 +375,5 @@ QPointer<Surface> PointerPinchGesture::surface() const
 
 }
 }
+
+#include "moc_pointergestures.cpp"

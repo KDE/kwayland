@@ -155,3 +155,5 @@ QString ClientConnection::executablePath() const
 
 }
 }
+
+#include "moc_clientconnection.cpp"

@@ -227,3 +227,5 @@ void OutputConfiguration::Private::failedCallback(void *data, org_kde_kwin_outpu
 
 }
 }
+
+#include "moc_outputconfiguration.cpp"

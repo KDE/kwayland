@@ -195,3 +195,5 @@ DataDeviceManager::DnDAction DataSource::selectedDragAndDropAction() const
 
 }
 }
+
+#include "moc_datasource.cpp"

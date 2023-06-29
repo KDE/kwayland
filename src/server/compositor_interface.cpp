@@ -109,3 +109,5 @@ void CompositorInterface::Private::createRegion(wl_client *client, wl_resource *
 
 }
 }
+
+#include "moc_compositor_interface.cpp"

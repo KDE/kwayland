@@ -401,3 +401,5 @@ PlasmaShellSurfaceInterface *PlasmaShellSurfaceInterface::get(wl_resource *nativ
 
 }
 }
+
+#include "moc_plasmashell_interface.cpp"

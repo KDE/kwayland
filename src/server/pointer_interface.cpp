@@ -458,3 +458,5 @@ QPointer<SurfaceInterface> Cursor::surface() const
 
 }
 }
+
+#include "moc_pointer_interface.cpp"

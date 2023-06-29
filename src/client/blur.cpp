@@ -158,3 +158,5 @@ Blur::operator org_kde_kwin_blur *() const
 
 }
 }
+
+#include "moc_blur.cpp"

@@ -249,3 +249,5 @@ bool XdgOutput::isValid() const
 
 }
 }
+
+#include "moc_xdgoutput.cpp"

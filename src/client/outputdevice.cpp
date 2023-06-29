@@ -616,3 +616,5 @@ void OutputDevice::destroy()
 
 }
 }
+
+#include "moc_outputdevice.cpp"

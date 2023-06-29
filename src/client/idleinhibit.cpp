@@ -153,3 +153,5 @@ bool IdleInhibitor::isValid() const
 
 }
 }
+
+#include "moc_idleinhibit.cpp"

@@ -222,3 +222,5 @@ XdgDecoration::Mode XdgDecoration::mode() const
 
 }
 }
+
+#include "moc_xdgdecoration.cpp"

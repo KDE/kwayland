@@ -242,3 +242,5 @@ DataDevice::operator wl_data_device *() const
 
 }
 }
+
+#include "moc_datadevice.cpp"

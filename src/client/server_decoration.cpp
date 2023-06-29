@@ -277,3 +277,5 @@ ServerSideDecoration::Mode ServerSideDecoration::defaultMode() const
 
 }
 }
+
+#include "moc_server_decoration.cpp"

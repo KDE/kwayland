@@ -186,3 +186,5 @@ SubSurface::operator wl_subsurface *()
 
 }
 }
+
+#include "moc_subsurface.cpp"

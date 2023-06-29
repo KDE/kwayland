@@ -187,3 +187,5 @@ bool RelativePointer::isValid() const
 
 }
 }
+
+#include "moc_relativepointer.cpp"

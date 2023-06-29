@@ -159,3 +159,5 @@ void AppMenu::setAddress(const QString &serviceName, const QString &objectPath)
 
 }
 }
+
+#include "moc_appmenu.cpp"

@@ -310,3 +310,5 @@ XdgImportedUnstableV2::~XdgImportedUnstableV2()
 
 }
 }
+
+#include "moc_xdgforeign_v2.cpp"

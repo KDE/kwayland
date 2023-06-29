@@ -186,3 +186,5 @@ Contrast::operator org_kde_kwin_contrast *() const
 
 }
 }
+
+#include "moc_contrast.cpp"

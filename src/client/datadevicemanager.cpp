@@ -103,3 +103,5 @@ DataDeviceManager::operator wl_data_device_manager *()
 
 }
 }
+
+#include "moc_datadevicemanager.cpp"

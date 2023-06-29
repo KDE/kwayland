@@ -228,3 +228,5 @@ FakeInput::operator org_kde_kwin_fake_input *()
 
 }
 }
+
+#include "moc_fakeinput.cpp"

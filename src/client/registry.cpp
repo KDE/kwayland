@@ -900,3 +900,5 @@ Registry::operator wl_registry *()
 
 }
 }
+
+#include "moc_registry.cpp"

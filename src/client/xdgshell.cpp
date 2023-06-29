@@ -495,3 +495,6 @@ XdgPositioner::Constraints XdgPositioner::constraints() const
 
 }
 }
+
+#include "moc_xdgshell.cpp"
+#include "moc_xdgshell_p.cpp"

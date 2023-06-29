@@ -347,3 +347,5 @@ void ConfinedPointer::setRegion(Region *region)
 
 }
 }
+
+#include "moc_pointerconstraints.cpp"

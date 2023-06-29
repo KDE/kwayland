@@ -162,3 +162,5 @@ void Slide::setOffset(qint32 offset)
 
 }
 }
+
+#include "moc_slide.cpp"

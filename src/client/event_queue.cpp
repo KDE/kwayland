@@ -90,3 +90,5 @@ EventQueue::operator wl_event_queue *()
 
 }
 }
+
+#include "moc_event_queue.cpp"

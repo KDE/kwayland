@@ -362,3 +362,5 @@ Q_INVOKABLE void PlasmaWindowModel::requestToggleShaded(int row)
 
 }
 }
+
+#include "moc_plasmawindowmodel.cpp"

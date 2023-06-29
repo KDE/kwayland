@@ -91,3 +91,5 @@ OutputConfiguration *OutputManagement::createConfiguration(QObject *parent)
 
 }
 }
+
+#include "moc_outputmanagement.cpp"

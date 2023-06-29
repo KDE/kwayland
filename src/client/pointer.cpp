@@ -241,3 +241,5 @@ Pointer::operator wl_pointer *()
 
 }
 }
+
+#include "moc_pointer.cpp"

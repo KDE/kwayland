@@ -297,3 +297,5 @@ wl_shm *ShmPool::shm()
 
 }
 }
+
+#include "moc_shm_pool.cpp"

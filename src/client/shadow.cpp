@@ -189,3 +189,5 @@ Shadow::operator org_kde_kwin_shadow *() const
 
 }
 }
+
+#include "moc_shadow.cpp"

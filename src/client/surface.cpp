@@ -269,3 +269,5 @@ QVector<Output *> Surface::outputs() const
 
 }
 }
+
+#include "moc_surface.cpp"

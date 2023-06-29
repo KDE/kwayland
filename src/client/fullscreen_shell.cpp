@@ -135,3 +135,5 @@ bool FullscreenShell::hasCapabilityCursorPlane() const
 
 }
 }
+
+#include "moc_fullscreen_shell.cpp"

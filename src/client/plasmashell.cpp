@@ -348,3 +348,5 @@ void PlasmaShellSurface::setPanelTakesFocus(bool takesFocus)
 
 }
 }
+
+#include "moc_plasmashell.cpp"

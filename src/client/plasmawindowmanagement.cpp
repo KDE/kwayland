@@ -1084,6 +1084,15 @@ void PlasmaWindow::requestToggleMaximized()
     }
 }
 
+void PlasmaWindow::requestToggleFullscreen()
+{
+    if (d->fullscreen) {
+        org_kde_plasma_window_set_state(d->window, ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN, 0);
+    } else {
+        org_kde_plasma_window_set_state(d->window, ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN, ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_FULLSCREEN);
+    }
+}
+
 void PlasmaWindow::setMinimizedGeometry(Surface *panel, const QRect &geom)
 {
     org_kde_plasma_window_set_minimized_geometry(d->window, *panel, geom.x(), geom.y(), geom.width(), geom.height());

@@ -173,6 +173,12 @@ public:
     Q_INVOKABLE void requestToggleMaximized(int row);
 
     /**
+     * Requests the window at this model row index have its fullscreen state toggled.
+     * @since 6.0
+     */
+    Q_INVOKABLE void requestToggleFullscreen(int row);
+
+    /**
      * Sets the geometry of the taskbar entry for the window at the model row
      * relative to a panel in particular. QRectF, intended for use from QML
      * @since 5.5

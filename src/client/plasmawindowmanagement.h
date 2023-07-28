@@ -438,6 +438,12 @@ public:
     void requestToggleMaximized();
 
     /**
+     * Requests the window at this model row index have its fullscreen state toggled.
+     * @since 6.0
+     */
+    void requestToggleFullscreen();
+
+    /**
      * Sets the geometry of the taskbar entry for this window
      * relative to a panel in particular
      * @since 5.5

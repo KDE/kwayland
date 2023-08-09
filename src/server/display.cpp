@@ -54,6 +54,11 @@
 
 #include <wayland-server.h>
 
+// sourcing the moc file before the egl.h include,
+// because that could include XLib.h (e.g. with Mesa < 22.3)
+// whose defines like "Bool" break Qt names
+#include "moc_display.cpp"
+
 #include <EGL/egl.h>
 
 namespace KWayland
@@ -725,5 +730,3 @@ void *Display::eglDisplay() const
 
 }
 }
-
-#include "moc_display.cpp"

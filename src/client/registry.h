@@ -26,7 +26,6 @@ struct zwp_text_input_manager_v2;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_appmenu_manager;
 struct org_kde_kwin_fake_input;
-struct org_kde_kwin_idle;
 struct org_kde_kwin_keystate;
 struct org_kde_kwin_dpms_manager;
 struct org_kde_kwin_shadow_manager;
@@ -142,7 +141,6 @@ public:
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
         PlasmaWindowManagement, ///< Refers to org_kde_plasma_window_management interface
-        Idle, ///< Refers to org_kde_kwin_idle_interface interface
         FakeInput, ///< Refers to org_kde_kwin_fake_input interface
         Shadow, ///< Refers to org_kde_kwin_shadow_manager interface
         Blur, ///< refers to org_kde_kwin_blur_manager interface
@@ -390,16 +388,6 @@ public:
      * @since 5.46
      **/
     org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
-    /**
-     * Binds the org_kde_kwin_idle with @p name and @p version.
-     * If the @p name does not exist or is not for the idle interface,
-     * @c null will be returned.
-     *
-     * Prefer using createIdle instead.
-     * @see createIdle
-     * @since 5.4
-     **/
-    org_kde_kwin_idle *bindIdle(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_keystate with @p name and @p version.
      * If the @p name does not exist or is not for the keystate interface,
@@ -828,22 +816,6 @@ public:
      * @since 5.4
      **/
     PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
-     * Creates an Idle and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the org_kde_kwin_idle interface,
-     * the returned Idle will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_idle interface to bind
-     * @param version The version or the org_kde_kwin_idle interface to use
-     * @param parent The parent for Idle
-     *
-     * @returns The created Idle.
-     * @since 5.4
-     **/
-    Idle *createIdle(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a Keystate and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1275,13 +1247,6 @@ Q_SIGNALS:
      **/
     void plasmaWindowManagementAnnounced(quint32 name, quint32 version);
     /**
-     * Emitted whenever a org_kde_kwin_idle interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     * @since 5.4
-     **/
-    void idleAnnounced(quint32 name, quint32 version);
-    /**
      * Emitted whenever a org_kde_kwin_fake_input interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1523,12 +1488,6 @@ Q_SIGNALS:
      * @since 5.4
      **/
     void plasmaWindowManagementRemoved(quint32 name);
-    /**
-     * Emitted whenever a org_kde_kwin_idle interface gets removed.
-     * @param name The name for the removed interface
-     * @since 5.4
-     **/
-    void idleRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_kwin_fake_input interface gets removed.
      * @param name The name for the removed interface

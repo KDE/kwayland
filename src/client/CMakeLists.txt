@@ -22,7 +22,6 @@ set(CLIENT_LIB_SRCS
     dpms.cpp
     fakeinput.cpp
     fullscreen_shell.cpp
-    idle.cpp
     idleinhibit.cpp
     keyboard.cpp
     keystate.cpp
@@ -89,11 +88,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-window-management.xml
     BASENAME plasma-window-management
-)
-
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/idle.xml
-    BASENAME idle
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -195,7 +189,6 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-idle-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fake-input-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-shadow-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-blur-client-protocol.h
@@ -278,7 +271,6 @@ set(CLIENT_LIB_HEADERS
   dpms.h
   fakeinput.h
   fullscreen_shell.h
-  idle.h
   idleinhibit.h
   keyboard.h
   keystate.h

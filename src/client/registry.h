@@ -26,7 +26,6 @@ struct zwp_text_input_manager_v2;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_appmenu_manager;
 struct org_kde_kwin_fake_input;
-struct org_kde_kwin_keystate;
 struct org_kde_kwin_dpms_manager;
 struct org_kde_kwin_shadow_manager;
 struct org_kde_kwin_blur_manager;
@@ -164,7 +163,6 @@ public:
         XdgOutputUnstableV1, ///< refers to zxdg_output_v1 @since 5.47
         XdgShellStable, ///< refers to xdg_wm_base @since 5.48
         XdgDecorationUnstableV1, ///< refers to zxdg_decoration_manager_v1 @since 5.54
-        Keystate, ///< refers to org_kwin_keystate @since 5.60
         PlasmaActivationFeedback, ///< Refers to org_kde_plasma_activation_feedback interface, @since 5.83
     };
     explicit Registry(QObject *parent = nullptr);
@@ -388,16 +386,6 @@ public:
      * @since 5.46
      **/
     org_kde_plasma_window_management *bindPlasmaWindowManagement(uint32_t name, uint32_t version) const;
-    /**
-     * Binds the org_kde_kwin_keystate with @p name and @p version.
-     * If the @p name does not exist or is not for the keystate interface,
-     * @c null will be returned.
-     *
-     * Prefer using createKeystate instead.
-     * @see createKeystate
-     * @since 5.60
-     **/
-    org_kde_kwin_keystate *bindKeystate(uint32_t name, uint32_t version) const;
     /**
      * Binds the org_kde_kwin_fake_input with @p name and @p version.
      * If the @p name does not exist or is not for the fake input interface,
@@ -816,22 +804,6 @@ public:
      * @since 5.4
      **/
     PlasmaWindowManagement *createPlasmaWindowManagement(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
-     * Creates a Keystate and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the org_kde_kwin_keystate interface,
-     * the returned Keystate will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_keystate interface to bind
-     * @param version The version or the org_kde_kwin_keystate interface to use
-     * @param parent The parent for Keystate
-     *
-     * @returns The created Keystate.
-     * @since 5.60
-     **/
-    Keystate *createKeystate(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a FakeInput and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1410,14 +1382,6 @@ Q_SIGNALS:
      **/
     void xdgDecorationAnnounced(quint32 name, quint32 version);
 
-    /**
-     * Emitted whenever a org_kde_kwin_keystate interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     * @since 5.60
-     **/
-    void keystateAnnounced(quint32 name, quint32 version);
-
     ///@}
 
     /**
@@ -1627,13 +1591,6 @@ Q_SIGNALS:
      * @since 5.54
      **/
     void xdgDecorationRemoved(quint32 name);
-
-    /**
-     * Emitted whenever a org_kde_kwin_keystate gets removed.
-     * @param name The name of the removed interface
-     * @since 5.60
-     **/
-    void keystateRemoved(quint32 name);
 
     ///@}
     /**

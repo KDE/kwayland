@@ -24,7 +24,6 @@ set(CLIENT_LIB_SRCS
     fullscreen_shell.cpp
     idleinhibit.cpp
     keyboard.cpp
-    keystate.cpp
     output.cpp
     pointer.cpp
     pointerconstraints.cpp
@@ -179,11 +178,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME xdg-decoration-unstable-v1
 )
 
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/keystate.xml
-    BASENAME keystate
-)
-
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
@@ -273,7 +267,6 @@ set(CLIENT_LIB_HEADERS
   fullscreen_shell.h
   idleinhibit.h
   keyboard.h
-  keystate.h
   output.h
   pointer.h
   pointerconstraints.h

@@ -26,7 +26,6 @@ set(CLIENT_LIB_SRCS
     idleinhibit.cpp
     keyboard.cpp
     keystate.cpp
-    remote_access.cpp
     output.cpp
     pointer.cpp
     pointerconstraints.cpp
@@ -219,11 +218,6 @@ set(CLIENT_GENERATED_FILES
 
 set_source_files_properties(${CLIENT_GENERATED_FILES} PROPERTIES SKIP_AUTOMOC ON)
 
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/remote-access.xml
-    BASENAME remote-access
-)
-
 set_source_files_properties(${CLIENT_LIB_SRCS} PROPERTIES
     COMPILE_FLAGS -DQT_NO_KEYWORDS)
 
@@ -288,7 +282,6 @@ set(CLIENT_LIB_HEADERS
   idleinhibit.h
   keyboard.h
   keystate.h
-  remote_access.h
   output.h
   pointer.h
   pointerconstraints.h

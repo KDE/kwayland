@@ -26,7 +26,6 @@
 #include "pointerconstraints.h"
 #include "pointergestures.h"
 #include "relativepointer.h"
-#include "remote_access.h"
 #include "seat.h"
 #include "server_decoration.h"
 #include "server_decoration_palette.h"
@@ -62,7 +61,6 @@
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
-#include <wayland-remote-access-client-protocol.h>
 #include <wayland-server-decoration-client-protocol.h>
 #include <wayland-server-decoration-palette-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
@@ -179,13 +177,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_idle_interface,
         &Registry::idleAnnounced,
         &Registry::idleRemoved
-    }},
-    {Registry::Interface::RemoteAccessManager, {
-        1,
-        QByteArrayLiteral("org_kde_kwin_remote_access_manager"),
-        &org_kde_kwin_remote_access_manager_interface,
-        &Registry::remoteAccessManagerAnnounced,
-        &Registry::remoteAccessManagerRemoved
     }},
     {Registry::Interface::FakeInput, {
         4,
@@ -647,7 +638,6 @@ BIND(PlasmaActivationFeedback, org_kde_plasma_activation_feedback)
 BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
-BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
 BIND(FakeInput, org_kde_kwin_fake_input)
 BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
@@ -712,7 +702,6 @@ CREATE(PlasmaActivationFeedback)
 CREATE(PlasmaVirtualDesktopManagement)
 CREATE(PlasmaWindowManagement)
 CREATE(Idle)
-CREATE(RemoteAccessManager)
 CREATE(FakeInput)
 CREATE(ShadowManager)
 CREATE(BlurManager)

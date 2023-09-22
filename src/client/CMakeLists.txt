@@ -27,9 +27,6 @@ set(CLIENT_LIB_SRCS
     keyboard.cpp
     keystate.cpp
     remote_access.cpp
-    outputconfiguration.cpp
-    outputmanagement.cpp
-    outputdevice.cpp
     output.cpp
     pointer.cpp
     pointerconstraints.cpp
@@ -78,16 +75,6 @@ ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/fullscreen-shell.xml
     BASENAME fullscreen-shell
-)
-
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/output-management.xml
-    BASENAME output-management
-)
-
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/outputdevice.xml
-    BASENAME org_kde_kwin_outputdevice
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -206,8 +193,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 
 set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-output-management-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-org_kde_kwin_outputdevice-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
@@ -304,9 +289,6 @@ set(CLIENT_LIB_HEADERS
   keyboard.h
   keystate.h
   remote_access.h
-  outputconfiguration.h
-  outputmanagement.h
-  outputdevice.h
   output.h
   pointer.h
   pointerconstraints.h

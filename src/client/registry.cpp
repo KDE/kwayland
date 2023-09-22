@@ -20,9 +20,6 @@
 #include "keystate.h"
 #include "logging.h"
 #include "output.h"
-#include "outputconfiguration.h"
-#include "outputdevice.h"
-#include "outputmanagement.h"
 #include "plasmashell.h"
 #include "plasmavirtualdesktop.h"
 #include "plasmawindowmanagement.h"
@@ -59,8 +56,6 @@
 #include <wayland-idle-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
 #include <wayland-keystate-client-protocol.h>
-#include <wayland-org_kde_kwin_outputdevice-client-protocol.h>
-#include <wayland-output-management-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-virtual-desktop-client-protocol.h>
 #include <wayland-plasma-window-management-client-protocol.h>
@@ -198,20 +193,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_fake_input_interface,
         &Registry::fakeInputAnnounced,
         &Registry::fakeInputRemoved
-    }},
-    {Registry::Interface::OutputManagement, {
-        4,
-        QByteArrayLiteral("org_kde_kwin_outputmanagement"),
-        &org_kde_kwin_outputmanagement_interface,
-        &Registry::outputManagementAnnounced,
-        &Registry::outputManagementRemoved
-    }},
-    {Registry::Interface::OutputDevice, {
-        4,
-        QByteArrayLiteral("org_kde_kwin_outputdevice"),
-        &org_kde_kwin_outputdevice_interface,
-        &Registry::outputDeviceAnnounced,
-        &Registry::outputDeviceRemoved
     }},
     {Registry::Interface::Shadow, {
         2,
@@ -668,8 +649,6 @@ BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(Idle, org_kde_kwin_idle)
 BIND(RemoteAccessManager, org_kde_kwin_remote_access_manager)
 BIND(FakeInput, org_kde_kwin_fake_input)
-BIND(OutputManagement, org_kde_kwin_outputmanagement)
-BIND(OutputDevice, org_kde_kwin_outputdevice)
 BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
@@ -735,8 +714,6 @@ CREATE(PlasmaWindowManagement)
 CREATE(Idle)
 CREATE(RemoteAccessManager)
 CREATE(FakeInput)
-CREATE(OutputManagement)
-CREATE(OutputDevice)
 CREATE(ShadowManager)
 CREATE(BlurManager)
 CREATE(ContrastManager)

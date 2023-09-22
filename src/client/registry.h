@@ -25,8 +25,6 @@ struct wl_text_input_manager;
 struct zwp_text_input_manager_v2;
 struct _wl_fullscreen_shell;
 struct org_kde_kwin_appmenu_manager;
-struct org_kde_kwin_outputmanagement;
-struct org_kde_kwin_outputdevice;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_idle;
 struct org_kde_kwin_keystate;
@@ -66,8 +64,6 @@ class DpmsManager;
 class EventQueue;
 class FakeInput;
 class FullscreenShell;
-class OutputManagement;
-class OutputDevice;
 class Idle;
 class IdleInhibitManager;
 class Keystate;
@@ -154,8 +150,6 @@ public:
         Contrast, ///< refers to org_kde_kwin_contrast_manager interface
         Slide, ///< refers to org_kde_kwin_slide_manager
         Dpms, ///< Refers to org_kde_kwin_dpms_manager interface
-        OutputManagement, ///< Refers to the wl_data_device_manager interface
-        OutputDevice, ///< Refers to the org_kde_kwin_outputdevice interface
         ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager @since 5.23
         TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2 @since 5.23
@@ -325,21 +319,9 @@ public:
      **/
     wl_shm *bindShm(uint32_t name, uint32_t version) const;
     /**
-     * Binds the org_kde_kwin_outputmanagement with @p name and @p version.
-     * If the @p name does not exist or is not for the outputmanagement interface,
-     * @c null will be returned.
-     *
-     * Prefer using createOutputManagement instead.
-     * @see createOutputManagement
-     **/
-    org_kde_kwin_outputmanagement *bindOutputManagement(uint32_t name, uint32_t version) const;
-    /**
      * Binds the org_kde_kwin_outputdevice with @p name and @p version.
      * If the @p name does not exist or is not for the outputdevice interface,
      * @c null will be returned.
-     *
-     * Prefer using createOutputDevice instead.
-     * @see createOutputDevice
      **/
     wl_output *bindOutput(uint32_t name, uint32_t version) const;
     /**
@@ -351,16 +333,6 @@ public:
      * @see createSubCompositor
      **/
     wl_subcompositor *bindSubCompositor(uint32_t name, uint32_t version) const;
-    /**
-     * Binds the wl_output with @p name and @p version.
-     * If the @p name does not exist or is not for the output interface,
-     * @c null will be returned.
-     *
-     * Prefer using createOutput instead.
-     * @see createOutput
-     * @since 5.5
-     **/
-    org_kde_kwin_outputdevice *bindOutputDevice(uint32_t name, uint32_t version) const;
 
     /**
      * Binds the _wl_fullscreen_shell with @p name and @p version.
@@ -773,38 +745,6 @@ public:
      * @returns The created Output.
      **/
     Output *createOutput(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
-     * Creates an KWinOutputManagement and sets it up to manage the interface identified
-     * by @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the wl_output interface,
-     * the returned KWinConnectors will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_outputmanagement interface to bind
-     * @param version The version or the org_kde_kwin_outputmanagement interface to use
-     * @param parent The parent for KWinOutputManagement
-     *
-     * @returns The created KWinOutputManagement.
-     * @since 5.5
-     **/
-    OutputManagement *createOutputManagement(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
-     * Creates an OutputDevice and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the org_kde_kwin_outputdevice interface,
-     * the returned OutputDevice will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_outputdevice interface to bind
-     * @param version The version or the org_kde_kwin_outputdevice interface to use
-     * @param parent The parent for OutputDevice
-     *
-     * @returns The created Output.
-     * @since 5.5
-     **/
-    OutputDevice *createOutputDevice(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a FullscreenShell and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1334,14 +1274,6 @@ Q_SIGNALS:
      **/
     void dataDeviceManagerAnnounced(quint32 name, quint32 version);
 
-    void outputManagementAnnounced(quint32 name, quint32 version);
-    /**
-     * Emitted whenever a org_kde_kwin_outputdevice interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     * @since 5.5
-     **/
-    void outputDeviceAnnounced(quint32 name, quint32 version);
     /**
      * Emitted whenever a org_kde_plasma_shell interface gets announced.
      * @param name The name for the announced interface
@@ -1602,18 +1534,6 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void dataDeviceManagerRemoved(quint32 name);
-    /**
-     * Emitted whenever a org_kde_kwin_outputmanagement interface gets removed.
-     * @param name The name for the removed interface
-     * @since 5.5
-     **/
-    void outputManagementRemoved(quint32 name);
-    /**
-     * Emitted whenever a org_kde_kwin_outputdevice interface gets removed.
-     * @param name The name for the removed interface
-     * @since 5.5
-     **/
-    void outputDeviceRemoved(quint32 name);
     /**
      * Emitted whenever a org_kde_plasma_shell interface gets removed.
      * @param name The name for the removed interface

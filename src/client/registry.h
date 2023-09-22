@@ -23,7 +23,6 @@ struct wl_shm;
 struct wl_subcompositor;
 struct wl_text_input_manager;
 struct zwp_text_input_manager_v2;
-struct _wl_fullscreen_shell;
 struct org_kde_kwin_appmenu_manager;
 struct org_kde_kwin_fake_input;
 struct org_kde_kwin_dpms_manager;
@@ -135,7 +134,6 @@ public:
         Seat, ///< Refers to the wl_seat interface
         Shm, ///< Refers to the wl_shm interface
         Output, ///< Refers to the wl_output interface
-        FullscreenShell, ///< Refers to the _wl_fullscreen_shell interface
         SubCompositor, ///< Refers to the wl_subcompositor interface;
         DataDeviceManager, ///< Refers to the wl_data_device_manager interface
         PlasmaShell, ///< Refers to org_kde_plasma_shell interface
@@ -328,15 +326,6 @@ public:
      **/
     wl_subcompositor *bindSubCompositor(uint32_t name, uint32_t version) const;
 
-    /**
-     * Binds the _wl_fullscreen_shell with @p name and @p version.
-     * If the @p name does not exist or is not for the fullscreen shell interface,
-     * @c null will be returned.
-     *
-     * Prefer using createFullscreenShell instead.
-     * @see createFullscreenShell
-     **/
-    _wl_fullscreen_shell *bindFullscreenShell(uint32_t name, uint32_t version) const;
     /**
      * Binds the wl_data_device_manager with @p name and @p version.
      * If the @p name does not exist or is not for the data device manager interface,
@@ -709,22 +698,6 @@ public:
      * @returns The created Output.
      **/
     Output *createOutput(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
-     * Creates a FullscreenShell and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the _wl_fullscreen_shell interface,
-     * the returned FullscreenShell will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the _wl_fullscreen_shell interface to bind
-     * @param version The version or the _wl_fullscreen_shell interface to use
-     * @param parent The parent for FullscreenShell
-     *
-     * @returns The created FullscreenShell.
-     * @since 5.5
-     **/
-    FullscreenShell *createFullscreenShell(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
      * Creates a DataDeviceManager and sets it up to manage the interface identified by
      * @p name and @p version.
@@ -1178,12 +1151,6 @@ Q_SIGNALS:
      **/
     void outputAnnounced(quint32 name, quint32 version);
     /**
-     * Emitted whenever a _wl_fullscreen_shell interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     **/
-    void fullscreenShellAnnounced(quint32 name, quint32 version);
-    /**
      * Emitted whenever a wl_data_device_manager interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1418,11 +1385,6 @@ Q_SIGNALS:
      * @param name The name for the removed interface
      **/
     void outputRemoved(quint32 name);
-    /**
-     * Emitted whenever a _wl_fullscreen_shell interface gets removed.
-     * @param name The name for the removed interface
-     **/
-    void fullscreenShellRemoved(quint32 name);
     /**
      * Emitted whenever a wl_data_device_manager interface gets removed.
      * @param name The name for the removed interface

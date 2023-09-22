@@ -14,7 +14,6 @@
 #include "dpms.h"
 #include "event_queue.h"
 #include "fakeinput.h"
-#include "fullscreen_shell.h"
 #include "idleinhibit.h"
 #include "logging.h"
 #include "output.h"
@@ -49,7 +48,6 @@
 #include <wayland-contrast-client-protocol.h>
 #include <wayland-dpms-client-protocol.h>
 #include <wayland-fake-input-client-protocol.h>
-#include <wayland-fullscreen-shell-client-protocol.h>
 #include <wayland-idle-inhibit-unstable-v1-client-protocol.h>
 #include <wayland-plasma-shell-client-protocol.h>
 #include <wayland-plasma-virtual-desktop-client-protocol.h>
@@ -201,13 +199,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_slide_manager_interface,
         &Registry::slideAnnounced,
         &Registry::slideRemoved
-    }},
-    {Registry::Interface::FullscreenShell, {
-        1,
-        QByteArrayLiteral("_wl_fullscreen_shell"),
-        &_wl_fullscreen_shell_interface,
-        &Registry::fullscreenShellAnnounced,
-        &Registry::fullscreenShellRemoved
     }},
     {Registry::Interface::Dpms, {
         1,
@@ -613,7 +604,6 @@ BIND(Seat, wl_seat)
 BIND(Shell, wl_shell)
 BIND(Shm, wl_shm)
 BIND(SubCompositor, wl_subcompositor)
-BIND(FullscreenShell, _wl_fullscreen_shell)
 BIND(DataDeviceManager, wl_data_device_manager)
 BIND(PlasmaShell, org_kde_plasma_shell)
 BIND(PlasmaActivationFeedback, org_kde_plasma_activation_feedback)
@@ -674,7 +664,6 @@ CREATE(Compositor)
 CREATE(Seat)
 CREATE(Shell)
 CREATE(SubCompositor)
-CREATE(FullscreenShell)
 CREATE(Output)
 CREATE(DataDeviceManager)
 CREATE(PlasmaShell)

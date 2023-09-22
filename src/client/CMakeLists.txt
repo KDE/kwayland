@@ -21,7 +21,6 @@ set(CLIENT_LIB_SRCS
     datasource.cpp
     dpms.cpp
     fakeinput.cpp
-    fullscreen_shell.cpp
     idleinhibit.cpp
     keyboard.cpp
     output.cpp
@@ -67,11 +66,6 @@ ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
     DEFAULT_SEVERITY Critical
     DESCRIPTION "KWayland Client Library"
     EXPORT KWAYLAND
-)
-
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/fullscreen-shell.xml
-    BASENAME fullscreen-shell
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
@@ -179,7 +173,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
 )
 
 set(CLIENT_GENERATED_FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-fullscreen-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-shell-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-plasma-window-management-client-protocol.h
@@ -264,7 +257,6 @@ set(CLIENT_LIB_HEADERS
   datasource.h
   dpms.h
   fakeinput.h
-  fullscreen_shell.h
   idleinhibit.h
   keyboard.h
   output.h

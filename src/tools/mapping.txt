@@ -19,7 +19,6 @@ wl_subcompositor;SubCompositor
 wl_subsurface;SubSurface
 wl_surface;Surface
 wl_touch;Touch
-_wl_fullscreen_shell;FullscreenShell
 org_kde_kwin_blur;Blur
 org_kde_kwin_blur_manager;BlurManager
 org_kde_kwin_contrast;Contrast

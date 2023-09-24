@@ -35,8 +35,6 @@ set(CLIENT_LIB_SRCS
     registry.cpp
     relativepointer.cpp
     seat.cpp
-    server_decoration.cpp
-    server_decoration_palette.cpp
     shadow.cpp
     shell.cpp
     shm_pool.cpp
@@ -113,10 +111,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME dpms
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/server-decoration.xml
-    BASENAME server-decoration
-)
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/text-input.xml
     BASENAME text-input-v0
 )
@@ -153,11 +147,6 @@ ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     BASENAME appmenu
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
-    PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/server-decoration-palette.xml
-    BASENAME server-decoration-palette
-)
-
-ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-output/xdg-output-unstable-v1.xml
     BASENAME xdg-output-unstable-v1
 )
@@ -182,8 +171,6 @@ set(CLIENT_GENERATED_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-contrast-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-slide-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-dpms-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server-decoration-client-protocol.h
-    ${CMAKE_CURRENT_BINARY_DIR}/wayland-server-decoration-palette-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v0-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-text-input-v2-client-protocol.h
     ${CMAKE_CURRENT_BINARY_DIR}/wayland-xdg-shell-v6-client-protocol.h
@@ -271,8 +258,6 @@ set(CLIENT_LIB_HEADERS
   registry.h
   relativepointer.h
   seat.h
-  server_decoration.h
-  server_decoration_palette.h
   shadow.h
   shell.h
   shm_pool.h

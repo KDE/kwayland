@@ -34,8 +34,6 @@ struct org_kde_plasma_activation_feedback;
 struct org_kde_plasma_shell;
 struct org_kde_plasma_virtual_desktop_management;
 struct org_kde_plasma_window_management;
-struct org_kde_kwin_server_decoration_manager;
-struct org_kde_kwin_server_decoration_palette_manager;
 struct xdg_shell;
 struct zxdg_shell_v6;
 struct xdg_wm_base;
@@ -144,7 +142,6 @@ public:
         Contrast, ///< refers to org_kde_kwin_contrast_manager interface
         Slide, ///< refers to org_kde_kwin_slide_manager
         Dpms, ///< Refers to org_kde_kwin_dpms_manager interface
-        ServerSideDecorationManager, ///< Refers to org_kde_kwin_server_decoration_manager
         TextInputManagerUnstableV0, ///< Refers to wl_text_input_manager @since 5.23
         TextInputManagerUnstableV2, ///< Refers to zwp_text_input_manager_v2 @since 5.23
         XdgShellUnstableV5, ///< Refers to xdg_shell (unstable version 5) @since 5.25
@@ -156,7 +153,6 @@ public:
         XdgShellUnstableV6, ///< Refers to zxdg_shell_v6 (unstable version 6) @since 5.39
         IdleInhibitManagerUnstableV1, ///< Refers to zwp_idle_inhibit_manager_v1 (unstable version 1) @since 5.41
         AppMenu, ///< Refers to org_kde_kwin_appmenu @since 5.42
-        ServerSideDecorationPalette, ///< Refers to org_kde_kwin_server_decoration_palette_manager @since 5.42
         PlasmaVirtualDesktopManagement, ///< Refers to org_kde_plasma_virtual_desktop_management interface @since 5.52
         XdgOutputUnstableV1, ///< refers to zxdg_output_v1 @since 5.47
         XdgShellStable, ///< refers to xdg_wm_base @since 5.48
@@ -436,16 +432,6 @@ public:
      **/
     org_kde_kwin_dpms_manager *bindDpmsManager(uint32_t name, uint32_t version) const;
     /**
-     * Binds the org_kde_kwin_server_decoration_manager with @p name and @p version.
-     * If the @p name does not exist or is not for the server side decoration manager interface,
-     * @c null will be returned.
-     *
-     * Prefer using createServerSideDecorationManager instead.
-     * @see createServerSideDecorationManager
-     * @since 5.6
-     **/
-    org_kde_kwin_server_decoration_manager *bindServerSideDecorationManager(uint32_t name, uint32_t version) const;
-    /**
      * Binds the wl_text_input_manager with @p name and @p version.
      * If the @p name does not exist or is not for the text input interface in unstable version 0,
      * @c null will be returned.
@@ -568,17 +554,6 @@ public:
      * @since 5.42
      **/
     org_kde_kwin_appmenu_manager *bindAppMenuManager(uint32_t name, uint32_t version) const;
-
-    /**
-     * Binds the org_kde_kwin_server_decoration_palette_manager with @p name and @p version.
-     * If the @p name does not exist or is not for the server side decoration palette manager interface,
-     * @c null will be returned.
-     *
-     * Prefer using createServerSideDecorationPaletteManager instead.
-     * @see createServerSideDecorationPaletteManager
-     * @since 5.42
-     **/
-    org_kde_kwin_server_decoration_palette_manager *bindServerSideDecorationPaletteManager(uint32_t name, uint32_t version) const;
 
     /**
      * Binds the zxdg_output_v1 with @p name and @p version.
@@ -874,22 +849,6 @@ public:
      **/
     DpmsManager *createDpmsManager(quint32 name, quint32 version, QObject *parent = nullptr);
     /**
-     * Creates a ServerSideDecorationManager and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the org_kde_kwin_server_decoration_manager interface,
-     * the returned ServerSideDecorationManager will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_server_decoration_manager interface to bind
-     * @param version The version or the org_kde_kwin_server_decoration_manager interface to use
-     * @param parent The parent for ServerSideDecorationManager
-     *
-     * @returns The created ServerSideDecorationManager.
-     * @since 5.6
-     **/
-    ServerSideDecorationManager *createServerSideDecorationManager(quint32 name, quint32 version, QObject *parent = nullptr);
-    /**
      * Creates a TextInputManager and sets it up to manage the interface identified by
      * @p name and @p version.
      *
@@ -1042,23 +1001,6 @@ public:
      * @since 5.42
      **/
     AppMenuManager *createAppMenuManager(quint32 name, quint32 version, QObject *parent = nullptr);
-
-    /**
-     * Creates a ServerSideDecorationPaletteManager and sets it up to manage the interface identified by
-     * @p name and @p version.
-     *
-     * Note: in case @p name is invalid or isn't for the org_kde_kwin_appmenu_manager interface,
-     * the returned ServerSideDecorationPaletteManager will not be valid. Therefore it's recommended to call
-     * isValid on the created instance.
-     *
-     * @param name The name of the org_kde_kwin_server_decoration_palette_manager interface to bind
-     * @param version The version or the org_kde_kwin_server_decoration_palette_manager interface to use
-     * @param parent The parent for ServerSideDecorationPaletteManager
-     *
-     * @returns The created ServerSideDecorationPaletteManager.
-     * @since 5.42
-     **/
-    ServerSideDecorationPaletteManager *createServerSideDecorationPaletteManager(quint32 name, quint32 version, QObject *parent = nullptr);
 
     /**
      * Creates an XdgOutputManager and sets it up to manage the interface identified by
@@ -1228,13 +1170,6 @@ Q_SIGNALS:
      **/
     void dpmsAnnounced(quint32 name, quint32 version);
     /**
-     * Emitted whenever a org_kde_kwin_server_decoration_manager interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     * @since 5.6
-     **/
-    void serverSideDecorationManagerAnnounced(quint32 name, quint32 version);
-    /**
      * Emitted whenever a wl_text_input_manager interface gets announced.
      * @param name The name for the announced interface
      * @param version The maximum supported version of the announced interface
@@ -1316,14 +1251,6 @@ Q_SIGNALS:
      * @since 5.42
      */
     void appMenuAnnounced(quint32 name, quint32 version);
-
-    /**
-     * Emitted whenever a org_kde_kwin_server_decoration_palette_manager interface gets announced.
-     * @param name The name for the announced interface
-     * @param version The maximum supported version of the announced interface
-     * @since 5.42
-     */
-    void serverSideDecorationPaletteManagerAnnounced(quint32 name, quint32 version);
 
     /**
      * Emitted whenever a zxdg_output_v1 interface gets announced.
@@ -1451,12 +1378,6 @@ Q_SIGNALS:
      **/
     void dpmsRemoved(quint32 name);
     /**
-     * Emitted whenever a org_kde_kwin_server_decoration_manager interface gets removed.
-     * @param name The name for the removed interface
-     * @since 5.6
-     **/
-    void serverSideDecorationManagerRemoved(quint32 name);
-    /**
      * Emitted whenever a wl_text_input_manager interface gets removed.
      * @param name The name for the removed interface
      * @since 5.23
@@ -1526,13 +1447,6 @@ Q_SIGNALS:
      * @since 5.42
      **/
     void appMenuRemoved(quint32 name);
-
-    /**
-     * Emitted whenever a org_kde_kwin_server_decoration_palette_manager gets removed.
-     * @param name The name of the removed interface
-     * @since 5.42
-     **/
-    void serverSideDecorationPaletteManagerRemoved(quint32 name);
 
     /**
      * Emitted whenever a zxdg_output_v1 gets removed.

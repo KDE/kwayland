@@ -24,8 +24,6 @@
 #include "pointergestures.h"
 #include "relativepointer.h"
 #include "seat.h"
-#include "server_decoration.h"
-#include "server_decoration_palette.h"
 #include "shadow.h"
 #include "shell.h"
 #include "shm_pool.h"
@@ -55,8 +53,6 @@
 #include <wayland-pointer-constraints-unstable-v1-client-protocol.h>
 #include <wayland-pointer-gestures-unstable-v1-client-protocol.h>
 #include <wayland-relativepointer-unstable-v1-client-protocol.h>
-#include <wayland-server-decoration-client-protocol.h>
-#include <wayland-server-decoration-palette-client-protocol.h>
 #include <wayland-shadow-client-protocol.h>
 #include <wayland-slide-client-protocol.h>
 #include <wayland-text-input-v0-client-protocol.h>
@@ -207,13 +203,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::dpmsAnnounced,
         &Registry::dpmsRemoved
     }},
-    {Registry::Interface::ServerSideDecorationManager, {
-        1,
-        QByteArrayLiteral("org_kde_kwin_server_decoration_manager"),
-        &org_kde_kwin_server_decoration_manager_interface,
-        &Registry::serverSideDecorationManagerAnnounced,
-        &Registry::serverSideDecorationManagerRemoved
-    }},
     {Registry::Interface::TextInputManagerUnstableV0, {
         1,
         QByteArrayLiteral("wl_text_input_manager"),
@@ -290,13 +279,6 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &org_kde_kwin_appmenu_manager_interface,
         &Registry::appMenuAnnounced,
         &Registry::appMenuRemoved
-    }},
-    {Registry::Interface::ServerSideDecorationPalette, {
-        1,
-        QByteArrayLiteral("org_kde_kwin_server_decoration_palette_manager"),
-        &org_kde_kwin_server_decoration_palette_manager_interface,
-        &Registry::serverSideDecorationPaletteManagerAnnounced,
-        &Registry::serverSideDecorationPaletteManagerRemoved
     }},
     {Registry::Interface::XdgOutputUnstableV1, {
         2,
@@ -610,7 +592,6 @@ BIND(PlasmaActivationFeedback, org_kde_plasma_activation_feedback)
 BIND(PlasmaVirtualDesktopManagement, org_kde_plasma_virtual_desktop_management)
 BIND(PlasmaWindowManagement, org_kde_plasma_window_management)
 BIND(FakeInput, org_kde_kwin_fake_input)
-BIND(ServerSideDecorationManager, org_kde_kwin_server_decoration_manager)
 BIND(TextInputManagerUnstableV0, wl_text_input_manager)
 BIND(TextInputManagerUnstableV2, zwp_text_input_manager_v2)
 BIND(XdgShellUnstableV5, xdg_shell)
@@ -628,7 +609,6 @@ BIND2(ContrastManager, Contrast, org_kde_kwin_contrast_manager)
 BIND2(SlideManager, Slide, org_kde_kwin_slide_manager)
 BIND2(DpmsManager, Dpms, org_kde_kwin_dpms_manager)
 BIND2(AppMenuManager, AppMenu, org_kde_kwin_appmenu_manager)
-BIND2(ServerSideDecorationPaletteManager, ServerSideDecorationPalette, org_kde_kwin_server_decoration_palette_manager)
 BIND(XdgOutputUnstableV1, zxdg_output_manager_v1)
 BIND(XdgDecorationUnstableV1, zxdg_decoration_manager_v1)
 
@@ -676,10 +656,8 @@ CREATE(BlurManager)
 CREATE(ContrastManager)
 CREATE(SlideManager)
 CREATE(DpmsManager)
-CREATE(ServerSideDecorationManager)
 CREATE2(ShmPool, Shm)
 CREATE(AppMenuManager)
-CREATE(ServerSideDecorationPaletteManager)
 
 #undef CREATE
 #undef CREATE2

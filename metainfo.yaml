@@ -9,8 +9,7 @@ portingAid: false
 deprecated: false
 release: true
 libraries:
- - qmake: KWaylandClient
-   cmake: "KF6::WaylandClient"
+ - cmake: "KF6::WaylandClient"
 cmakename: KF6Wayland
 
 public_lib: true

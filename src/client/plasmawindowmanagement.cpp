@@ -33,8 +33,8 @@ public:
     bool showingDesktop = false;
     QList<PlasmaWindow *> windows;
     PlasmaWindow *activeWindow = nullptr;
-    QVector<quint32> stackingOrder;
-    QVector<QByteArray> stackingOrderUuids;
+    QList<quint32> stackingOrder;
+    QList<QByteArray> stackingOrderUuids;
 
     void setup(org_kde_plasma_window_management *wm);
 
@@ -46,8 +46,8 @@ private:
     static void stackingOrderUuidsCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, const char *uuids);
     void setShowDesktop(bool set);
     void windowCreated(org_kde_plasma_window *id, quint32 internalId, const char *uuid);
-    void setStackingOrder(const QVector<quint32> &ids);
-    void setStackingOrder(const QVector<QByteArray> &uuids);
+    void setStackingOrder(const QList<quint32> &ids);
+    void setStackingOrder(const QList<QByteArray> &uuids);
 
     static struct org_kde_plasma_window_management_listener s_listener;
     PlasmaWindowManagement *q;
@@ -273,7 +273,7 @@ void PlasmaWindowManagement::Private::windowCreated(org_kde_plasma_window *id, q
 
 void PlasmaWindowManagement::Private::stackingOrderCallback(void *data, org_kde_plasma_window_management *interface, wl_array *ids)
 {
-    // This is no-op since setStackingOrder(const QVector<quint32> &ids) is deprecated since 5.73,
+    // This is no-op since setStackingOrder(const QList<quint32> &ids) is deprecated since 5.73,
     // but we can't remove this method because it's needed in
     // PlasmaWindowManagement::Private::s_listener struct
 }
@@ -285,7 +285,7 @@ void PlasmaWindowManagement::Private::stackingOrderUuidsCallback(void *data, org
     wm->setStackingOrder(QByteArray(uuids).split(';').toVector());
 }
 
-void PlasmaWindowManagement::Private::setStackingOrder(const QVector<QByteArray> &uuids)
+void PlasmaWindowManagement::Private::setStackingOrder(const QList<QByteArray> &uuids)
 {
     if (stackingOrderUuids == uuids) {
         return;
@@ -390,7 +390,7 @@ PlasmaWindowModel *PlasmaWindowManagement::createWindowModel()
     return new PlasmaWindowModel(this);
 }
 
-QVector<QByteArray> PlasmaWindowManagement::stackingOrderUuids() const
+QList<QByteArray> PlasmaWindowManagement::stackingOrderUuids() const
 {
     return d->stackingOrderUuids;
 }

@@ -50,7 +50,7 @@ public:
      * All timestamps, references the positions.
      * That is each position has a timestamp.
      **/
-    QVector<quint32> timestamps() const;
+    QList<quint32> timestamps() const;
     /**
      * Most recent position
      **/
@@ -58,7 +58,7 @@ public:
     /**
      * All positions this TouchPoint had, updated with each move.
      **/
-    QVector<QPointF> positions() const;
+    QList<QPointF> positions() const;
     /**
      * The Surface this TouchPoint happened on.
      **/
@@ -130,7 +130,7 @@ public:
      * The TouchPoints of the latest touch event sequence.
      * Only valid till the next touch event sequence is started
      **/
-    QVector<TouchPoint *> sequence() const;
+    QList<TouchPoint *> sequence() const;
 
     operator wl_touch *();
     operator wl_touch *() const;

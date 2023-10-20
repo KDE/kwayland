@@ -41,11 +41,11 @@ private:
     static void autoHidingPanelShownCallback(void *data, org_kde_plasma_surface *org_kde_plasma_surface);
 
     PlasmaShellSurface *q;
-    static QVector<Private *> s_surfaces;
+    static QList<Private *> s_surfaces;
     static const org_kde_plasma_surface_listener s_listener;
 };
 
-QVector<PlasmaShellSurface::Private *> PlasmaShellSurface::Private::s_surfaces;
+QList<PlasmaShellSurface::Private *> PlasmaShellSurface::Private::s_surfaces;
 
 PlasmaShell::PlasmaShell(QObject *parent)
     : QObject(parent)

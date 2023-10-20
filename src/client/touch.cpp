@@ -7,9 +7,9 @@
 #include "surface.h"
 #include "wayland_pointer_p.h"
 // Qt
+#include <QList>
 #include <QPointF>
 #include <QPointer>
-#include <QVector>
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -24,7 +24,7 @@ public:
     void setup(wl_touch *t);
     WaylandPointer<wl_touch, wl_touch_release> touch;
     bool active = false;
-    QVector<TouchPoint *> sequence;
+    QList<TouchPoint *> sequence;
     TouchPoint *getActivePoint(qint32 id) const;
 
 private:
@@ -48,8 +48,8 @@ public:
     quint32 downSerial = 0;
     quint32 upSerial = 0;
     QPointer<Surface> surface;
-    QVector<QPointF> positions;
-    QVector<quint32> timestamps;
+    QList<QPointF> positions;
+    QList<quint32> timestamps;
     bool down = true;
 };
 
@@ -68,7 +68,7 @@ QPointF TouchPoint::position() const
     return d->positions.last();
 }
 
-QVector<QPointF> TouchPoint::positions() const
+QList<QPointF> TouchPoint::positions() const
 {
     return d->positions;
 }
@@ -96,7 +96,7 @@ quint32 TouchPoint::time() const
     return d->timestamps.last();
 }
 
-QVector<quint32> TouchPoint::timestamps() const
+QList<quint32> TouchPoint::timestamps() const
 {
     return d->timestamps;
 }
@@ -266,7 +266,7 @@ Touch::operator wl_touch *()
     return d->touch;
 }
 
-QVector<TouchPoint *> Touch::sequence() const
+QList<TouchPoint *> Touch::sequence() const
 {
     return d->sequence;
 }

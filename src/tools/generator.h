@@ -82,7 +82,7 @@ public:
         return m_name;
     }
 
-    QVector<Argument> arguments() const
+    QList<Argument> arguments() const
     {
         return m_arguments;
     }
@@ -100,7 +100,7 @@ public:
 
 private:
     QString m_name;
-    QVector<Argument> m_arguments;
+    QList<Argument> m_arguments;
     bool m_destructor = false;
 };
 
@@ -121,14 +121,14 @@ public:
         return m_name;
     }
 
-    QVector<Argument> arguments() const
+    QList<Argument> arguments() const
     {
         return m_arguments;
     }
 
 private:
     QString m_name;
-    QVector<Argument> m_arguments;
+    QList<Argument> m_arguments;
 };
 
 class Interface
@@ -164,12 +164,12 @@ public:
         return m_clientName + QStringLiteral("Interface");
     }
 
-    QVector<Request> requests() const
+    QList<Request> requests() const
     {
         return m_requests;
     }
 
-    QVector<Event> events() const
+    QList<Event> events() const
     {
         return m_events;
     }
@@ -200,8 +200,8 @@ private:
     QString m_name;
     QString m_clientName;
     quint32 m_version;
-    QVector<Request> m_requests;
-    QVector<Event> m_events;
+    QList<Request> m_requests;
+    QList<Event> m_events;
     bool m_global = false;
     Interface *m_factory;
 };
@@ -298,7 +298,7 @@ private:
     QMutex m_mutex;
     QWaitCondition m_waitCondition;
     QXmlStreamReader m_xmlReader;
-    QVector<Interface> m_interfaces;
+    QList<Interface> m_interfaces;
 
     int m_finishedCounter = 0;
 };

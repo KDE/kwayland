@@ -44,14 +44,14 @@ public:
     bool foreign = false;
     QMetaObject::Connection eventDispatcherConnection;
     int error = 0;
-    static QVector<ConnectionThread *> connections;
+    static QList<ConnectionThread *> connections;
     static QRecursiveMutex mutex;
 
 private:
     ConnectionThread *q;
 };
 
-QVector<ConnectionThread *> ConnectionThread::Private::connections = QVector<ConnectionThread *>{};
+QList<ConnectionThread *> ConnectionThread::Private::connections = QList<ConnectionThread *>{};
 QRecursiveMutex ConnectionThread::Private::mutex;
 
 ConnectionThread::Private::Private(ConnectionThread *q)
@@ -307,7 +307,7 @@ int ConnectionThread::errorCode() const
     return d->error;
 }
 
-QVector<ConnectionThread *> ConnectionThread::connections()
+QList<ConnectionThread *> ConnectionThread::connections()
 {
     return Private::connections;
 }

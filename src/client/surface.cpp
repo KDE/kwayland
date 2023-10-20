@@ -10,8 +10,8 @@
 #include "wayland_pointer_p.h"
 
 #include <QGuiApplication>
+#include <QList>
 #include <QRegion>
-#include <QVector>
 // Wayland
 #include <wayland-client-protocol.h>
 
@@ -262,7 +262,7 @@ void Surface::setScale(qint32 scale)
     wl_surface_set_buffer_scale(d->surface, scale);
 }
 
-QVector<Output *> Surface::outputs() const
+QList<Output *> Surface::outputs() const
 {
     return d->outputs;
 }

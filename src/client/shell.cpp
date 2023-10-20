@@ -11,7 +11,7 @@
 #include "wayland_pointer_p.h"
 // Qt
 #include <QGuiApplication>
-#include <QVector>
+#include <QList>
 #include <qpa/qplatformnativeinterface.h>
 // Wayland
 #include <wayland-client-protocol.h>
@@ -116,7 +116,7 @@ public:
 
     WaylandPointer<wl_shell_surface, wl_shell_surface_destroy> surface;
     QSize size;
-    static QVector<ShellSurface *> s_surfaces;
+    static QList<ShellSurface *> s_surfaces;
 
 private:
     void ping(uint32_t serial);
@@ -128,7 +128,7 @@ private:
     static const struct wl_shell_surface_listener s_listener;
 };
 
-QVector<ShellSurface *> ShellSurface::Private::s_surfaces = QVector<ShellSurface *>();
+QList<ShellSurface *> ShellSurface::Private::s_surfaces = QList<ShellSurface *>();
 
 ShellSurface::Private::Private(ShellSurface *q)
     : q(q)

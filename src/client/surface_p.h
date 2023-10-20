@@ -26,7 +26,7 @@ public:
     QSize size;
     bool foreign = false;
     qint32 scale = 1;
-    QVector<Output *> outputs;
+    QList<Output *> outputs;
 
     void setup(wl_surface *s);
 

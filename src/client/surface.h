@@ -244,7 +244,7 @@ public:
      * @see outputLeft
      * @since 5.27
      **/
-    QVector<Output *> outputs() const;
+    QList<Output *> outputs() const;
 
     /**
      * All Surfaces which are currently created.

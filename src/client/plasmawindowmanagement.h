@@ -164,7 +164,7 @@ public:
      *
      * @since 5.73
      */
-    QVector<QByteArray> stackingOrderUuids() const;
+    QList<QByteArray> stackingOrderUuids() const;
 
 Q_SIGNALS:
     /**

@@ -6,8 +6,8 @@
 #ifndef WAYLAND_CONNECTION_THREAD_H
 #define WAYLAND_CONNECTION_THREAD_H
 
+#include <QList>
 #include <QObject>
-#include <QVector>
 
 #include "KWayland/Client/kwaylandclient_export.h"
 
@@ -188,7 +188,7 @@ public:
      * @returns all connections created in this application
      * @since 5.37
      **/
-    static QVector<ConnectionThread *> connections();
+    static QList<ConnectionThread *> connections();
 
 public Q_SLOTS:
     /**

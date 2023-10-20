@@ -6,9 +6,9 @@
 #include "output.h"
 #include "wayland_pointer_p.h"
 // Qt
+#include <QList>
 #include <QPoint>
 #include <QRect>
-#include <QVector>
 // wayland
 #include <wayland-client-protocol.h>
 
@@ -72,10 +72,10 @@ private:
     Output *q;
     static struct wl_output_listener s_outputListener;
 
-    static QVector<Private *> s_allOutputs;
+    static QList<Private *> s_allOutputs;
 };
 
-QVector<Output::Private *> Output::Private::s_allOutputs;
+QList<Output::Private *> Output::Private::s_allOutputs;
 
 Output::Private::Private(Output *q)
     : q(q)

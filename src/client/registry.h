@@ -264,7 +264,7 @@ public:
      * @returns All pairs of name and version of the given interface
      * @since 5.5
      **/
-    QVector<AnnouncedInterface> interfaces(Interface interface) const;
+    QList<AnnouncedInterface> interfaces(Interface interface) const;
 
     /**
      * @name Low-level bind methods for global interfaces.

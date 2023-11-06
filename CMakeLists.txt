@@ -1,15 +1,20 @@
+project(qqc2-breeze-style)
+set(PROJECT_VERSION "5.27.80")
+
 cmake_minimum_required(VERSION 3.16)
 
-set(KF_VERSION "5.240.0") # handled by release scripts
-project(KWayland VERSION ${KF_VERSION})
+set(QT_MIN_VERSION "6.4.0")
+set(KF6_MIN_VERSION "5.240.0")
+set(KF_DEP_VERSION "5.240.0")
+set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 
-# ECM setup
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
+
 include(FeatureSummary)
-find_package(ECM 5.240.0  NO_MODULE)
-set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://commits.kde.org/extra-cmake-modules")
-feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules)
-
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
@@ -39,10 +44,9 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KWAYLAND
                         SOVERSION 6)
 
 # Dependencies
-set(REQUIRED_QT_VERSION 6.5.0)
-find_package(Qt6Gui ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
-find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Concurrent)
-find_package(Qt6WaylandClient ${REQUIRED_QT_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
+find_package(Qt6Gui ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED Concurrent)
+find_package(Qt6WaylandClient ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
 
 find_package(Wayland 1.15 COMPONENTS Client)
 set_package_properties(Wayland PROPERTIES

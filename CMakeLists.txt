@@ -1,7 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+
 project(kwayland)
 set(PROJECT_VERSION "5.27.80")
-
-cmake_minimum_required(VERSION 3.16)
 
 set(QT_MIN_VERSION "6.4.0")
 set(KF6_MIN_VERSION "5.240.0")
@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} )
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${ECM_MODULE_PATH})
 
 include(FeatureSummary)
 include(KDEInstallDirs)

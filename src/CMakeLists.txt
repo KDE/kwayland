@@ -28,7 +28,7 @@ if(BUILD_QCH)
         KF6Wayland_QCH
         NAME KWayland
         BASE_NAME KF6Wayland
-        VERSION ${KF6_MIN_VERSION}
+        VERSION ${PROJECT_VERSION}
         ORG_DOMAIN org.kde
         SOURCES # using only public headers, to cover only public API
             ${KWaylandClient_APIDOX_SRCS}

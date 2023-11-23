@@ -1,17 +1,14 @@
-maintainer: graesslin
+fancyname: KWayland
 description: Qt-style API to interact with the wayland-client API
-tier: 1
-type: integration
+irc: plasma
+maintainer: graesslin
 platforms:
     - name: Linux
     - name: FreeBSD
-portingAid: false
-deprecated: false
-release: true
-libraries:
- - cmake: "KF6::WaylandClient"
-cmakename: KF6Wayland
-
 public_lib: true
-group: Frameworks
-subgroup: Tier 1
+public_source_dirs:
+    - src/client
+libraries:
+    - cmake: "Plasma::KWaylandClient"
+cmakename: KWayland
+group: plasma

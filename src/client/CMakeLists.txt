@@ -59,8 +59,8 @@ set(CLIENT_LIB_SRCS
 ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
     HEADER logging.h
     IDENTIFIER KWAYLAND_CLIENT
-    CATEGORY_NAME kf.wayland.client
-    OLD_CATEGORY_NAMES kwayland-client
+    CATEGORY_NAME kde.plasma.wayland.client
+    OLD_CATEGORY_NAMES kwayland-client kf.wayland.client
     DEFAULT_SEVERITY Critical
     DESCRIPTION "KWayland Client Library"
     EXPORT KWAYLAND
@@ -188,15 +188,14 @@ set_source_files_properties(${CLIENT_GENERATED_FILES} PROPERTIES SKIP_AUTOMOC ON
 set_source_files_properties(${CLIENT_LIB_SRCS} PROPERTIES
     COMPILE_FLAGS -DQT_NO_KEYWORDS)
 
-add_library(KF6WaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
-add_library(KF6::WaylandClient ALIAS KF6WaylandClient)
+add_library(KWaylandClient ${CLIENT_LIB_SRCS} surface_p.cpp)
+add_library(Plasma::KWaylandClient ALIAS KWaylandClient)
 
-ecm_generate_export_header(KF6WaylandClient
+ecm_generate_export_header(KWaylandClient
     BASE_NAME
         KWaylandClient
     EXPORT_FILE_NAME
         KWayland/Client/kwaylandclient_export.h
-    GROUP_BASE_NAME KF
     VERSION ${PROJECT_VERSION}
     USE_VERSION_HEADER
     VERSION_BASE_NAME KWayland
@@ -206,28 +205,27 @@ ecm_generate_export_header(KF6WaylandClient
 )
 
 if (HAVE_MEMFD)
-    target_compile_definitions(KF6WaylandClient PRIVATE -DHAVE_MEMFD=1)
+    target_compile_definitions(KWaylandClient PRIVATE -DHAVE_MEMFD=1)
 else()
-    target_compile_definitions(KF6WaylandClient PRIVATE -DHAVE_MEMFD=0)
+    target_compile_definitions(KWaylandClient PRIVATE -DHAVE_MEMFD=0)
 endif()
 
-target_include_directories(KF6WaylandClient
-    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KWayland>"
+target_include_directories(KWaylandClient
+    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR}/KWayland>"
 )
 
-target_link_libraries(KF6WaylandClient
+target_link_libraries(KWaylandClient
     PUBLIC Qt6::Gui
     PRIVATE Wayland::Client
         Qt6::Concurrent
         Qt6::WaylandClientPrivate
 )
 
-set_target_properties(KF6WaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
+set_target_properties(KWaylandClient PROPERTIES VERSION   ${KWAYLAND_VERSION}
                                                  SOVERSION ${KWAYLAND_SOVERSION}
-                                                 EXPORT_NAME WaylandClient
 )
 
-install(TARGETS KF6WaylandClient EXPORT KF6WaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS KWaylandClient EXPORT KWaylandTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(CLIENT_LIB_HEADERS
   ${CMAKE_CURRENT_BINARY_DIR}/KWayland/Client/kwaylandclient_export.h
@@ -275,7 +273,7 @@ set(CLIENT_LIB_HEADERS
 
 install(FILES
   ${CLIENT_LIB_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KWayland/KWayland/Client COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR}/KWayland/KWayland/Client COMPONENT Devel
 )
 
 # make available to ecm_add_qch in parent folder

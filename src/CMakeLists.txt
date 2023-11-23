@@ -25,9 +25,9 @@ if(BUILD_QCH)
     _make_absolute(KWaylandClient_APIDOX_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/client")
 
     ecm_add_qch(
-        KF6Wayland_QCH
+        KWayland_QCH
         NAME KWayland
-        BASE_NAME KF6Wayland
+        BASE_NAME KWayland
         VERSION ${PROJECT_VERSION}
         ORG_DOMAIN org.kde
         SOURCES # using only public headers, to cover only public API

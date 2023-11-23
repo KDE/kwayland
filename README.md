@@ -49,23 +49,14 @@ KWayland installs a CMake Config file which allows to use KWayland as imported t
 
 To find the package use for example:
 
-    find_package(KF6Wayland CONFIG)
-    set_package_properties(KF6Wayland PROPERTIES TYPE OPTIONAL )
-    add_feature_info("KF6Wayland" KF6Wayland_FOUND "Required for the awesome Wayland on Qt demo")
+    find_package(KWayland CONFIG)
+    set_package_properties(KWayland PROPERTIES TYPE OPTIONAL )
+    add_feature_info("KWayland" KWayland_FOUND "Required for the awesome Wayland on Qt demo")
 
 Now to link against the Client library use:
 
     add_executable(exampleApp example.cpp)
-    target_link_libraries(exampleApp KF6::WaylandClient)
-
-### With QMake
-
-KWayland installs .pri files allowing easy usage in QMake based
-applications.
-
-Just use:
-
-    QT += KWaylandClient
+    target_link_libraries(exampleApp Plasma::KWaylandClient)
 
 Please make sure that your project is configured with C++11 support:
 

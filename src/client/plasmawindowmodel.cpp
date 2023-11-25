@@ -188,8 +188,8 @@ QHash<int, QByteArray> PlasmaWindowModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
 
-    roles.insert(Qt::DisplayRole, "DisplayRole");
-    roles.insert(Qt::DecorationRole, "DecorationRole");
+    roles.insert(Qt::DisplayRole, "display");
+    roles.insert(Qt::DecorationRole, "decoration");
 
     QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("AdditionalRoles"));
 

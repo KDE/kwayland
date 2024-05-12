@@ -1,7 +1,6 @@
 fancyname: KWayland
 description: Qt-style API to interact with the wayland-client API
 irc: plasma
-maintainer: graesslin
 platforms:
     - name: Linux
     - name: FreeBSD

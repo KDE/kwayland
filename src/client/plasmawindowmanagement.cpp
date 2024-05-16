@@ -100,6 +100,7 @@ public:
     QString resourceName;
     QString applicationMenuServiceName;
     QString applicationMenuObjectPath;
+    QRect clientGeometry;
 
 private:
     static void titleChangedCallback(void *data, org_kde_plasma_window *window, const char *title);
@@ -119,6 +120,7 @@ private:
     static void appmenuChangedCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *service_name, const char *object_path);
     static void activityEnteredCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
     static void activityLeftCallback(void *data, org_kde_plasma_window *org_kde_plasma_window, const char *id);
+    static void clientGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height);
     void setActive(bool set);
     void setMinimized(bool set);
     void setMaximized(bool set);
@@ -470,6 +472,7 @@ org_kde_plasma_window_listener PlasmaWindow::Private::s_listener = {
     activityEnteredCallback,
     activityLeftCallback,
     resourceNameChangedCallback,
+    clientGeometryCallback,
 };
 
 void PlasmaWindow::Private::appmenuChangedCallback(void *data, org_kde_plasma_window *window, const char *service_name, const char *object_path)
@@ -1372,6 +1375,24 @@ PlasmaActivation::PlasmaActivation(PlasmaActivationFeedback *parent, org_kde_pla
 }
 
 PlasmaActivation::~PlasmaActivation() = default;
+
+QRect PlasmaWindow::clientGeometry() const
+{
+    return d->clientGeometry;
+}
+
+void PlasmaWindow::Private::clientGeometryCallback(void *data, org_kde_plasma_window *window, int32_t x, int32_t y, uint32_t width, uint32_t height)
+{
+    Q_UNUSED(window)
+    Private *p = cast(data);
+    const QRect geo(x, y, width, height);
+    if (p->clientGeometry == geo) {
+        return;
+    }
+    p->clientGeometry = geo;
+    Q_EMIT p->q->clientGeometryChanged();
+}
+
 }
 }
 

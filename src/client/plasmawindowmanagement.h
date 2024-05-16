@@ -572,6 +572,13 @@ public:
      */
     void sendToOutput(KWayland::Client::Output *output) const;
 
+    /**
+     * @returns The client geometry (i.e. without window borders) in absolute coordinates.
+     * @see clientGeometryChanged
+     * @since 6.2
+     **/
+    QRect clientGeometry() const;
+
 Q_SIGNALS:
     /**
      * The window title changed.
@@ -751,6 +758,13 @@ Q_SIGNALS:
      * @since 5.69
      **/
     void applicationMenuChanged();
+
+    /**
+     * This signal is emitted whenever the client geometry changes.
+     * @see clientGeometry
+     * @since 6.2
+     **/
+    void clientGeometryChanged();
 
 private:
     friend class PlasmaWindowManagement;

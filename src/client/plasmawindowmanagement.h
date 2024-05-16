@@ -571,6 +571,7 @@ public:
      * @since 5.86
      */
     void sendToOutput(KWayland::Client::Output *output) const;
+    [[nodiscard]] QRect geometryWithoutBorder() const;
 
 Q_SIGNALS:
     /**
@@ -751,6 +752,7 @@ Q_SIGNALS:
      * @since 5.69
      **/
     void applicationMenuChanged();
+    void geometryWithoutBorderChanged();
 
 private:
     friend class PlasmaWindowManagement;

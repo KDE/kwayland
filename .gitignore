@@ -24,5 +24,6 @@ CMakeLists.txt.user*
 /compile_commands.json
 .clangd
 .idea
+.vscode
 /cmake-build*
 .cache

@@ -177,13 +177,15 @@ void PlasmaWindowManagement::Private::setup(org_kde_plasma_window_management *wi
     wm.setup(windowManagement);
     org_kde_plasma_window_management_add_listener(windowManagement, &s_listener, this);
 
-    auto object = org_kde_plasma_window_management_get_stacking_order(wm);
-    org_kde_plasma_stacking_order_add_listener(object,
-                                               &s_stackingOrderListener,
-                                               new StackingOrderData{
-                                                   .wm = this,
-                                                   .list = {},
-                                               });
+    if (org_kde_plasma_window_management_get_version(windowManagement) >= ORG_KDE_PLASMA_WINDOW_MANAGEMENT_GET_STACKING_ORDER_SINCE_VERSION) {
+        auto object = org_kde_plasma_window_management_get_stacking_order(wm);
+        org_kde_plasma_stacking_order_add_listener(object,
+                                                   &s_stackingOrderListener,
+                                                   new StackingOrderData{
+                                                       .wm = this,
+                                                       .list = {},
+                                                   });
+    }
 }
 
 void PlasmaWindowManagement::Private::showDesktopCallback(void *data, org_kde_plasma_window_management *org_kde_plasma_window_management, uint32_t state)

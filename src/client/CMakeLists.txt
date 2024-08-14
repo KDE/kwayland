@@ -69,96 +69,117 @@ ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-shell.xml
     BASENAME plasma-shell
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-virtual-desktop.xml
     BASENAME plasma-virtual-desktop
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/plasma-window-management.xml
     BASENAME plasma-window-management
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/fake-input.xml
     BASENAME fake-input
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/shadow.xml
     BASENAME shadow
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/blur.xml
     BASENAME blur
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/contrast.xml
     BASENAME contrast
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/slide.xml
     BASENAME slide
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/dpms.xml
     BASENAME dpms
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/text-input.xml
     BASENAME text-input-v0
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/text-input-unstable-v2.xml
     BASENAME text-input-v2
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml
     BASENAME xdg-shell-v6
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
     BASENAME relativepointer-unstable-v1
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/pointer-gestures/pointer-gestures-unstable-v1.xml
     BASENAME pointer-gestures-unstable-v1
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
     BASENAME pointer-constraints-unstable-v1
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-foreign/xdg-foreign-unstable-v2.xml
     BASENAME xdg-foreign-unstable-v2
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/idle-inhibit/idle-inhibit-unstable-v1.xml
     BASENAME idle-inhibit-unstable-v1
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/appmenu.xml
     BASENAME appmenu
+    PRIVATE_CODE
 )
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-output/xdg-output-unstable-v1.xml
     BASENAME xdg-output-unstable-v1
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/stable/xdg-shell/xdg-shell.xml
     BASENAME xdg-shell
+    PRIVATE_CODE
 )
 
 ecm_add_wayland_client_protocol(CLIENT_LIB_SRCS
     PROTOCOL ${WaylandProtocols_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
     BASENAME xdg-decoration-unstable-v1
+    PRIVATE_CODE
 )
 
 set(CLIENT_GENERATED_FILES

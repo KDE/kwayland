@@ -38,7 +38,7 @@ public:
     SubPixel subPixel = SubPixel::Unknown;
     Transform transform = Transform::Normal;
     Modes modes;
-    Modes::iterator currentMode = modes.end();
+    std::optional<Mode> currentMode;
     QString name;
     QString description;
 
@@ -230,7 +230,7 @@ void Output::Private::addMode(uint32_t flags, int32_t width, int32_t height, int
                 it++;
             }
         }
-        currentMode = currentIt;
+        currentMode = *currentIt;
     }
     if (existing) {
         Q_EMIT q->modeChanged(mode);
@@ -309,7 +309,7 @@ void Output::Private::setScale(int s)
 
 QRect Output::geometry() const
 {
-    if (d->currentMode == d->modes.end()) {
+    if (!d->currentMode) {
         return QRect();
     }
     return QRect(d->globalPosition, pixelSize());
@@ -352,7 +352,7 @@ QSize Output::physicalSize() const
 
 QSize Output::pixelSize() const
 {
-    if (d->currentMode == d->modes.end()) {
+    if (!d->currentMode) {
         return QSize();
     }
     return (*d->currentMode).size;
@@ -360,7 +360,7 @@ QSize Output::pixelSize() const
 
 int Output::refreshRate() const
 {
-    if (d->currentMode == d->modes.end()) {
+    if (!d->currentMode) {
         return 0;
     }
     return (*d->currentMode).refreshRate;

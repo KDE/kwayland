@@ -22,6 +22,7 @@ public:
 
     WaylandPointer<wl_keyboard, wl_keyboard_release> keyboard;
     QPointer<Surface> enteredSurface;
+    QList<quint32> enteredKeys;
 
     struct {
         qint32 charactersPerSecond = 0;
@@ -92,8 +93,13 @@ void Keyboard::Private::enterCallback(void *data, wl_keyboard *keyboard, uint32_
 
 void Keyboard::Private::enter(uint32_t serial, wl_surface *surface, wl_array *keys)
 {
-    Q_UNUSED(keys)
     enteredSurface = Surface::get(surface);
+
+    enteredKeys.clear();
+    for (const uint32_t &key : std::span(static_cast<uint32_t *>(keys->data), keys->size / sizeof(uint32_t))) {
+        enteredKeys.append(key);
+    }
+
     Q_EMIT q->entered(serial);
 }
 
@@ -167,6 +173,11 @@ Surface *Keyboard::enteredSurface()
 Surface *Keyboard::enteredSurface() const
 {
     return d->enteredSurface.data();
+}
+
+QList<quint32> Keyboard::enteredKeys() const
+{
+    return d->enteredKeys;
 }
 
 bool Keyboard::isValid() const

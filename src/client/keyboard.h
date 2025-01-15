@@ -83,6 +83,11 @@ public:
     Surface *enteredSurface();
 
     /**
+     * @returns The keys that were reported in the enter event.
+     **/
+    QList<quint32> enteredKeys() const;
+
+    /**
      * @returns Whether key repeat is enabled on this keyboard
      * @see keyRepeatRate
      * @see keyRepeatDelay

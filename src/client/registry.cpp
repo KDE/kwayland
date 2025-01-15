@@ -486,17 +486,17 @@ static Registry::Interface nameToInterface(const char *interface)
 void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uint32_t version)
 {
     Interface i = nameToInterface(interface);
-    Q_EMIT q->interfaceAnnounced(QByteArray(interface), name, version);
     if (i == Interface::Unknown) {
         qCDebug(KWAYLAND_CLIENT) << "Unknown interface announced: " << interface << "/" << name << "/" << version;
-        return;
+    } else {
+        qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
+        m_interfaces.append({i, name, version});
+        auto it = s_interfaces.constFind(i);
+        if (it != s_interfaces.end()) {
+            Q_EMIT(q->*it.value().announcedSignal)(name, version);
+        }
     }
-    qCDebug(KWAYLAND_CLIENT) << "Wayland Interface: " << interface << "/" << name << "/" << version;
-    m_interfaces.append({i, name, version});
-    auto it = s_interfaces.constFind(i);
-    if (it != s_interfaces.end()) {
-        Q_EMIT(q->*it.value().announcedSignal)(name, version);
-    }
+    Q_EMIT q->interfaceAnnounced(QByteArray(interface), name, version);
 }
 
 void Registry::Private::handleRemove(uint32_t name)

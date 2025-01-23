@@ -23,7 +23,6 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 include(ECMPoQmTools)
 include(ECMAddQch)
-include(CMakeFindFrameworks)
 include(CMakePackageConfigHelpers)
 include(CheckIncludeFile)
 

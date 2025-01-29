@@ -239,6 +239,7 @@ target_link_libraries(KWaylandClient
     PUBLIC Qt6::Gui
     PRIVATE Wayland::Client
         Qt6::Concurrent
+        Qt6::GuiPrivate
         Qt6::WaylandClientPrivate
 )
 

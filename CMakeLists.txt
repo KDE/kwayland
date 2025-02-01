@@ -51,10 +51,11 @@ if (QT_MAJOR_VERSION STREQUAL "5")
     pkg_check_modules(XKBCommon REQUIRED IMPORTED_TARGET xkbcommon)
 endif()
 
-find_package(Wayland 1.15 COMPONENTS Client Server)
-set_package_properties(Wayland PROPERTIES
-                       TYPE REQUIRED
-                      )
+find_package(Wayland 1.15 REQUIRED COMPONENTS Client)
+
+if(EXCLUDE_DEPRECATED_BEFORE_AND_AT VERSION_LESS 5.74.0)
+    find_package(Wayland 1.15 REQUIRED COMPONENTS Server)
+endif()
 
 find_package(WaylandScanner)
 

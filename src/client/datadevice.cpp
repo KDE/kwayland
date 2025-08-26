@@ -230,6 +230,19 @@ DataOffer *DataDevice::dragOffer() const
     return d->drag.offer;
 }
 
+std::unique_ptr<DataOffer> DataDevice::takeDragOffer()
+{
+    if (!d->drag.offer) {
+        return nullptr;
+    }
+
+    DataOffer *offer = d->drag.offer;
+    d->drag.offer = nullptr;
+
+    offer->setParent(nullptr);
+    return std::unique_ptr<DataOffer>(offer);
+}
+
 DataDevice::operator wl_data_device *()
 {
     return d->device;

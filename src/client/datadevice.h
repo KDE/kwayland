@@ -86,6 +86,7 @@ public:
      * @since 5.22
      **/
     DataOffer *dragOffer() const;
+    std::unique_ptr<DataOffer> takeDragOffer();
 
     operator wl_data_device *();
     operator wl_data_device *() const;

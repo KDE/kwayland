@@ -202,6 +202,16 @@ ConnectionThread::ConnectionThread(QObject *parent)
             }
         },
         Qt::DirectConnection);
+    d->eventDispatcherConnection = connect(
+        QCoreApplication::eventDispatcher(),
+        &QAbstractEventDispatcher::awake,
+        this,
+        [this] {
+            if (d->display) {
+                wl_display_flush(d->display);
+            }
+        },
+        Qt::DirectConnection);
 }
 
 ConnectionThread::ConnectionThread(wl_display *display, QObject *parent)

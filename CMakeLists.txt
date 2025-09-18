@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(PROJECT_VERSION "6.4.90")
+set(PROJECT_VERSION "6.5.80")
 project(kwayland VERSION ${PROJECT_VERSION})
 
 set(QT_MIN_VERSION "6.9.0")

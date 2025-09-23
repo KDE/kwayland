@@ -23,9 +23,9 @@ public:
     void setup(wl_data_device *d);
 
     WaylandPointer<wl_data_device, wl_data_device_release> device;
-    QScopedPointer<DataOffer> selectionOffer;
+    std::unique_ptr<DataOffer> selectionOffer;
     struct Drag {
-        QPointer<DataOffer> offer;
+        std::unique_ptr<DataOffer> offer;
         QPointer<Surface> surface;
     };
     Drag drag;
@@ -45,7 +45,7 @@ private:
     static const struct wl_data_device_listener s_listener;
 
     DataDevice *q;
-    DataOffer *lastOffer = nullptr;
+    std::unique_ptr<DataOffer> lastOffer;
 };
 
 const wl_data_device_listener DataDevice::Private::s_listener =
@@ -61,7 +61,7 @@ void DataDevice::Private::dataOfferCallback(void *data, wl_data_device *dataDevi
 void DataDevice::Private::dataOffer(wl_data_offer *id)
 {
     Q_ASSERT(!lastOffer);
-    lastOffer = new DataOffer(q, id);
+    lastOffer.reset(new DataOffer(nullptr, id));
     Q_ASSERT(lastOffer->isValid());
 }
 
@@ -82,8 +82,7 @@ void DataDevice::Private::dragEnter(quint32 serial, const QPointer<Surface> &sur
 {
     drag.surface = surface;
     Q_ASSERT(*lastOffer == dataOffer);
-    drag.offer = lastOffer;
-    lastOffer = nullptr;
+    drag.offer = std::move(lastOffer);
     Q_EMIT q->dragEntered(serial, relativeToSurface);
 }
 
@@ -96,9 +95,6 @@ void DataDevice::Private::leaveCallback(void *data, wl_data_device *dataDevice)
 
 void DataDevice::Private::dragLeft()
 {
-    if (drag.offer) {
-        delete drag.offer;
-    }
     drag = Drag();
     Q_EMIT q->dragLeft();
 }
@@ -132,9 +128,8 @@ void DataDevice::Private::selection(wl_data_offer *id)
         return;
     }
     Q_ASSERT(*lastOffer == id);
-    selectionOffer.reset(lastOffer);
-    lastOffer = nullptr;
-    Q_EMIT q->selectionOffered(selectionOffer.data());
+    selectionOffer = std::move(lastOffer);
+    Q_EMIT q->selectionOffered(selectionOffer.get());
 }
 
 DataDevice::Private::Private(DataDevice *q)
@@ -158,9 +153,6 @@ DataDevice::DataDevice(QObject *parent)
 
 DataDevice::~DataDevice()
 {
-    if (d->drag.offer) {
-        delete d->drag.offer;
-    }
     release();
 }
 
@@ -217,7 +209,7 @@ void DataDevice::clearSelection(quint32 serial)
 
 DataOffer *DataDevice::offeredSelection() const
 {
-    return d->selectionOffer.data();
+    return d->selectionOffer.get();
 }
 
 QPointer<Surface> DataDevice::dragSurface() const
@@ -227,20 +219,12 @@ QPointer<Surface> DataDevice::dragSurface() const
 
 DataOffer *DataDevice::dragOffer() const
 {
-    return d->drag.offer;
+    return d->drag.offer.get();
 }
 
 std::unique_ptr<DataOffer> DataDevice::takeDragOffer()
 {
-    if (!d->drag.offer) {
-        return nullptr;
-    }
-
-    DataOffer *offer = d->drag.offer;
-    d->drag.offer = nullptr;
-
-    offer->setParent(nullptr);
-    return std::unique_ptr<DataOffer>(offer);
+    return std::move(d->drag.offer);
 }
 
 DataDevice::operator wl_data_device *()

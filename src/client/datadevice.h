@@ -75,6 +75,7 @@ public:
     void clearSelection(quint32 serial);
 
     DataOffer *offeredSelection() const;
+    std::unique_ptr<DataOffer> takeOfferedSelection();
 
     /**
      * @returns the currently focused surface during drag'n'drop on this DataDevice.

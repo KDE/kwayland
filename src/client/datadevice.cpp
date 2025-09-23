@@ -212,6 +212,11 @@ DataOffer *DataDevice::offeredSelection() const
     return d->selectionOffer.get();
 }
 
+std::unique_ptr<DataOffer> DataDevice::takeOfferedSelection()
+{
+    return std::move(d->selectionOffer);
+}
+
 QPointer<Surface> DataDevice::dragSurface() const
 {
     return d->drag.surface;

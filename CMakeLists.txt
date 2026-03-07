@@ -70,7 +70,7 @@ set_package_properties(PlasmaWaylandProtocols PROPERTIES TYPE REQUIRED)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu90")
 
 ecm_set_disabled_deprecation_versions(
-    QT 6.8.1
+    QT 6.11.0
 )
 
 check_cxx_source_compiles("

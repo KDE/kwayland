@@ -50,7 +50,7 @@ if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
     find_package(Qt6WaylandClientPrivate ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE)
 endif()
 
-find_package(Wayland 1.24 COMPONENTS Client)
+find_package(Wayland 1.26 COMPONENTS Client)
 set_package_properties(Wayland PROPERTIES
                        TYPE REQUIRED
                       )

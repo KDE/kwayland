@@ -496,7 +496,7 @@ void Registry::Private::handleAnnounce(uint32_t name, const char *interface, uin
 {
     Interface i = nameToInterface(interface);
     if (qstrcmp(interface, wl_fixes_interface.name) == 0) {
-        fixes.setup(reinterpret_cast<wl_fixes *>(wl_registry_bind(registry, name, &wl_fixes_interface, 1)));
+        fixes.setup(reinterpret_cast<wl_fixes *>(wl_registry_bind(registry, name, &wl_fixes_interface, std::min(version, 2u))));
         if (queue) {
             queue->addProxy(fixes);
         }
@@ -529,6 +529,10 @@ void Registry::Private::handleRemove(uint32_t name)
         }
     }
     Q_EMIT q->interfaceRemoved(name);
+
+    if (fixes && wl_fixes_get_version(fixes) >= WL_FIXES_ACK_GLOBAL_REMOVE_SINCE_VERSION) {
+        wl_fixes_ack_global_remove(fixes, registry, name);
+    }
 }
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const

@@ -134,6 +134,12 @@ public:
      */
     quint32 rows() const;
 
+    /**
+     * @returns The currently active desktop on an output identified by @p outputName.
+     * @since 6.7
+     */
+    PlasmaVirtualDesktop *currentDesktopByOutputName(const QString &outputName) const;
+
     operator org_kde_plasma_virtual_desktop_management *();
     operator org_kde_plasma_virtual_desktop_management *() const;
 
@@ -220,6 +226,14 @@ public:
     void requestActivate();
 
     /**
+     * Requests this desktop to be activated on output given by @p outputName.
+     * The server may or may not decide to consent to the request.
+     * The server may activate the desktop on other outputs as well.
+     * @since 6.7
+     */
+    void requestEnterOutput(const QString &outputName);
+
+    /**
      * @returns The unique id of this desktop. The format of the id is decided by the compositor
      */
     QString id() const;
@@ -264,6 +278,12 @@ Q_SIGNALS:
      * @since 6.7
      */
     void positionChanged(quint32 position);
+
+    /**
+     * Emitted when this desktop becomes active on the output corresponding to @p outputName.
+     * @since 6.7
+     */
+    void outputEntered(const QString &outputName);
 
     /**
      * This event is sent after all other properties has been

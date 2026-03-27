@@ -148,7 +148,7 @@ static const QMap<Registry::Interface, SuppertedInterfaceData> s_interfaces = {
         &Registry::plasmaShellRemoved
     }},
     {Registry::Interface::PlasmaVirtualDesktopManagement, {
-        2,
+        3,
         QByteArrayLiteral("org_kde_plasma_virtual_desktop_management"),
         &org_kde_plasma_virtual_desktop_management_interface,
         &Registry::plasmaVirtualDesktopManagementAnnounced,

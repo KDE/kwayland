@@ -56,6 +56,7 @@ public:
     QString id;
     QString name;
     bool active = false;
+    quint32 position = 0;
 
 private:
     PlasmaVirtualDesktop *q;
@@ -68,6 +69,7 @@ private:
     static void deactivatedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop);
     static void doneCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop);
     static void removedCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop);
+    static void positionCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, uint32_t index);
 
     static const org_kde_plasma_virtual_desktop_listener s_listener;
 };
@@ -265,7 +267,7 @@ quint32 PlasmaVirtualDesktopManagement::rows() const
 }
 
 const org_kde_plasma_virtual_desktop_listener PlasmaVirtualDesktop::Private::s_listener =
-    {idCallback, nameCallback, activatedCallback, deactivatedCallback, doneCallback, removedCallback};
+    {idCallback, nameCallback, activatedCallback, deactivatedCallback, doneCallback, removedCallback, positionCallback};
 
 void PlasmaVirtualDesktop::Private::idCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, const char *id)
 {
@@ -309,6 +311,14 @@ void PlasmaVirtualDesktop::Private::removedCallback(void *data, org_kde_plasma_v
     auto p = reinterpret_cast<PlasmaVirtualDesktop::Private *>(data);
     Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
     Q_EMIT p->q->removed();
+}
+
+void PlasmaVirtualDesktop::Private::positionCallback(void *data, org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop, uint32_t index)
+{
+    auto p = reinterpret_cast<PlasmaVirtualDesktop::Private *>(data);
+    Q_ASSERT(p->plasmavirtualdesktop == org_kde_plasma_virtual_desktop);
+    p->position = index;
+    Q_EMIT p->q->positionChanged(index);
 }
 
 PlasmaVirtualDesktop::Private::Private(PlasmaVirtualDesktop *q)
@@ -384,6 +394,11 @@ QString PlasmaVirtualDesktop::name() const
 bool PlasmaVirtualDesktop::isActive() const
 {
     return d->active;
+}
+
+quint32 PlasmaVirtualDesktop::position() const
+{
+    return d->position;
 }
 
 }

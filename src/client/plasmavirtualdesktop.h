@@ -237,6 +237,14 @@ public:
      */
     bool isActive() const;
 
+    /**
+     * The position of the virtual desktop in the desktop list. The virtual
+     * desktop position is in the [0, N - 1] range, where N is the number of
+     * virtual desktops.
+     * @since 6.7
+     */
+    quint32 position() const;
+
     operator org_kde_plasma_virtual_desktop *();
     operator org_kde_plasma_virtual_desktop *() const;
 
@@ -251,6 +259,11 @@ Q_SIGNALS:
      * Emitted when this desktop has been activated by the server
      */
     void deactivated();
+
+    /**
+     * @since 6.7
+     */
+    void positionChanged(quint32 position);
 
     /**
      * This event is sent after all other properties has been

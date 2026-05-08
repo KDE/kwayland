@@ -61,7 +61,6 @@ ecm_qt_declare_logging_category(CLIENT_LIB_SRCS
     IDENTIFIER KWAYLAND_CLIENT
     CATEGORY_NAME kde.plasma.wayland.client
     OLD_CATEGORY_NAMES kwayland-client kf.wayland.client
-    DEFAULT_SEVERITY Critical
     DESCRIPTION "KWayland Client Library"
     EXPORT KWAYLAND
 )

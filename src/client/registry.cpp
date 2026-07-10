@@ -530,11 +530,9 @@ void Registry::Private::handleRemove(uint32_t name)
     }
     Q_EMIT q->interfaceRemoved(name);
 
-#ifdef WL_FIXES_ACK_GLOBAL_REMOVE
     if (fixes && wl_fixes_get_version(fixes) >= WL_FIXES_ACK_GLOBAL_REMOVE_SINCE_VERSION) {
         wl_fixes_ack_global_remove(fixes, registry, name);
     }
-#endif
 }
 
 bool Registry::Private::hasInterface(Registry::Interface interface) const

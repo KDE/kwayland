@@ -3,9 +3,6 @@ remove_definitions(-DQT_NO_CAST_FROM_ASCII)
 remove_definitions(-DQT_NO_CAST_TO_ASCII)
 remove_definitions(-DQT_NO_KEYWORDS)
 
-# needed to access QPA
-include_directories(SYSTEM ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
-
 set(CLIENT_LIB_SRCS
     appmenu.cpp
     buffer.cpp

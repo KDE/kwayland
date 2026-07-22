@@ -45,8 +45,8 @@ find_package(Qt6Gui ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS Private)
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED Concurrent)
 find_package(Qt6WaylandClient ${QT_MIN_VERSION} CONFIG REQUIRED NO_MODULE COMPONENTS Private)
 
-find_package(Qt6GuiPrivate ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE)
-find_package(Qt6WaylandClientPrivate ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE)
+find_package(Qt6GuiPrivate ${QT_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(Qt6WaylandClientPrivate ${QT_MIN_VERSION} REQUIRED NO_MODULE)
 
 find_package(Wayland 1.24 COMPONENTS Client)
 set_package_properties(Wayland PROPERTIES

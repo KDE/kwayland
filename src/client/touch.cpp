@@ -33,7 +33,7 @@ private:
     static void motionCallback(void *data, wl_touch *touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y);
     static void frameCallback(void *data, wl_touch *touch);
     static void cancelCallback(void *data, wl_touch *touch);
-    void down(quint32 serial, quint32 time, qint32 id, const QPointF &position, const QPointer<Surface> &surface);
+    void down(quint32 serial, quint32 time, qint32 id, const QPointF &position, Surface *surface);
     void up(quint32 serial, quint32 time, qint32 id);
     void motion(quint32 time, qint32 id, const QPointF &position);
 
@@ -130,10 +130,10 @@ void Touch::Private::downCallback(void *data, wl_touch *touch, uint32_t serial, 
 {
     auto t = reinterpret_cast<Touch::Private *>(data);
     Q_ASSERT(t->touch == touch);
-    t->down(serial, time, id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), QPointer<Surface>(Surface::get(surface)));
+    t->down(serial, time, id, QPointF(wl_fixed_to_double(x), wl_fixed_to_double(y)), Surface::get(surface));
 }
 
-void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF &position, const QPointer<Surface> &surface)
+void Touch::Private::down(quint32 serial, quint32 time, qint32 id, const QPointF &position, Surface *surface)
 {
     TouchPoint *p = new TouchPoint;
     p->d->downSerial = serial;

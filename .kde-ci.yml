@@ -1,7 +1,7 @@
 Dependencies:
  - 'on': ['Linux', 'FreeBSD']
    'require':
-    'frameworks/extra-cmake-modules': '@same'
+    'frameworks/extra-cmake-modules': 'Frameworks/6.24'
     'libraries/plasma-wayland-protocols': 'stable/1.20'
     'third-party/wayland': '@latest'
     'third-party/wayland-protocols': '@latest'
